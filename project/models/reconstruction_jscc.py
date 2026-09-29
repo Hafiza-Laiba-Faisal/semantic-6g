@@ -68,6 +68,8 @@ class ReconstructionDeepJSCC(torch.nn.Module):
         channel: str = "awgn",
         generator: Optional[torch.Generator] = None,
         denormalize_output: bool = True,
+        noise: Optional[torch.Tensor] = None,
+        h: Optional[torch.Tensor] = None,
     ) -> torch.Tensor:
         """One transmission of the state through the frozen pipeline.
 
@@ -80,17 +82,20 @@ class ReconstructionDeepJSCC(torch.nn.Module):
         generator : RNG for reproducible noise/fading.
         denormalize_output : return physical units (True) or the raw
             normalized estimate (False; used by the loss path).
+        noise / h : optional pre-generated realizations for paired
+            evaluation (complex [B, k] noise; complex [B, 1] h); used
+            verbatim instead of sampling - Step-3 conventions untouched.
         """
         if channel not in ("awgn", "rayleigh"):
             raise ValueError(f"unknown channel {channel!r}")
         z = self.encode(s)
         if channel == "awgn":
-            y = awgn_channel(z, snr_db, generator=generator)
+            y = awgn_channel(z, snr_db, generator=generator, noise=noise)
             y_eq = y
         else:
-            y, h = rayleigh_channel(z, snr_db, generator=generator,
-                                    return_h=True)
-            y_eq = equalize_zf(y, h)
+            y, h_used = rayleigh_channel(z, snr_db, generator=generator,
+                                         return_h=True, noise=noise, h=h)
+            y_eq = equalize_zf(y, h_used)
         s_bar_hat = self.decoder(y_eq)
         if denormalize_output:
             return denormalize(s_bar_hat)

@@ -57,26 +57,52 @@ def rayleigh_channel(
     generator: Optional[torch.Generator] = None,
     power: float = config.TX_POWER,
     return_h: bool = False,
+    noise: Optional[torch.Tensor] = None,
+    h: Optional[torch.Tensor] = None,
 ):
-    """Transmit one codeword batch through slow Rayleigh fading + AWGN."""
+    """Transmit one codeword batch through slow Rayleigh fading + AWGN.
+
+    ``noise`` (complex ``[B, k]`` or stacked real matching ``z``) and
+    ``h`` (complex ``[B, 1]``) may be pre-generated for paired evaluation;
+    when supplied they are used verbatim and no sampling occurs.
+    """
     check_codeword(z)
     batch = z.shape[0] if z.dim() > 1 else 1
-    h = sample_fading(
-        batch, generator=generator, device=z.device,
-        dtype=z.real.dtype if z.is_complex() else z.dtype)
+    if h is None:
+        h = sample_fading(
+            batch, generator=generator, device=z.device,
+            dtype=z.real.dtype if z.is_complex() else z.dtype)
+    else:
+        if (not h.is_complex() or tuple(h.shape) != (batch, 1)):
+            raise ValueError(
+                f"h must be complex [batch, 1], got {tuple(h.shape)} "
+                f"complex={h.is_complex()}")
     sigma2 = snr_db_to_sigma2(snr_db, power=power)
     if z.is_complex():
-        n = sample_complex_gaussian(
-            z.shape, sigma2, generator=generator, device=z.device,
-            dtype=z.real.dtype, complex_out=True)
+        if noise is None:
+            n = sample_complex_gaussian(
+                z.shape, sigma2, generator=generator, device=z.device,
+                dtype=z.real.dtype, complex_out=True)
+        else:
+            if (not noise.is_complex() or noise.shape != z.shape):
+                raise ValueError(
+                    f"noise must be complex matching z, got {tuple(noise.shape)}")
+            n = noise
         y = h * z + n
     else:
         # stacked real input: apply the same complex h to the complex view
         k = z.shape[-1] // 2
         zc = torch.complex(z[..., :k], z[..., k:])
-        n = sample_complex_gaussian(
-            zc.shape, sigma2, generator=generator, device=z.device,
-            dtype=z.dtype, complex_out=True)
+        if noise is None:
+            n = sample_complex_gaussian(
+                zc.shape, sigma2, generator=generator, device=z.device,
+                dtype=z.dtype, complex_out=True)
+        else:
+            if noise.is_complex() or noise.shape != z.shape:
+                raise ValueError(
+                    f"noise must be real-stacked matching z, got "
+                    f"{tuple(noise.shape)} complex={noise.is_complex()}")
+            n = torch.complex(noise[..., :k], noise[..., k:])
         yc = h * zc + n
         y = torch.cat([yc.real, yc.imag], dim=-1)
     if return_h:

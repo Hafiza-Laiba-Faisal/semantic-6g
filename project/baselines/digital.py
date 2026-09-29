@@ -361,11 +361,16 @@ class DigitalBaseline:
         channel: str = "awgn",
         generator: Optional[torch.Generator] = None,
         noiseless: bool = False,
+        noise: Optional[torch.Tensor] = None,
+        h: Optional[torch.Tensor] = None,
     ) -> torch.Tensor:
         """Physical state -> estimated physical state through the full chain.
 
         ``noiseless=True`` bypasses the channel (validation reference for
         Gate E: the estimate then equals the quantizer reconstruction).
+        ``noise``/``h`` accept pre-generated realizations for paired
+        evaluation (used verbatim; no sampling). The frozen framing,
+        budget and Step-3 channel conventions are untouched.
         """
         if channel not in ("awgn", "rayleigh"):
             raise ValueError(f"unknown channel {channel!r}")
@@ -377,10 +382,10 @@ class DigitalBaseline:
                 s_bar_hat = self.decode_symbols(sym, "awgn", snr_db)
                 return denormalize(s_bar_hat)
             if channel == "awgn":
-                y = awgn_channel(sym, snr_db, generator=generator)
+                y = awgn_channel(sym, snr_db, generator=generator, noise=noise)
                 s_bar_hat = self.decode_symbols(y, "awgn", snr_db)
             else:
-                y, h = rayleigh_channel(sym, snr_db, generator=generator,
-                                        return_h=True)
-                s_bar_hat = self.decode_symbols(y, "rayleigh", snr_db, h=h)
+                y, h_used = rayleigh_channel(sym, snr_db, generator=generator,
+                                             noise=noise, h=h, return_h=True)
+                s_bar_hat = self.decode_symbols(y, "rayleigh", snr_db, h=h_used)
             return denormalize(s_bar_hat)

@@ -31,6 +31,7 @@ def awgn_channel(
     snr_db: float,
     generator: Optional[torch.Generator] = None,
     power: float = config.TX_POWER,
+    noise: Optional[torch.Tensor] = None,
 ) -> torch.Tensor:
     """Transmit one codeword batch through complex AWGN.
 
@@ -40,10 +41,23 @@ def awgn_channel(
         (already power-normalized by the caller).
     snr_db : configured SNR in dB (per complex symbol, P / sigma^2).
     generator : optional torch.Generator for reproducibility.
+    noise : optional pre-generated realization (paired evaluation).
+        When given, it is used verbatim instead of sampling; ``generator``
+        and ``snr_db`` are then irrelevant to the added noise. Must match
+        the kind/shape contract of ``z`` (complex ``[B, k]`` or stacked
+        real ``[B, 2k]``).
 
     Returns the received signal with the same kind/shape as ``z``.
     """
     check_codeword(z)
+    if noise is not None:
+        check_codeword(noise)
+        if noise.shape != z.shape or noise.is_complex() != z.is_complex():
+            raise ValueError(
+                f"noise shape/kind mismatch: {tuple(noise.shape)} "
+                f"complex={noise.is_complex()} vs z {tuple(z.shape)} "
+                f"complex={z.is_complex()}")
+        return z + noise
     sigma2 = snr_db_to_sigma2(snr_db, power=power)
     if _is_complex(z):
         n = sample_complex_gaussian(

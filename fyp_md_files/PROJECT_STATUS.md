@@ -8,16 +8,18 @@ Reconstruction DeepJSCC vs a conventional digital baseline under AWGN and
 slow Rayleigh fading with a frozen UAV navigation task.
 
 ## Current Status
-Step 6 — PASS (checkpointed)
+Step 7 — PASS (checkpointed)
 
 ## Last Completed Step
-Step 6 — Digital Baseline (conv K=7 R_c=1/2, Gray-QPSK exact log-MAP,
-soft Viterbi, strict matched-budget framing per audit section 8)
+Step 7 — Evaluation Harness (project/evaluation/: paired episodes +
+identical noise/h realizations across methods, frozen metrics,
+Wilson CI + McNemar + paired-t statistics)
 
 ## Next Step
-Step 7 — NOT STARTED / awaiting specification
-(candidate per coding order: evaluation harness — paired episodes,
-metrics, statistics, Wilson CIs, identical-noise verification)
+Step 8 — NOT STARTED / awaiting specification
+(candidates per coding order: training/common.py full protocol,
+experiments/ runners + main.py, then the M1–M5 matrix with full-scale
+training — requires explicit approval and a compute plan)
 
 ## Frozen Decisions
 - UAV state: 6D [x, y, vx, vy, x_g, y_g]
@@ -38,6 +40,10 @@ metrics, statistics, Wilson CIs, identical-noise verification)
   (LLR_I = 4*sqrt(2)*Re(y_eq)/sigma2_eff, LLR_Q = 4*sqrt(2)*Im(y_eq)/sigma2_eff)
 - Rayleigh LLR: per-symbol perfect-CSI scaling, sigma2_eff = sigma2/max(|h|^2, eps_eq)
 - Uncoded QPSK: validation/reference path only (formal ablation = later M5)
+- Evaluation: paired pre-generated episodes + noise [E,T,k] + h [E,T]
+  bitwise-identical across methods; one fixed SNR per condition;
+  success-conditional time-to-goal (failures keep the T+1 sentinel);
+  checkpoints regenerated-by-seed, never committed
 - Task loss: L_task = ld*L_d + lu*L_u + lv*L_v + lT*L_T with
   - lambda_d = 1.0
   - lambda_u = 0.0
@@ -53,14 +59,16 @@ metrics, statistics, Wilson CIs, identical-noise verification)
 - Step 4: PASS (DeepJSCC encoder/decoder + reconstruction pipeline + smoke training)
 - Step 5: PASS (task-oriented closed-loop training with frozen task loss)
 - Step 6: PASS (digital baseline: quantizer, conv coding, Gray-QPSK, Viterbi, framing)
+- Step 7: PASS (evaluation harness: metrics, statistics, paired evaluation)
 
 ## Last Verification
 - Step 0-2: 11/11 unit tests + oracle gate PASS (SR 100%, 0/5000 exits)
 - Step 3: 43/43 checks PASS
 - Step 4: 21/21 structural + 10/10 smoke checks PASS
 - Step 5: 28/28 checks PASS (incl. in-process 43 + 11 regression)
-- Step 6: 33/33 checks PASS (Gates A-E incl. BER-vs-theory on 8e6 bits/point;
-  regression 11 + 43 + 21 + 10 + 28 re-verified)
+- Step 6: 33/33 checks PASS (Gates A-E incl. BER-vs-theory on 8e6 bits/point)
+- Step 7: 18/18 checks PASS (Gates A-H; full regression 11 + 43 + 21 + 10 +
+  28 + 33 re-verified)
 
 ## Last Commit
 - step0-2: ddc41b0 (root commit)
@@ -68,6 +76,7 @@ metrics, statistics, Wilson CIs, identical-noise verification)
 - step4:   8e4dc95
 - step5:   bb82334584949d76719d4a035a80af44c24f7727
 - step6:   f58cb77b23555635b331761b52987f062130161a
+- step7:   (recorded in fyp_md_files/05-implementation-audit.md checkpoint entry)
 
 ## Repository State
 Clean after checkpoint: YES

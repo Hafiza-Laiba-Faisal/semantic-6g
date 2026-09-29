@@ -16,6 +16,7 @@ final_variables-1, final_variables-2, and the channel-verification notes). No pr
 - **Step 0–2 implemented and verified** (`project/config.py`, `data/normalization.py`, `uav/dynamics.py`, `uav/controller.py`, `uav/environment.py`; 11 unit tests + oracle gate all pass; project-local venv with torch 2.4.1+cpu / numpy 1.26.4).
 - **Task-loss weights FROZEN: λ_d = 1.0, λ_u = 0.0, λ_v = 0.0, λ_T = 2.0 (user decision in Step 5).** Project design choice (A7 proposed defaults, consistent with final_variables-1 §2.7 "λ_T = 2.0, start simple"), NOT literature-derived. L_d and L_T drive optimization; L_u and L_v are diagnostics only. Rollout convention frozen (audit 1.1 row 12): L_d and L_v sum over post-transition states t = 1..T (t = 0 excluded), L_u over applied controls t = 0..T−1.
 - **Step-6 soft-decision conventions FROZEN (user decision).** (i) QPSK soft demapper = EXACT log-MAP, LLR = log[P(bit=0)/P(bit=1)]; for the frozen Gray-QPSK mapping this is exactly linear: LLR_I = 4√2·Re(y_eq)/σ²_eff, LLR_Q = 4√2·Im(y_eq)/σ²_eff. (ii) Rayleigh uses PER-SYMBOL perfect-CSI scaling: after the frozen ZF equalizer, σ²_eff = σ²/max(|h|², ε_eq) per codeword — never the average σ². (iii) Uncoded QPSK chain = validation/reference path for the BER gate only; the formal uncoded ablation remains a later M5 experiment.
+- **Step-7 evaluation conventions FROZEN (user decision).** Scope = `project/evaluation/` harness only (metrics, statistics, paired loop, tests) — no experiments/, no full training, no thesis-level execution. Checkpoints regenerated-by-seed (never committed); harness is checkpoint-agnostic. Time-to-goal = first t with d_t ≤ r_g; success-conditional statistics exclude failures (failures keep the T+1 sentinel, reported as failure_count). Statistics implemented: mean, std, success count/total, Wilson 95% CI, continuity-corrected McNemar (n01 == n10 handled explicitly as p = 1), paired t-test (incomplete-beta t p-value, no SciPy). Fixed SNR per (channel, method, condition) — never sampled per episode/step. Paired evaluation: episodes AND n[episode, step, symbol] AND h[episode, step] pre-generated once per condition from purpose-separated streams and handed to every method as exact tensors (bitwise-identical across methods, hard-gated). Minimal backward-compatible channel extension added for pre-generated realizations (Step-3 equations untouched).
 
 ---
 
@@ -363,7 +364,7 @@ Rules: M2 is the primary three-way comparison (equal k, equal power, equal episo
 
 ---
 
-*Implementation status: Step 0–2 complete and verified (11/11 unit tests + oracle gate PASS, controller frozen at Kp = 1.0, Kv = 2.0); Step 3 (channel layer) complete and verified (43/43 channel checks PASS); Step 4 complete and verified (DeepJSCC encoder/decoder MLPs + reconstruction pipeline; 21/21 structural checks; smoke trains AWGN −96.6%, Rayleigh −90.2%); Step 5 complete and verified (task-oriented closed-loop training, 28/28 checks; smoke trains AWGN −84.4% / Rayleigh −94.5% total task loss, bitwise reproducible); Step 6 complete and verified (digital baseline per §8: frozen quantizer, component-major MSB-first packing, conv K=7 R_c=1/2 G1-first, Gray-QPSK with exact log-MAP LLRs, per-symbol CSI-scaled Rayleigh LLRs, butterfly soft Viterbi with zero-tail traceback, strict 6B+6 ≤ k framing with InfeasibleDigitalConfig at k ∈ {1,2,3}; 33/33 checks incl. BER-vs-theory on 8×10⁶ bits per point; full regression 11 + 43 + 21 + 10 + 28 PASS). Known smoke-scale observations for full training: encoder grad norms grow late in training (global-norm clip 1.0 does the real work — monitor/lower LR in full runs); λ_u = 0 so control effort legitimately rose as a diagnostic; reconstruction-MSE diagnostic rose while task loss fell (the expected task-vs-fidelity trade-off). Decision status: A1, A11, controller gains, task-loss λ, Step-6 LLR conventions FROZEN; A2–A12 otherwise carry proposed defaults (A6 resolved: no d_max needed).*
+*Implementation status: Steps 0–6 complete and verified as recorded in §9 below (regression totals 11 + 43 + 21 + 10 + 28 + 33). Step 7 complete and verified: `project/evaluation/` harness — metrics.py (exact audit row-15 formulas, identical schema for oracle/recon/task/digital), statistics.py (mean/std, success counts, Wilson 95% CI, continuity-corrected McNemar, paired t via incomplete beta — dependency-free), evaluate.py (Condition dataclass + pre-generated paired episodes/noise/h handed bitwise-identically to all methods; explicit structured infeasible status for digital at k ∈ {1,2,3}); 18/18 checks (Gates A–H); minimal backward-compatible channel extension for pre-generated realizations (Step-3 equations untouched). Known smoke-scale observations for full training: encoder grad norms grow late in training (global-norm clip 1.0 does the real work — monitor/lower LR in full runs); λ_u = 0 so control effort legitimately rose as a diagnostic; reconstruction-MSE diagnostic rose while task loss fell (the expected task-vs-fidelity trade-off). Decision status: A1, A11, controller gains, task-loss λ, Step-6 LLR conventions, Step-7 evaluation conventions FROZEN; A2–A12 otherwise carry proposed defaults (A6 resolved: no d_max needed).*
 
 ---
 
@@ -413,6 +414,37 @@ Commit: f58cb77b23555635b331761b52987f062130161a
 Branch: main
 Tests: 33/33 Step-6 checks (Gates A-E); regression 11/11 + 43/43 + 21/21 + 10/10 + 28/28
 Date: 2026-09-29
+
+Step: 7
+Status: PASS
+Commit: <recorded after the step-7 commit>
+Branch: main
+Tests: 18/18 Step-7 checks (Gates A-H); full regression 11 + 43 + 21 + 10 + 28 + 33
+Date: 2026-09-29
+```
+
+Step-7 gate results (tests/test_evaluation.py):
+
+```text
+Gate A (hand-computed metrics): two hand-walked trajectories — success, final
+  distance, avg distance (t=0 excluded), control effort, time-to-goal (first hit;
+  argmax over the hit vector), normalized-state MSE (perfect=0, offset=0.09),
+  failure sentinel T+1 — all match hand values exactly.
+Gate B (Wilson 95% CI): implementation == hand closed form for (7,50), (0,10),
+  (10,10); n=0 safe.
+Gate C (mean/std): matches reference calculation to 1e-12.
+Gate D (paired realization identity, HARD): pre-generated noise and h are
+  bitwise identical across reconstruction / task / digital captures; the
+  materialization itself is deterministic. All methods share the same k
+  (matched budget) so the noise width matches.
+Gate E (determinism): full harness rerun -> bitwise-identical metric tables.
+Gate F (interface parity): oracle/recon/task produce the identical 7-key
+  metric schema + aggregate row; digital at k=3 (B unset) returns the explicit
+  structured INFEASIBLE status (never fake metrics).
+Gate G (statistical pairing): McNemar counts only discordant pairs (symmetric
+  discordance = p 1 explicitly); paired t is sign-antisymmetric and preserves
+  pairing; constant nonzero difference -> t = inf, p = 0.
+Gate H (regression): 11 + 43 + 21 + 10 + 28 + 33 all PASS.
 ```
 
 Step-6 gate results (all expected/empirical/tolerance reported by tests/test_digital.py):

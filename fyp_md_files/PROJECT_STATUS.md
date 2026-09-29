@@ -63,6 +63,14 @@ Gray-QPSK + soft Viterbi, framing per audit section 8)
 ## Repository State
 Clean after checkpoint: YES
 
+Push state after Step-5 checkpoint: BLOCKED (no push credentials in the
+build environment; commits are local on `main`). To publish, run once in
+an interactive terminal with GitHub access:
+    git push -u origin main
+(origin = https://github.com/Hafiza-Laiba-Faisal/semantic-6g.git, which
+was verified reachable and empty before the checkpoint; the credential
+dialog completes only in an interactive session.)
+
 ## Environment (machine-independent setup)
 - Python 3.9+ (project-local venv; no global installs)
 - torch 2.4.1+cpu, numpy 1.26.4, matplotlib

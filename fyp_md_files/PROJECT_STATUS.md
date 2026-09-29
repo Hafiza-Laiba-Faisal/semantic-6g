@@ -100,6 +100,9 @@ origin = https://github.com/Hafiza-Laiba-Faisal/semantic-6g.git
 - Do not commit virtual environments, caches, secrets, or unrelated artifacts.
 - Git checkpoint policy: after every completed step, run tests, update audit,
   commit, push, verify, record the hash, update this file.
+- Incremental commits (user policy): commit every change-batch immediately
+  (per module / per gate / per bug fix) with a descriptive message - do not
+  batch unrelated work into one large commit; push at each completed step.
 
 ## Resume Procedure
 1. Clone the repository.

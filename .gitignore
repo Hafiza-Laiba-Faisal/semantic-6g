@@ -6,6 +6,9 @@ __pycache__/
 *.py[cod]
 .pytest_cache/
 
+# agent-local state
+.freebuff/
+
 # experiment outputs
 results/
 *.pth

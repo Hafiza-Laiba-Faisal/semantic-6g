@@ -165,6 +165,27 @@ class InfeasibleDigitalConfig(ValueError):
 
 HIDDEN_DIMS = (128, 128)    # encoder/decoder hidden widths      [PROJ]
 
+# Task-loss weights  L_task = ld*L_d + lu*L_u + lv*L_v + lT*L_T
+# [FROZEN] user decision in Step 5 (A7 proposed defaults, consistent with
+# final_variables-1 section 2.7 "lambda_T = 2.0, start simple").
+# Project design choice - NOT a literature-derived value.
+#   ld = 1.0 : distance term active
+#   lu = 0.0 : control effort is a diagnostic only
+#   lv = 0.0 : velocity term is a diagnostic only
+#   lT = 2.0 : terminal distance active
+LAMBDA_DISTANCE = 1.0
+LAMBDA_CONTROL = 0.0
+LAMBDA_VELOCITY = 0.0
+LAMBDA_TERMINAL = 2.0
+
+# Frozen rollout convention (audit 1.1 row 12):
+#   L_d = (1/T) sum_{t=1..T}   ||p_t - p_g||^2   (post-transition states;
+#         t = 0 is the initial condition, NOT included)
+#   L_u = (1/T) sum_{t=0..T-1} ||u_t||^2         (applied controls)
+#   L_v = (1/T) sum_{t=1..T}   ||v_t||^2         (post-transition velocities)
+#   L_T = ||p_T - p_g||^2
+TASK_LOSS_INCLUDES_T0 = False
+
 
 # =========================================================================
 # 7. Training protocol                                       (audit 2.6)
@@ -268,6 +289,11 @@ def validate() -> None:
             f"M2 digital point k={k} must exactly fit (audit 8.6)")
     assert 0.0 < LEARNING_RATE
     assert len(TRAINING_SEEDS) >= 3, "at least 3 training seeds"
+    for lam in (LAMBDA_DISTANCE, LAMBDA_CONTROL, LAMBDA_VELOCITY,
+                LAMBDA_TERMINAL):
+        assert lam >= 0.0, "task-loss weights must be non-negative"
+    assert (LAMBDA_DISTANCE + LAMBDA_TERMINAL) > 0.0, (
+        "at least one navigation term must be active")
 
 
 def describe() -> str:

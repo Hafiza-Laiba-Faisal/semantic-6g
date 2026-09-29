@@ -1,0 +1,11 @@
+# local environment artifacts
+.venv/
+wheels/
+.conda_env/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# experiment outputs
+results/
+*.pth

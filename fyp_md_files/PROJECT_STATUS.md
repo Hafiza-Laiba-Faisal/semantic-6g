@@ -8,15 +8,16 @@ Reconstruction DeepJSCC vs a conventional digital baseline under AWGN and
 slow Rayleigh fading with a frozen UAV navigation task.
 
 ## Current Status
-Step 5 — PASS (checkpointed)
+Step 6 — PASS (checkpointed)
 
 ## Last Completed Step
-Step 5 — Task-Oriented Closed-Loop Training
+Step 6 — Digital Baseline (conv K=7 R_c=1/2, Gray-QPSK exact log-MAP,
+soft Viterbi, strict matched-budget framing per audit section 8)
 
 ## Next Step
-Step 6 — NOT STARTED / awaiting specification
-(candidate per coding order: digital baseline with conv K=7 R_c=1/2 +
-Gray-QPSK + soft Viterbi, framing per audit section 8)
+Step 7 — NOT STARTED / awaiting specification
+(candidate per coding order: evaluation harness — paired episodes,
+metrics, statistics, Wilson CIs, identical-noise verification)
 
 ## Frozen Decisions
 - UAV state: 6D [x, y, vx, vy, x_g, y_g]
@@ -33,6 +34,10 @@ Gray-QPSK + soft Viterbi, framing per audit section 8)
 - Training SNR ~ U(0, 20) dB; bandwidth grid rho in {1/6, 1/3, 1/2} -> k in {1, 2, 3}
 - Digital baseline: conv K=7, R_c=1/2, (171,133)_8, soft Viterbi, Gray QPSK;
   packet invariant 6B + 6 <= k (audit section 8); INFEASIBLE at k in {1,2,3}
+- QPSK soft demapper: EXACT log-MAP, LLR = log[P(0)/P(1)]
+  (LLR_I = 4*sqrt(2)*Re(y_eq)/sigma2_eff, LLR_Q = 4*sqrt(2)*Im(y_eq)/sigma2_eff)
+- Rayleigh LLR: per-symbol perfect-CSI scaling, sigma2_eff = sigma2/max(|h|^2, eps_eq)
+- Uncoded QPSK: validation/reference path only (formal ablation = later M5)
 - Task loss: L_task = ld*L_d + lu*L_u + lv*L_v + lT*L_T with
   - lambda_d = 1.0
   - lambda_u = 0.0
@@ -47,29 +52,33 @@ Gray-QPSK + soft Viterbi, framing per audit section 8)
 - Step 3: PASS (channel layer + 43-check verification suite)
 - Step 4: PASS (DeepJSCC encoder/decoder + reconstruction pipeline + smoke training)
 - Step 5: PASS (task-oriented closed-loop training with frozen task loss)
+- Step 6: PASS (digital baseline: quantizer, conv coding, Gray-QPSK, Viterbi, framing)
 
 ## Last Verification
 - Step 0-2: 11/11 unit tests + oracle gate PASS (SR 100%, 0/5000 exits)
 - Step 3: 43/43 checks PASS
 - Step 4: 21/21 structural + 10/10 smoke checks PASS
 - Step 5: 28/28 checks PASS (incl. in-process 43 + 11 regression)
+- Step 6: 33/33 checks PASS (Gates A-E incl. BER-vs-theory on 8e6 bits/point;
+  regression 11 + 43 + 21 + 10 + 28 re-verified)
 
 ## Last Commit
 - step0-2: ddc41b0 (root commit)
 - step3:   8517ee7
 - step4:   8e4dc95
 - step5:   bb82334584949d76719d4a035a80af44c24f7727
+- step6:   (recorded in fyp_md_files/05-implementation-audit.md checkpoint entry)
 
 ## Repository State
 Clean after checkpoint: YES
 
-Push state after Step-5 checkpoint: BLOCKED (no push credentials in the
-build environment; commits are local on `main`). To publish, run once in
-an interactive terminal with GitHub access:
-    git push -u origin main
-(origin = https://github.com/Hafiza-Laiba-Faisal/semantic-6g.git, which
-was verified reachable and empty before the checkpoint; the credential
-dialog completes only in an interactive session.)
+Push state after Step-5 checkpoint: SUCCESS (pushed by the user via a
+fine-grained PAT; verified with `git ls-remote origin` — origin/main =
+5463aa9 = local HEAD). Push procedure for future steps: the user pushes
+from their own terminal with a one-shot token URL (not stored on the
+machine):
+    git push https://<TOKEN>@github.com/Hafiza-Laiba-Faisal/semantic-6g.git main
+origin = https://github.com/Hafiza-Laiba-Faisal/semantic-6g.git
 
 ## Environment (machine-independent setup)
 - Python 3.9+ (project-local venv; no global installs)

@@ -15,6 +15,7 @@ final_variables-1, final_variables-2, and the channel-verification notes). No pr
 - **A6 RESOLVED empirically:** with the frozen controller, success is 100% in every initial-distance bin up to d0 ≈ 20.6 m (full-workspace sampling), so **d_max is not required**; config keeps D_MAX = None and the full-workspace episode distribution stands.
 - **Step 0–2 implemented and verified** (`project/config.py`, `data/normalization.py`, `uav/dynamics.py`, `uav/controller.py`, `uav/environment.py`; 11 unit tests + oracle gate all pass; project-local venv with torch 2.4.1+cpu / numpy 1.26.4).
 - **Task-loss weights FROZEN: λ_d = 1.0, λ_u = 0.0, λ_v = 0.0, λ_T = 2.0 (user decision in Step 5).** Project design choice (A7 proposed defaults, consistent with final_variables-1 §2.7 "λ_T = 2.0, start simple"), NOT literature-derived. L_d and L_T drive optimization; L_u and L_v are diagnostics only. Rollout convention frozen (audit 1.1 row 12): L_d and L_v sum over post-transition states t = 1..T (t = 0 excluded), L_u over applied controls t = 0..T−1.
+- **Step-6 soft-decision conventions FROZEN (user decision).** (i) QPSK soft demapper = EXACT log-MAP, LLR = log[P(bit=0)/P(bit=1)]; for the frozen Gray-QPSK mapping this is exactly linear: LLR_I = 4√2·Re(y_eq)/σ²_eff, LLR_Q = 4√2·Im(y_eq)/σ²_eff. (ii) Rayleigh uses PER-SYMBOL perfect-CSI scaling: after the frozen ZF equalizer, σ²_eff = σ²/max(|h|², ε_eq) per codeword — never the average σ². (iii) Uncoded QPSK chain = validation/reference path for the BER gate only; the formal uncoded ablation remains a later M5 experiment.
 
 ---
 
@@ -362,7 +363,7 @@ Rules: M2 is the primary three-way comparison (equal k, equal power, equal episo
 
 ---
 
-*Implementation status: Step 0–2 complete and verified (11/11 unit tests + oracle gate PASS, controller frozen at Kp = 1.0, Kv = 2.0); Step 3 (channel layer) complete and verified (43/43 channel checks PASS); Step 4 complete and verified (DeepJSCC encoder/decoder MLPs + reconstruction pipeline; 21/21 structural checks; smoke trains AWGN −96.6%, Rayleigh −90.2%); Step 5 complete and verified (task-oriented closed-loop training with the frozen task loss and λ = (1, 0, 0, 2): 28/28 checks PASS — loss algebra vs hand computation, rollout dims, zero-error case, closed-loop gradient flow on both channels, finite-difference vs autograd agreement, smoke trains AWGN −84.4% / Rayleigh −94.5% total task loss with bitwise reproducibility; full regression 43 + 11 + 21 + 10 PASS). Known smoke-scale observations for full training: encoder grad norms grow late in training (global-norm clip 1.0 does the real work — monitor/lower LR in full runs); λ_u = 0 so control effort legitimately rose as a diagnostic; reconstruction-MSE diagnostic rose while task loss fell (the expected task-vs-fidelity trade-off). Decision status: A1, A11, controller gains, task-loss λ FROZEN; A2–A12 otherwise carry proposed defaults (A6 resolved: no d_max needed).*
+*Implementation status: Step 0–2 complete and verified (11/11 unit tests + oracle gate PASS, controller frozen at Kp = 1.0, Kv = 2.0); Step 3 (channel layer) complete and verified (43/43 channel checks PASS); Step 4 complete and verified (DeepJSCC encoder/decoder MLPs + reconstruction pipeline; 21/21 structural checks; smoke trains AWGN −96.6%, Rayleigh −90.2%); Step 5 complete and verified (task-oriented closed-loop training, 28/28 checks; smoke trains AWGN −84.4% / Rayleigh −94.5% total task loss, bitwise reproducible); Step 6 complete and verified (digital baseline per §8: frozen quantizer, component-major MSB-first packing, conv K=7 R_c=1/2 G1-first, Gray-QPSK with exact log-MAP LLRs, per-symbol CSI-scaled Rayleigh LLRs, butterfly soft Viterbi with zero-tail traceback, strict 6B+6 ≤ k framing with InfeasibleDigitalConfig at k ∈ {1,2,3}; 33/33 checks incl. BER-vs-theory on 8×10⁶ bits per point; full regression 11 + 43 + 21 + 10 + 28 PASS). Known smoke-scale observations for full training: encoder grad norms grow late in training (global-norm clip 1.0 does the real work — monitor/lower LR in full runs); λ_u = 0 so control effort legitimately rose as a diagnostic; reconstruction-MSE diagnostic rose while task loss fell (the expected task-vs-fidelity trade-off). Decision status: A1, A11, controller gains, task-loss λ, Step-6 LLR conventions FROZEN; A2–A12 otherwise carry proposed defaults (A6 resolved: no d_max needed).*
 
 ---
 
@@ -405,6 +406,34 @@ Commit: bb82334584949d76719d4a035a80af44c24f7727
 Branch: main
 Tests: 28/28 Step-5 checks; regression 11/11 + 43/43 + 21/21 + 10/10
 Date: 2026-09-29
+
+Step: 6
+Status: PASS
+Commit: <recorded after the step-6 commit>
+Branch: main
+Tests: 33/33 Step-6 checks (Gates A-E); regression 11/11 + 43/43 + 21/21 + 10/10 + 28/28
+Date: 2026-09-29
+```
+
+Step-6 gate results (all expected/empirical/tolerance reported by tests/test_digital.py):
+
+```text
+Gate A (quantizer): 5/5 — Δ = 2/(2^B−1) exact; max granular error ≤ Δ/2
+  (e.g. B=8: 0.00392 ≤ 0.00391+1e-9); endpoints exact; clip both ways; round-trip exact.
+Gate B (uncoded Gray-QPSK): empirical BER vs Q(√SNR) = 0.5·erfc(√(SNR/2)) on AWGN,
+  N = 8×10^6 bits per point: 0 dB 0.158763 vs 0.158655; 6 dB 0.023003 vs 0.023007;
+  10 dB 0.000783 vs 0.000783 (all within 4σ binomial tolerance). Axis: SNR = P/σ² = Es/N0.
+Gate C (conv + Viterbi): impulse response matches (1+D³+D⁴+D⁵+D⁶, 1+D+D³+D⁴+D⁶) by hand
+  and by reference vector; zero-tail drives state 7→0; noiseless chain = 0 bit errors
+  in 7680; single-symbol corruption fully recovered.
+Gate D (Rayleigh): block fading verified inside the digital packet; bitwise
+  reproducible; CSI-scaled LLRs finite under the ε_eq guard (|h| = 1e-6 case).
+Gate E (full chain): noiseless output == quantizer-only reconstruction (dev 0.0);
+  framing 6B=48 → info 54 → coded 108 → payload 54 → pad 0 → k=54 asserted;
+  all feasible k ∈ {12,18,24,30,54} execute; AWGN + Rayleigh finite and in-range;
+  closed-loop digital navigation (B=8, k=54, 14 dB) reaches 0.174 m in 60 steps.
+Infeasibility: k ∈ {1,2,3} raises InfeasibleDigitalConfig (k_min = 12) — reported as
+  architectural infeasibility, never relaxed.
 ```
 
 Continuation marker: `fyp_md_files/PROJECT_STATUS.md` (machine-independent handoff; resume procedure inside).

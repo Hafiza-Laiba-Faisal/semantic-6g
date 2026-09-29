@@ -58,7 +58,7 @@ Gray-QPSK + soft Viterbi, framing per audit section 8)
 - step0-2: ddc41b0 (root commit)
 - step3:   8517ee7
 - step4:   8e4dc95
-- step5:   (recorded in fyp_md_files/05-implementation-audit.md checkpoint entry)
+- step5:   bb82334584949d76719d4a035a80af44c24f7727
 
 ## Repository State
 Clean after checkpoint: YES

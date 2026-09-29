@@ -401,7 +401,7 @@ Date: 2026-09-29
 
 Step: 5
 Status: PASS
-Commit: <recorded after the step-5 commit is created>
+Commit: bb82334584949d76719d4a035a80af44c24f7727
 Branch: main
 Tests: 28/28 Step-5 checks; regression 11/11 + 43/43 + 21/21 + 10/10
 Date: 2026-09-29

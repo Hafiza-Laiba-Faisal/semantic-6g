@@ -409,7 +409,7 @@ Date: 2026-09-29
 
 Step: 6
 Status: PASS
-Commit: <recorded after the step-6 commit>
+Commit: f58cb77b23555635b331761b52987f062130161a
 Branch: main
 Tests: 33/33 Step-6 checks (Gates A-E); regression 11/11 + 43/43 + 21/21 + 10/10 + 28/28
 Date: 2026-09-29

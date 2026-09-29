@@ -67,7 +67,7 @@ metrics, statistics, Wilson CIs, identical-noise verification)
 - step3:   8517ee7
 - step4:   8e4dc95
 - step5:   bb82334584949d76719d4a035a80af44c24f7727
-- step6:   (recorded in fyp_md_files/05-implementation-audit.md checkpoint entry)
+- step6:   f58cb77b23555635b331761b52987f062130161a
 
 ## Repository State
 Clean after checkpoint: YES

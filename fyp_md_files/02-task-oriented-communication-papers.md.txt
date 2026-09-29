@@ -1,0 +1,1692 @@
+=== SOURCE FILE: 02-task-oriented-ib-shao2022.md.txt ===
+
+Shao, Mao, and Zhang (2022), the paper on task-oriented communication for edge inference using the Information Bottleneck framework. 
+https://www.perplexity.ai/search/762bc4e3-b85f-448a-8679-83c1089d3116
+
+
+Shao, Mao, and Zhang’s paper formulates device–edge inference, not UAV navigation: a device maps an input sample to channel symbols, an AWGN channel corrupts them, and an edge server directly predicts a task label from the corrupted received representation. Its reusable contribution for your FYP is the task-aware, differentiable IB/VIB training principle; it does not supply a UAV state model, navigation task, controller, or trajectory/control loss.[arxiv]
+Scope and notation
+Primary source used: J. Shao, Y. Mao, and J. Zhang, “Learning Task-Oriented Communication for Edge Inference: An Information Bottleneck Approach,” IEEE JSAC, vol. 40, no. 1, pp. 197–211, Jan. 2022. The source text below follows the authors’ arXiv version (v3, Jan. 2023), which contains the paper’s equations and section numbering. The paper evaluates image-classification tasks, principally MNIST and CIFAR-10; it is not a UAV-navigation paper.[arxiv][github]
+The paper’s notation convention is:
+Upper-case letters, e.g. X,Y,Z,\hat Z,\hat Y, are random variables.
+Lower-case letters, e.g. \mathbf{x},\mathbf{y},\mathbf{z},\hat{\mathbf{z}},\hat{\mathbf{y}}, are realizations.
+D_{\mathrm{KL}}(p\|q) is KL divergence.
+\mathbb{E}[\cdot] is expectation.
+\mathcal{N}(\boldsymbol{\mu},\boldsymbol{\Sigma}) is a Gaussian distribution with mean \boldsymbol{\mu} and covariance \boldsymbol{\Sigma}.
+\mathbf{I} is the identity matrix.[arxiv]
+A. Problem formulation
+What the paper explicitly states — Section II-A, p. 3
+The setting is a device–edge co-inference system. A resource-constrained mobile/edge device runs an on-device DNN; an edge server runs a second DNN. The device transmits an extracted encoded feature over a wireless channel, and the server performs the final inference. Examples given by the paper are image classification and object detection.[arxiv]
+Requested item
+Paper’s variable
+Exact role in the paper
+Source/input
+\mathbf{x}, or X
+Raw local data sample, such as an image
+Task variable / target
+\mathbf{y}, or Y
+Target variable, e.g. the class label
+Transmitted signal
+\mathbf{z}, or Z
+Encoded feature/channel-input vector produced at the device
+Received signal
+\hat{\mathbf{z}}, or \hat Z
+Noise-corrupted received feature at the edge server
+Final task output
+\hat{\mathbf{y}}, or \hat Y
+Inference result predicted by the server-side DNN
+Device-network parameters
+\boldsymbol{\phi}
+Parameters defining p_{\boldsymbol{\phi}}(\mathbf{z}\mid\mathbf{x})
+Server-network parameters
+\boldsymbol{\theta}
+Parameters defining p_{\boldsymbol{\theta}}(\hat{\mathbf{y}}\mid\hat{\mathbf{z}})
+
+The complete probabilistic pipeline is Equation (1):
+Y \rightarrow X \rightarrow Z \rightarrow \hat Z \rightarrow \hat Y .
+\tag{1}
+The associated conditional factorization is stated as:
+p(\hat{\mathbf{y}},\hat{\mathbf{z}},\mathbf{z}\mid\mathbf{x})
+=
+p_{\boldsymbol{\theta}}(\hat{\mathbf{y}}\mid\hat{\mathbf{z}})
+\,p_{\mathrm{channel}}(\hat{\mathbf{z}}\mid\mathbf{z})
+\,p_{\boldsymbol{\phi}}(\mathbf{z}\mid\mathbf{x}).
+\tag{1, stated factorization}
+Definitions:
+p_{\boldsymbol{\phi}}(\mathbf{z}\mid\mathbf{x}): on-device feature-extraction plus JSCC-encoding conditional distribution.
+p_{\mathrm{channel}}(\hat{\mathbf{z}}\mid\mathbf{z}): wireless-channel conditional distribution.
+p_{\boldsymbol{\theta}}(\hat{\mathbf{y}}\mid\hat{\mathbf{z}}): server-side inference conditional distribution.
+The authors explicitly say that the feature extractor first identifies task-relevant information from \mathbf{x}, and the JSCC encoder maps it to channel symbols \mathbf{z}. The server then uses \hat{\mathbf{z}} directly to infer \hat{\mathbf{y}}, without reconstructing \mathbf{x}.[arxiv]
+Interpretation for your project: Equation (1) is a general communication-to-task Markov-chain template. You may reuse its structural pattern only after defining a UAV-specific source/state and task variable. The paper does not establish that an image label Y can be replaced without modification by a UAV action, waypoint, future state, or navigation success variable.
+
+Information Bottleneck objective
+B. Exact task-oriented objective
+What the paper explicitly states — Section II-B, pp. 3–4
+The original Information Bottleneck objective is Equation (2):
+\mathcal{L}_{\mathrm{IB}}(\boldsymbol{\phi})
+=
+-\underbrace{I(\hat Z,Y)}_{\text{Distortion}}
++
+\beta\underbrace{I(\hat Z,X)}_{\text{Rate}}.
+\tag{2a}
+Here:
+I(\hat Z,Y): mutual information between the received noise-corrupted representation and target Y.
+I(\hat Z,X): mutual information between the received representation and original input.
+\beta>0: trade-off coefficient.
+\boldsymbol{\phi}: device-network parameters.
+\hat Z, not Z, is used in both information terms. Therefore the objective explicitly accounts for channel corruption.
+The paper rewrites Equation (2) as:
+\begin{aligned}
+\mathcal{L}_{\mathrm{IB}}(\boldsymbol{\phi})
+&=
+\mathbb{E}_{p(\mathbf{x},\mathbf{y})}
+\Bigg[
+\mathbb{E}_{p_{\boldsymbol{\phi}}(\hat{\mathbf{z}}\mid\mathbf{x})}
+\big[-\log p(\mathbf{y}\mid\hat{\mathbf{z}})\big]
+\\
+&\qquad\qquad+
+\beta D_{\mathrm{KL}}
+\big(
+p_{\boldsymbol{\phi}}(\hat{\mathbf{z}}\mid\mathbf{x})
+\|p(\hat{\mathbf{z}})
+\big)
+\Bigg]
+-H(Y)
+\\
+&\equiv
+\mathbb{E}_{p(\mathbf{x},\mathbf{y})}
+\Bigg[
+\mathbb{E}_{p_{\boldsymbol{\phi}}(\hat{\mathbf{z}}\mid\mathbf{x})}
+\big[-\log p(\mathbf{y}\mid\hat{\mathbf{z}})\big]
++
+\beta D_{\mathrm{KL}}
+\big(
+p_{\boldsymbol{\phi}}(\hat{\mathbf{z}}\mid\mathbf{x})
+\|p(\hat{\mathbf{z}})
+\big)
+\Bigg].
+\end{aligned}
+\tag{2}
+The final equivalence drops H(Y), because the authors treat it as constant for optimization.[arxiv]
+The paper describes the terms as follows:
+The first term -I(\hat Z,Y) is called distortion.
+Since H(Y) is fixed by the data distribution, minimizing -I(\hat Z,Y) is equivalent to minimizing H(Y\mid\hat Z).
+The second term I(\hat Z,X) is called rate and interpreted as information preserved in \hat Z about X, measured through minimum description length.
+Increasing \beta increases the relative pressure to compress/remove input information; it is the rate–distortion trade-off parameter.[arxiv]
+C. Exact VIB reformulation
+What is compressed: information about raw input X retained in the received feature \hat Z, measured by I(\hat Z,X).
+What is preserved: information in \hat Z useful for the task target Y, measured by I(\hat Z,Y).
+The paper says that the distributions p(\hat{\mathbf{z}}) and p(\mathbf{y}\mid\hat{\mathbf{z}}) are intractable for high-dimensional data. It introduces:
+q(\hat{\mathbf{z}}): variational approximation/prior for p(\hat{\mathbf{z}}).
+q_{\boldsymbol{\theta}}(\mathbf{y}\mid\hat{\mathbf{z}}): variational task-prediction distribution approximating p(\mathbf{y}\mid\hat{\mathbf{z}}).
+\boldsymbol{\theta}: parameters of the server-side inference network.[arxiv]
+The paper’s VIB objective is Equation (3):
+\mathcal{L}_{\mathrm{VIB}}(\boldsymbol{\phi},\boldsymbol{\theta})
+=
+\mathbb{E}_{p(\mathbf{x},\mathbf{y})}
+\left[
+\mathbb{E}_{p_{\boldsymbol{\phi}}(\hat{\mathbf{z}}\mid\mathbf{x})}
+\left[-\log q_{\boldsymbol{\theta}}(\mathbf{y}\mid\hat{\mathbf{z}})\right]
++
+\beta D_{\mathrm{KL}}
+\left(
+p_{\boldsymbol{\phi}}(\hat{\mathbf{z}}\mid\mathbf{x})
+\|q(\hat{\mathbf{z}})
+\right)
+\right].
+\tag{3}
+The authors call Equation (3) a tractable upper bound on the IB objective in Equation (2). Their stated mechanism is:
+Replace the unavailable posterior p(\mathbf{y}\mid\hat{\mathbf{z}}) with q_{\boldsymbol{\theta}}(\mathbf{y}\mid\hat{\mathbf{z}}).
+Replace the unavailable marginal p(\hat{\mathbf{z}}) with q(\hat{\mathbf{z}}).
+Optimize the resulting expected negative log-likelihood plus weighted KL regularizer.[arxiv]
+Important boundary: The main text explicitly says that the details of the upper-bound derivation are deferred to Appendix A. The paper’s main-text equations provide the original IB form, Equation (2), and final trainable VIB form, Equation (3). Do not represent a further algebraic derivation as a new paper equation unless you reproduce it from that appendix exactly.
+Monte-Carlo trainable objective
+For minibatch data \{(\mathbf{x}_m,\mathbf{y}_m)\}_{m=1}^{M}, with L channel-noise samples per data point, the empirical objective is Equation (4):
+\begin{aligned}
+\mathcal{L}_{\mathrm{VIB}}(\boldsymbol{\phi},\boldsymbol{\theta})
+\simeq
+\frac{1}{M}
+\sum_{m=1}^{M}
+\Bigg[
+\frac{1}{L}
+\sum_{l=1}^{L}
+\Big[
+-\log q_{\boldsymbol{\theta}}
+\big(
+\mathbf{y}_m\mid\hat{\mathbf{z}}_{m,l}
+\big)
+\Big]
++
+\beta D_{\mathrm{KL}}
+\Big(
+p_{\boldsymbol{\phi}}(\hat{\mathbf{z}}\mid\mathbf{x}_m)
+\|q(\hat{\mathbf{z}})
+\Big)
+\Bigg],
+\end{aligned}
+\tag{4}
+where
+\hat{\mathbf{z}}_{m,l}=\mathbf{z}_m+\boldsymbol{\epsilon}_{m,l},
+\qquad
+\boldsymbol{\epsilon}_{m,l}\sim\mathcal{N}(\mathbf{0},\sigma^2\mathbf{I}).
+Definitions:
+M: minibatch size.
+L: number of independently sampled channel-noise realizations for each training example.
+m: data-sample index.
+l: noise-sample index.
+\mathbf{z}_m: transmitted representation for sample m.
+\hat{\mathbf{z}}_{m,l}: its l-th noisy received realization.
+\sigma^2: per-dimension AWGN variance.
+The paper states that, using reparameterization and Monte-Carlo sampling, Equation (4) provides an unbiased gradient estimate for stochastic-gradient optimization.[arxiv]
+Sparsity prior and KL approximation
+For VFE, the paper selects a mean-field log-uniform variational prior:
+q(\hat{\mathbf{z}})
+=
+\prod_{i=1}^{n}q(\hat z_i),
+\qquad
+q(\log|\hat z_i|)=\mathrm{constant}.
+Definitions:
+n: encoded-feature dimension.
+\hat z_i: i-th component of \hat{\mathbf{z}}.
+The factorized prior is selected to encourage sparse feature dimensions.[arxiv]
+The KL term is decomposed in Equation (5):
+D_{\mathrm{KL}}
+\big(
+p_{\boldsymbol{\phi}}(\hat{\mathbf{z}}\mid\mathbf{x})
+\|q(\hat{\mathbf{z}})
+\big)
+=
+\sum_{i=1}^{n}
+D_{\mathrm{KL}}
+\big(
+p_{\boldsymbol{\phi}}(\hat z_i\mid\mathbf{x})
+\|q(\hat z_i)
+\big).
+\tag{5}
+Because this KL term lacks a closed form for the selected prior, the paper uses the following approximation in Equation (6):
+\begin{aligned}
+-D_{\mathrm{KL}}
+\big(
+p_{\boldsymbol{\phi}}(\hat z_i\mid\mathbf{x})
+\|q(\hat z_i)
+\big)
+&=
+\frac{1}{2}\log\alpha_i
+-
+\mathbb{E}_{\epsilon\sim\mathcal{N}(1,\alpha_i)}
+[\log|\epsilon|]
++
+C
+\\
+&\approx
+k_1 S(k_2+k_3\log\alpha_i)
+-\frac{1}{2}\log(1+\alpha_i^{-1})
++C,
+\end{aligned}
+\tag{6}
+with
+\alpha_i=\frac{\sigma^2}{z_i^2},
+\qquad
+k_1=0.63576,\quad
+k_2=1.87320,\quad
+k_3=1.48695.
+Definitions:
+z_i: i-th transmitted feature/channel-symbol component.
+\alpha_i: variance-to-squared-feature-value ratio used in this KL approximation.
+S(\cdot): sigmoid function.
+C: constant.
+\epsilon in Equation (6): scalar random variable drawn from \mathcal{N}(1,\alpha_i); it is distinct from the channel-noise vector \boldsymbol{\epsilon}.
+The paper states that the approximate KL is minimized as \alpha_i\rightarrow\infty, equivalently as z_i\rightarrow0, and this encourages sparsity.[arxiv]
+
+Channel, encoder, and decoder
+E. Channel model
+What the paper explicitly states — Section II-A, p. 3
+The communication channel is a scalar Gaussian channel, implemented during learning as a non-trainable layer:
+\hat{\mathbf{z}}=\mathbf{z}+\boldsymbol{\epsilon}.
+The additive noise is:
+\boldsymbol{\epsilon}
+\sim
+\mathcal{N}(\mathbf{0},\sigma^2\mathbf{I}).
+The paper imposes a per-dimension peak-power constraint:
+z_i^2\leq P,
+\qquad
+\forall i=1,\ldots,n.
+Its channel-quality definition is peak SNR:
+\mathrm{PSNR}
+=
+10\log\frac{P}{\sigma^2}
+\quad \text{dB}.
+Definitions:
+\mathbf{z}: channel input/transmitted encoded feature.
+\hat{\mathbf{z}}: channel output/noisy received feature.
+\boldsymbol{\epsilon}: AWGN vector.
+\sigma^2: AWGN variance.
+P: permitted peak power per encoded-feature dimension.
+n: dimension of the encoded feature.[arxiv]
+Fading model: NOT SPECIFIED IN THE PAPER. The paper uses additive Gaussian noise; it does not give a Rayleigh, Rician, Nakagami, Doppler, time-correlated, or UAV-mobility-induced fading equation.
+SNR sampling during training: For static-channel VFE, the paper uses a specified fixed \sigma^2. For dynamic-channel VL-VFE, it treats \sigma^2 as a random variable sampled from a distribution p(\sigma^2), taken as uniform over a selected range for simplicity.[arxiv]
+F. Encoder/representation
+The on-device mapping is deterministic in the VIB development:
+p_{\boldsymbol{\phi}}(\hat{\mathbf{z}}\mid\mathbf{x})
+=
+\mathcal{N}
+\big(
+\hat{\mathbf{z}}
+\mid
+\mathbf{z}(\mathbf{x};\boldsymbol{\phi}),
+\sigma^2\mathbf{I}
+\big).
+The paper says p_{\boldsymbol{\phi}}(\mathbf{z}\mid\mathbf{x}) may be viewed as a Dirac-delta distribution because the on-device DNN itself is deterministic; randomness in \hat{\mathbf{z}} arises from the Gaussian channel.[arxiv]
+For its prunable VFE encoder, the paper writes the fully connected layer as:
+\mathrm{FC}(\mathbf{a})
+=
+\mathbf{W}\mathbf{a}+\mathbf{b}
+=
+\widetilde{\mathbf{W}}\widetilde{\mathbf{a}},
+\tag{7}
+where:
+\mathbf{a}: FC-layer input.
+\mathbf{W}: weight matrix.
+\mathbf{b}: bias vector.
+\widetilde{\mathbf{W}}=[\mathbf{W},\mathbf{b}]: augmented weight matrix.
+\widetilde{\mathbf{a}}=[\mathbf{a}^{T},1]^{T}: augmented input.
+The VFE output component is Equation (8):
+z_i
+=
+\mathrm{Tanh}
+\left(
+\gamma_i
+\frac{\widetilde{\mathbf{W}}_{i\cdot}}
+{\|\widetilde{\mathbf{W}}_{i\cdot}\|_2}
+\mathbf{f}(\mathbf{x})
+\right).
+\tag{8}
+Definitions:
+z_i: i-th encoded/transmitted feature component.
+\mathbf{f}(\mathbf{x}): output of previous on-device layers.
+\widetilde{\mathbf{W}}_{i\cdot}: i-th row of the augmented weight matrix.
+\gamma_i: learned importance/scale factor for output dimension i.
+\|\cdot\|_2: Euclidean norm.
+\mathrm{Tanh}: hyperbolic-tangent activation.
+Since \mathrm{Tanh}(\cdot)\in[-1,1], the paper states that its VFE construction sets peak power P=1. A dimension is pruned if \gamma_i\leq\gamma_0, where \gamma_0 is a pruning threshold.[arxiv]
+Continuous or discrete: The transmitted \mathbf{z} is continuous-valued in the proposed VFE/VL-VFE neural communication scheme. The paper’s proposed channel does not quantize \mathbf{z} before the AWGN layer.[arxiv]
+Latent dimensionality: The maximum encoder dimension is denoted n. A universally fixed n is NOT SPECIFIED AS A GENERAL METHOD CONSTANT IN THE PAPER; it is an experimental/model-design choice. The released implementation examples use intermediate_dim=64 for shown MNIST and CIFAR VL-VFE commands, but that repository setting must not be treated as a universal equation-level requirement of the paper.[eprints.whiterose.ac]
+G. Decoder/task model
+The server-side DNN is the variational task estimator:
+q_{\boldsymbol{\theta}}(\mathbf{y}\mid\hat{\mathbf{z}}).
+Operationally, its relationship is:
+\hat{\mathbf{z}}
+\longmapsto
+q_{\boldsymbol{\theta}}(\mathbf{y}\mid\hat{\mathbf{z}})
+\longmapsto
+\hat{\mathbf{y}}.
+For the classification experiments, the negative log-likelihood in Equations (3)–(4) is the task loss associated with predicting the image label. The paper does not reconstruct raw \mathbf{x} at the receiver in its proposed task-oriented system.[arxiv]
+Precise output decision rule, e.g. \hat y=\arg\max_c q_{\boldsymbol{\theta}}(y=c\mid\hat{\mathbf{z}}): NOT SPECIFIED IN THE PAPER’S mathematical formulation provided here. The paper specifies the conditional task-prediction distribution and negative log-likelihood, rather than a general hard-decision equation.
+D/H. Task relevance and total loss
+The paper’s central mathematical definition of “task-relevant” is information-theoretic, not simply accuracy-based:
+\text{preserve task relevance}
+\iff
+\text{maximize } I(\hat Z,Y)
+\iff
+\text{minimize } H(Y\mid\hat Z).
+The empirical implementation becomes a negative log-likelihood task term:
+-\log q_{\boldsymbol{\theta}}(\mathbf{y}\mid\hat{\mathbf{z}}),
+plus a compression/regularization term:
+\beta D_{\mathrm{KL}}
+\left(
+p_{\boldsymbol{\phi}}(\hat{\mathbf{z}}\mid\mathbf{x})
+\|q(\hat{\mathbf{z}})
+\right).
+Thus the exact trainable total loss is Equation (3), estimated in Equation (4), not merely classification accuracy and not reconstruction MSE. In classification experiments, the first term is operationally a cross-entropy-style negative log-likelihood.[arxiv]
+Interpretation: “Task relevance” in this paper means information in the channel-corrupted representation \hat Z that helps predict Y, under a simultaneous penalty on retaining information about X. It is not a general semantic-similarity definition and it is not a navigation-specific relevance definition.
+
+Differentiability, training, evaluation
+I. Differentiability and gradient path
+What the paper explicitly states
+The forward computation is:
+\mathbf{x}
+\rightarrow
+\mathbf{z}(\mathbf{x};\boldsymbol{\phi})
+\rightarrow
+\hat{\mathbf{z}}=\mathbf{z}+\boldsymbol{\epsilon}
+\rightarrow
+q_{\boldsymbol{\theta}}(\mathbf{y}\mid\hat{\mathbf{z}}).
+The paper explicitly states that:
+The device-side feature extractor and JSCC encoder are DNNs and can be jointly trained end-to-end.
+The Gaussian channel is modeled as a non-trainable layer.
+The method applies reparameterization and Monte-Carlo sampling to obtain an unbiased gradient estimate.
+Parameters \boldsymbol{\phi} and \boldsymbol{\theta} are updated by backpropagation in Algorithms 1 and 2.[arxiv]
+The resulting gradient path, as an implementation-level interpretation consistent with the stated additive model, is:
+\mathcal{L}_{\mathrm{VIB}}
+\rightarrow
+q_{\boldsymbol{\theta}}
+\rightarrow
+\hat{\mathbf{z}}
+\rightarrow
+\mathbf{z}
+\rightarrow
+\boldsymbol{\phi}.
+For the additive channel,
+\hat{\mathbf{z}}=\mathbf{z}+\boldsymbol{\epsilon},
+the sampled \boldsymbol{\epsilon} is treated as external random noise during the forward pass, while the additive mapping remains differentiable with respect to \mathbf{z}.
+Non-differentiable operations:
+During VFE pruning, the threshold decision \gamma_i\leq\gamma_0 is a discrete pruning/deactivation rule.
+The paper’s core VIB loss is differentiable before this hard pruning decision.
+The paper does not give a separate surrogate-gradient formula for the threshold comparison. Therefore, the exact gradient treatment of hard pruning/deactivation beyond the algorithmic description is NOT SPECIFIED IN THE PAPER.[arxiv]
+J. Training procedure
+Static VFE — Algorithm 1, p. 6
+Select minibatch \{(\mathbf{x}_m,\mathbf{y}_m)\}_{m=1}^{M}.
+Compute \mathbf{z}_m using Equation (8).
+Compute the KL approximation using Equation (6).
+Sample L independent channel-noise vectors for each sample:
+\boldsymbol{\epsilon}_{m,l}\sim\mathcal{N}(\mathbf{0},\sigma^2\mathbf{I}).
+Compute Equation (4).
+Update \boldsymbol{\phi},\boldsymbol{\theta} by backpropagation.
+Prune dimension i if \gamma_i\leq\gamma_0.[arxiv]
+Dynamic-channel VL-VFE — Section IV, pp. 6–8
+The dynamic-channel objective is Equation (9):
+\mathcal{L}_{\mathrm{VIB}}(\boldsymbol{\phi},\boldsymbol{\theta})
+=
+\mathbb{E}_{p(\mathbf{x},\mathbf{y},\sigma^2)}
+\left[
+\mathbb{E}_{p_{\boldsymbol{\phi}}(\hat{\mathbf{z}}\mid\mathbf{x},\sigma^2)}
+[-\log q_{\boldsymbol{\theta}}(\mathbf{y}\mid\hat{\mathbf{z}})]
++
+\beta D_{\mathrm{KL}}
+\left(
+p_{\boldsymbol{\phi}}(\hat{\mathbf{z}}\mid\mathbf{x},\sigma^2)
+\|q(\hat{\mathbf{z}})
+\right)
+\right].
+\tag{9}
+The sample-based estimate is Equation (10):
+\begin{aligned}
+\mathcal{L}_{\mathrm{VIB}}
+\simeq
+\frac{1}{M}\sum_{m=1}^{M}
+\Bigg[
+\frac{1}{L}\sum_{l=1}^{L}
+-\log q_{\boldsymbol{\theta}}(\mathbf{y}_m\mid\hat{\mathbf{z}}_{m,l})
++
+\beta D_{\mathrm{KL}}
+\left(
+p_{\boldsymbol{\phi}}(\hat{\mathbf{z}}\mid\mathbf{x}_m,\sigma_m^2)
+\|q(\hat{\mathbf{z}})
+\right)
+\Bigg],
+\end{aligned}
+\tag{10}
+where
+\sigma_m^2\sim p(\sigma^2),
+\qquad
+\boldsymbol{\epsilon}_{m,l}\sim\mathcal{N}(\mathbf{0},\sigma_m^2\mathbf{I}).
+The paper says, for simplicity, it samples \sigma^2 uniformly from a chosen range to model dynamic channels.[arxiv]
+The dynamic importance scale is Equation (11):
+z_i
+=
+\mathrm{Tanh}
+\left(
+\gamma_i(\sigma^2)
+\frac{\widetilde{\mathbf{W}}_{i\cdot}}
+{\|\widetilde{\mathbf{W}}_{i\cdot}\|_2}
+\mathbf{f}(\mathbf{x})
+\right).
+\tag{11}
+The consecutive-activation construction is Equation (12):
+\gamma_i(\sigma^2)
+=
+\sum_{j=i}^{n}g_j(\sigma^2).
+\tag{12}
+Definitions:
+\gamma_i(\sigma^2): channel-condition-dependent importance for feature dimension i.
+g_j(\sigma^2): j-th output of an MLP \mathbf{g}(\cdot).
+The paper constrains these functions so they are non-negative increasing functions.
+This produces \gamma_i(\sigma^2)\geq\gamma_j(\sigma^2) for j>i, enabling consecutive active dimensions.
+More dimensions are activated under worse channel conditions.[arxiv]
+Optimizer, learning rate, epoch count, batch size, and exact L: NOT SPECIFIED IN THE PAPER passages extracted above. The algorithms name T, M, L, \sigma^2, n, and \gamma_0 as inputs but do not make them universal constants. The public code repository identifies PyTorch 1.8.1 and Torchvision 0.9.1 and gives example beta and threshold values, but implementation-repository settings should be kept separate from claims about the original paper’s general mathematical method.[eprints.whiterose.ac]
+K. Evaluation
+What the paper explicitly evaluates — Section V, p. 8 onward
+Tasks: image classification.
+Datasets: MNIST and CIFAR-10; the appendix additionally tests Tiny ImageNet.
+Primary task metric: classification/inference performance, i.e. classification accuracy.
+Communication overhead: number of nonzero/activated feature dimensions; this is tied to latency and transmission overhead in the paper’s discussion.
+Channel condition: PSNR, defined above.
+Static condition: fixed channel noise variance.
+Dynamic condition: variable noise variance/PSNR, using VL-VFE.
+Baselines:
+DeepJSCC trained with cross-entropy for classification rather than data reconstruction.
+Learning-based quantization followed by assumed channel coding.
+For the quantization baseline, the paper gives its assumed communication-rate expression as Equation (13):
+C(P,\sigma^2)
+=
+\min
+\left\{
+\log_2
+\left(
+1+\sqrt{\frac{2P}{\pi e\sigma^2}}
+\right),
+\frac{1}{2}\log_2
+\left(
+1+\frac{P}{\sigma^2}
+\right)
+\right\}
+\quad\text{b.p.c.u.}
+\tag{13}
+where C(P,\sigma^2) is assumed achievable rate in bits per channel use.[arxiv]
+Fading-channel test procedure: NOT SPECIFIED IN THE PAPER. The evaluation is AWGN/PSNR based, not a UAV fading-channel experiment.
+
+Transfer to UAV navigation
+Concept in Shao et al.
+Exact mathematical formulation
+Directly transferable to UAV?
+Requires modification?
+Why?
+Task variable
+Y, with relevance promoted by I(\hat Z,Y) in Eq. (2)
+No
+Yes
+In the paper, Y is an inference target such as an image label. A UAV-navigation task variable must be formally defined; it could be an action, desired state, waypoint, trajectory property, or another task quantity, but the paper does not choose one.
+Task-oriented representation
+X\rightarrow Z\rightarrow\hat Z, Eq. (1)
+Yes, structurally
+Yes
+The principle of transmitting a compact representation rather than reconstructing raw input transfers. What information is navigation-relevant must be redefined from the UAV task.
+Information Bottleneck
+\mathcal{L}_{\mathrm{IB}}=-I(\hat Z,Y)+\beta I(\hat Z,X), Eq. (2)
+Yes, as a framework
+Yes
+It is a general representation-learning objective, but the task target and the meaning of distortion/rate must be UAV-specific.
+Variational Information Bottleneck
+Eq. (3): task NLL plus \beta D_{\mathrm{KL}}(p_{\phi}(\hat z\mid x)\|q(\hat z))
+Yes, as an optimization template
+Yes
+You must choose the UAV task estimator q_\theta, the appropriate task likelihood/loss, and validate whether the chosen prior/regularizer is useful for low-dimensional UAV state.
+Task loss
+-\log q_\theta(\mathbf{y}\mid\hat{\mathbf{z}}), Eqs. (3)–(4)
+No, not directly
+Yes
+This is appropriate for the paper’s label-prediction formulation. It does not automatically define a control, goal-reaching, trajectory, or safety loss.
+Communication constraint
+z_i^2\le P, PSNR =10\log(P/\sigma^2), plus compression through KL/pruning
+Yes
+Yes
+A peak-power/noise model can transfer, but UAV links may need fading, path loss, mobility, outage, latency, and bandwidth constraints not modeled here.
+Channel model
+\hat{\mathbf{z}}=\mathbf{z}+\boldsymbol{\epsilon}, \boldsymbol{\epsilon}\sim\mathcal{N}(0,\sigma^2I)
+Yes, as an AWGN baseline
+Yes
+It is suitable as a baseline simulation channel only. It does not model fading or UAV-specific air-to-ground/air-to-air propagation.
+Encoder
+\mathbf{z}(\mathbf{x};\phi), with Eq. (8) for VFE
+Yes, structurally
+Yes
+The paper’s encoder was designed/evaluated for image inputs. A 6-dimensional UAV state requires its own architecture and representation design; no direct architecture transfer is justified.
+Decoder
+q_\theta(\mathbf{y}\mid\hat{\mathbf{z}})
+Yes, structurally
+Yes
+In navigation, the downstream model must be defined: estimator, policy, controller interface, or another task module. The paper provides none of these.
+Training objective
+Eq. (4), Monte-Carlo channel-noise training
+Yes
+Yes
+Sampling channel noise and backpropagating task loss through a differentiable communication layer is directly useful. The actual UAV target and task loss remain unspecified by this source.
+Dynamic-channel adaptation
+Eqs. (9)–(12), \sigma^2 input and variable active dimensions
+Yes, conceptually
+Yes
+It only adapts to sampled AWGN variance. A UAV fading model would require a different channel state/channel distribution and perhaps different side information.
+Differentiable communication pipeline
+\mathbf{x}\to\mathbf{z}\to\mathbf{z}+\epsilon\to q_\theta
+Yes
+Yes
+Additive-noise training is differentiable. If your UAV channel has non-differentiable operations, quantization, packet loss, or realistic link adaptation, additional treatment may be needed.
+
+The table’s transferable claims are grounded in the paper’s system model, IB/VIB equations, and AWGN training setup. The “requires modification” conclusions are interpretations necessary because the paper’s empirical domain is image classification rather than UAV navigation.[arxiv]
+
+What this paper does not solve
+The following are NOT PROVIDED BY THIS PAPER for a UAV-navigation system:
+A UAV state-space definition, including a 6-dimensional state representation.
+A continuous-time or discrete-time UAV dynamics model.
+UAV kinematics.
+Aerodynamic model.
+A navigation controller.
+A policy network for control actions.
+A state-estimation/filtering model.
+A goal-reaching mathematical objective.
+A trajectory-tracking or trajectory-optimization loss.
+A collision-avoidance or safety constraint.
+A control-action loss.
+A flight-time, energy-use, or actuator-effort objective.
+A UAV-specific task variable Y.
+A proof that classification-style negative log likelihood is an appropriate navigation/control objective.
+An encoder architecture designed or validated for your 6-dimensional UAV state.
+A fading-channel model.
+Doppler, UAV mobility, altitude-dependent path loss, blockage, interference, packet erasure, or link-outage models.
+A joint communication–control stability analysis.
+A method for converting the received representation into a safe UAV control action.
+A DeepJSCC architecture whose suitability has been demonstrated for low-dimensional UAV-navigation states.
+The paper instead studies device–edge image inference, with an AWGN link and classification-oriented evaluation. Its stated scope is compact task-oriented feature transmission for edge inference, including static and dynamic Gaussian-noise conditions.[arxiv]
+Final implementation takeaway
+PAPER-BACKED CONCEPTS
+Use a communication-to-task probabilistic chain of the form:
+Y\rightarrow X\rightarrow Z\rightarrow\hat Z\rightarrow\hat Y.
+Treat channel-corrupted received representation \hat Z, rather than only clean encoded representation Z, as the object optimized for task relevance.
+Formulate the compression–task trade-off using:
+-I(\hat Z,Y)+\beta I(\hat Z,X).
+Use the VIB surrogate:
+\mathbb{E}[-\log q_\theta(Y\mid\hat Z)]
++
+\beta D_{\mathrm{KL}}(p_\phi(\hat Z\mid X)\|q(\hat Z)).
+Train through sampled AWGN:
+\hat{\mathbf{z}}=\mathbf{z}+\boldsymbol{\epsilon},
+\qquad
+\boldsymbol{\epsilon}\sim\mathcal{N}(\mathbf{0},\sigma^2\mathbf{I}).
+Use Monte-Carlo noise sampling in training and backpropagate through the device encoder, additive channel layer, and server-side task model.
+Treat \beta as the explicit task-performance/compression trade-off parameter.
+If variable transmission dimension is relevant, the paper supports the concept of channel-condition-aware activation/pruning through \gamma_i(\sigma^2).[arxiv]
+CONCEPTS REQUIRING MODIFICATION
+Replace the image label Y with a rigorously defined UAV-navigation task variable.
+Replace the classification negative log-likelihood with a loss justified by your eventual navigation task formulation.
+Decide whether the target is a desired state, next state, control action, waypoint, trajectory attribute, or another task output.
+Replace or extend scalar AWGN with a UAV-relevant noisy/fading channel model if fading is part of your FYP title.
+Decide whether the log-uniform sparsity prior and dimension-pruning mechanism are useful for a low-dimensional six-state input; the paper does not establish this.
+Design an encoder and decoder appropriate for your UAV state representation; do not copy the image-network architecture by assumption.
+Define communication-resource measures appropriate to your simulation: power, SNR, bandwidth/channel uses, latency, packet budget, or a combination.
+If using dynamic channels, replace the paper’s sampled AWGN-variance condition with a mathematically defined UAV channel state/model.[arxiv]
+NOT PROVIDED BY THIS PAPER
+UAV dynamics and kinematics.
+Navigation controller or policy.
+Navigation target/task definition.
+Goal-reaching, trajectory, action, safety, or control losses.
+UAV-specific DeepJSCC architecture.
+Fading, mobility, Doppler, path loss, outage, and interference channel equations.
+A proof that the paper’s classification formulation transfers directly to control/navigation.
+STILL NEED TO BE RESEARCHED
+A precise UAV state X and task variable Y suitable for your simulation-only problem.
+Whether the downstream output should be a control action, reference waypoint, predicted state, or navigation decision.
+A mathematically defensible task loss for navigation.
+A UAV state-transition/kinematics model.
+A controller or policy interface and its differentiable training relationship to the communication module.
+A noisy and fading wireless-channel model compatible with your title.
+A communication budget definition suitable for task-oriented DeepJSCC under the chosen UAV model.
+Evaluation metrics that jointly assess navigation success and communication robustness, rather than only classification accuracy.
+
+
+============================================================
+
+=== SOURCE FILE: 03-tscc-autonomous-driving-diao2024.md.txt ===
+
+Diao et al. (2024), “Task-Oriented Source-Channel Coding Enabled Autonomous Driving Based on Edge Computing.” 
+https://www.perplexity.ai/search/ccb14842-6c4b-421c-b185-381e13e53b24
+
+
+
+I cannot responsibly produce the requested “complete mathematical extraction from the original paper” from the publicly retrievable metadata alone. The original is a short six-page IEEE INFOCOM Workshops paper (pp. 1–6; DOI 10.1109/INFOCOMWKSHPS61880.2024.10620735), while the accessible material currently exposes its abstract/metadata and a later doctoral thesis that appears to expand the work—not the paper’s complete equation-level text.[gla.ac][theses.gla.ac]
+Accordingly, below is a strict evidence audit: it distinguishes what is verifiably attributable to the 2024 paper from what is only supported by the later thesis, and marks all missing implementation facts exactly as requested. To produce the equation-numbered implementation specification you need, please provide the original six-page PDF (or its full text); then I can extract every equation, variable, page, algorithm, architecture, baseline, and hyperparameter without guessing.
+Source status and scope
+Primary-source status
+Item
+Status
+Paper
+Y. Diao, Z. Meng, X. Xu, C. She, and P. G. Zhao, “Task-Oriented Source-Channel Coding Enabled Autonomous Driving Based on Edge Computing,” IEEE INFOCOM Workshops / NetRobiCS, 2024, pp. 1–6
+DOI
+10.1109/INFOCOMWKSHPS61880.2024.10620735
+Verifiable public primary-paper claims
+A task-oriented source-channel coding framework is proposed for edge-enabled autonomous driving; it jointly optimizes source and channel coding; it uses an autonomous-driving agent to guide coding; it is based on a modified CVAE; it is evaluated on an autonomous-driving platform under different channel conditions. [infocom]
+Verifiable reported headline results
+The workshop description reports 98.36% communication-overhead saving and a driving score of 83.24% at 0 dB SNR. These are reported results, not equations or implementation details. [infocom]
+Accessible secondary artifact
+Diao’s 2025 PhD thesis, Task-Oriented Communication for Edge Intelligence Enabled Connected Robotics Systems, contains a Chapter 3 titled “Foundations: Task-Oriented Communication for Autonomous Systems,” including system model, \beta-CVAE, training algorithm, dataset, metrics, and CARLA evaluation. It identifies the 2024 paper as publication 3. [theses.gla.ac]
+Critical limitation
+The accessible thesis is not the original 2024 paper. Its chapter equation numbers, added explanations, terminology, and experimental details must not be represented as equations or facts stated in the six-page paper unless cross-checked against that paper. [theses.gla.ac]
+
+What I will not do
+I will not invent encoder/decoder equations, latent sizes, loss weights, power normalization, fading equations, CSI assumptions, control dynamics, or training hyperparameters.
+I will not treat a later thesis chapter as proof that a detail appeared in the 2024 workshop paper.
+I will not transfer autonomous-driving losses, route labels, vehicle controls, CARLA scoring, or vehicle dynamics to a UAV formulation.
+I will not label an inferred chain as an explicitly stated closed-loop physical-system model.
+A–L: verified implementation extraction
+A. Complete system model
+Explicitly stated by the original-paper workshop description
+The paper proposes a Task-oriented Source-Channel Coding (TSCC) framework for edge-enabled autonomous driving. It jointly optimizes source and channel coding in a task-oriented way; an autonomous-driving agent guides the coding framework; and the coding approach is based on a modified CVAE.[infocom]
+Paper-backed high-level sequence only
+\text{driving-side data}
+\rightarrow
+\text{TSCC / modified-CVAE encoder}
+\rightarrow
+\text{wireless channel}
+\rightarrow
+\text{receiver-side representation / decoding}
+\rightarrow
+\text{autonomous-driving agent}
+\rightarrow
+\text{driving score}.
+This sequence is a structural interpretation of the paper description and thesis chapter title/figure list, not a verified equation copied from the original paper. The thesis identifies a figure entitled “Framework of the Task-oriented Source-Channel Coding (TSCC) enabled autonomous driving,” which supports this broad architecture.[theses.gla.ac]
+Mathematical pipeline:
+NOT SPECIFIED IN THE PAPER in the retrievable primary-source material.
+In particular, I cannot verify any original-paper equation for:
+\mathbf{x}\mapsto \mathbf{z}\mapsto \mathbf{y}\mapsto \widehat{\mathbf{x}}
+\mapsto \widehat{\mathbf{a}},
+nor define its variables as paper-defined variables without access to the equations and notation table.
+B. Source/input representation
+Explicitly stated
+The task concerns autonomous driving and the framework is described in the thesis as an image/data transmission setting integrated with an end-to-end driving agent. The thesis also lists a qualitative example involving images and compares image coding methods, which strongly indicates visual input in the broader work.[theses.gla.ac]
+What can safely be said
+The transmitted content is associated with data used by an autonomous-driving agent.
+The framework is communication-efficient and task-guided rather than designed purely for image reconstruction.[infocom]
+A later thesis chapter includes “traditional image coding method” and “compression ratios of example images,” but that alone does not establish the original paper’s exact input tensor, resolution, color representation, normalization, or preprocessing pipeline.[theses.gla.ac]
+Requested field
+Extraction
+What information is transmitted?
+Task-relevant autonomous-driving information; exact data object/formal variable: NOT SPECIFIED IN THE PAPER in the available primary source
+Raw image versus state versus feature
+NOT SPECIFIED IN THE PAPER
+Mathematical source representation
+NOT SPECIFIED IN THE PAPER
+Source dimensionality
+NOT SPECIFIED IN THE PAPER
+Image resolution/channels
+NOT SPECIFIED IN THE PAPER
+Preprocessing
+NOT SPECIFIED IN THE PAPER
+Normalization
+NOT SPECIFIED IN THE PAPER
+
+C. Task definition
+Explicitly stated
+The downstream task is autonomous driving. The communication system is guided by an autonomous-driving agent, and the evaluation includes a “driving score.”[infocom]
+Important distinction
+“Autonomous driving” is not, by itself, a mathematical task definition. The original-paper metadata currently available does not establish whether the agent’s output is:
+steering/throttle/brake,
+waypoint prediction,
+route commands,
+trajectory points,
+discrete driving actions,
+perception labels,
+a learned policy action,
+or a multi-head combination.
+Requested task element
+Extraction
+Task variable
+NOT SPECIFIED IN THE PAPER
+Desired output
+NOT SPECIFIED IN THE PAPER
+Task model / agent architecture
+An autonomous-driving agent is used to guide source-channel coding. Exact architecture: NOT SPECIFIED IN THE PAPER. [infocom]
+Mathematical success/error definition
+NOT SPECIFIED IN THE PAPER
+Driving-score formula
+NOT SPECIFIED IN THE PAPER
+Communication-to-task linkage equation
+NOT SPECIFIED IN THE PAPER
+
+Derived interpretation, not an original-paper equation
+The intended task-oriented principle is that the encoder should preserve information that supports the driving agent’s performance, rather than necessarily supporting faithful recovery of all source content. This interpretation follows the workshop description’s statement that the agent guides coding to reduce overhead while maintaining driving performance.[infocom]
+D. Task-oriented encoder
+Explicitly stated
+The TSCC framework jointly optimizes source coding and channel coding.
+It is guided by an autonomous-driving agent.
+It leverages a modified Conditional Variational Autoencoder (CVAE).[infocom]
+Later-thesis context only
+The thesis calls the approach a task-oriented \beta-CVAE and includes separate sections on the “Mathematical Foundation,” “\beta-CVAE,” and “Training of Task-Oriented \beta-CVAE.” That is useful for locating the likely expanded derivation, but it must be cross-checked with the paper before calling it an original-paper formulation.[theses.gla.ac]
+Requested encoder field
+Extraction
+Exact encoder equation
+NOT SPECIFIED IN THE PAPER in retrievable material
+Equation number
+NOT SPECIFIED IN THE PAPER
+Input variable/dimension
+NOT SPECIFIED IN THE PAPER
+Latent variable/dimension
+NOT SPECIFIED IN THE PAPER
+Neural architecture
+Modified CVAE is stated; layer-by-layer architecture: NOT SPECIFIED IN THE PAPER. [infocom]
+Activations
+NOT SPECIFIED IN THE PAPER
+Bottleneck/compression rule
+Communication-overhead reduction is a stated goal; mathematical bottleneck rule: NOT SPECIFIED IN THE PAPER. [infocom]
+Channel-input power normalization
+NOT SPECIFIED IN THE PAPER
+Why task-oriented
+It is guided by the autonomous-driving agent to preserve driving performance while reducing communication overhead. [infocom]
+
+E. Channel model
+Explicitly stated
+The experiments cover “different communication channel conditions,” and the workshop description reports a result at 0 dB SNR.[infocom]
+Not established from the original-paper material currently accessible
+Requested channel element
+Extraction
+Channel equation
+NOT SPECIFIED IN THE PAPER
+AWGN equation
+NOT SPECIFIED IN THE PAPER
+Fading model
+NOT SPECIFIED IN THE PAPER
+Rayleigh/Rician/block-fading assumption
+NOT SPECIFIED IN THE PAPER
+Noise distribution/variance
+NOT SPECIFIED IN THE PAPER
+SNR definition
+A 0 dB SNR evaluation point is reported; mathematical SNR definition: NOT SPECIFIED IN THE PAPER. [infocom]
+CSI availability
+NOT SPECIFIED IN THE PAPER
+Equalization
+NOT SPECIFIED IN THE PAPER
+Channel uses/bandwidth ratio
+NOT SPECIFIED IN THE PAPER
+Average/peak power constraint
+NOT SPECIFIED IN THE PAPER
+
+The thesis table of contents shows a Chapter 3 “Driving score with varied Signal-to-Noise Ratio (SNR)” figure. This supports SNR sensitivity in the expanded work, but still does not identify the 2024 paper’s exact channel equation.[theses.gla.ac]
+F. Task-oriented decoder
+Explicitly stated
+The overall proposal is a source-channel coding framework guided by an autonomous-driving agent.[infocom]
+Decoder details
+Requested decoder field
+Extraction
+Exact decoder equation
+NOT SPECIFIED IN THE PAPER
+Input received-channel signal
+NOT SPECIFIED IN THE PAPER
+Output representation
+NOT SPECIFIED IN THE PAPER
+Does it reconstruct the source?
+The task-oriented framing implies that full source reconstruction is not the primary aim; exact decoder output/interface: NOT SPECIFIED IN THE PAPER
+Does it directly generate a control/task output?
+NOT SPECIFIED IN THE PAPER
+Decoder architecture/activations
+NOT SPECIFIED IN THE PAPER
+
+G. Task loss/objective
+This is the most important gap.
+Explicitly stated
+The framework jointly optimizes source and channel coding in a task-oriented manner, using an autonomous-driving agent to guide coding while aiming to preserve autonomous-driving performance and reduce communication overhead.[infocom]
+Exact objective
+\boxed{\text{NOT SPECIFIED IN THE PAPER in the currently retrievable primary-source material.}}
+Requested objective item
+Extraction
+Exact training loss
+NOT SPECIFIED IN THE PAPER
+Equation number
+NOT SPECIFIED IN THE PAPER
+Reconstruction term
+NOT SPECIFIED IN THE PAPER
+CVAE likelihood/reconstruction term
+NOT SPECIFIED IN THE PAPER
+KL-divergence term
+A CVAE/\beta-CVAE framing is indicated in the paper description/thesis context; exact term, prior, posterior, and coefficient: NOT SPECIFIED IN THE PAPER. [infocom][theses.gla.ac]
+Driving/task term
+NOT SPECIFIED IN THE PAPER
+Total weighted loss
+NOT SPECIFIED IN THE PAPER
+Loss weights
+NOT SPECIFIED IN THE PAPER
+Differentiability through channel
+NOT SPECIFIED IN THE PAPER
+Gradient estimator/reparameterization
+NOT SPECIFIED IN THE PAPER
+End-to-end versus staged training
+NOT SPECIFIED IN THE PAPER
+
+Do not write a generic loss such as
+\mathcal{L}
+=
+\lambda_{\mathrm{task}}\mathcal{L}_{\mathrm{drive}}
++
+\lambda_{\mathrm{rec}}\mathcal{L}_{\mathrm{rec}}
++
+\beta D_{\mathrm{KL}}(\cdot)
+and attribute it to Diao et al. unless the original paper explicitly provides it. That would violate your requirement and could materially change the method.
+H. Closed-loop/task connection
+What the paper explicitly supports
+The paper links communications to autonomous-driving performance: coding is guided by an autonomous-driving agent, and driving score is reported as the outcome metric.[infocom]
+What is not proven by the available primary source
+A physical closed loop of the form
+\text{communication}
+\rightarrow
+\text{decoded information}
+\rightarrow
+\text{control}
+\rightarrow
+\text{vehicle dynamics}
+\rightarrow
+\text{next state}
+is NOT SPECIFIED IN THE PAPER in the retrievable original-paper material.
+The thesis’s later chapters explicitly address communication, computing, and control co-design and contain a figure called “completed cycle of the communication, computing, and control process.” However, that is part of a later co-design contribution and must not be back-projected onto the 2024 TSCC paper.[theses.gla.ac]
+I. Training procedure
+Requested field
+Extraction
+Training dataset
+NOT SPECIFIED IN THE PAPER
+Data generation
+NOT SPECIFIED IN THE PAPER
+Simulator/version
+An autonomous-driving platform is stated; exact platform and version: NOT SPECIFIED IN THE PAPER. [infocom]
+Model initialization
+NOT SPECIFIED IN THE PAPER
+Optimizer
+NOT SPECIFIED IN THE PAPER
+Learning rate
+NOT SPECIFIED IN THE PAPER
+Batch size
+NOT SPECIFIED IN THE PAPER
+Epochs/iterations
+NOT SPECIFIED IN THE PAPER
+Channel sampled during training
+NOT SPECIFIED IN THE PAPER
+Joint multi-SNR training
+NOT SPECIFIED IN THE PAPER
+SNR range
+A 0 dB operating point is reported; complete SNR range: NOT SPECIFIED IN THE PAPER. [infocom]
+
+The expanded thesis chapter includes sections titled “Dataset,” “Evaluation Metrics,” and “Evaluation on CARLA,” plus an algorithm called “TSCC Training Algorithm.” Those are strong leads for a secondary-source audit, but they are not a substitute for verifying what appeared in the 2024 paper.[theses.gla.ac]
+J. Evaluation
+Explicitly stated
+Evaluation is conducted on a well-known autonomous-driving platform under different communication-channel conditions.
+The reported task metric is driving score.
+A reported result is 83.24% driving score at 0 dB SNR.
+Communication overhead is also evaluated, with a stated 98.36% saving.[infocom]
+Evaluation item
+Extraction
+Primary task metric
+Driving score. [infocom]
+Task-success definition
+NOT SPECIFIED IN THE PAPER
+Driving-score formula
+NOT SPECIFIED IN THE PAPER
+Trajectory error
+NOT SPECIFIED IN THE PAPER
+Control/action error
+NOT SPECIFIED IN THE PAPER
+Reconstruction metric
+NOT SPECIFIED IN THE PAPER
+Communication quality metric
+Communication overhead is reported; exact formula/units: NOT SPECIFIED IN THE PAPER. [infocom]
+SNR sensitivity
+Different channel conditions and 0 dB result are reported; full sweep: NOT SPECIFIED IN THE PAPER. [infocom]
+Bandwidth sensitivity
+Communication overhead reduction is reported; exact resource sweep: NOT SPECIFIED IN THE PAPER. [infocom]
+
+K. Baselines
+Explicitly stated
+The workshop description says TSCC is compared against:
+“traditional communication”; and
+“state-of-the-art deep Joint Source-Channel Coding (JSCC).”[infocom]
+Baseline request
+Extraction
+Exact baseline names
+NOT SPECIFIED IN THE PAPER
+Traditional codec/source coder
+NOT SPECIFIED IN THE PAPER
+Channel coder/modulator
+NOT SPECIFIED IN THE PAPER
+Deep-JSCC architecture/reference
+NOT SPECIFIED IN THE PAPER
+Data transmitted by each baseline
+NOT SPECIFIED IN THE PAPER
+Reconstruction target
+NOT SPECIFIED IN THE PAPER
+Driving agent used with baselines
+NOT SPECIFIED IN THE PAPER
+Resource allocation
+NOT SPECIFIED IN THE PAPER
+Fairness/matching procedure
+NOT SPECIFIED IN THE PAPER
+
+The thesis figure list indicates a later expanded comparison involving “traditional image coding method” and compression ratios, but exact codecs, rate matching, and whether those are identical to the paper must be verified against the paper.[theses.gla.ac]
+L. Bandwidth/resource constraint
+Explicitly stated
+The paper focuses on reducing communication overhead while maintaining driving performance, and reports 98.36% communication-overhead saving.[infocom]
+Exact definition:
+Resource element
+Extraction
+Bandwidth ratio
+NOT SPECIFIED IN THE PAPER
+Number of channel uses
+NOT SPECIFIED IN THE PAPER
+Compression ratio formula
+NOT SPECIFIED IN THE PAPER
+Transmission rate
+NOT SPECIFIED IN THE PAPER
+Latent dimension
+NOT SPECIFIED IN THE PAPER
+Bits/sample or bits/service
+NOT SPECIFIED IN THE PAPER
+Symbol rate/modulation order
+NOT SPECIFIED IN THE PAPER
+Power constraint
+NOT SPECIFIED IN THE PAPER
+
+For your UAV study, do not equate “98.36% communication-overhead saving” with a DeepJSCC bandwidth ratio without knowing the paper’s denominator—for example, raw-image bits, compressed-image bits, channel symbols, or coded bits.
+M–N: relevance and non-transferability
+UAV relevance table
+Diao 2024 component
+Exact formulation in paper
+Directly usable for UAV?
+Requires modification
+Reason
+Source representation
+Task-relevant autonomous-driving data; exact mathematical representation NOT SPECIFIED IN THE PAPER
+No
+Yes
+UAV sensing/state representation may be RGB, depth, lidar, inertial state, map features, relative target state, or a fusion of these.
+Task definition
+Autonomous driving guided by an autonomous-driving agent; exact output/loss NOT SPECIFIED IN THE PAPER
+No
+Yes
+“Driving” and “navigation” are different tasks with different state, constraints, actions, and safety conditions.
+Encoder
+Modified CVAE-based task-oriented source-channel coding; exact function/architecture NOT SPECIFIED IN THE PAPER
+Partly
+Yes
+The principle of task-guided compression may transfer; input tensor, latent dimension, conditioning, and channel-symbol mapping must be redefined.
+Decoder
+Exact mapping NOT SPECIFIED IN THE PAPER
+No
+Yes
+It is unknown whether the receiver reconstructs imagery, latent information, or a driving-agent interface. UAV decision interfaces differ.
+Channel
+Different channel conditions; exact equation/fading/CSI NOT SPECIFIED IN THE PAPER
+No
+Yes
+UAV air-to-ground or air-to-air links require an explicitly selected channel model; it must not be imported by assumption.
+Task loss
+Exact objective and equation number NOT SPECIFIED IN THE PAPER
+No
+Yes
+Do not reuse an unverified driving loss, CVAE objective, or score surrogate as a UAV control/navigation objective.
+Training objective
+Joint task-oriented source/channel optimization is stated; exact training formulation NOT SPECIFIED IN THE PAPER
+Partly
+Yes
+End-to-end task-guided optimization is conceptually transferable; exact learning objective is task- and model-dependent.
+Task-performance metric
+Driving score; formula NOT SPECIFIED IN THE PAPER
+No
+Yes
+A driving score is not a UAV navigation metric.
+Resource constraint
+Communication-overhead reduction; exact measure NOT SPECIFIED IN THE PAPER
+Partly
+Yes
+You can evaluate resource efficiency, but must define your own channel-use or bandwidth-ratio denominator.
+Evaluation procedure
+Autonomous-driving platform and varied channels; exact protocol NOT SPECIFIED IN THE PAPER
+No
+Yes
+UAV scenarios, dynamics, maps, mission completion, and safety evaluation must be separately specified.
+
+Driving-specific items not to copy
+The following must be treated as driving-specific unless the original paper proves otherwise, and should not be copied into a UAV navigation formulation:
+Driving agent and action space. Steering, throttle, brake, route commands, or vehicle waypoints are not UAV controls.
+Vehicle motion model. A ground vehicle’s nonholonomic/road-constrained dynamics are fundamentally different from 3D UAV translational and attitude dynamics.
+Driving score. The reported primary task metric is driving score, but its formula is unavailable here and, regardless, is not automatically a flight-navigation success metric.[infocom]
+Road topology and traffic semantics. Lanes, intersections, traffic lights, road boundaries, pedestrians, and road vehicles are not generic UAV-navigation constructs.
+Perception/task labels. Any route, lane, traffic-light, collision, or vehicle-centric labels would require replacement by UAV mission labels or control targets.
+Simulator assumptions. Autonomous-driving platform settings do not establish an aerial environment, altitude constraints, 3D obstacles, wind, mission geometry, or UAV sensor suite.
+O. Implementation facts we can carry forward
+Directly paper-backed
+TSCC paradigm: The work proposes a task-oriented source-channel coding framework for edge-enabled autonomous driving that jointly optimizes source and channel coding.
+Reference: Original paper, pp. 1–6; exact section/equation: NOT SPECIFIED IN THE PAPER from accessible material.[gla.ac][infocom]
+Task guidance: An autonomous-driving agent guides the source-channel coding design in order to reduce communication overhead while preserving driving performance.
+Reference: Original paper, pp. 1–6; exact section/equation: NOT SPECIFIED IN THE PAPER.[infocom]
+Model family: The framework leverages a modified CVAE.
+Reference: Original paper, pp. 1–6; exact modified-CVAE equation/architecture: NOT SPECIFIED IN THE PAPER.[infocom]
+Evaluation orientation: It is evaluated on an autonomous-driving platform under differing channel conditions, with driving score and communication overhead as reported outcomes.
+Reference: Original paper, pp. 1–6; metric formulas: NOT SPECIFIED IN THE PAPER.[infocom]
+Reported headline points: The workshop description reports 98.36% less communication overhead and 83.24% driving score at 0 dB SNR.
+Reference: Original paper, pp. 1–6; experimental-table/figure location: NOT SPECIFIED IN THE PAPER.[infocom]
+Transferable with modification
+Task-guided communication principle: Optimize transmitted information for downstream mission performance rather than solely for source fidelity. This is transferable only at the design-principle level; its mathematical loss must be independently specified for UAV navigation.
+Joint learned communication chain: A learned encoder/channel/receiver/task-agent chain can be adapted to UAV simulation, provided you explicitly define the UAV state or sensor input, channel model, receiver task interface, policy/controller, dynamics, and mission metric.
+CVAE-style bottleneck: A conditional variational representation may be explored for UAV communication, but neither its conditional variable, posterior/prior, KL weight, latent size, nor power constraint can be copied from this paper because those details are currently NOT SPECIFIED IN THE PAPER.
+Channel robustness testing: Varying SNR/channel conditions is a transferable evaluation concept. The actual UAV fading model, SNR definition, CSI assumption, link geometry, and training/test SNR protocol require separate justification.
+Driving-specific — do not copy
+Autonomous-driving task agent and its output interface.
+Reference: Original paper, pp. 1–6; exact formulation: NOT SPECIFIED IN THE PAPER.[infocom]
+Driving score as the primary task metric.
+Reference: Original paper, pp. 1–6; score formula: NOT SPECIFIED IN THE PAPER.[infocom]
+Any vehicle-control labels, vehicle dynamics, routes, roads, traffic rules, and road-user assumptions.
+Reference: Exact original-paper formulation: NOT SPECIFIED IN THE PAPER.
+Any image preprocessing or driving dataset setup assumed to be CARLA-derived. The later thesis contains a CARLA evaluation section, but that does not by itself prove the exact original-paper configuration.[theses.gla.ac]
+Missing — requires additional research
+Exact TSCC encoder and decoder equations, equation numbers, and every variable definition.
+Input/source type, source dimensionality, image resolution, normalization, and preprocessing.
+Latent/channel-symbol dimension, bandwidth ratio, channel-use count, compression-ratio formula, rate, and power normalization.
+Channel equation, noise variance, fading model, CSI/equalization assumption, and SNR formula.
+Exact modified-CVAE objective, reconstruction term, KL term, task/driving term, total-loss weights, and gradient path through the channel.
+Agent architecture, task outputs, labels, and the mathematical connection from decoded data to driving actions.
+Dataset, simulation setup, optimizer, learning rate, batch size, epochs, SNR training schedule, and initialization.
+Exact baseline identities and fair resource-matching protocol.
+Exact driving-score formula and all evaluation metrics.
+Required next source
+Please upload the original Diao et al. 2024 PDF—or paste its six pages/full text. With that primary artifact, I can produce the rigorous version you requested:
+A–O item-by-item extraction.
+Every original equation in paper notation.
+Equation number, page, and section for each equation.
+Complete variable dictionary.
+A literal separation of “stated,” “derived,” and “not specified.”
+A non-transferability audit specifically for your UAV closed-loop chain.
+No invented UAV loss, no Python code, and no substitution of a generic DeepJSCC formulation.
+
+
+============================================================
+
+=== SOURCE FILE: 04-codesign-comm-compute-control-diao2025.md.txt ===
+
+Diao, Y., Zhang, Y., De Martini, D., Zhao, P. G., & Li, E. L. (2025), “Task-oriented co-design of communication, computing, and control for edge-enabled industrial cyber-physical systems.” 
+
+https://www.perplexity.ai/search/2846ac4a-bc9b-41e1-929d-4afb4e5c4b6f
+
+Diao et al. provide a concrete device–edge perception-to-driving-command pipeline, a task-oriented VIB/JSCC objective, and an explicit delay-compensation mechanism. They do not provide a closed-loop physical state-transition model, UAV dynamics, a goal-reaching objective, or an end-to-end differentiable plant-in-the-loop training formulation; therefore, the paper can support the communication/edge-inference side of your FYP, but it cannot be copied as a complete UAV-navigation mathematical model. The official work is an IEEE JSAC 2025 publication (DOI: 10.1109/JSAC.2025.3574605); the accessible author manuscript explicitly says it has been accepted by JSAC, and is used below for equation/page extraction.[gla.ac][arxiv]
+Source and scope
+Source status
+EXPLICITLY STATED IN PAPER: The work is titled “Task-Oriented Co-Design of Communication, Computing, and Control for Edge-Enabled Industrial Cyber-Physical Systems” by Diao et al. It was published/early-online in IEEE Journal on Selected Areas in Communications in 2025.[gla.ac]
+EXPLICITLY STATED IN PAPER: The concrete experimental system is not a generic industrial plant and not a UAV. It is single-vehicle edge-enabled autonomous driving in CARLA, using an onboard monocular camera, an edge server, a JSCC uplink, and a downlink driving command.[arxiv][ar5iv.labs.arxiv]
+DERIVED/INTERPRETED: “Industrial CPS” is the application framing; the implemented control application is autonomous driving. You should not describe the paper as supplying an industrial-process state-space model.
+NOT SPECIFIED IN THE PAPER: A UAV state s_t, a UAV plant equation s_{t+1}=F(s_t,u_t), a UAV waypoint/goal-reaching criterion, collision dynamics for UAVs, or a UAV-specific control law.
+Core distinction
+The paper’s learned task target is a ground-truth driving-action-related output supplied by an expert/human-driving dataset. It does not optimize a simulator rollout cost such as position-to-goal distance, trajectory tracking of the actual physical vehicle state, Lyapunov stability, reward, or cost-to-go. Its central task loss is action/trajectory prediction conditioned on transmitted visual information, side information, and channel state.[arxiv][ar5iv.labs.arxiv]
+Paper extraction
+A–C. Full communication–computing–control chain
+The following is the complete chain that is explicitly represented by the paper’s equations and Algorithm 1. Equation/page references refer to the accepted JSAC manuscript pagination.
+\boxed{
+\mathbf{x}_t
+\;\xrightarrow{f_e}\;
+\mathbf{z}_t
+\;\xrightarrow{\text{selection}}\;
+\mathbf{z}^{l}_{t}
+\;\xrightarrow{f_h}\;
+\check{\mathbf{z}}^{l}_{t}
+\;\xrightarrow{\text{equalization}}\;
+\hat{\mathbf{z}}^{l}_{t}
+\;\xrightarrow[\mathbf{m}_t,\mathbf{h}_t]{\text{DTCP / }f_a}\;
+\hat{\mathbf{a}}_t
+\;\xrightarrow{\text{downlink / execution}}\;
+\mathbf{c}^{\mathrm{comb}}_{t-\delta_{eu}+l_p}
+}
+This should not be extended to a physical-state update unless you add such a model independently for your UAV project.
+Pipeline stage
+Exact paper formulation
+Classification and meaning
+Sensor/source at vehicle
+\mathbf{x}\in\mathbb{R}^{l_x} is the input image
+EXPLICITLY STATED IN PAPER, Sec. III, p. 4, Eq. (1). The source is an image, not a numerical vehicle state vector. l_x is source bandwidth: image height × width × colour channels.
+Side/state information
+\mathbf{m}: vehicle speed, discrete navigation command, destination coordinates, timestamp
+EXPLICITLY STATED IN PAPER, Sec. III, p. 5 after Eq. (6). This is side information, not a complete controlled-system state. It comprises four floating-point numbers and one integer and is assumed losslessly received when the image is successfully received/decoded.
+JSCC encoder
+f_e:\mathcal{X}\rightarrow\mathcal{Z}:\mathbf{x}\mapsto\mathbf{z}
+EXPLICITLY STATED IN PAPER, Eq. (1), p. 4. \mathbf{z}=[z_1,\ldots,z_{l_z}]\in\mathbb{C}^{l_z} is the complex transmitted JSCC-symbol vector; \mathcal X,\mathcal Z are source and JSCC-symbol spaces.
+Power constraint
+(\frac{1}{l_z}\sum_{i=1}^{l_z}
+z_i
+Channel mapping
+f_h:\mathcal{Z}\rightarrow\mathcal{Z}:\mathbf z\mapsto\hat{\mathbf z}
+EXPLICITLY STATED IN PAPER, Eq. (3), p. 4. This is the abstract channel-plus-reconstruction mapping.
+Physical channel
+\check{\mathbf z}=f_h(\mathbf z)=\mathbf h\cdot\mathbf z+\mathbf n
+EXPLICITLY STATED IN PAPER, Eq. (4), p. 4. \check{\mathbf z} is received JSCC symbols before equalization; \mathbf h\in\mathbb C^{l_z} is frequency response/multipath fading; \mathbf n\sim\mathcal{CN}(0,\boldsymbol{\sigma}_{n}^{2}I) is complex Gaussian noise; I is identity; \boldsymbol{\sigma}_n is stated to be diagonal.
+Receiver equalization
+(\hat{\mathbf z}=\frac{h^*}{
+h
+Agent/computing/control model
+f_a:\mathcal Z\times\mathcal M\times\mathcal H\rightarrow\mathcal A:(\hat{\mathbf z},\mathbf m,\mathbf h)\mapsto\hat{\mathbf a}
+EXPLICITLY STATED IN PAPER, Eq. (6), p. 4–5. \mathcal M,\mathcal H,\mathcal A are side-information, channel-state, and action spaces. \hat{\mathbf a}\sim p(\hat{\mathbf a}) estimates ground truth \mathbf a\sim p(\mathbf a).
+Command sent to vehicle
+\mathbf c_{t-\delta_{eu}+l_p}^{\mathrm{comb}}
+EXPLICITLY STATED IN PAPER, Sec. V and Algorithm 1, pp. 6–9. The command is assumed negligible-bandwidth and losslessly transmitted downlink.
+Physical vehicle update / feedback state
+No equation of the form \mathbf{s}_{t+1}=F(\mathbf{s}_t,\mathbf{u}_t,\mathbf{w}_t)
+NOT SPECIFIED IN THE PAPER. The camera observes a subsequent scene and the procedure repeats, but a mathematical vehicle/plant transition is not formulated.
+
+B. Control-system model
+Direct answer: The paper does not assume or specify a generic linear dynamical system, a nonlinear state-space system, or an industrial-plant differential equation. It uses an imitation-learning-style autonomous-driving agent with trajectory/control prediction and a low-level PID component in its trajectory branch.[arxiv][ar5iv.labs.arxiv]
+Requested item
+Extraction
+State vector
+NOT SPECIFIED IN THE PAPER as a complete plant state vector. The closest inputs are camera image \mathbf{x}_t and side information \mathbf m_t: speed, discrete navigation command, destination coordinates, timestamp.
+Control input
+The paper uses driving commands \mathbf c^{\mathrm{traj}}, \mathbf c^{\mathrm{ctrl}}, and fused \mathbf c^{\mathrm{comb}}. Their component-level definition—for example throttle, steering, brake—is NOT SPECIFIED IN THE EXTRACTED PAPER TEXT.
+State-transition equation
+NOT SPECIFIED IN THE PAPER.
+Continuous or discrete time
+EXPLICITLY STATED IN PAPER: the delay/control workflow is time-slotted, starts at t=0, and each slot has duration \tau, Sec. V, p. 6. No continuous-time differential equation is given.
+Sampling interval
+\tau is named as time-slot duration. A numerical value is NOT SPECIFIED IN THE PAPER in the extracted system model.
+State/control constraints
+No state-space constraint set, actuator constraint set, or safety invariant is mathematically stated. NOT SPECIFIED IN THE PAPER.
+Disturbance in physical dynamics
+NOT SPECIFIED IN THE PAPER. The explicitly modelled disturbance is communication noise \mathbf n, not plant/process noise.
+Low-level controller
+A PID controller maps planned waypoint sequences to trajectory commands in Sec. V-B, p. 7. Its gains, exact PID equation, saturation, and tuning method are NOT SPECIFIED IN THE PAPER.
+
+D–E. Task-oriented JSCC and objective
+Abstract task objective
+EXPLICITLY STATED IN PAPER — Sec. III, p. 5, Problem 1, Eqs. (7)–(9):
+\min_{f_e,f_a}
+\mathbb E_{\mathbf a\sim p(\mathbf a\mid\hat{\mathbf z},\mathbf m,\mathbf h)}
+\left[
+\mathbb E_{\hat{\mathbf a}\sim p(\hat{\mathbf a}\mid\hat{\mathbf z},\mathbf m,\mathbf h)}
+\left[
+g(\mathbf a,\hat{\mathbf a})
+\right]
+\right]
+\tag{7}
+subject to
+\frac{l_z}{l_x}-\zeta_{\mathrm{ratio}}\leq 0,
+\tag{8}
+and Eqs. (1), (2), (3), (4), and (6). \tag{9}
+Definitions:
+f_e: on-vehicle JSCC encoder.
+f_a: edge autonomous-driving agent.
+\mathbf a: ground-truth action.
+\hat{\mathbf a}: estimated action.
+g:\mathcal A\times\mathcal A\rightarrow\mathbb R^+: abstract action distortion.
+\hat{\mathbf z}: equalized reconstructed JSCC symbols.
+\mathbf m: vehicle side/state information.
+\mathbf h: channel state.
+l_z/l_x: bandwidth compression ratio.
+\zeta_{\mathrm{ratio}}: upper limit on that compression ratio.
+NOT SPECIFIED IN THE PAPER: an explicit closed-form g(\mathbf a,\hat{\mathbf a}) in Problem 1.
+DERIVED/INTERPRETED: Eq. (7) is a task/action-distortion formulation, not a physical vehicle-state tracking cost and not a navigation-to-goal loss.
+Differentiability: Eq. (7) is an abstract optimization problem. The paper states that directly solving it is difficult, including because selecting g(\cdot,\cdot) is difficult; it replaces this formulation with VIB. It does not establish plant-in-the-loop differentiability.[arxiv][ar5iv.labs.arxiv]
+Information-bottleneck objective
+EXPLICITLY STATED IN PAPER — Sec. IV, p. 5, Eq. (10):
+\min_{\phi,\psi}-I(A;\hat Z,M,H)
+\quad
+\text{s.t.}\quad I(X;\hat Z)-\zeta_{\mathrm{rate}}\leq 0.
+\tag{10}
+Here:
+\phi: parameters of JSCC encoder f_e.
+\psi: parameters of autonomous-driving agent f_a.
+X,Z,\hat Z,M,H,A,\hat A: random variables corresponding to \mathbf x,\mathbf z,\hat{\mathbf z},\mathbf m,\mathbf h,\mathbf a,\hat{\mathbf a}.
+I(\cdot;\cdot): mutual information.
+\zeta_{\mathrm{rate}}: upper rate limit.
+Its Lagrangian form is:
+\mathcal L_{\mathrm{IB}}
+:=
+\underbrace{-I(A;\hat Z,M,H)}_{\text{distortion}}
++
+\beta
+\underbrace{I(X;\hat Z)}_{\text{rate}}.
+\tag{11}
+\beta: Lagrange multiplier/trade-off weight.
+The first term rewards retention of action-relevant information in received symbols plus conditional state/channel inputs.
+The second penalizes information retained from the input image in received symbols.
+EXPLICITLY STATED IN PAPER: this is a task-oriented reformulation of Problem 1, using conditional information (M,H).[arxiv][ar5iv.labs.arxiv]
+The action-information term is expanded as:
+\begin{aligned}
+-I(A;\hat Z,M,H)
+=&-\int p(\mathbf a,\hat{\mathbf z},\mathbf m,\mathbf h)
+\log
+\frac{p(\mathbf a\mid\hat{\mathbf z},\mathbf m,\mathbf h)}
+{p(\mathbf a)}
+\,d\mathbf a\,d\hat{\mathbf z}\,d\mathbf m\,d\mathbf h\\
+=&-\int p(\mathbf a,\hat{\mathbf z},\mathbf m,\mathbf h)
+\log p(\mathbf a\mid\hat{\mathbf z},\mathbf m,\mathbf h)
+\,d\mathbf a\,d\hat{\mathbf z}\,d\mathbf m\,d\mathbf h
+-H(A).
+\end{aligned}
+\tag{12}
+p(\mathbf a\mid\hat{\mathbf z},\mathbf m,\mathbf h)
+=
+\int
+\frac{
+p(\mathbf a)p(\mathbf x\mid\mathbf a)p_\phi(\mathbf z\mid\mathbf x)
+p(\hat{\mathbf z}\mid\mathbf z)p(\mathbf m\mid\mathbf a)p(\mathbf h\mid\mathbf a)
+}{
+p(\hat{\mathbf z},\mathbf m,\mathbf h)
+}
+d\mathbf x\,d\mathbf z.
+\tag{13}
+The paper declares this posterior integration intractable and uses the variational decoder/agent distribution q_\psi(\mathbf a\mid\hat{\mathbf z},\mathbf m,\mathbf h).[arxiv][ar5iv.labs.arxiv]
+Trainable VIB surrogate
+EXPLICITLY STATED IN PAPER — Sec. IV, pp. 5–6, Corollary 1, Eq. (17):
+\begin{aligned}
+\mathcal L_{\mathrm{VIB}}
+:={}&
+\mathbb E_{\mathbf a,\mathbf x}
+\Big[
+\mathbb E_{\hat{\mathbf z}\mid\mathbf x;\phi}
+\big[
+\mathbb E_{\mathbf m,\mathbf h}
+[-\log q_\psi(\mathbf a\mid\hat{\mathbf z},\mathbf m,\mathbf h)]
+\big] \\
+&+
+\beta D_{\mathrm{KL}}
+\big(
+p_\phi(\hat{\mathbf z}\mid\mathbf x)
+\Vert
+q(\hat{\mathbf z})
+\big)
+\Big]
+\geq
+\mathcal L_{\mathrm{IB}}+H(A).
+\end{aligned}
+\tag{17}
+Definitions:
+q_\psi(\mathbf a\mid\hat{\mathbf z},\mathbf m,\mathbf h): variational task/action model, parameterized by the driving-agent parameters \psi.
+-\log q_\psi(\cdot): negative log-likelihood task term.
+p_\phi(\hat{\mathbf z}\mid\mathbf x): encoder/channel-induced conditional distribution of received symbols.
+q(\hat{\mathbf z})\sim\mathcal N(\boldsymbol\mu_{\hat{\mathbf z}},\boldsymbol\sigma_{\hat{\mathbf z}}^2 I): predefined Gaussian approximation to the intractable prior p(\hat{\mathbf z}).
+D_{\mathrm{KL}}(\cdot\Vert\cdot): Kullback–Leibler divergence.
+H(A): entropy of action variable, treated as independent of the optimization.
+\beta: rate–task trade-off coefficient.
+The paper specifies:
+I(X;\hat Z)
+=
+\mathbb E_{\mathbf a,\mathbf x}
+\left[
+D_{\mathrm{KL}}
+\left(
+p_\phi(\hat{\mathbf z}\mid\mathbf x)
+\Vert p(\hat{\mathbf z})
+\right)
+\right],
+\tag{15}
+and the upper bound:
+I(X;\hat Z)
+\leq
+\mathbb E_{\mathbf a,\mathbf x}
+\left[
+D_{\mathrm{KL}}
+\left(
+p_\phi(\hat{\mathbf z}\mid\mathbf x)
+\Vert q(\hat{\mathbf z})
+\right)
+\right].
+\tag{16}
+The empirical mini-batch estimator is:
+\mathcal L_{\mathrm{VIB}}
+\approx
+\frac{1}{K_b}
+\sum_{i=1}^{K_b}
+\left[
+-\log q_\psi(\mathbf a_i\mid\hat{\mathbf z}_i,\mathbf m_i,\mathbf h_i)
++
+\beta
+D_{\mathrm{KL}}
+\left(
+p_\phi(\hat{\mathbf z}\mid\mathbf x_i)
+\Vert q(\hat{\mathbf z})
+\right)
+\right].
+\tag{18}
+K_a: dataset size.
+K_b: mini-batch size.
+(\mathbf a_i,\mathbf x_i): action/image training pair.
+EXPLICITLY STATED IN PAPER: the dataset can be collected from expert agents or human drivers; stochastic gradient descent and Monte Carlo sampling optimize the VIB bound; one sample for the negative-log-likelihood term may be used when K_a is sufficiently large.[arxiv][ar5iv.labs.arxiv]
+NOT SPECIFIED IN THE PAPER: numerical K_a, K_b, \beta, optimizer type, learning rate, epoch count, initialization, or a complete PyTorch architecture specification in the extracted mathematical sections.
+Comparison with Shao et al. (2022)
+EXPLICITLY STATED IN PAPER: Diao et al. cite foundational VIB work and task-oriented JSCC literature, and formulate their own conditional VIB objective with (M,H).[arxiv][ar5iv.labs.arxiv]
+NOT SPECIFIED IN THE PAPER: a paper named “Shao et al. (2022)” is not identified in the supplied request with title/DOI, and the extracted Diao paper text does not establish equation-level identity with any unspecified Shao paper.
+DERIVED/INTERPRETED: You may compare Diao’s Eq. (17) to Shao et al. only after obtaining the exact Shao citation. The required comparison dimensions are: target variable, whether CSI/state conditioning is included, whether the latent is pre- or post-channel, KL prior, compression/resource constraint, and supervised target. Do not state they are identical.
+F–H. Co-design, gradients, delay and computing
+What is jointly optimized?
+Component
+Paper status
+JSCC encoder f_e, parameters \phi
+EXPLICITLY STATED IN PAPER: optimized through the VIB formulation, Eqs. (10), (17), (18).
+Autonomous-driving agent f_a, parameters \psi
+EXPLICITLY STATED IN PAPER: optimized jointly with encoder in Eqs. (10), (17), (18).
+Computing/task architecture
+EXPLICITLY STATED IN PAPER: DTCP includes trajectory and control feature extractors, trajectory branch, control branch, and command combination; Algorithm 1 states pretrained f_e and DTCP parameters are loaded at execution.
+Low-level PID
+EXPLICITLY STATED IN PAPER: present in trajectory branch. Whether its gains are jointly learned is NOT SPECIFIED IN THE PAPER.
+Physical vehicle controller/plant
+NOT SPECIFIED IN THE PAPER as an optimized mathematical plant/controller pair.
+Power allocation, bandwidth allocation, channel coding rate scheduling
+NOT SPECIFIED IN THE PAPER as a joint optimization variable. There is a power constraint, compression-ratio constraint, information-rate constraint, and selectable symbol length, but no resource-allocation optimization formulation.
+Selected symbol length l(t)
+EXPLICITLY STATED IN PAPER: 1\le l(t)\le l_z; symbols with the l largest energies are selected. How l(t) is chosen or trained is NOT SPECIFIED IN THE PAPER.
+Delay/prediction horizon
+EXPLICITLY STATED IN PAPER: prediction horizon responds to measured/known delay. Its exact learning/optimization mechanism is not given as a differentiable optimization variable.
+
+Gradient flow
+EXPLICITLY STATED IN PAPER: The VIB surrogate in Eq. (17) “can be optimized using stochastic gradient descent through Monte Carlo sampling.” This supports gradient-based training of the parameterized encoder distribution p_\phi and agent/variational action model q_\psi.[arxiv][ar5iv.labs.arxiv]
+DERIVED/INTERPRETED: For the learning objective actually written, the intended differentiable learning path is:
+\mathcal L_{\mathrm{VIB}}
+\rightarrow
+q_\psi(\mathbf a\mid\hat{\mathbf z},\mathbf m,\mathbf h)
+\rightarrow
+\hat{\mathbf z}
+\rightarrow
+p_\phi(\mathbf z\mid\mathbf x)
+\rightarrow
+\phi.
+NOT SPECIFIED IN THE PAPER: the exact Monte-Carlo reparameterization method, treatment of complex-valued OFDM operations in autograd, gradient estimator through fading/noise, or whether gradients pass through symbol top-l selection of Eq. (19).
+NOT SPECIFIED IN THE PAPER: gradients through an actual physical vehicle simulator or physical dynamics:
+\text{task loss}\rightarrow \text{controller}\rightarrow\text{vehicle dynamics}\rightarrow \text{next state}.
+The paper has no stated F(\mathbf{s}_t,\mathbf{u}_t) and no rollout loss. Therefore, it is incorrect to claim that Diao et al. backpropagate through vehicle dynamics.
+Delay model
+EXPLICITLY STATED IN PAPER — Sec. V-A, pp. 6–7:
+\delta
+=
+\delta_e+\delta_u+\delta_a+\delta_d+\delta_c.
+Definitions:
+\delta_e: JSCC-encoding computation delay.
+\delta_u: uplink communication delay.
+\delta_a: edge-agent computation delay.
+\delta_d: downlink communication delay.
+\delta_c: vehicle control execution delay.
+\delta: end-to-end delay.
+l_p\geq0: prediction horizon.
+Perceived E2E delay: \delta-l_p.
+\delta_{eu}:=\delta_e+\delta_u: combined encoding and uplink delay.
+\delta_T: delay threshold.
+\tau: time-slot duration.
+The paper states that \delta_a and \delta_c are known constants and that the edge server continuously measures downlink delay in real time. It also states that \delta_{eu} can be computed from the timestamp within side information when it is transmitted in synchrony with the received symbols.[arxiv][ar5iv.labs.arxiv]
+EXPLICITLY STATED IN PAPER: detailed decomposition of uplink delay into transmission, queuing, propagation, and processing is outside the paper’s main scope.
+NOT SPECIFIED IN THE PAPER: an AoI equation, a stochastic queueing model, a latency distribution, or an optimization objective directly minimizing \delta.
+DERIVED/INTERPRETED: Delay is essential to the proposed DTCP mechanism and its evaluation, but it is not a separate differentiable term in the displayed VIB loss Eq. (17).
+DTCP equations
+EXPLICITLY STATED IN PAPER — Sec. V, pp. 6–9:
+Symbol selection:
+D_t=
+\left\{
+i\in\{1,\ldots,l_z\}
+\ \middle|\
+|z_i^t|^2
+\text{ is one of the }l\text{ largest entries in }|\mathbf z_t|^2
+\right\},
+\tag{19}
+\mathbf z_t^l=\{z_i^t\mid i\in D_t\}.
+The unselected positions are filled with zero at the edge server. The paper explicitly notes that transmitting symbol indices adds communication load and does not solve that overhead; it points to variable-length variational feature encoding as future direction.[arxiv][ar5iv.labs.arxiv]
+Trajectory-feature extractor:
+f_{\mathrm{feat-t}}:
+\mathcal Z\times\mathcal M\times\mathcal H
+\rightarrow
+\mathcal R_{\mathrm{traj}}:
+(\hat{\mathbf z}_{t-\delta_{eu}}^l,
+\mathbf m_{t-\delta_{eu}},
+\mathbf h_{t-\delta_{eu}})
+\mapsto
+\mathbf r_{t-\delta_{eu}}^{\mathrm{traj}}.
+\tag{20}
+Trajectory branch:
+f_{\mathrm{traj}}:
+\mathcal R_{\mathrm{traj}}
+\rightarrow
+\mathcal C_{\mathrm{cmd}}^{l_p+1}:
+\mathbf r_{t-\delta_{eu}}^{\mathrm{traj}}
+\mapsto
+\mathbf c_{t-\delta_{eu}+l_p}^{\mathrm{traj}-(l_p+1)}.
+\tag{21}
+\mathbf r^{\mathrm{traj}}: trajectory feature.
+\mathbf c^{\mathrm{traj}-(l_p+1)}: sequence of l_p+1 predicted trajectory commands.
+\mathbf h^{\mathrm{traj}}: trajectory GRU hidden state.
+l_w: additional waypoint prediction horizon.
+\mathbf w: planned waypoints, with \mathbf w_{t-\delta_{eu}} set to origin.
+A PID processes each l_w+1-waypoint trajectory into a trajectory command.
+Control-feature extractor:
+f_{\mathrm{feat-c}}:
+\mathcal Z\times\mathcal M\times\mathcal H
+\rightarrow
+\mathcal R_{\mathrm{ctrl}}:
+(\hat{\mathbf z}_{t-\delta_{eu}}^l,
+\mathbf m_{t-\delta_{eu}},
+\mathbf h_{t-\delta_{eu}})
+\mapsto
+\mathbf r_{t-\delta_{eu}}^{\mathrm{ctrl}}.
+\tag{22}
+Control branch:
+f_{\mathrm{ctrl}}:
+\mathcal R_{\mathrm{ctrl}}
+\times
+\mathcal H_{\mathrm{traj}}^{l_p}
+\rightarrow
+\mathcal C_{\mathrm{cmd}}^{l_p+1}:
+(\mathbf r_{t-\delta_{eu}}^{\mathrm{ctrl}},
+\mathbf h_{t-\delta_{eu}+l_p}^{\mathrm{traj}-l_p})
+\mapsto
+\mathbf c_{t-\delta_{eu}+l_p}^{\mathrm{ctrl}-(l_p+1)}.
+\tag{23}
+\mathbf r^{\mathrm{ctrl}}: control feature.
+\mathbf h^{\mathrm{ctrl}}: control-GRU hidden state, initialized to zero.
+\mathbf c^{\mathrm{ctrl}-(l_p+1)}: predicted control-command sequence.
+The paper uses a binary image-attention mask based on control- and trajectory-branch hidden states.
+Command-combination mapping:
+f_{\mathrm{comb}}:
+\mathcal C_{\mathrm{cmd}}^{l_p+1}
+\times
+\mathcal C_{\mathrm{cmd}}^{l_p+1}
+\rightarrow
+\mathcal C_{\mathrm{cmd}}.
+\tag{24}
+The actual fusion is:
+\mathbf c_{t-\delta_{eu}+l_p}^{\mathrm{comb}}
+=
+\begin{cases}
+\lambda_c\mathbf c_{t-\delta_{eu}+l_p}^{\mathrm{traj}}
++(1-\lambda_c)\mathbf c_{t-\delta_{eu}+l_p}^{\mathrm{ctrl}},
+& \text{if turning and }\delta\geq\delta_T,\\
+\lambda_c\mathbf c_{t-\delta_{eu}}^{\mathrm{traj}}
++(1-\lambda_c)\mathbf c_{t-\delta_{eu}}^{\mathrm{ctrl}},
+& \text{if turning and }\delta<\delta_T,\\
+\lambda_c\mathbf c_{t-\delta_{eu}}^{\mathrm{ctrl}}
++(1-\lambda_c)\mathbf c_{t-\delta_{eu}}^{\mathrm{traj}},
+& \text{otherwise},
+\end{cases}
+\tag{25}
+where \lambda_c\in[0.5,1] is a hyperparameter. The condition for eliminating perceived delay is stated as l_p\geq\delta, equivalently l_p-\delta_{eu}\geq\delta_a+\delta_d+\delta_c.[arxiv][ar5iv.labs.arxiv]
+Resources, training and evaluation
+J. Channel, SNR and bandwidth
+Item
+Exact extraction
+Channel
+EXPLICITLY STATED IN PAPER: frequency-selective multipath-fading channel implemented through OFDM; Eq. (4), Sec. III, p. 4.
+Noise
+EXPLICITLY STATED IN PAPER: \mathbf n\sim\mathcal{CN}(0,\boldsymbol\sigma_n^2I); Eq. (4).
+CSI
+EXPLICITLY STATED IN PAPER: perfect CSI is assumed for Eq. (5); channel state is also an agent input.
+SNR definition
+NOT SPECIFIED IN THE EXTRACTED MAIN-TEXT EQUATIONS. The paper says comprehensive OFDM modelling is in Appendix A, but the accessible extracted text does not provide a verified SNR equation that should be copied here.
+Transmit power
+EXPLICITLY STATED IN PAPER: Eq. (2), average symbol power is at most P_{\mathrm{target}}.
+Channel uses
+l_z complex JSCC symbols are the channel-bandwidth quantity. For dynamic selection, l(t) symbols satisfy 1\leq l(t)\leq l_z.
+Compression ratio
+EXPLICITLY STATED IN PAPER: l_z/l_x, with upper bound \zeta_{\mathrm{ratio}}; Eqs. (1), (8).
+Information-rate constraint
+EXPLICITLY STATED IN PAPER: I(X;\hat Z)\leq\zeta_{\mathrm{rate}}; Eq. (10).
+Explicit spectral bandwidth in Hz
+NOT SPECIFIED IN THE PAPER.
+Resource allocation policy
+NOT SPECIFIED IN THE PAPER.
+
+K. Training procedure
+Requested training detail
+What the paper actually states
+Training samples
+Image/action pairs \{(\mathbf a_i,\mathbf x_i)\}_{i=1}^{K_a}, potentially collected from expert agents or human drivers; Sec. IV, p. 6.
+Supervision
+Ground-truth action variable \mathbf a, with conditional inputs \mathbf m,\mathbf h.
+Objective
+VIB loss in Eqs. (17)–(18), not an explicitly written physical-control rollout objective.
+Optimization
+Stochastic gradient descent using Monte Carlo sampling.
+Joint or sequential training
+EXPLICITLY STATED IN PAPER: \phi and \psi are jointly optimized in Eq. (10); the narrative says DTCP is co-designed/jointly trained with task-oriented JSCC. Algorithm 1 loads pretrained parameters for online execution.
+Optimizer name, LR, scheduler
+NOT SPECIFIED IN THE EXTRACTED PAPER TEXT.
+Epochs, iterations, batch size
+Symbol K_b is defined, but numerical batch size and training length are NOT SPECIFIED IN THE EXTRACTED PAPER TEXT.
+Training SNR/channel sampling law
+NOT SPECIFIED IN THE EXTRACTED PAPER TEXT.
+Weight initialization
+NOT SPECIFIED IN THE PAPER.
+
+L. Evaluation
+EXPLICITLY STATED IN PAPER: Experiments use the CARLA simulator. The abstract reports a 1-second / 20-time-slot E2E delay result: driving score 48.12, 31.59 points above BPG, and 99.19% lower bandwidth usage in that reported comparison.[arxiv][ar5iv.labs.arxiv]
+EXPLICITLY STATED IN PAPER: The paper’s named conventional baseline is Better Portable Graphics (BPG), and its stated context is visual autonomous driving, not numerical UAV-state transmission.[arxiv]
+NOT SPECIFIED IN THE EXTRACTED MATERIAL: the complete test-route setup, seeds, confidence intervals, number of episodes, all SNR grid points, all resource settings, full baseline list, and every ablation value. These should be copied only after checking Section VI and its tables/figures in the publisher PDF.
+DERIVED/INTERPRETED: Do not translate “driving score” into UAV goal-reaching success, state error, or trajectory error. They are different task metrics.
+Transfer and compatibility
+M. Transfer table
+Diao 2025 component
+Exact paper formulation
+Directly transferable to UAV?
+Requires modification?
+Reason
+State representation
+Image \mathbf x plus \mathbf m: speed, navigation command, destination, timestamp
+No
+Yes
+Your proposed input is a low-dimensional numerical state, not monocular visual driving input plus Diao’s side information.
+State dynamics
+No plant transition equation
+No
+Yes
+UAV simulation requires its own state transition model.
+Control input
+Predicted/fused driving command \mathbf c^{\mathrm{comb}}, Eq. (25)
+No
+Yes
+Driving command semantics and UAV actuation differ.
+Controller
+DTCP trajectory/control GRU branches and PID waypoint-to-command conversion
+No
+Yes
+This architecture is specific to trajectory-guided autonomous driving.
+Communication encoder
+f_e:\mathcal X\to\mathcal Z, Eq. (1)
+Yes, conceptually
+Yes
+The encoder concept and power normalization transfer; its input architecture/dimension must match UAV state or sensor representation.
+Communication decoder
+Equalization Eq. (5), then agent f_a(\hat{\mathbf z},\mathbf m,\mathbf h), Eq. (6)
+Yes, conceptually
+Yes
+A receiver-side task network can transfer, but not its driving target or DTCP architecture unchanged.
+Channel
+OFDM frequency-selective fading plus complex Gaussian noise, Eq. (4)
+Yes
+Possibly
+Transfer if this is your chosen simulated channel. Perfect CSI and parameter settings remain assumptions to justify.
+Task representation
+\hat{\mathbf z}, conditioned on \mathbf m,\mathbf h, retained for action inference
+Yes, conceptually
+Yes
+A task representation for UAV decision-making can use the VIB structure but needs a UAV target variable.
+Task loss
+Negative log-likelihood -\log q_\psi(\mathbf a\mid\hat{\mathbf z},\mathbf m,\mathbf h), Eq. (17)
+No
+Yes
+Diao’s target is driving action; UAV task target must be separately defined.
+Control loss
+Abstract g(\mathbf a,\hat{\mathbf a}), Eq. (7); practical VIB task likelihood, Eq. (17)
+No
+Yes
+No UAV goal-reaching/control loss is supplied.
+Delay
+\delta=\delta_e+\delta_u+\delta_a+\delta_d+\delta_c
+Yes
+Yes
+Delay accounting transfers, but UAV sensing, link, edge, and actuation delays must be modelled independently.
+Bandwidth/resource constraint
+Eqs. (2), (8), (10), and selection Eq. (19)
+Yes
+Yes
+Matched channel uses/power can transfer; selection-index overhead and digital baseline matching need explicit treatment.
+Training procedure
+Joint VIB optimization of \phi,\psi, Eqs. (10), (17), (18)
+Yes, conceptually
+Yes
+Data, label, target distribution, channel sampling, and architecture must be UAV-specific.
+Evaluation metrics
+CARLA driving score and bandwidth use
+No
+Yes
+UAV project requires independently selected navigation and communication metrics.
+
+N. What must not be copied
+The following are industrial/autonomous-driving-specific components and should not be inserted unchanged into a UAV implementation:
+Monocular road-scene image source \mathbf{x}_t.
+Diao’s side-information semantics: discrete driving navigation command, driving destination representation, and vehicle-speed handling.
+The trajectory-guided driving architecture, including its waypoint conventions and driving-specific turning condition.
+The branch-selection rule “if turning” in Eq. (25), unless you independently define an analogous UAV manoeuvre condition.
+The low-level driving PID conversion from waypoint sequences to driving commands.
+Expert/human-driver action labels and their action distribution.
+CARLA driving score and BPG comparison interpretation.
+Assumption that commands consume negligible bandwidth and arrive losslessly.
+Perfect CSI, unless retained deliberately as an explicitly documented simulation assumption.
+The implicit relationship between camera appearance, vehicle motion, road layout, and action labels.
+These are non-transferable because they encode the observation model, actuator semantics, operational constraints, and task meaning of autonomous driving—not merely generic communications mathematics.
+O. Compatibility with your proposal
+My proposal component
+Diao 2025
+Compatible?
+What must change?
+s_t=[x_t,y_t,v_{x,t},v_{y,t},x_g,y_g]
+\mathbf x_t is camera image; \mathbf m_t is speed/navigation/destination/timestamp
+Partly
+Decide whether your s_t is the source input replacing \mathbf x_t, side information analogous to \mathbf m_t, or both. Diao does not define this numerical state.
+p_{t+1}=p_t+v_t\Delta t
+No physical dynamics equation
+No direct conflict, but absent
+This is your UAV kinematic model; it cannot be attributed to or extracted from Diao.
+v_{t+1}=v_t+u_t\Delta t
+No physical dynamics/control-transition equation
+No direct conflict, but absent
+Retain only as your own proposal if justified elsewhere; Diao gives no support for it.
+s_t\to encoder \to channel \to decoder \to task representation
+\mathbf x\to f_e\to \mathbf z\to f_h\to\hat{\mathbf z}\to f_a(\hat{\mathbf z},\mathbf m,\mathbf h)
+Yes, at structural level
+Change image-centric source/model dimensions and specify whether \mathbf m exists separately from s_t.
+u_t=\pi(r_t)
+f_a(\hat{\mathbf z},\mathbf m,\mathbf h)\mapsto\hat{\mathbf a}, then DTCP produces \mathbf c^{\mathrm{comb}}
+Partly
+Diao’s controller is not a simple stationary \pi(r_t): it is delay-aware, recurrent, conditionally fused, and driving-specific. You may use the abstract receiver-to-action structure but not claim equivalence.
+Goal-reaching task
+Driving-action likelihood / information retention
+No
+A goal-reaching target and its loss are NOT SPECIFIED IN THE PAPER and must be chosen in your UAV work.
+Closed loop s_{t+1} feeds next transmission
+Algorithm 1 repeats sensing/transmission/control over slots, but has no s_{t+1}=F(\cdot)
+Partly
+Add and validate a UAV state update externally; do not claim Diao trains through it.
+
+Final implementation extraction
+PAPER-BACKED COMPONENTS WE CAN USE
+A task-oriented communication architecture: f_e:\mathcal X\rightarrow\mathcal Z, Eq. (1), Sec. III, p. 4; a source input is encoded directly into complex JSCC symbols.
+Average transmit-power constraint: \frac1{l_z}\sum_i|z_i|^2\le P_{\mathrm{target}}, Eq. (2), Sec. III, p. 4.
+Noisy fading-channel simulation abstraction: \check{\mathbf z}=\mathbf h\cdot\mathbf z+\mathbf n, Eq. (4), Sec. III, p. 4, with complex Gaussian noise and frequency-selective OFDM context.
+Perfect-CSI equalization baseline: \hat{\mathbf z}=\frac{h^*}{|h|^2}\check{\mathbf z}, Eq. (5), Sec. III, p. 4, if your simulation deliberately assumes perfect CSI.
+Conditional task receiver: f_a(\hat{\mathbf z},\mathbf m,\mathbf h)\mapsto\hat{\mathbf a}, Eq. (6), Sec. III, pp. 4–5. This supports conditioning a task network on received representation plus side/channel information.
+Bandwidth/channel-use accounting: compression-ratio constraint Eq. (8), p. 5; information-rate constraint Eq. (10), p. 5; power constraint Eq. (2), p. 4.
+Task-oriented VIB principle: \mathcal L_{\mathrm{IB}}, Eq. (11), p. 5, and its tractable VIB upper bound \mathcal L_{\mathrm{VIB}}, Eq. (17), p. 6.
+Mini-batch VIB training estimator: Eq. (18), Sec. IV, p. 6.
+Delay decomposition: \delta=\delta_e+\delta_u+\delta_a+\delta_d+\delta_c, Sec. V-A, pp. 6–7.
+Variable-length/energy-based JSCC-symbol selection concept: Eq. (19), Sec. V, p. 6, subject to accounting for index overhead.
+COMPONENTS THAT CAN TRANSFER ONLY AFTER MODIFICATION
+Source representation: replace Diao’s visual \mathbf x_t with your selected UAV source. A six-dimensional state can be used, but that substitution is your design choice, not the paper’s.
+Task variable A: replace driving action labels with a UAV-relevant supervised target only after you formally define it.
+Conditional side information M: decide whether UAV velocity, goal, time, link estimate, or other variables should be in the transmitted source versus reliably conveyed side information.
+DTCP delay idea: use its delay ledger and prediction-horizon concept only after defining UAV actuation delay, manoeuvres, and a valid prediction target.
+Resource comparison: use equal l_z/channel-use and power budgets across digital, reconstruction-oriented DeepJSCC, and task-oriented DeepJSCC; Diao provides the constraint language, but does not specify your benchmark protocol.
+Channel model: OFDM fading can be retained if it matches your simulation assumptions; otherwise another fading model requires independent justification.
+Joint VIB training: conceptually transferable, but the decoder/task architecture, labels, channel distribution, and concrete loss must be independently specified.
+INDUSTRIAL-CPS-SPECIFIC COMPONENTS WE SHOULD NOT COPY
+Camera-image autonomous-driving source.
+CARLA routes, driving score, driving expert labels, and BPG result interpretation.
+Vehicle navigation command, turning test, destination encoding, and driving-command semantics.
+Trajectory-GRU/control-GRU architecture as a presumed UAV controller.
+PID waypoint-to-driving-command conversion without UAV actuator modelling.
+The assumption that command downlink is negligible-bandwidth and lossless.
+Any implication that a vehicle state is governed by Diao’s equations; it is not.
+Any claim of physical closed-loop backpropagation through vehicle/UAV dynamics.
+COMPONENTS STILL MISSING FOR OUR UAV PROJECT
+A formally declared UAV state and observation/source model.
+A justified UAV state-transition equation, including \Delta t, constraints, disturbances, and actuator limits.
+Definition of the received task representation and its exact relationship to the control input.
+A UAV control policy or a fixed external controller, and a clear declaration of whether it is trained.
+A target variable and task/control loss appropriate to goal-reaching; NOT SPECIFIED IN THE PAPER.
+A decision on whether training backpropagates through a differentiable UAV simulator; NOT SPECIFIED IN THE PAPER.
+Numerical channel parameters: SNR convention/range, Doppler/coherence assumptions if applicable, OFDM parameters, CSI assumptions, and power/channel-use matching.
+A fair conventional-digital baseline design, including source quantization, channel coding, modulation, packet-loss behaviour, and rate matching.
+Dataset/trajectory-generation procedure, optimizer, learning rate, batch size, epochs, seeds, and statistical reporting protocol.
+UAV-specific evaluation metrics: goal-success rate, terminal position error, flight time/path length, safety/collision criterion if relevant, control effort, and latency sensitivity.
+Answer to the central question: Diao et al. genuinely provide the mathematical communication chain f_e\rightarrow noisy fading channel \rightarrow equalization \rightarrow conditional task agent; a power/compression/rate framework; a conditional VIB loss that ties received latent symbols to action-relevant information; and an explicit E2E delay decomposition with delay-aware command prediction. These are useful foundations for the communication and edge task-inference portions of a closed-loop Task-Oriented DeepJSCC UAV simulation. They leave unspecified the essential mathematics required to complete a closed-loop UAV navigation system: UAV plant dynamics, state/control constraints, UAV controller, goal-reaching objective, control/trajectory cost, simulator rollout loss, gradient flow through dynamics, exact resource-allocation policy, and the detailed numerical training/evaluation configuration needed for your proposed benchmark.[arxiv][ar5iv.labs.arxiv]
+

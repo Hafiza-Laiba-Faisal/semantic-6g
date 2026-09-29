@@ -1,0 +1,862 @@
+=== SOURCE FILE: 06-digital-communication-baseline.txt ===
+
+Perplexity Prompt 6 — Conventional Digital Communication Baseline
+I am developing an FYP titled:
+“Task-Oriented Deep Joint Source-Channel Coding for UAV Navigation Under Noisy and Fading Wireless Channels.” 
+
+https://www.perplexity.ai/search/8f42ca56-a113-4476-a36b-c61624e11259
+
+The primary DeepJSCC paper does define the architecture of a conventional separated digital system, and it later evaluates a practical JPEG/JPEG2000–LDPC–BPSK/QAM benchmark. It does not define a digital baseline for transmitting a six-dimensional continuous UAV state, so quantizer range/bit depth, framing, selected code/modulation pair, CSI treatment, and controller interface cannot be claimed as taken from that paper.
+1. Evidence base and baseline scope
+Primary sources
+Source
+Exact relevance to your comparison
+E. Bourtsoulatze, D. B. Kurka, and D. Gündüz, “Deep Joint Source-Channel Coding for Wireless Image Transmission,” IEEE Transactions on Cognitive Communications and Networking, vol. 5, no. 3, pp. 567–579, September 2019. DOI: 10.1109/TCCN.2019.2919300.
+This is the most important source. Its Fig. 1(a) defines the conventional separated chain: source encoder \rightarrow channel encoder \rightarrow modulator \rightarrow noisy channel \rightarrow demodulator \rightarrow channel decoder \rightarrow source decoder. It uses JPEG/JPEG2000 source coding and, in its practical AWGN experiment, LDPC codes with BPSK, 4-QAM, 16-QAM, and 64-QAM. [imperial.ac]
+E. Bourtsoulatze, D. B. Kurka, and D. Gündüz, “Deep Joint Source-Channel Coding for Wireless Image Transmission,” ICASSP 2019, pp. 4774–4778, 2019. DOI: 10.1109/ICASSP.2019.8683463.
+Earlier conference version. Its Fig. 1 gives the same conventional source/channel/modulation pipeline. It explicitly states the slow-Rayleigh model, lack of CSI/pilots for DeepJSCC, and the capacity-based digital benchmark for fading. [discovery.ucl.ac]
+D. B. Kurka and D. Gündüz, “Joint Source-Channel Coding of Images with (not very) Deep Learning,” 2020 tutorial/review manuscript.
+Summarizes the practical comparison as BPG/JPEG2000/WebP/JPEG followed by LDPC. It confirms k/n as bandwidth ratio, and uses a complex AWGN model with n\sim\mathcal{CN}(0,\sigma^2I). [imperial.ac]
+T.-Y. Tung, D. B. Kurka, M. Jankowski, and D. Gündüz, “DeepJSCC-Q: Constellation Constrained Deep Joint Source-Channel Coding,” IEEE Journal on Selected Areas in Information Theory, vol. 3, no. 4, pp. 720–731, 2022. Preprint DOI: 10.48550/arXiv.2206.08100.
+Relevant because it explicitly considers finite channel-input alphabets/constellations, rather than the unconstrained complex outputs assumed by original DeepJSCC. It is not a conventional separated digital baseline, but it is useful for explaining that “complex channel use” and “finite QAM symbol” are distinct modelling choices. [arxiv]
+J. Shao, Y. Mao, and J. Zhang, “Learning Task-Oriented Communication for Edge Inference: An Information Bottleneck Approach,” IEEE Journal on Selected Areas in Communications, vol. 40, no. 1, pp. 197–211, January 2022.
+Relevant to task-oriented communication, not to a conventional quantize–code–modulate digital benchmark for continuous navigation states. It should not be cited as evidence for a particular digital quantizer, channel code, or QAM configuration. [linkedin]
+3GPP, TS 38.212: NR; Multiplexing and Channel Coding, Release 17.
+A standards source for real-world LDPC/polar-code processing, including CRC and rate matching. It is evidence that modern practical systems involve more than a bare N_{\rm coded}=N_{\rm info}/R_c equation; it does not impose an appropriate configuration for your FYP. [standards.iteh]
+
+What the original DeepJSCC paper actually compares
+There are two materially different “digital baselines” in Bourtsoulatze–Kurka–Gündüz:
+Baseline type
+Source coding
+Channel coding/modulation
+What it means
+Capacity-based upper bound
+JPEG or JPEG2000
+No implementable code/modulation is instantiated; it assumes reliable operation at complex-AWGN capacity
+An optimistic upper bound for separated JPEG/JPEG2000 transmission, not a runnable digital chain
+Practical AWGN benchmark
+JPEG or JPEG2000
+LDPC (4096,8192), (4096,6144), or (2048,6144), combined with BPSK, 4-QAM, 16-QAM, or 64-QAM
+An implementable image-transmission benchmark; exact best configuration varies by experimental point and is not a single frozen baseline
+
+The practical LDPC pairs correspond to rate 1/2, 2/3, and 1/3, respectively. The paper reports all combinations with BPSK, 4-QAM, 16-QAM, and 64-QAM, then plots only the best-performing schemes or those exceeding a stated PSNR threshold. It does not prescribe one universal LDPC/QAM pair.[imperial.ac]
+Critical limitation: JPEG, JPEG2000, WebP, and BPG are image source codecs. They do not directly specify how a continuous vector
+s_t=[x_t,y_t,v_{x,t},v_{y,t},x_g,y_g]\in\mathbb{R}^{6}
+must be represented. Therefore, “replace JPEG with B-bit uniform state quantization” is a reasonable project adaptation, but it is not an exact implementation copied from the DeepJSCC article.
+2. Verified communication chain
+Literature-supported conventional chain
+The 2019 paper’s Fig. 1(a), Sec. II, gives the generic conventional chain:
+x
+\rightarrow f_s
+\rightarrow f_c
+\rightarrow f_m
+\rightarrow \text{channel}
+\rightarrow g_m
+\rightarrow g_c
+\rightarrow g_s
+\rightarrow \hat{x}.
+For your source vector, the structurally corresponding chain is:
+s_t
+\rightarrow f_s
+\rightarrow b_t
+\rightarrow f_c
+\rightarrow c_t
+\rightarrow f_m
+\rightarrow z_t
+\rightarrow \hat z_t
+\rightarrow g_m
+\rightarrow \hat c_t
+\rightarrow g_c
+\rightarrow \hat b_t
+\rightarrow g_s
+\rightarrow \hat s_t
+\rightarrow \pi(\hat s_t)
+\rightarrow u_t .
+This chain is consistent with the conventional architecture in the original DeepJSCC paper, but only the following substitution is yours:
+x \mapsto s_t,\qquad \hat{x}\mapsto\hat{s}_t.
+It is not an equation printed for UAV navigation in the cited literature. The paper describes source encoding, channel encoding, modulation, and reverse decoding/decompression; it does not use the specific labels “quantizer” or “dequantizer” because its source encoder is JPEG/JPEG2000, rather than scalar quantization.[imperial.ac]
+Stage-by-stage audit
+Stage
+Input \rightarrow output
+Mathematical role
+Lossless/lossy
+Directly specified in DeepJSCC baseline?
+State normalization or range enforcement
+s_t\rightarrow \bar{s}_t
+Scale/clip each physical coordinate to a declared finite domain
+Potentially lossy if clipping occurs
+NOT SPECIFIED IN THE SOURCE
+Source quantization
+\bar{s}_t\rightarrow q_t
+Map each continuous scalar or vector to a finite index set
+Lossy
+NOT SPECIFIED IN THE SOURCE
+Bit representation
+q_t\rightarrow b_t
+Represent quantization indices as binary words
+Lossless once q_t is fixed
+NOT SPECIFIED IN THE SOURCE
+Optional source compression
+b_t\rightarrow b_t^{\prime}
+Remove statistical redundancy; JPEG/JPEG2000/BPG in image baseline
+Usually lossy for JPEG/JPEG2000/BPG
+JPEG/JPEG2000 specified for images; no vector-state equivalent specified
+Channel encoder
+b_t^{\prime}\rightarrow c_t
+Add structured redundancy for error correction
+Information-preserving at encoder; decoding may fail
+Generic LDPC/Turbo examples; practical benchmark uses LDPC
+Modulator
+c_t\rightarrow z_t\in\mathbb C^{n_{\rm dig}}
+Group bits and map them to constellation points
+Lossless before channel if mapping is one-to-one
+BPSK/4-QAM/16-QAM/64-QAM used
+AWGN/fading channel
+z_t\rightarrow y_t
+Add noise and possibly multiply by channel gain
+Stochastic impairment
+Explicitly specified
+Demodulator
+y_t\rightarrow hard bits or LLRs
+Invert constellation mapping probabilistically
+Not lossless in noise
+Generic stage specified; exact detector/LLR convention NOT SPECIFIED
+Channel decoder
+received metrics \rightarrow\hat b_t
+Exploit code redundancy
+May be correct or erroneous
+LDPC code families specified; exact decoder iteration/algorithm NOT SPECIFIED
+Source decoder/dequantizer
+\hat b_t\rightarrow\hat{s}_t
+Recover codec output or reproduction level
+Cannot reverse source quantization exactly
+JPEG/JPEG2000 decompression specified for images; vector dequantizer NOT SPECIFIED
+Controller
+\hat{s}_t\rightarrow u_t
+Navigation/control decision
+Not a communications operation
+NOT SPECIFIED IN THE LITERATURE
+
+Quantizer mathematics: what can and cannot be claimed
+A fixed-rate scalar quantizer needs a representable range. For coordinate s_i, define an engineering range
+[a_i,b_i],\qquad a_i<b_i,
+and B_i bits, giving L_i=2^{B_i} reproduction levels.
+One common endpoint-inclusive uniform quantizer is:
+\Delta_i=\frac{b_i-a_i}{2^{B_i}-1},
+q_i=
+\operatorname{clip}\left(
+\operatorname{round}\left(\frac{\operatorname{clip}(s_i,a_i,b_i)-a_i}{\Delta_i}\right),
+0,2^{B_i}-1
+\right),
+\hat{s}_i=a_i+\Delta_i q_i.
+For a non-clipped input and nearest-level rounding, the local granular error obeys
+e_i=s_i-\hat s_i,\qquad |e_i|\leq \frac{\Delta_i}{2}.
+This is a valid uniform scalar quantizer definition, but it is not specified in Bourtsoulatze et al. The paper normalizes image values to [0,1], then learns a continuous JSCC mapping; it does not quantize source pixels into a fixed B-bit state codebook.[imperial.ac]
+Alternative definitions also exist:
+A mid-rise uniform quantizer uses 2^B bins and reconstruction values near bin centres; then a common step is (b-a)/2^B, not (b-a)/(2^B-1).
+A fixed-point representation is effectively a uniform scalar representation after choosing scale, offset, signedness, and overflow/saturation rule.
+IEEE floating-point represents a number through sign, exponent, and significand; it does not provide uniform absolute precision across a declared physical interval.
+Vector quantization maps s_t to one codebook index:
+q=\arg\min_{j\in\{1,\ldots,2^B\}}\|s_t-c_j\|^2,\qquad \hat{s}_t=c_q.
+It can exploit correlation among position, velocity, and goal variables, but requires a specified trained/designed codebook and distortion criterion.
+None of scalar uniform, fixed-point, floating-point, or vector quantization is selected by the original DeepJSCC digital comparison for continuous source vectors. NOT SPECIFIED IN THE LITERATURE.
+Source-bit count
+If six scalars are independently quantized with the same fixed width B, no entropy coding, framing, or metadata, then the raw source payload is algebraically
+N_{\rm src}=kB=6B.
+This is a conditional bookkeeping identity, not a design selected by the literature.
+If each coordinate has its own bit width,
+N_{\rm src}=\sum_{i=1}^{6} B_i.
+If a vector quantizer uses one B-bit codebook index for the entire state, then
+N_{\rm src}=B,
+before framing and channel coding. If lossless entropy coding is inserted, payload length becomes variable and need not equal either expression.
+The relevant DeepJSCC paper instead treats the image dimension n as “source bandwidth” and maps it directly to k complex channel symbols; it does not establish a 4-, 8-, or 16-bit scalar representation for continuous sources.[imperial.ac]
+Therefore:
+Bit depth
+Literature status for your continuous UAV state
+Mathematical implication only
+4 bits/scalar
+NOT SPECIFIED IN THE LITERATURE
+16 levels/scalar; raw payload 24 bits if applied uniformly to six scalars
+8 bits/scalar
+NOT SPECIFIED IN THE LITERATURE
+256 levels/scalar; raw payload 48 bits
+16 bits/scalar
+NOT SPECIFIED IN THE LITERATURE
+65{,}536 levels/scalar; raw payload 96 bits
+
+The associated resolution depends on the chosen range. A 16-bit quantizer is not inherently “better” in a fair bandwidth-limited comparison because it may consume more channel uses unless code rate or modulation order changes.
+3. Coding, modulation, and bandwidth accounting
+Channel-code mathematics
+For a channel code with N_{\rm info} input bits and N_{\rm coded} coded bits,
+R_c=\frac{N_{\rm info}}{N_{\rm coded}},
+hence, for an unpunctured codeword,
+N_{\rm coded}=\frac{N_{\rm info}}{R_c}.
+If the source payload plus any outer fields is N_{\rm info}, then this is the appropriate accounting relation. The original DeepJSCC article uses LDPC code lengths:
+(4096,8192),\quad (4096,6144),\quad (2048,6144),
+where the format is (N_{\rm info},N_{\rm coded}), yielding R_c=1/2,2/3,1/3.[imperial.ac]
+However, real coded packets often instead obey:
+N_{\rm info}=N_{\rm src}+N_{\rm CRC}+N_{\rm header}+N_{\rm pad},
+R_{\rm eff}=\frac{N_{\rm src}}{N_{\rm transmitted\ coded\ bits}},
+where R_{\rm eff} differs from nominal R_c because of CRC, padding, termination, tail bits, puncturing, shortening, rate matching, pilots, headers, and retransmission policy. 3GPP’s NR coding standard, for example, explicitly treats transport blocks, CRC processing, and rate matching; it demonstrates why nominal code rate alone is not a complete practical specification.[standards.iteh]
+Channel-code candidates: evidence versus selection
+Candidate
+In relevant DeepJSCC baseline?
+Block/code-rate evidence
+Decoder evidence
+Status for your FYP
+LDPC
+Yes
+Original practical comparison: (4096,8192), (4096,6144), (2048,6144), rates 1/2,2/3,1/3
+Exact algorithm, LLR convention, maximum iterations, parity-check matrix family and stopping rule are NOT SPECIFIED IN THE SOURCE
+Strongly literature-connected candidate, but no unique configuration
+Capacity-achieving code
+Yes, only as an assumption
+Used to construct an upper bound through Shannon capacity
+Not runnable because no finite code/decoder is supplied
+Not an implementation baseline
+Turbo
+Mentioned generically
+Listed as a near-capacity code example
+No specific code, rate, or block length in the tested benchmark
+NOT SELECTED BY THE RELEVANT BASELINE
+Polar
+Mentioned in later reviews, used in standards
+No original DeepJSCC practical image-baseline configuration
+NOT SPECIFIED IN THE SOURCE
+NOT SELECTED BY THE RELEVANT BASELINE
+Convolutional
+Not used in the original practical DeepJSCC benchmark
+NOT SPECIFIED IN THE RELEVANT BASELINE
+NOT SPECIFIED
+Cannot claim this comes from DeepJSCC comparison literature
+Reed–Solomon
+Not used in the original practical DeepJSCC benchmark
+NOT SPECIFIED IN THE RELEVANT BASELINE
+NOT SPECIFIED
+Cannot claim this comes from DeepJSCC comparison literature
+
+LDPC decoding is commonly soft-input iterative belief propagation or a related message-passing/min-sum implementation, but this must not be attributed to Bourtsoulatze et al. without identifying the actual LDPC implementation. The paper gives code dimensions and rate alternatives, not a decoder algorithm or complexity count.[imperial.ac]
+Modulation and symbol count
+For an M-ary constellation with a one-to-one binary label,
+m=\log_2 M
+coded bits label each modulation symbol. Thus:
+Modulation
+M
+m=\log_2M coded bits/complex symbol
+BPSK
+2
+1
+QPSK / 4-QAM
+4
+2
+16-QAM
+16
+4
+64-QAM
+64
+6
+
+If the coded-bit count is a multiple of m, then
+n_{\rm dig}=\frac{N_{\rm coded}}{\log_2 M}
+complex modulation symbols are emitted. Under the standard discrete-time complex-baseband model where one constellation symbol occupies one symbol interval, this is also the number of complex channel uses.
+If divisibility does not hold, then a framing/padding/rate-matching convention is needed:
+n_{\rm dig}=\left\lceil\frac{N_{\rm coded}}{\log_2M}\right\rceil.
+The original DeepJSCC paper’s actual practical comparison combines the listed LDPC codes with BPSK, 4-QAM, 16-QAM, and 64-QAM. It does not report a single universal mapping label, Gray-coding choice, constellation coordinate formula, or soft-demapper equation. Gray labeling and exact scaling are NOT SPECIFIED IN THE SOURCE.[imperial.ac]
+A common unit-average-energy square-QAM normalization is
+\mathbb{E}[|X|^2]=1,
+but that specific QAM coordinate scaling cannot be claimed as the original paper’s exact digital-baseline implementation. The paper does state that its experiments set average signal power to P=1, and that for explicitly modulated benchmark schemes, P denotes average constellation-symbol power.[imperial.ac]
+Budget equation and fair matching
+For a fixed-length quantize–code–modulate chain with no source compression beyond scalar quantization:
+N_{\rm src}=6B,
+N_{\rm coded}=\frac{N_{\rm info}}{R_c},
+n_{\rm dig}
+=\frac{N_{\rm coded}}{\log_2M}
+=\frac{N_{\rm info}}{R_c\log_2M}.
+If N_{\rm info}=6B exactly, then
+n_{\rm dig}=\frac{6B}{R_c\log_2M}.
+This is a derived accounting identity, not an exact baseline equation stated for UAV states in the literature.
+To impose the same nominal complex-symbol budget as a DeepJSCC encoder output z_t\in\mathbb C^n, a frozen digital design would need to satisfy
+n_{\rm dig}=n
+or explicitly document its rounding/framing surplus. Equivalently, ignoring overhead and integrality,
+N_{\rm info}=nR_c\log_2M.
+This equation shows why B, R_c, and M cannot be chosen independently under fixed n.
+Real-versus-complex dimension: resolved
+The original paper defines:
+x\in\mathbb{R}^{n_{\rm source}},
+\qquad
+z\in\mathbb{C}^{k_{\rm channel}},
+and calls
+\frac{k_{\rm channel}}{n_{\rm source}}
+the bandwidth compression ratio. It treats the real and imaginary parts of each complex element z_i as transmitted on the I and Q components, while still counting z_i as one complex channel-input sample/channel use.[imperial.ac]
+For your notation, do not reuse n for both state dimension and channel uses. Use, for example:
+d_s=6,\qquad z_t\in\mathbb{C}^{n_{\rm ch}}.
+Then the direct analogue of the original DeepJSCC convention is
+\rho_{\rm DeepJSCC}=\frac{n_{\rm ch}}{d_s}=\frac{n_{\rm ch}}{6}.
+There is no extra factor of two if both systems are budgeted in complex channel uses:
+n_{\rm DeepJSCC}=n_{\rm digital}.
+There is a factor of two if you change the accounting unit from complex uses to real dimensions:
+n_{\rm real\ dimensions}=2n_{\rm complex\ uses}.
+The important rule is not “always use a factor of two”; it is “never compare one method in complex uses and the other in real dimensions.” The original paper’s k/n convention uses real source dimensions in the denominator and complex channel uses in the numerator.[imperial.ac]
+4. Channel models, state recovery, and controller fairness
+AWGN: exact DeepJSCC convention
+The 2019 journal article defines:
+\hat z=z+n,
+\qquad
+n\sim\mathcal{CN}(0,\sigma^2 I_k),
+with average transmit-power constraint
+\frac{1}{k}\mathbb{E}[z^\ast z]\le P,
+and channel SNR
+\mathrm{SNR}=10\log_{10}\left(\frac{P}{\sigma^2}\right)\ {\rm dB}.
+It sets P=1 in experiments. For explicitly modulated digital baselines, P is the average constellation-symbol power.[imperial.ac]
+This is a complex-baseband SNR per complex symbol convention.
+For a coded M-ary scheme with m=\log_2M, nominal code rate R_c, average symbol energy E_s=P, and no overhead,
+E_b^{\rm coded\ bit}=\frac{E_s}{m},
+E_b^{\rm information\ bit}=\frac{E_s}{R_cm},
+so
+\frac{E_s}{N_0}
+=
+R_cm\frac{E_b^{\rm information\ bit}}{N_0}.
+Consequently,
+\left(\frac{E_b}{N_0}\right)_{\rm info,dB}
+=
+\left(\frac{E_s}{N_0}\right)_{\rm dB}
+-10\log_{10}(R_c\log_2M).
+This relation must be adjusted if effective rate includes CRC, padding, pilots, headers, or non-integer symbol packing. General modulation references likewise identify E_s/E_b=\log_2M before coding; the code rate inserts the additional R_c factor when energy is referenced to information bits.[ocw.uc3m]
+Slow Rayleigh fading: exact DeepJSCC convention
+The original journal article uses:
+\hat z=hz+n,
+h\sim\mathcal{CN}(0,H_c),
+\qquad
+n\sim\mathcal{CN}(0,\sigma^2I_k).
+For the slow-fading experiment:
+h is sampled once per image/frame.
+The same h remains constant during transmission of that whole image.
+A new independent h is sampled for the next image/frame.
+H_c=1.
+Neither transmitter nor receiver is assumed to have CSI.
+No pilot signals are transmitted.
+The average SNR is
+10\log_{10}\left(\frac{\mathbb E[|h|^2]P}{\sigma^2}\right).
+The term “Rayleigh” refers to the amplitude |h| when h is circular complex Gaussian. [imperial.ac]
+For DeepJSCC, no explicit equalizer is included: the neural decoder receives the faded/noisy signal and is trained over this model. The paper suggests that it can implicitly learn channel adaptation/estimation.[imperial.ac]
+For a conventional coherent digital receiver, however, practical demodulation and soft LDPC decoding normally require a channel estimate and an equalization/detection rule, for example
+\tilde y=\frac{y}{h}=x+\frac{n}{h}
+for ideal zero-forcing equalization when h\neq 0. But the original DeepJSCC practical LDPC–QAM benchmark is reported for AWGN, not as a fully specified coherent LDPC/QAM Rayleigh baseline. Its fading “digital” comparison is instead a capacity/outage upper-bound construction that assumes the receiver knows the realization. Therefore:
+Conventional fading CSI assumption: NOT SPECIFIED IN THE PRACTICAL DEEPJSCC DIGITAL BASELINE.
+Pilot structure: NOT SPECIFIED IN THE LITERATURE.
+Equalizer type: NOT SPECIFIED IN THE LITERATURE.
+Pilot overhead in bandwidth matching: NOT SPECIFIED IN THE LITERATURE.
+BER, BLER, packet error, and task metrics
+For transmitted bits b_\ell and recovered bits \hat b_\ell,
+\mathrm{BER}
+=
+\frac{1}{N_{\rm bits}}
+\sum_{\ell=1}^{N_{\rm bits}}
+\mathbf{1}\{b_\ell\neq \hat b_\ell\}.
+For N_{\rm blk} channel-code blocks,
+\mathrm{BLER}
+=
+\frac{1}{N_{\rm blk}}
+\sum_{j=1}^{N_{\rm blk}}
+\mathbf{1}\{\hat{\mathbf b}^{(j)}\neq \mathbf b^{(j)}\}.
+Packet error rate is the same form when “block” is defined as an application packet/frame; symbol error rate is
+\mathrm{SER}
+=
+\frac{\#\{\text{incorrect detected constellation symbols}\}}
+{\#\{\text{transmitted constellation symbols}\}}.
+BER/BLER are meaningful for the digital baseline because it has an explicit bitstream, coded block, and constellation decisions.
+Original unconstrained DeepJSCC has neither a source-bit stream nor a conventional coded-block decision. Therefore, it should not be assigned BER/BLER merely for symmetry. Its appropriate end-to-end outputs are source reconstruction error and navigation/task metrics. The original paper evaluates image reconstruction using MSE/PSNR, not BER, for DeepJSCC.[imperial.ac]
+For a UAV study, a defensible metric split is:
+Layer
+Digital baseline
+Reconstruction DeepJSCC
+Task-oriented DeepJSCC
+Physical/link diagnostics
+BER, SER, BLER, outage rate where applicable
+Channel SNR; optional latent/power diagnostics
+Channel SNR; optional latent/power diagnostics
+State-level quality
+\|s_t-\hat s_t\|^2, componentwise errors
+Same
+Optional, if \hat s_t is defined
+Task-level quality
+Success rate, final goal error, collision/constraint violations, cumulative control cost, episode length
+Same
+Same
+
+The task-level metrics must be common across all three methods. BER is a supplemental digital-link diagnostic, not a common task metric.
+State recovery and controller input
+For the proposed scalar quantizer, the digital recovery sequence would be:
+\hat b_t
+\rightarrow
+\hat q_t
+\rightarrow
+\hat{s}_t=Q^{-1}(\hat q_t)
+\rightarrow
+\pi(\hat{s}_t)
+\rightarrow
+u_t.
+For endpoint-inclusive uniform reconstruction,
+\hat{s}_{i,t}=a_i+\Delta_i\hat q_{i,t},
+followed, if desired, by saturation to [a_i,b_i].
+This is a valid derived digital-system construction. The original DeepJSCC paper has the analogous source-decoder relationship “decoded compressed bitstream \rightarrow JPEG/JPEG2000 decompression \rightarrow\hat{x},” but does not write Q^{-1}(\hat b) for state vectors.[imperial.ac]
+Same controller: fairness classification
+Using the same controller/policy \pi after each method’s received representation is a sensible experimental approach only if the controller’s input space is identical.
+Digital and reconstruction DeepJSCC naturally fit:
+\pi(\hat{s}_t).
+A task-oriented representation r_t may have a different dimension and semantics:
+\pi(r_t).
+Thus, claiming “the exact same controller” is only valid if r_t is deliberately defined to have the same interface as \hat{s}_t, or if \pi is a shared architecture trained/evaluated under an explicitly matched representation contract.
+Whether one frozen controller should be reused, retrained per method, or co-trained end-to-end is a PROJECT-SPECIFIC FAIRNESS DESIGN CHOICE. The DeepJSCC image paper has no navigation controller; the task-oriented edge-inference work does not establish a closed-loop UAV-controller fairness rule.[imperial.ac][linkedin]
+5. Candidates, extraction table, and unresolved parameters
+Possible complete baseline candidates
+These are evidence-based candidate families, not recommendations or rankings.
+Candidate
+Literature-supported elements
+Communication budget
+What is directly comparable
+What remains unspecified
+A. Capacity-separated reference
+JPEG/JPEG2000 plus capacity-achieving coded-modulation assumption
+In original paper: R_{\max}=(k/n)C, C=\log_2(1+\mathrm{SNR}) for complex AWGN
+Useful only as an optimistic analytic separated-system reference
+No finite code, no code block, no modulation, no state quantizer, no vector-state source codec; not runnable as a baseline
+B. Practical DeepJSCC-image-style digital chain
+Source codec \rightarrow LDPC (4096,8192), (4096,6144), or (2048,6144) \rightarrow BPSK/4-QAM/16-QAM/64-QAM
+n_{\rm dig}=N_{\rm coded}/\log_2M complex symbols before framing overhead
+This is the closest practical separated digital family to the original DeepJSCC comparison
+Replacing JPEG/JPEG2000 by state quantization is not provided; choice among code/modulation combinations, LDPC matrix/decoder, quantizer, and state framing are unspecified
+C. Finite-alphabet neural JSCC comparator
+DeepJSCC-Q with a prescribed finite constellation
+Still transmits a fixed number of complex channel inputs
+Addresses fairness when a hardware/protocol constellation constraint matters
+Not a conventional quantize–channel-code–QAM digital baseline; it does not solve your requested conventional comparison
+D. Fading capacity/outage reference
+Slow Rayleigh channel with separated digital system designed at average SNR; outage when instantaneous capacity is insufficient
+Uses an average-SNR capacity construction rather than a practical finite-block transmission chain
+Analytically aligned with the original paper’s fading figure
+No actual LDPC/QAM receiver, CSI/pilot/equalizer, outage protocol, or state quantizer
+
+The original paper’s AWGN capacity benchmark is:
+n_{\rm source}R \le k_{\rm channel} C,
+R_{\max}=\frac{k_{\rm channel}}{n_{\rm source}}C,
+C=\log_2(1+\mathrm{SNR})
+for the complex AWGN convention used there. It calls this an upper bound and explicitly notes that finite blocklengths generally cannot achieve that capacity.[imperial.ac]
+Final implementation extraction table
+Component
+Literature-supported definition
+Source
+Project-specific parameter?
+Quantizer
+Conventional pipeline contains a source encoder; DeepJSCC image baselines use JPEG/JPEG2000/BPG-type image source coding, not state scalar quantization
+Bourtsoulatze et al., Sec. II and Fig. 1(a)
+Yes — state quantizer type is NOT SPECIFIED IN THE LITERATURE
+Bits/scalar
+No B-bits-per-continuous-state-scalar rule is given
+Relevant DeepJSCC papers
+Yes — NOT SPECIFIED IN THE LITERATURE
+Source bits
+For a chosen fixed-width scalar representation, N_{\rm src}=\sum_iB_i; if six equal-width scalars, N_{\rm src}=6B
+Derived bookkeeping, not a paper-specific UAV formulation
+Yes
+Channel code
+Practical image comparison uses LDPC; capacity benchmark assumes an ideal capacity-achieving code
+Bourtsoulatze et al., Sec. IV-B
+Yes — exact LDPC construction/decoder is NOT SPECIFIED
+Code rate
+Tested LDPC rates: 1/2,2/3,1/3
+Bourtsoulatze et al., Sec. IV-B
+Yes — no unique rate selected
+Coded bits
+N_{\rm coded}=N_{\rm info}/R_c for unpunctured nominal coding
+Standard code-rate definition; code dimensions reported in Bourtsoulatze et al.
+Yes — CRC/padding/puncturing/rate matching unspecified
+Modulation
+BPSK, 4-QAM, 16-QAM, 64-QAM tested
+Bourtsoulatze et al., Sec. IV-B
+Yes — no unique choice selected
+Bits/symbol
+m=\log_2M
+Standard modulation relation
+No, once M is selected
+Channel uses
+n_{\rm dig}=N_{\rm coded}/\log_2M complex symbols if packed exactly
+Derived from coded-bit grouping; consistent with the paper’s complex symbol model
+Yes — padding/framing/pilot accounting unspecified
+AWGN
+\hat z=z+n,\;n\sim\mathcal{CN}(0,\sigma^2I)
+Bourtsoulatze et al., Sec. III
+No for that model; yes if selecting a different convention
+Rayleigh
+\hat z=hz+n,\;h\sim\mathcal{CN}(0,H_c), frame-constant slow fading, H_c=1 in experiment
+Bourtsoulatze et al., Sec. IV-A
+Yes — whether to adopt this for your baseline is a study choice
+CSI
+DeepJSCC fading experiment assumes no transmitter or receiver CSI and no pilots
+Bourtsoulatze et al., Sec. IV-A
+Yes — practical digital fading CSI is NOT SPECIFIED
+Equalization
+No explicit equalizer in DeepJSCC; fading digital upper bound inherently assumes receiver channel realization knowledge
+Bourtsoulatze et al., Sec. IV-A
+Yes — NOT SPECIFIED IN THE LITERATURE
+SNR
+\mathrm{SNR}=10\log_{10}(P/\sigma^2), P=1 in experiments
+Bourtsoulatze et al., Eq. (5)
+No for matched replication; yes for E_b/N_0 reporting convention
+BER
+Bit-error fraction for a bit-based system
+Standard link metric
+Yes — report for digital baseline; not naturally defined for continuous DeepJSCC
+BLER
+Incorrect decoded code-block fraction
+Standard link metric
+Yes — block/packet definition is NOT SPECIFIED
+Dequantization
+Source decoder reverses the selected source representation; no scalar state reconstruction equation given
+Fig. 1(a) and Sec. II of Bourtsoulatze et al.
+Yes — NOT SPECIFIED IN THE LITERATURE
+Controller input
+Original paper ends at source reconstruction; no controller
+Bourtsoulatze et al.
+Yes — NOT SPECIFIED IN THE LITERATURE
+
+Literature-supported fairness requirements
+Use the same channel model and the same stated SNR convention when comparing systems.
+Use the same average transmit-power convention. The original paper uses P=1 and measures SNR as P/\sigma^2.[imperial.ac]
+State the channel-use budget in the same unit. In the primary DeepJSCC convention, this is complex channel uses k, not unlabelled “dimensions.”[imperial.ac]
+Compare end-to-end source/task output under the same channel conditions, rather than declaring a digital method “better” using BER alone and a DeepJSCC system “better” using reconstruction alone.
+Do not present a finite-length practical digital implementation as capacity achieving. The primary paper distinguishes its practical LDPC/QAM experiments from its capacity upper bound and notes finite-blocklength limitations.[imperial.ac]
+Project-specific experimental controls
+The following are sensible controls, but are PROJECT-SPECIFIC EXPERIMENTAL CONTROLS, not a complete list imposed by any cited DeepJSCC paper:
+Same source-state sequence s_t.
+Same initial UAV state and goal state.
+Same plant dynamics, action bounds, disturbances, and collision model.
+Same episode horizon and termination criteria.
+Same nominal complex channel-use budget per state/message.
+Same average transmit power.
+Same AWGN sample or same block-fading realization per paired episode, if using paired Monte Carlo comparisons.
+Same SNR grid and same SNR definition.
+Same number of test episodes and random seeds.
+Same controller interface, or a clearly documented alternative fairness protocol for r_t.
+Same navigation metrics: success, safety violation, final position error, path/control cost, and time-to-goal.
+Common source/state reconstruction metrics where a reconstructed state exists.
+Separate reporting of digital BER/BLER rather than treating it as a common metric.
+Still Unspecified / Cannot Be Determined From Literature
+Quantization bits per scalar: NOT SPECIFIED IN THE LITERATURE.
+Physical range [a_i,b_i] for x,y,v_x,v_y,x_g,y_g: NOT SPECIFIED IN THE LITERATURE.
+Whether out-of-range UAV states clip, wrap, signal overflow, or rescale dynamically: NOT SPECIFIED IN THE LITERATURE.
+Uniform scalar versus fixed-point versus floating-point versus vector quantization: NOT SPECIFIED IN THE LITERATURE.
+State-vector bit ordering and endianness: NOT SPECIFIED IN THE LITERATURE.
+Entropy coding of quantizer outputs: NOT SPECIFIED IN THE LITERATURE.
+A unique source-bit payload N_{\rm src}: NOT SPECIFIED IN THE LITERATURE.
+A unique LDPC parity-check matrix or standard profile: NOT SPECIFIED IN THE LITERATURE.
+LDPC decoder algorithm, LLR scaling, iteration count, stopping criterion, and complexity: NOT SPECIFIED IN THE LITERATURE.
+Whether LDPC uses CRC, shortening, puncturing, interleaving, rate matching, or padding: NOT SPECIFIED IN THE LITERATURE.
+A unique code rate: NOT SPECIFIED IN THE LITERATURE. The original paper investigates 1/3, 1/2, and 2/3, rather than choosing a universal rate.
+A unique modulation order: NOT SPECIFIED IN THE LITERATURE. The original paper investigates BPSK, 4-QAM, 16-QAM, and 64-QAM.
+Gray labeling and exact constellation scaling for the original practical digital baseline: NOT SPECIFIED IN THE SOURCE.
+Digital packet/frame segmentation for one 6-D state versus multiple states per codeword: NOT SPECIFIED IN THE LITERATURE.
+Whether a channel-codeword is permitted to span several control time steps: NOT SPECIFIED IN THE LITERATURE.
+Latency/deadline handling when a selected LDPC block exceeds one control interval: NOT SPECIFIED IN THE LITERATURE.
+How rounding/padding affects exact equality of n_{\rm dig} and DeepJSCC n_{\rm ch}: NOT SPECIFIED IN THE LITERATURE.
+Whether pilot channel uses count inside the communication budget for a coherent digital Rayleigh receiver: NOT SPECIFIED IN THE LITERATURE.
+Digital receiver CSI assumption under Rayleigh fading: NOT SPECIFIED IN THE PRACTICAL DEEPJSCC DIGITAL BASELINE.
+Equalization rule under Rayleigh fading: NOT SPECIFIED IN THE LITERATURE.
+Whether to report P/\sigma^2, E_s/N_0, coded-bit E_b/N_0, or information-bit E_b/N_0 as the main SNR axis: NOT SPECIFIED IN THE LITERATURE.
+UAV state normalization used before DeepJSCC encoding: NOT SPECIFIED IN THE LITERATURE.
+UAV controller \pi, its training, and its input representation: NOT SPECIFIED IN THE LITERATURE.
+Whether the same frozen controller must be used for digital, reconstruction DeepJSCC, and task-oriented DeepJSCC: PROJECT-SPECIFIC FAIRNESS DESIGN CHOICE.
+Whether task-oriented representation r_t must equal the reconstructed state dimension: NOT SPECIFIED IN THE LITERATURE.
+UAV task loss, goal-reaching criterion, collision model, and dynamics: NOT SPECIFIED IN THE LITERATURE.
+The defensible next document for your FYP is therefore a separate, explicitly labelled frozen project specification. It should state every unresolved choice above and derive the chosen digital payload, codeword structure, modulation symbols, and complex-use budget exactly. That document may use the literature-supported chain and equations here, but it must not describe its newly selected values as if they were uniquely prescribed by DeepJSCC literature.
+
+
+============================================================
+
+=== SOURCE FILE: 08-training-evaluation-protocol.txt ===
+
+Prompt 8 — Training + Evaluation Protocol Verification
+I am implementing an FYP titled:
+“Task-Oriented Deep Joint Source-Channel Coding for UAV Navigation Under Noisy and Fading Wireless Channels.” 
+
+https://www.perplexity.ai/search/47c5abb9-a463-43b1-82ce-255a1b04035a
+
+Based on the literature review and established ML experimental practice, here is the verified training and evaluation protocol for your FYP.
+A. Overall Training/Evaluation Structure
+Which components require training:
+Conventional Digital: None (fixed algorithmic blocks: quantizer, channel codec, modulator). [Standard practice]
+Reconstruction DeepJSCC: Encoder $f_\theta$ and Decoder $g_\phi$ neural networks. [Directly specified by Bourtsoulatze et al. (2019), Kurka & Gündüz (2021)]
+Task-Oriented DeepJSCC: Encoder $f_\theta$, Decoder $g_\phi$, and potentially the downstream controller $\pi$ if end-to-end trained. [Directly specified by Diao et al. (2024, 2025)]
+Data usage:
+Training: Used to update neural network weights via gradient descent.
+Validation: Used for hyperparameter tuning (e.g., learning rate, early stopping) and model checkpoint selection. Never used for final performance reporting. [Standard practice]
+Testing: Used only once after final model selection to report unbiased performance metrics. [Standard practice]
+Test Episode Consistency:
+Requirement: All three methods must be evaluated on the exact same set of test episodes (same initial states, same goals, same channel realizations). This ensures a paired comparison that isolates the communication method as the only variable. [Standard practice]
+Recommended Pipeline:
+Episode Generation: Generate a large pool of independent navigation episodes.
+Split: Partition episodes into Train (e.g., 70%), Validation (e.g., 15%), Test (e.g., 15%).
+Training: Train models on Train set; monitor Validation loss for early stopping/checkpointing.
+Model Selection: Select the best checkpoint based on Validation performance.
+Final Evaluation: Run the selected models on the frozen Test set.
+B. UAV Episode/Data Generation
+Structure:
+Recommendation: Option 2 (Complete navigation episodes/trajectories).
+Reasoning: DeepJSCC is evaluated on its ability to support a closed-loop task. Independent state vectors (Option 1) ignore temporal correlation and control dynamics. Task-oriented communication (Diao et al.) explicitly optimizes for the success of a trajectory or sequence of actions, not just single-step reconstruction. [Supported by Diao et al. (2024, 2025) which use trajectory/control losses over time steps.]
+Training Sample Content:
+A single training step for the communication system typically processes a batch of state vectors $s_t$ (or images) at a specific time $t$.
+However, the loss function aggregates error over the episode or uses the state transition $(s_t, u_t, s_{t+1})$ to compute task success.
+Specific Structure: For Task-Oriented training, the sample is effectively the episode sequence ${s_0, s_1, \dots, s_T}$ and actions ${u_0, \dots, u_{T-1}}$, as the loss (e.g., goal-reaching error) depends on the cumulative effect of communication errors over time. [Project-specific design choice, aligned with Diao et al. control loops.]
+C. Initial and Goal Position Generation
+Best Practices:
+Randomization: Start positions ($p_{start}$) and Goal positions ($p_{goal}$) should be sampled uniformly within a defined operational area (e.g., a 2D square region). [Standard practice]
+Distance Constraints:
+Minimum Distance: Enforce $|p_{start} - p_{goal}| \ge d_{min}$ (e.g., 5–10 meters) to prevent trivial "already there" episodes.
+Maximum Distance: Enforce $|p_{start} - p_{goal}| \le d_{max}$ to ensure the goal is reachable within the episode time limit $T$ given max velocity $v_{max}$.
+Velocity Initialization: Typically $v_0 = $ (hovering start) for simplicity, or sampled from a low-velocity distribution. [Project-specific design choice][0]
+Literature Note: Specific values for $d_{min}, d_{max}$ are rarely universal constants in communication papers; they are simulation parameters. You must define these based on your UAV kinematic limits ($v_{max}, u_{max}$) and episode length $T$. [Project-specific design choice]
+D. Navigation Controller During Dataset Generation
+Controller Definition:
+Fixed Controller: Use a fixed, lightweight controller (e.g., PD or PID) for all methods during evaluation to ensure fairness. The controller should take the received/reconstructed state $\hat{s}_t$ (or task representation) as input and output control $u_t$. [Standard practice]
+Training Architecture:
+Reconstruction DeepJSCC: Train $f_\theta, g_\phi$ to minimize $|s_t - \hat{s}_t|^2$. The controller is not part of the training loop (open-loop communication training). [Directly specified by Bourtsoulatze et al. (2019)]
+Task-Oriented DeepJSCC: Train $f_\theta, g_\phi$ (and optionally controller parameters) to minimize a task loss (e.g., goal error). The controller must be differentiable (or use a surrogate) to backpropagate gradients through the loop: $s_t \to \text{Channel} \to \hat{s}t \to \text{Controller} \to u_t \to s{t+1}$. [Directly specified by Diao et al. (2024, 2025)]
+Isolation: The controller logic (gains, structure) must remain identical across Conventional, Reconstruction, and Task-Oriented evaluations. Only the input to the controller (quantized vs. reconstructed vs. task-feature) changes. [Standard practice]
+E. Train / Validation / Test Split
+Strategy:
+Split Unit: Split by episodes, not by individual state vectors.
+Reasoning: States within a trajectory are temporally correlated ($s_{t+1}$ depends on $s_t$). Splitting states randomly would cause data leakage (training on $s_t$ and testing on $s_{t+1}$ from the same episode), inflating performance. [Standard practice]
+Protocol: Generate $N$ episodes. Assign indices $0 \dots 0.7N$ to Train, $0.7N \dots 0.85N$ to Val, $0.85N \dots N$ to Test. [Standard practice]
+F. Test Set Isolation
+Handling:
+Frozen: Test episodes must be generated once with a fixed seed and saved (or regenerated with the same seed).
+No Tuning: No hyperparameters, model checkpoints, or algorithm choices may be selected based on Test performance. [Standard practice]
+Implementation: In code, generate test_seeds at the start of the project and hardcode them. Use a separate eval_loop that loads the final model and runs only on this set. [Standard practice]
+G. Random Seeds
+Best Practice:
+Seeds to Set: Python random, NumPy np.random, PyTorch torch.manual_seed, and CUDA torch.cuda.manual_seed_all. Enable torch.backends.cudnn.deterministic = True if reproducibility is critical (note: may impact performance). [Standard practice]
+Number of Seeds: 3 independent training runs (different initialization seeds) is the minimum acceptable for an FYP to show variance. [Standard practice]
+Statistical Certainty: 3 seeds provide a rough estimate of stability but do not provide statistical certainty. If computationally feasible, 5–10 seeds are preferable for tighter confidence intervals. [Standard practice]
+H. Seed Separation
+Distinction:
+Training Seed: Controls weight initialization, batch shuffling, and training channel noise realizations.
+Evaluation Seed: Controls test episode generation (start/goal positions) and test channel noise realizations.
+Reuse: Yes, the exact same test channel realizations (noise vectors $n$) should be reused across all three methods for each test episode. This creates a paired comparison (Method A vs. Method B on the same noise instance), reducing variance and increasing statistical power. [Standard practice]
+I. Training SNR Strategy
+Strategies in Literature:
+Strategy 1 (One model per SNR): Original DeepJSCC (Bourtsoulatze et al., 2019) often trained separate models for specific SNRs (e.g., 0dB, 5dB, 10dB) to maximize performance at that point. [Directly specified by Bourtsoulatze et al. (2019)]
+Strategy 2/3 (SNR Range / Random SNR): Later works (Kurka & Gündüz, 2021; Xu et al., 2022) introduced SNR-adaptive training where SNR is sampled randomly per batch (e.g., $SNR \sim \mathcal{U}$ dB). This creates a single robust model that degrades gracefully. [Directly specified by Kurka & Gündüz (2021), Xu et al. (2022)][0][cs.utexas]
+Recommendation:
+For FYP: Use Strategy 2 (SNR Range) for the main proposed method to demonstrate robustness (a key DeepJSCC benefit).
+For Baselines: You may train Reconstruction DeepJSCC at specific SNRs if you want to show the "best case" for that baseline, but a single SNR-range model is fairer for comparison. [Project-specific design choice]
+J. Test SNR Strategy
+Evaluation:
+Fixed Values: Test SNR values (e.g., ${-5, 0, 5, 10, 15, 20}$ dB) must be fixed in advance.
+Mismatch: Models trained on an SNR range (e.g., 0–20 dB) can be evaluated at any SNR within or slightly outside that range. Models trained at a single SNR (e.g., 10 dB) will show the "cliff effect" when tested far from 10 dB.
+Reporting: Report performance across the full test SNR range to show the SNR-vs-Performance curve. [Standard practice]
+K. AWGN vs Rayleigh Training
+Conditions:
+Separate Models: It is scientifically cleanest to train separate models for AWGN and Rayleigh fading, as the channel statistics differ significantly. [Standard practice]
+Mixed-Channel: Training on a mix of AWGN and Rayleigh is possible (domain randomization) but may lower peak performance on either specific channel. [Project-specific design choice]
+Cross-Channel Ablation: Evaluating an AWGN-trained model on a Rayleigh channel (and vice versa) is a valid and meaningful ablation to test robustness to channel mismatch. [Supported by Bourtsoulatze et al. (2019) which test on fading channels.]
+L. Channel-Matched vs Cross-Channel Evaluation
+Protocol:
+Matched (AWGN?AWGN, Rayleigh?Rayleigh): Measures peak performance under expected conditions.
+Cross-Channel (AWGN?Rayleigh, Rayleigh?AWGN): Measures robustness/generalization. A significant drop indicates the model overfit to specific channel statistics (e.g., learned to ignore phase in AWGN but fails when phase rotates in Rayleigh). [Standard practice]
+M. Bandwidth / Channel-Use Ratio
+Definition:
+Formula: $\rho = k/n$, where $k$ is channel uses (complex symbols) and $n$ is source dimensions. [Directly specified by Bourtsoulatze et al. (2019), Kurka & Gündüz (2021)]
+Note: Some papers define compression ratio as $n/k$. Ensure consistency. We use $\rho = k/n$ (channel uses per source dimension).
+Experimental Values:
+Examples: DeepJSCC papers typically use $\rho \in {1/6, 1/4, 1/3, 1/2}$. [Directly specified by Kurka & Gündüz (2021)]
+Recommendation: Choose at least three ratios, e.g., $\rho \in {1/6, 1/3, 1/2}$, to show performance scaling with bandwidth. [Project-specific design choice based on literature ranges]
+N. Fair Matching of Bandwidth Across Methods
+Critical Requirement:
+Channel Uses: All methods must use the exact same number of channel uses $k$ per state transmission.
+Conventional Digital: If state dimension is $n=6$ (floats), and you use 16-bit quantization, source bits = $6 \times 16 = 96$ bits. With QPSK (2 bits/symbol), channel uses $k = 96/2 = 48$ symbols.
+DeepJSCC: Output layer of encoder must produce exactly $k=48$ complex numbers.
+Validity: Comparing "neural outputs" directly with "QAM symbols" is valid provided both are complex-valued channel inputs satisfying the same power constraint and count $k$. [Standard practice]
+O. Conventional Digital Baseline Resource Budget
+Design Decisions:
+Quantization: 16-bit or 32-bit float. 16-bit is standard for "digital" baseline in DeepJSCC comparisons. [Standard practice]
+Channel Code: Use a capacity-approaching code (e.g., Polar, LDPC, or Turbo). If implementing a full codec is too complex, a theoretical capacity bound (Shannon limit) is often used in DeepJSCC papers as the "ideal digital" baseline. [Directly specified by Bourtsoulatze et al. (2019) which compare against BPG+LDPC and BPG+Capacity]
+Modulation: QPSK or 16-QAM. Match the spectral efficiency to ensure $k$ matches DeepJSCC.
+Project-Specific: If you cannot implement a full LDPC/Polar codec, explicitly state you are using a theoretical capacity bound or a simple block code (e.g., Hamming) with a note on the sub-optimality. [Project-specific design choice]
+P. Reconstruction-DeepJSCC Training
+Objective:
+Loss: $\mathcal{L}_{rec} = |s_t - \hat{s}_t|_2^2$ (MSE). [Directly specified by Bourtsoulatze et al. (2019)]
+Normalization: State variables ($x, y, v_x, v_y$) must be normalized (e.g., to $$ or zero-mean unit-variance) before training to ensure balanced gradients. [Standard practice][0][1]
+Weighting: If dimensions have vastly different scales (e.g., position in meters vs. velocity in m/s), normalization handles this. Do not manually weight unless physical justification exists. [Standard practice]
+Q. Task-Oriented DeepJSCC Training
+Objective:
+Loss: Diao et al. (2024, 2025) use a task-specific loss, e.g., action error $|a - \hat{a}|^2$ or trajectory error. For navigation, a suitable loss is the final goal error $|p_T - p_{goal}|^2$ or a cumulative control cost. [Directly specified by Diao et al. (2024, 2025)]
+Transfer: You cannot directly use "driving score" from Diao's autonomous driving. You must define a navigation success metric (e.g., distance to goal at $T$) and use it (or a differentiable surrogate) as the loss. [Project-specific design choice based on Diao et al. methodology]
+R. Differentiability of Navigation Objective
+Differentiation:
+Requirement: To train end-to-end, the entire loop $s_t \to \text{Channel} \to \hat{s}t \to \text{Controller} \to u_t \to s{t+1}$ must be differentiable.
+Controller: Must be a differentiable function (e.g., a small MLP or a differentiable PD controller). [Directly specified by Diao et al. (2024, 2025)]
+Dynamics: The UAV kinematic equations ($p_{t+1} = p_t + v_t \Delta t$) are naturally differentiable.
+Surrogate: If the true metric (e.g., "Success: 1 if dist < threshold") is non-differentiable, train using a differentiable proxy (e.g., MSE to goal) and evaluate using the true metric. [Standard practice]
+S. Episode Length and Time Horizon
+Parameters:
+Timestep $\Delta t$: Typical simulation steps are 0.1s or 0.05s. [Project-specific design choice]
+Max Length $T$: Must be long enough for the UAV to reach the goal at max velocity. $T \ge d_{max} / (v_{max} \Delta t)$. [Project-specific design choice]
+Limits: Velocity and acceleration limits should reflect realistic UAV kinematics (e.g., $v_{max} = 5$ m/s, $u_{max} = 2$ m/s²). [Project-specific design choice]
+T. Validation and Model Selection
+Metric:
+Reconstruction DeepJSCC: Select checkpoint with lowest Validation Reconstruction MSE. [Standard practice]
+Task-Oriented DeepJSCC: Select checkpoint with best Validation Task Performance (e.g., lowest goal error or highest success rate on val episodes). [Standard practice]
+U. Avoiding Test-Set Leakage
+Checklist:
+Test seeds fixed and hardcoded.
+No hyperparameter tuning on test set.
+No normalization statistics (mean/std) computed on test set (compute on Train only).
+Test episodes disjoint from Train/Val episodes (no overlapping trajectories).
+Final model selected solely on Validation performance. [Standard practice]
+V. Statistical Reporting
+Reporting:
+Format: Report Mean ± Standard Deviation across the independent test episodes (and across training seeds if multiple). [Standard practice]
+Confidence Intervals: For Success Rate (Bernoulli), use 95% Binomial Confidence Intervals (e.g., Wilson score interval). For continuous metrics (Error), use 95% t-interval. [Standard practice]
+W. Statistical Significance
+Testing:
+Appropriateness: Yes, significance testing adds rigor.
+Tests: Use paired t-tests (for continuous metrics) or McNemar's test (for success rates) since methods are evaluated on the same episodes.
+Multiple Comparisons: If testing many SNR points, apply a correction (e.g., Bonferroni) or report p-values with caution. [Standard practice]
+X. Paired Evaluation
+Synchronization:
+Why: Paired evaluation (same episodes, same noise) reduces variance caused by "easy" vs "hard" episodes, making it easier to detect true differences between methods.
+How: Use the same random seed for episode generation and channel noise generation for all three methods during the test phase. [Standard practice]
+Y. Number of Test Episodes
+Stability:
+Recommendation: 100 to 500 episodes is typical for stable success rate estimation.
+Analysis: Perform a pilot run: plot the cumulative mean success rate vs. number of episodes. If the curve stabilizes (flatlines) by $N$ episodes, $N$ is sufficient. [Standard practice]
+Z. Ablation Study
+Verification:
+Reconstruction vs Task Loss: Valid. Isolates the benefit of task-oriented training.
+AWGN?Rayleigh: Valid. Tests channel mismatch robustness.
+Bandwidth Sensitivity: Valid. Shows performance vs. cost trade-off.
+Interpretation: Ensure you explicitly state what factor is being isolated (e.g., "This ablation isolates the effect of channel mismatch..."). [Standard practice]
+AA. Additional Useful Ablations
+Recommendations:
+Perfect CSI vs No CSI: If your system uses channel estimation, comparing perfect vs. estimated CSI is valuable. [Supported by Kurka & Gündüz (2021)]
+State Normalization: Compare normalized vs. raw state input (likely to fail, but proves necessity of normalization). [Project-specific]
+Controller Type: Compare PD vs. NN controller (if computationally feasible). [Project-specific]
+AB. Main Experimental Matrix
+Structure:
+Channel: {AWGN, Rayleigh}
+SNR: {-5, 0, 5, 10, 15, 20} dB
+Bandwidth $\rho$: {1/6, 1/3, 1/2}
+Method: {Conventional, Reconstruction DeepJSCC, Task-Oriented DeepJSCC}
+Cost: $2 \times 6 \times 3 \times 3 = 108$ configurations. With 3 seeds and 100 episodes each, this is computationally heavy.
+Refinement: You may reduce SNR points (e.g., {0, 5, 10, 15}) or Bandwidth points (e.g., {1/6, 1/3}) for the main matrix, and use the full set for the "best" method only. [Project-specific design choice]
+AC. Experimental Reproducibility Checklist
+Checklist:
+Environment: Python version, PyTorch version, CUDA version.
+Seeds: All 4 seeds (Python, NumPy, Torch CPU, Torch CUDA).
+Dataset: Split ratios, episode generation logic, normalization stats.
+UAV: $\Delta t, T, v_{max}, u_{max}$, goal tolerance.
+Communication: $\rho$, Power constraint, SNR definition ($P/\sigma^2$), Channel models.
+Training: Optimizer (Adam), LR, Batch size, Epochs, Loss functions.
+Evaluation: Test SNR list, Test episodes count, Metrics (Success, Error).
+Stats: Number of seeds, CI method, Paired test method. [Standard practice]
+AD. Final Protocol Table
+Experimental Component
+Literature Evidence
+Recommended Project Setting
+Status
+Episode generation
+Diao et al. (2024)
+Complete trajectories, split by episode
+Verified
+State normalization
+Standard ML
+Zero-mean/Unit-var or Min-Max on Train set
+Standard practice
+Train/Val/Test split
+Standard ML
+70/15/15 split by episode
+Standard practice
+Training seeds
+Standard ML
+3 independent seeds (min)
+Standard practice
+Test seeds
+Standard ML
+Fixed, frozen, reused across methods
+Standard practice
+Training SNR
+Kurka & Gündüz (2021)
+Random SNR per batch (e.g., 0–20 dB)
+Supported
+Testing SNR
+Bourtsoulatze et al. (2019)
+Fixed grid (e.g., -5 to 20 dB)
+Verified
+AWGN training
+Bourtsoulatze et al. (2019)
+Separate model for AWGN
+Verified
+Rayleigh training
+Bourtsoulatze et al. (2019)
+Separate model for Rayleigh
+Verified
+Channel mismatch
+Bourtsoulatze et al. (2019)
+Cross-evaluate AWGN?Rayleigh
+Verified
+Bandwidth ratios
+Kurka & Gündüz (2021)
+$\rho \in {1/6, 1/3, 1/2}$
+Supported
+Digital baseline
+Bourtsoulatze et al. (2019)
+Matched channel uses $k$ (QPSK/LDPC)
+Verified
+Reconstruction loss
+Bourtsoulatze et al. (2019)
+MSE $|s - \hat{s}|^2$
+Verified
+Task loss
+Diao et al. (2024, 2025)
+Goal error / Action error
+Supported
+Validation metric
+Standard ML
+Val Loss (MSE or Task)
+Standard practice
+Test episodes
+Standard ML
+100–500 (stability check)
+Standard practice
+Statistical reporting
+Standard ML
+Mean ± Std, 95% CI
+Standard practice
+Ablations
+Literature
+Mismatch, Bandwidth, Loss type
+Supported
+
+AE. Final "LOCKED VS UNLOCKED" List
+LOCKED — Can be implemented:
+Train/Val/Test split logic (by episode).
+Seed management (4 seeds, frozen test set).
+Bandwidth matching ($\rho = k/n$).
+Reconstruction loss (MSE).
+AWGN/Rayleigh channel models (standard definitions).
+Statistical reporting (Mean ± Std, CI).
+Paired evaluation protocol.
+UNLOCKED — Must be decided before coding:
+UAV Kinematics: Exact values for $v_{max}, u_{max}, \Delta t, T, d_{min}, d_{max}$. [Project-specific]
+Digital Baseline: Specific channel code (LDPC? Polar? Capacity bound?). [Project-specific]
+Task Loss: Exact formulation (Final MSE? Cumulative control cost? Success BCE?). [Project-specific]
+Controller: PD gains or NN architecture for the differentiable controller. [Project-specific]
+Normalization: Min-Max vs. Z-Score. [Project-specific]
+Experimental Matrix: Final selection of SNR points and $\rho$ values to fit compute budget. [Project-specific]
+AF. Sources
+Bourtsoulatze, Kurka & Gündüz (2019): "Deep Joint Source-Channel Coding for Wireless Image Transmission." IEEE Trans. on Cogn. Comms. and Netw. [Verified for DeepJSCC baseline, MSE loss, bandwidth ratio, AWGN/Rayleigh models]
+Kurka & Gündüz (2021): "DeepJSCC-f: Deep Joint Source-Channel Coding of Images with Feedback." IEEE J. Sel. Areas Inf. Theory. [Verified for SNR-adaptive training, bandwidth agility]
+Diao et al. (2024, 2025): "Task-Oriented Co-Design of Communication, Computing, and Control..." IEEE JSAC / arXiv. [Verified for task-oriented loss, differentiable control loop, action error]
+Xu et al. (2022): "Deep Joint Source-Channel Coding for Semantic Communications." IEEE Wireless Comms. [Verified for SNR-adaptive training ranges]
+Gündüz et al. (2023): "Beyond Transmitting Bits: Context, Semantics, and Task-Oriented Communications." IEEE JSAC. [General task-oriented context]
+

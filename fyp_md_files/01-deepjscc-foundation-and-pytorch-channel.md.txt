@@ -1,0 +1,1081 @@
+=== SOURCE FILE: 01-deepjscc-foundation-bourtsoulatze2019.md.txt ===
+
+DeepJSCC Foundation: Bourtsoulatze et al. 2019 
+https://www.perplexity.ai/search/9481c056-ba07-4402-ad09-6d23ec672738
+
+
+
+The paper’s DeepJSCC core is a deterministic CNN autoencoder that maps a real-valued image vector directly to k complex channel uses, inserts a differentiable AWGN or slow-Rayleigh-fading channel layer, and reconstructs the image with a transpose-convolution decoder. For a low-dimensional UAV state, the channel equations, complex-symbol construction, power normalization, and definition k/n transfer directly; the image CNN and image-specific MSE/PSNR evaluation do not.[repository.essex.ac]
+Source and notation
+This extraction is from Bourtsoulatze, Kurka, and Gündüz, “Deep Joint Source-Channel Coding for Wireless Image Transmission,” IEEE TCCN, 2019—principally Sections II–IV and Figs. 1–6. The arXiv v4/preprint accessible here corresponds to the published paper’s content.[repository.essex.ac][arxiv]
+A. Source representation
+Explicitly stated — Section II, PDF p. 2; Section III, PDF p. 3
+The source is an input image represented as a real vector:
+\mathbf{x}\in\mathbb{R}^{n}.
+Variable definitions:
+\mathbf{x}: input image, represented as an n-dimensional real-valued vector.
+n: image dimension, called the source bandwidth by the paper.
+\hat{\mathbf{x}}\in\mathbb{R}^{n}: reconstructed image at the receiver.
+For experiments, the source is an RGB image:
+CIFAR-10: 32\times 32 RGB images, so n=32\times32\times3=3072.
+Kodak evaluation: RGB images of 768\times512; training uses randomly cropped 128\times128 ImageNet patches.
+Images are 24-bit RGB, i.e., 8 bits per colour channel.[repository.essex.ac]
+Preprocessing
+Explicitly stated — Section IV, PDF p. 4
+Before the CNN encoder, image samples are normalized by the maximum pixel value, 255:
+\mathbf{x}_{\mathrm{norm}}=\frac{\mathbf{x}}{255}.
+This equation is an explicit algebraic restatement of the paper’s sentence, not a numbered equation in the paper.
+Input values after normalization lie in [0,1].
+At the decoder output, the final sigmoid produces values in [0,1].
+A final denormalization layer multiplies by 255 to return pixel values to [0,255].
+NOT SPECIFIED IN THE PAPER: a general normalization rule for arbitrary non-image sources, such as UAV position, velocity, heading, battery state, waypoint error, or sensor state. Min–max scaling, z-score standardization, clipping, and per-feature normalization for your UAV state are not provided by this paper.
+
+Encoder and channel symbols
+B. Encoder mapping
+Explicitly stated — Section III, PDF p. 3
+The encoder is a deterministic function
+f_{\boldsymbol{\theta}}:\mathbb{R}^{n}\rightarrow\mathbb{C}^{k},
+which maps the source image to channel inputs:
+\mathbf{z}=f_{\boldsymbol{\theta}}(\mathbf{x}).
+This mapping is stated in prose rather than presented as a separate numbered equation.
+Variable definitions:
+f_{\boldsymbol{\theta}}(\cdot): DeepJSCC joint source–channel encoder.
+\boldsymbol{\theta}: trainable encoder-CNN parameters.
+\mathbf{x}\in\mathbb{R}^{n}: real-valued input image.
+\mathbf{z}\in\mathbb{C}^{k}: vector of k complex-valued channel-input samples.
+k: channel dimension, called the channel bandwidth by the paper.
+The encoder CNN consists of convolutional layers, PReLU activations, and a power-normalization layer. The paper says convolutional layers extract image features; nonlinear activations enable a nonlinear map from source space to coded-signal space.[repository.essex.ac]
+Exact CNN architecture reported
+Explicitly stated — Fig. 2 and Section IV, PDF p. 4
+The reported image architecture contains:
+Encoder stage
+Layer specification in Fig. 2
+Activation
+Input
+Normalize image pixels by 255
+None
+1
+Convolution, 5\times5, 16 filters, stride 2
+PReLU
+2
+Convolution, 5\times5, 32 filters, stride 2
+PReLU
+3
+Convolution, 5\times5, 32 filters, stride 1
+PReLU
+4
+Convolution, 5\times5, 32 filters, stride 1
+PReLU
+5
+Convolution, 5\times5, number of filters selected to yield 2k total output units, stride 1
+PReLU
+Output processing
+Power-normalization layer, then pair real values into complex symbols
+None
+
+The paper’s Fig. 2 notation is:
+F\times F\times K/S,
+where:
+F: spatial filter extent/size,
+K: number of convolutional filters,
+S: stride.
+The paper explicitly states that the last encoder convolutional layer has 2k units in total. It varies the number of filters K in that last convolutional layer to obtain different values of k/n.[repository.essex.ac]
+Important scope limitation: this is an image CNN with spatial convolutions and two downsampling stages. The paper does not specify a fully connected/MLP encoder for a low-dimensional vector state.
+C. Real network outputs to complex symbols
+Explicitly stated — Section IV, PDF p. 4
+The last encoder convolutional layer produces 2k real-valued units. After power normalization, those 2k real values are combined into k complex-valued channel symbols.
+In implementation terms, the paper explicitly establishes this structure:
+\underbrace{(\text{real-valued neural output})}_{2k\text{ real units}}
+\longrightarrow
+\underbrace{\mathbf{z}\in\mathbb{C}^{k}}_{k\text{ complex channel samples}}.
+The paper says the real and imaginary parts are directly transmitted over the in-phase and quadrature components of the digital signal.[repository.essex.ac]
+NOT SPECIFIED IN THE PAPER: an explicit index-level pairing convention such as
+z_i=a_i+j\,b_i
+or whether the 2k output vector is ordered as all real parts followed by all imaginary parts, or interleaved (\Re z_1,\Im z_1,\Re z_2,\Im z_2,\ldots). You must choose and implement one consistent convention; do not claim that its ordering is specified by this paper.
+D. Power normalization
+Explicitly stated — Eq. (1), Section III, PDF p. 3
+The required average-power constraint is
+\frac{1}{k}\mathbb{E}\!\left[\mathbf{z}^{*}\mathbf{z}\right]\leq P.
+Variable definitions:
+k: number of complex channel-input symbols.
+\mathbf{z}\in\mathbb{C}^{k}: transmitted complex codeword/channel-input vector.
+\mathbf{z}^{*}: conjugate transpose of \mathbf{z}.
+\mathbf{z}^{*}\mathbf{z}=\sum_{i=1}^{k}|z_i|^2: total energy of the complex codeword.
+\mathbb{E}[\cdot]: expectation.
+P: average transmit power per complex channel use.
+The normalization rule is Eq. (1):
+\boxed{
+\mathbf{z}
+=
+\sqrt{kP}\,
+\frac{\tilde{\mathbf{z}}}
+{\sqrt{\tilde{\mathbf{z}}^{*}\tilde{\mathbf{z}}}}
+}
+\tag{1}
+where:
+\tilde{\mathbf{z}}\in\mathbb{C}^{k}: encoder output before power normalization, as written in Section III.
+\tilde{\mathbf{z}}^{*}: conjugate transpose of \tilde{\mathbf{z}}.
+\tilde{\mathbf{z}}^{*}\tilde{\mathbf{z}}=\sum_{i=1}^{k}|\tilde z_i|^2: pre-normalization codeword energy.
+P: target average transmit power per complex channel use.
+\mathbf{z}: normalized transmitted codeword.
+What Eq. (1) guarantees
+From Eq. (1),
+\mathbf{z}^{*}\mathbf{z}=kP,
+for every nonzero encoder output \tilde{\mathbf z}. Thus each normalized codeword has energy kP, and therefore its power averaged over its k complex uses is P.
+This conclusion is a direct algebraic consequence of Eq. (1), not an additional assumption.
+Normalization location
+Explicitly stated — Section IV, PDF p. 4
+The power-normalization layer is located:
+after the final encoder convolutional layer;
+after its 2k real outputs have been produced;
+before those values are combined into k complex channel symbols and passed through the channel.
+Granularity
+The paper’s Eq. (1) divides by the norm of the individual output vector \tilde{\mathbf z}. Therefore, the normalization is per encoded source sample / per codeword, not a batch-average operation.
+Implementation caution: Eq. (1) contains division by \sqrt{\tilde{\mathbf z}^{*}\tilde{\mathbf z}}. Handling an exactly zero encoder output with an \epsilon denominator is a numerical implementation issue, but such an \epsilon is NOT SPECIFIED IN THE PAPER.
+
+Channel models and bandwidth
+E. AWGN channel
+Explicitly stated — Section III, PDF p. 4
+The AWGN transfer function is
+\eta_n(\mathbf{z})=\mathbf{z}+\mathbf{n}.
+Equivalently, the received vector in AWGN is
+\hat{\mathbf z}=\mathbf z+\mathbf n.
+This latter display is a direct substitution into the paper’s \hat{\mathbf z}=\eta(\mathbf z) notation; it is not separately numbered.
+Variable definitions:
+\eta_n:\mathbb C^k\rightarrow\mathbb C^k: AWGN-channel transfer function.
+\mathbf{z}\in\mathbb C^k: transmitted codeword.
+\hat{\mathbf z}\in\mathbb C^k: received/noisy channel-output vector.
+\mathbf{n}\in\mathbb C^k: complex additive-noise vector.
+\mathbf n\sim\mathcal{CN}(\mathbf0,\sigma^2\mathbf I_k).
+\mathcal{CN}: circularly symmetric complex Gaussian distribution.
+\mathbf I_k: k\times k identity matrix.
+\sigma^2: average noise power, as explicitly stated by the paper.
+The entries of \mathbf n are i.i.d. circularly symmetric complex Gaussian samples.[repository.essex.ac]
+Exact SNR definition
+Explicitly stated — Eq. (5), Section IV, PDF p. 5
+\boxed{
+\mathrm{SNR}
+=
+10\log_{10}\left(\frac{P}{\sigma^2}\right)
+\quad\text{dB}
+}
+\tag{5}
+where:
+P: average power of the coded channel-input signal after the encoder power-normalization layer.
+\sigma^2: average complex-noise power.
+\mathrm{SNR}: channel signal-to-noise ratio in dB.
+The authors set P=1 in all reported experiments. They vary the SNR by varying \sigma^2.[repository.essex.ac]
+Factor-of-two clarification
+The paper specifies complex noise as
+\mathbf n\sim\mathcal{CN}(\mathbf0,\sigma^2\mathbf I_k)
+and defines SNR using P/\sigma^2, not P/(2\sigma^2). Therefore:
+\sigma^2 is the variance / average power of each complex noise sample in the paper’s notation.
+If implementing the conventional circular complex Gaussian convention
+n_i=n_{i,\mathrm R}+j n_{i,\mathrm I},
+then the implementation must use
+n_{i,\mathrm R},n_{i,\mathrm I}\sim\mathcal N(0,\sigma^2/2)
+independently, so that \mathbb E|n_i|^2=\sigma^2.
+The final real/imaginary component formula is a standard interpretation of the explicitly stated \mathcal{CN}(0,\sigma^2) convention; it is not written as an equation in the paper. The paper itself does not use a factor of 2 in Eq. (5).[repository.essex.ac]
+F. Slow Rayleigh fading
+Explicitly stated — Section III, PDF p. 4; Section IV-A, PDF pp. 6–7
+The fading-only transfer function is
+\eta_h(\mathbf z)=h\mathbf z,
+where
+h\sim\mathcal{CN}(0,H_c).
+The composite slow-Rayleigh-plus-AWGN channel is
+\boxed{
+\eta(\mathbf z)
+=
+\eta_n(\eta_h(\mathbf z))
+=
+h\mathbf z+\mathbf n
+}
+where:
+h: a scalar complex fading coefficient.
+H_c: variance parameter of h, written by the paper as the covariance/scalar parameter in \mathcal{CN}(0,H_c).
+\mathbf z\in\mathbb C^k: transmitted complex codeword.
+\mathbf n\sim\mathcal{CN}(\mathbf 0,\sigma^2\mathbf I_k): AWGN.
+\eta_h(\cdot): fading transformation.
+\eta_n(\cdot): AWGN transformation.
+\eta(\cdot): total fading-plus-noise channel transformation.
+For its experiments, the paper sets
+H_c=1,
+and changes \sigma^2 to emulate different average SNRs.[repository.essex.ac]
+Fading duration and CSI
+Explicitly stated — Section IV-A, PDF pp. 6–7
+This is block/slow fading at the image-codeword level:
+A single h is sampled for each transmitted image.
+The same h stays constant for all k channel symbols used to transmit that image.
+A new independently sampled h is used for the next image.
+The paper assumes:
+No CSI at the transmitter.
+No CSI at the receiver.
+No pilot transmission.
+No explicit channel equalization.
+The authors interpret the trained network’s behavior as suggesting that it learns to estimate/adapt to the channel state through training, but they do not add an explicit estimator or an equalizer block.[repository.essex.ac]
+For the fading experiments, the paper refers to average SNR as
+\mathrm{SNR}
+=
+10\log_{10}
+\left(
+\frac{\mathbb E[h^2]P}{\sigma^2}
+\right).
+This expression appears in the paper’s fading-evaluation discussion. Note that the paper writes \mathbb E[h^2], although for a complex fading coefficient the usual physical average channel power would conventionally be expressed using \mathbb E[|h|^2]. Do not silently rewrite the paper’s printed expression as a different equation. With the experiment setting H_c=1, the intended normalized average fading power is one. [repository.essex.ac]
+G. Bandwidth compression ratio
+Explicitly stated — Section II, PDF p. 2
+The paper defines:
+n: source bandwidth, i.e., the real dimension of the source image vector \mathbf x\in\mathbb R^n.
+k: channel bandwidth, i.e., the number of complex-valued channel-input samples \mathbf z\in\mathbb C^k.
+Its bandwidth-compression ratio is:
+\boxed{
+\frac{k}{n}
+}
+This is stated in prose and is not assigned an equation number in the paper.
+This is crucial:
+Quantity
+Paper’s convention
+Source dimension n
+Number of real source dimensions
+Channel dimension k
+Number of complex channel uses
+Neural output immediately before complex packing
+2k real values
+Reported bandwidth ratio
+k/n, not 2k/n
+Typical compression regime
+k<n
+
+Thus, for your UAV state \mathbf s\in\mathbb R^{n_{\text{UAV}}}, if you use the paper’s convention and transmit k complex symbols, the directly corresponding ratio is:
+\frac{k}{n_{\text{UAV}}}.
+That is a direct transfer of the paper’s dimension convention. It does not mean the latent neural tensor has only k real degrees of freedom: it has 2k real components that are grouped into k complex channel uses.
+NOT SPECIFIED IN THE PAPER: whether a low-dimensional UAV navigation state should use a compression regime k<n_{\text{UAV}}, equality k=n_{\text{UAV}}, or expansion k>n_{\text{UAV}}. The original paper studies images and generally discusses k<n.
+
+Decoder, optimization, and tests
+H. Decoder
+Explicitly stated — Section III, PDF p. 4; Section IV, PDF p. 4
+The decoder is
+g_{\boldsymbol{\phi}}:\mathbb C^k\rightarrow\mathbb R^n
+and computes
+\hat{\mathbf x}=g_{\boldsymbol{\phi}}(\hat{\mathbf z}),
+\qquad
+\hat{\mathbf z}=\eta(\mathbf z).
+Variable definitions:
+g_{\boldsymbol{\phi}}(\cdot): joint source–channel decoder.
+\boldsymbol{\phi}: trainable decoder-CNN parameters.
+\hat{\mathbf z}\in\mathbb C^k: channel output after noise and, where applicable, fading.
+\hat{\mathbf x}\in\mathbb R^n: reconstructed image.
+The decoder first converts the real and imaginary components of the k received complex samples back into 2k real values, then processes them through transpose-convolution layers.
+Reported decoder architecture
+Explicitly stated — Fig. 2 and Section IV, PDF p. 4
+The decoder mirrors the encoder:
+Decoder stage
+Layer specification in Fig. 2
+Activation
+Input
+k received complex samples \hat{\mathbf z}
+None
+Real representation
+Split/arrange into 2k real values
+None
+1
+Transpose convolution, 5\times5, 32 filters, stride 1
+PReLU
+2
+Transpose convolution, 5\times5, 32 filters, stride 1
+PReLU
+3
+Transpose convolution, 5\times5, 32 filters, stride 1
+PReLU
+4
+Transpose convolution, 5\times5, 16 filters, stride 2
+PReLU
+5
+Transpose convolution, 5\times5, 3 filters, stride 2
+Sigmoid
+Output
+Multiply normalized output by 255
+None
+
+The last decoder transposed-convolution layer uses sigmoid, not PReLU, to create normalized pixel outputs in [0,1]. The paper then multiplies by 255.[repository.essex.ac]
+NOT SPECIFIED IN THE PAPER: a decoder architecture for a generic vector source such as a UAV state. In particular, it does not prescribe an MLP width, number of hidden layers, activation function, residual connection, state constraint, output clipping rule, or state-space decoder.
+I. Training
+Explicitly stated — Eqs. (2)–(3), Section III/IV, PDF pp. 4–5
+The general end-to-end objective is Eq. (2):
+\boxed{
+(\boldsymbol{\theta}^{*},\boldsymbol{\phi}^{*})
+=
+\underset{\boldsymbol{\theta},\boldsymbol{\phi}}{\arg\min}\;
+\mathbb E_{p(\mathbf x,\hat{\mathbf x})}
+\left[
+d(\mathbf x,\hat{\mathbf x})
+\right]
+}
+\tag{2}
+Variable definitions:
+\boldsymbol{\theta}^{*}: optimized encoder parameters.
+\boldsymbol{\phi}^{*}: optimized decoder parameters.
+p(\mathbf x,\hat{\mathbf x}): joint distribution of original and reconstructed source samples.
+d(\mathbf x,\hat{\mathbf x}): chosen distortion measure.
+\mathbb E_{p(\mathbf x,\hat{\mathbf x})}[\cdot]: expected distortion over the joint source/reconstruction distribution.
+For its image experiments, the paper uses MSE. Its finite-sample training loss is Eq. (3):
+\boxed{
+L
+=
+\frac{1}{N}
+\sum_{i=1}^{N}
+d(\mathbf x_i,\hat{\mathbf x}_i)
+}
+\tag{3}
+with
+d(\mathbf x,\hat{\mathbf x})
+=
+\frac{1}{n}
+\left\|
+\mathbf x-\hat{\mathbf x}
+\right\|^2.
+Variable definitions:
+L: batch/sample-average training loss.
+N: number of samples in the loss average; in minibatch training, this is the minibatch size.
+\mathbf x_i: i-th original image.
+\hat{\mathbf x}_i: reconstruction of the i-th image.
+d(\mathbf x_i,\hat{\mathbf x}_i): MSE distortion for sample i.
+n: number of real source dimensions/pixel values.
+\|\cdot\|: Euclidean norm.
+The optimizer is Adam. The implementation is TensorFlow, not PyTorch.[repository.essex.ac]
+Reported training details
+Dataset setting
+Details explicitly reported
+CIFAR-10 training set
+50,000 images, 32\times32 RGB
+CIFAR-10 test set
+10,000 distinct images
+CIFAR-10 minibatch size
+64
+CIFAR-10 initial learning rate
+10^{-3}
+CIFAR-10 learning-rate change
+Reduced to 10^{-4} after 500,000 iterations
+CIFAR-10 stopping
+Train until test-set performance no longer improves; authors say test images were not used to optimize hyperparameters
+Kodak model training data
+ImageNet, 1.2 million images
+Kodak model crop size
+128\times128
+Kodak minibatch size
+32
+Kodak learning rate
+10^{-4}
+Kodak stopping
+Until convergence
+
+[repository.essex.ac]
+Training SNR strategy
+The paper does not train one model jointly across a distribution of SNR values. Instead:
+Each DeepJSCC model/curve is trained for a specific target channel SNR, \mathrm{SNR}_{\text{train}}.
+The model is evaluated at potentially different \mathrm{SNR}_{\text{test}}.
+For figures that compare bandwidth ratios at a fixed SNR, the same SNR is used for training and evaluation.
+This distinction is explicit in the discussion of Figs. 3–6.[repository.essex.ac]
+NOT SPECIFIED IN THE PAPER:
+joint multi-SNR training;
+random SNR sampling per minibatch;
+curriculum training over SNR;
+exact random seed;
+Adam \beta_1,\beta_2,\epsilon, weight decay, gradient clipping, initializer, or learning-rate schedule beyond the reported CIFAR change;
+exact epoch count / exact iteration count at convergence;
+a PyTorch implementation.
+J. Testing and evaluation
+Explicitly stated — Section IV, PDF pp. 5–8
+The primary metric is PSNR:
+\boxed{
+\mathrm{PSNR}
+=
+10\log_{10}
+\left(
+\frac{\mathrm{MAX}^{2}}{\mathrm{MSE}}
+\right)
+\quad \text{dB}
+}
+\tag{4}
+Variable definitions:
+\mathrm{MAX}: maximum allowable pixel value.
+\mathrm{MSE}=d(\mathbf x,\hat{\mathbf x}): image MSE.
+For their RGB image experiments, \mathrm{MAX}=2^8-1=255.
+They state that PSNR quantifies all reported performance, while also discussing SSIM as a perceptual-quality measure.[repository.essex.ac]
+Reported SNR values and evaluation conditions
+Evaluation
+Explicit SNRs / settings
+CIFAR-10 AWGN, Fig. 3
+0, 10, and 20 dB; same SNR in training and testing
+CIFAR-10 AWGN robustness, Fig. 4
+\mathrm{SNR}_{\text{train}}\in\{1,4,7,13,19\} dB; \mathrm{SNR}_{\text{test}} varies from 0 to 25 dB
+CIFAR-10 fading, Fig. 5
+Average SNR = 0, 10, and 20 dB; same target SNR for training/evaluation
+CIFAR-10 fading robustness, Fig. 6
+\mathrm{SNR}_{\text{train}}\in\{1,4,7,13,19\} dB; average \mathrm{SNR}_{\text{test}} varies from 0 to 25 dB
+CIFAR-10 channel averaging
+Each test image transmitted 10 times
+Kodak test dataset
+24 RGB images, 768\times512
+Kodak channel averaging
+Each image transmitted 100 times
+
+For CIFAR-10, the paper evaluates bandwidth ratios including k/n=1/12, 1/6, and, for fading robustness, 1/3. It plots a wider sweep of k/n in the bandwidth-ratio figures.[repository.essex.ac]
+The image-specific digital comparison comprises JPEG/JPEG2000 and, for Kodak experiments, practical LDPC codes with BPSK, 4-QAM, 16-QAM, and 64-QAM. That comparison is outside the core DeepJSCC foundation and should not be treated as a required component of your UAV implementation.[repository.essex.ac]
+
+What transfers to UAV
+The following is deliberately limited to the communication/channel foundation. It does not create a UAV task loss, controller, or digital baseline.
+Item
+Classification
+What transfers, precisely
+End-to-end encoder \rightarrow differentiable channel \rightarrow decoder
+DIRECTLY SUPPORTED BY THE PAPER
+Use a deterministic encoder, non-trainable differentiable channel layer, and trainable decoder jointly, as in Fig. 1(b) and Eq. (2).
+Complex channel vector \mathbf z\in\mathbb C^k
+DIRECTLY SUPPORTED BY THE PAPER
+Your encoder can produce 2k real latent values and map them to k complex channel uses.
+Per-codeword power normalization
+DIRECTLY SUPPORTED BY THE PAPER
+Apply Eq. (1) exactly, after producing the pre-normalization channel representation and before channel simulation.
+AWGN simulation
+DIRECTLY SUPPORTED BY THE PAPER
+Simulate \hat{\mathbf z}=\mathbf z+\mathbf n, \mathbf n\sim\mathcal{CN}(0,\sigma^2\mathbf I_k), with Eq. (5) and usually P=1.
+Slow Rayleigh block-fading simulation
+DIRECTLY SUPPORTED BY THE PAPER
+Use \hat{\mathbf z}=h\mathbf z+\mathbf n, sample one h per source sample/codeword, hold it across all k symbols, and use an independently sampled h for the next source sample.
+No CSI / no explicit equalizer fading setting
+DIRECTLY SUPPORTED BY THE PAPER
+The original fading experiment assumes neither transmitter nor receiver CSI and no pilots/equalizer.
+Ratio k/n_{\mathrm{UAV}}
+DIRECTLY SUPPORTED BY THE PAPER
+Let n_{\mathrm{UAV}} be the number of real-valued source-state components and k the number of complex channel uses. Retain the paper’s convention: report k/n_{\mathrm{UAV}}, not 2k/n_{\mathrm{UAV}}.
+Whether to use k<n_{\mathrm{UAV}}, k=n_{\mathrm{UAV}}, or k>n_{\mathrm{UAV}}
+PROJECT DESIGN CHOICE
+The paper typically studies image bandwidth compression, k<n, but does not prescribe a regime for low-dimensional state vectors.
+Replacing the image CNN with an MLP/vector encoder-decoder
+REQUIRES MODIFICATION FOR MY UAV STATE
+The paper’s exact architecture is convolutional/transpose-convolutional and exploits image spatial structure. A UAV state vector needs a different source-network architecture.
+Number of latent layers, hidden widths, vector activations, residual blocks
+NOT PROVIDED BY THE PAPER
+The paper gives only the image CNN in Fig. 2; it does not specify a vector-state network.
+Input scaling for UAV features
+REQUIRES MODIFICATION FOR MY UAV STATE
+Image division by 255 is image-specific. A UAV-state scaling rule must be chosen and documented separately.
+Output constraints for angles, positions, velocity, battery, etc.
+NOT PROVIDED BY THE PAPER
+The paper only uses sigmoid and [0,255] denormalization for pixels.
+Image MSE loss in Eq. (3)
+REQUIRES MODIFICATION FOR MY UAV STATE
+Eq. (3) directly defines image elementwise MSE. Whether this is appropriate for heterogeneous physical state units is not decided by the paper.
+UAV navigation/task-aware loss
+PROJECT DESIGN CHOICE
+The paper does not define a navigation, control, safety, waypoint, collision, trajectory, or task-success loss.
+Single-SNR model training
+DIRECTLY SUPPORTED BY THE PAPER
+Train a separate model for each chosen \mathrm{SNR}_{\text{train}}, then test at other SNRs to study mismatch robustness.
+Multi-SNR robust training
+NOT PROVIDED BY THE PAPER
+Do not attribute random-SNR or multi-SNR training to the original paper.
+PyTorch implementation
+REQUIRES MODIFICATION FOR MY UAV STATE
+The original implementation is TensorFlow. Translating the stated operations and equations into PyTorch is feasible, but the paper does not provide PyTorch code or framework-specific details.
+\epsilon in power normalization
+PROJECT DESIGN CHOICE
+Useful for numerical safety in PyTorch, but not specified in Eq. (1).
+Digital source/channel baseline
+NOT PROVIDED BY THE PAPER
+The paper has image baselines, but it does not define a digital baseline appropriate to your UAV state or navigation objective.
+
+Implementation boundary
+For your PyTorch simulation, the paper supports the following communication chain without changing its mathematical model:
+\mathbf s\in\mathbb R^{n_{\mathrm{UAV}}}
+\;\xrightarrow{\,f_{\boldsymbol\theta}\,}\;
+\tilde{\mathbf z}
+\;\xrightarrow{\text{Eq. (1)}}\;
+\mathbf z\in\mathbb C^k
+\;\xrightarrow{\,\eta\,}\;
+\hat{\mathbf z}\in\mathbb C^k
+\;\xrightarrow{\,g_{\boldsymbol\phi}\,}\;
+\hat{\mathbf s}\in\mathbb R^{n_{\mathrm{UAV}}}.
+This display is an application-level substitution of a UAV-state vector \mathbf s for the paper’s image vector \mathbf x; it is not an equation printed in the original paper. The directly retained paper components are Eq. (1), the AWGN/fading channel transfer functions, the complex-symbol convention, Eq. (5), and the k/n convention. The state representation, vector-network architecture, state normalization, state distortion/task objective, and navigation evaluation remain outside what Bourtsoulatze–Kurka–Gündüz specifies.[repository.essex.ac]
+
+
+============================================================
+
+=== SOURCE FILE: 07-channel-pytorch-verification.txt ===
+
+Perplexity Prompt 7 — Technical Channel & PyTorch Implementation Verification
+I am developing an FYP titled:
+“Task-Oriented Deep Joint Source-Channel Coding for UAV Navigation Under Noisy and Fading Wireless Channels.” 
+
+https://www.perplexity.ai/search/02e28d96-6967-4de0-91ea-daaf936a2b57
+
+
+This report separates what is directly stated in original DeepJSCC/task-oriented papers from standard complex-baseband mathematics and from choices that remain open for your UAV-navigation FYP. The most important conclusion is that the seminal DeepJSCC work defines a complex channel-vector model and a per-codeword normalization mathematically, but it does not specify PyTorch complex-tensor usage, a PyTorch tensor layout, or a universal Rayleigh equalization convention. Those must not be silently inferred.
+Evidence scope
+Primary sources used
+Label
+Source
+Relevance
+DeepJSCC
+E. Bourtsoulatze, D. B. Kurka, and D. Gündüz, “Deep Joint Source-Channel Coding for Wireless Image Transmission,” IEEE TCCN, 2019, pp. 567–579, DOI: 10.1109/TCCN.2019.2919300
+Original DeepJSCC system model, complex channel symbols, normalization, AWGN and slow Rayleigh experiments
+DeepJSCC precursor
+Bourtsoulatze, Kurka, Gündüz, ICASSP 2019 version
+Gives extractable Eq. (1), stated FC dimensions, Rayleigh assumptions, and train/test protocol explicitly [discovery.ucl.ac]
+Complex-baseband reference
+D. Tse and P. Viswanath, Fundamentals of Wireless Communication, Appendix A
+Defines \mathcal{CN}(0,\sigma^2), real/imaginary variances, complex AWGN, Rayleigh magnitude, and complex N_0 conventions [web.stanford]
+Task-oriented example
+Y. Diao et al., “Aligning Task- and Reconstruction-Oriented Communications for Edge Intelligence,” IEEE JSAC, 2025, DOI: 10.1109/JSAC.2025.3559121
+Task-oriented JSCC with complex channel symbols, Rayleigh channel, explicit equalization, quantized constellation option [pure.manchester.ac]
+Task-oriented example
+M. A. Jarrahi, E. Bourtsoulatze, V. Abolghasemi, “Task-Oriented JSCC with Adaptive Deep Compressed Sensing”
+Explicit block-Rayleigh model, SNR convention, unit power, per-image fade, and curriculum SNR training [repository.essex.ac]
+Contrast source
+C. Bian et al., “DeepJSCC-MIMO”
+Explicit CSIR, ZF/model-driven equalization, complex Gaussian channel matrix, and separate vs random-SNR training; this is not the original SISO DeepJSCC convention [arxiv]
+
+Scope caution. The original DeepJSCC article is image-transmission work, not a UAV-state-navigation paper. Its physical-layer conventions can inform your later specification, but its source model, loss, architecture, channel-use ratio, fading/CSI assumptions, and SNR protocol are not automatically mandated for an FYP whose source is s_t\in\mathbb{R}^{k_s}.
+Verified mathematical conventions
+A–B. Complex representation and real-to-complex mapping
+The original DeepJSCC formulation defines an encoder
+f_\theta:\mathbb{R}^{n}\rightarrow\mathbb{C}^{k},
+\qquad
+\mathbf z=f_\theta(\mathbf x)\in\mathbb{C}^{k},
+where n is called the source bandwidth and k the channel bandwidth. The channel output is likewise complex, \hat{\mathbf z}\in\mathbb{C}^{k}. The bandwidth ratio used conceptually is therefore k/n: complex channel uses per real source dimension.[discovery.ucl.ac]
+The ICASSP implementation description associated with the original method then makes the real-valued neural implementation explicit:
+The encoder FC layer output has size 2k.
+The decoder FC input has size 2k.
+The paper says the system transmits the real and imaginary parts through the in-phase and quadrature components.
+Therefore, in that reported CNN implementation, k complex channel symbols are represented by 2k real scalar outputs/inputs.[discovery.ucl.ac]
+The paper does not write a numbered equation spelling out the grouping convention, such as
+z_i=a_i+j b_i,
+nor does it state whether the 2k-vector ordering is interleaved,
+[a_1,b_1,a_2,b_2,\ldots,a_k,b_k],
+or stacked,
+[a_1,\ldots,a_k,b_1,\ldots,b_k].
+Therefore:
+NOT SPECIFIED IN THE PAPER/SOURCE: the real/imaginary ordering of the 2k FC outputs.
+The source also says the implementation was in TensorFlow, not PyTorch. It does not say that TensorFlow complex tensors were used, nor does it provide a tensor-level implementation.[discovery.ucl.ac]
+NOT SPECIFIED IN THE PAPER/SOURCE: whether the original DeepJSCC implementation used native complex tensors internally.
+NOT SPECIFIED IN THE PAPER/SOURCE: whether a PyTorch implementation should use torch.complex64/torch.complex128 or two real channels.
+Factor-of-two interpretation
+The factor of two has a precise and limited meaning:
+Quantity
+Complex-baseband DeepJSCC meaning
+Neural-network real scalar outputs
+2k, in the reported original CNN architecture
+Complex symbols
+k
+Complex channel uses
+k, if one use is one complex I/Q symbol
+Real scalar dimensions carried by those uses
+2k
+Source dimension
+n real dimensions in the original image notation
+DeepJSCC bandwidth ratio
+k/n, not 2k/n, because the paper counts complex channel uses
+
+Thus, doubling to 2k is needed when implementing a complex k-vector with real-valued network outputs. It does not mean the paper defines 2k complex channel uses.
+For your notation, if a UAV state is s_t\in\mathbb{R}^{k_s} and you later define z_t\in\mathbb{C}^{n_c}, then a real-valued encoder representation has 2n_c scalar coordinates. Whether your project calls the channel-use ratio n_c/k_s, 2n_c/k_s, or something based on time slots is a project-specific metric definition that must be frozen before experiments.
+C–D. Transmit-power normalization
+The original DeepJSCC encoder produces an unnormalized vector \tilde{\mathbf z}\in\mathbb C^k, followed by the normalization layer
+\mathbf z
+=
+\sqrt{kP}\,
+\frac{\tilde{\mathbf z}}
+{\sqrt{\tilde{\mathbf z}^{*}\tilde{\mathbf z}}},
+\tag{DeepJSCC Eq. 1}
+where (\cdot)^* is conjugate transpose. This is the exact form reported in the ICASSP precursor of the TCCN paper.[discovery.ucl.ac]
+The stated average-power constraint is
+\frac{1}{k}\mathbb E[\mathbf z^{*}\mathbf z]\leq P.
+Under the displayed normalization, for every nonzero output codeword,
+\frac{1}{k}\mathbf z^{*}\mathbf z=P.
+That is stronger than merely satisfying the expectation constraint: it fixes the average energy over the k symbols in each encoded codeword to P.
+What the normalization does and does not establish
+Question
+Verified conclusion
+Per sample/codeword?
+Yes. Eq. (1) normalizes the entire encoded vector \tilde{\mathbf z} of one source item by its own norm
+Per channel symbol independently?
+No. The denominator is (\tilde{\mathbf z}^*\tilde{\mathbf z}=\sum_i
+Per batch?
+No batch-level equation is stated in the paper
+Dataset-average only?
+No. The mathematical constraint is an expectation, but the reported normalization enforces fixed codeword energy before taking an expectation
+Separate normalization of I and Q?
+No. The complex norm jointly includes both components
+Unit power used?
+Yes. The AWGN and slow-Rayleigh experiments state P=1 [discovery.ucl.ac]
+
+With P=1, Eq. (1) gives
+\frac{1}{k}\sum_{i=1}^{k}|z_i|^2=1
+for each nonzero codeword. This is not the same as requiring each complex symbol to have |z_i|^2=1. Individual symbols can have unequal energies.
+The task-oriented ATROC paper uses a different, constellation-aware chain: quantize \mathbf z to \bar{\mathbf z}, calculate P_{\bar z}=k^{-1}\sum_i|\bar z_i|^2, then scale as
+\mathbf z_{\mathrm{in}}
+=
+\sqrt{\frac{P_{\mathrm{target}}}{P_{\bar z}}}\bar{\mathbf z}.
+\tag{ATROC Eq. 22}
+That is a valid paper-defined convention, but it is not the same pipeline as unquantized original DeepJSCC.[pure.manchester.ac]
+E–F. AWGN, complex-noise variance, and SNR
+For a complex AWGN channel, the standard model is
+\mathbf y=\mathbf z+\mathbf n,
+\qquad
+\mathbf n\sim\mathcal{CN}(\mathbf 0,\sigma_n^2\mathbf I).
+Under the standard circularly symmetric complex Gaussian definition,
+n_i=n_{i,R}+j n_{i,I},
+with
+n_{i,R}, n_{i,I}
+\overset{\mathrm{i.i.d.}}{\sim}
+\mathcal N\left(0,\frac{\sigma_n^2}{2}\right).
+Hence,
+\mathbb E[|n_i|^2]
+=
+\mathbb E[n_{i,R}^2]+\mathbb E[n_{i,I}^2]
+=
+\sigma_n^2.
+Tse and Viswanath explicitly define a standard complex Gaussian w\sim\mathcal{CN}(0,1) as having real and imaginary components each of variance 1/2, and use complex AWGN w\sim\mathcal{CN}(0,N_0).[web.stanford]
+Therefore, if a source writes
+n\sim\mathcal{CN}(0,\sigma^2),
+then the unambiguous interpretation under this convention is:
+\operatorname{Var}(n_R)=\operatorname{Var}(n_I)=\frac{\sigma^2}{2},
+\qquad
+\operatorname{Std}(n_R)=\operatorname{Std}(n_I)
+=
+\sqrt{\frac{\sigma^2}{2}}.
+The original DeepJSCC precursor writes its slow-Rayleigh noise as
+\mathbf n\sim\mathcal{CN}(0,N_0\mathbf I_k)
+and varies N_0 while setting P=1. It does not provide an explicit equation labeled “\mathrm{SNR}=P/N_0” in the extractable text, but this is the internally consistent complex-baseband interpretation: per-complex-symbol signal power P divided by per-complex-symbol noise power N_0.[discovery.ucl.ac]
+Under that convention,
+\mathrm{SNR}_{\mathrm{linear}}
+=
+\frac{P}{\sigma_n^2},
+\qquad
+\mathrm{SNR}_{\mathrm{dB}}
+=
+10\log_{10}\left(\frac{P}{\sigma_n^2}\right).
+If P=1,
+\sigma_n^2
+=
+10^{-\mathrm{SNR}_{\mathrm{dB}}/10}.
+Then each real noise coordinate must have standard deviation
+\sigma_{\mathrm{real}}
+=
+\sqrt{\frac{\sigma_n^2}{2}}
+=
+\sqrt{\frac{10^{-\mathrm{SNR}_{\mathrm{dB}}/10}}{2}}.
+This “divide variance by two before generating I/Q noise” is required only if \sigma_n^2 was defined as the total variance/power of one complex sample.
+Real versus complex AWGN
+Convention
+Noise model
+Per-real-coordinate variance
+Noise power used in SNR denominator
+Real channel
+n\sim\mathcal N(0,\sigma_r^2)
+\sigma_r^2
+\sigma_r^2
+Complex circular AWGN
+n\sim\mathcal{CN}(0,\sigma_c^2)
+\sigma_c^2/2
+(\mathbb E
+Incorrect mixed convention
+Claim n\sim\mathcal{CN}(0,\sigma_c^2) but sample I/Q with variance \sigma_c^2
+\sigma_c^2
+Actual complex noise power is 2\sigma_c^2
+
+The original DeepJSCC paper also includes a separate real-valued AWGN experiment: it assumes \operatorname{Im}\{z\}=\operatorname{Im}\{n\}=0, takes \operatorname{Re}\{n\}\sim\mathcal N(0,N_0I_k), and then uses FC size k, not 2k. Thus, the paper itself uses both a real-AWGN setup and a complex slow-Rayleigh setup; their noise variances must not be interchanged.[discovery.ucl.ac]
+G. E_s/N_0, E_b/N_0, and DeepJSCC SNR
+For a conventional coded digital system, if a complex modulation symbol carries m=\log_2M coded bits and the channel-code rate is R_c information bits per coded bit, then
+E_s = (R_c m)E_b,
+so, when the same N_0 convention is used,
+\frac{E_s}{N_0}
+=
+R_c \log_2(M)\frac{E_b}{N_0}.
+In dB,
+\left(\frac{E_s}{N_0}\right)_{\mathrm{dB}}
+=
+\left(\frac{E_b}{N_0}\right)_{\mathrm{dB}}
++
+10\log_{10}\!\big(R_c\log_2 M\big).
+DeepJSCC does not produce an explicit bit stream, does not choose a QAM order in the original analog-style method, and does not have a conventional channel-code rate. Therefore:
+E_b/N_0 is not inherently defined for original unquantized DeepJSCC.
+The natural DeepJSCC quantity is symbol-power SNR, P/\sigma_n^2, or equivalently E_s/N_0 when E_s=P per complex use.
+A fair comparison against a digital baseline must align the same physical resources: complex channel uses, average transmit energy, noise convention, bandwidth ratio, block duration, and CSI knowledge.
+Converting only the dB labels without matching those resources is not sufficient.
+The original DeepJSCC comparison uses a capacity-based digital reference whose rate depends on channel bandwidth and channel capacity; it is not a claim that DeepJSCC uses E_b/N_0.[discovery.ucl.ac]
+Fading, CSI, decoder, and gradients
+H–I. Original DeepJSCC slow-Rayleigh model
+For its slow-Rayleigh experiment, the original DeepJSCC work specifies
+\hat{\mathbf z}
+=
+\operatorname{diag}(\mathbf h)\mathbf z+\mathbf n,
+with
+\mathbf h\sim\mathcal{CN}(0,H_c\mathbf I_k),
+\qquad
+\mathbf n\sim\mathcal{CN}(0,N_0\mathbf I_k),
+and sets
+H_c=1,\qquad P=1.
+It further states that the channel gain is sampled from a Rayleigh distribution, remains constant during transmission of the whole image, and changes independently for the next image.[discovery.ucl.ac]
+There is a notation tension worth preserving:
+The displayed vector equation writes \operatorname{diag}(\mathbf h)\mathbf z, which superficially permits an elementwise fading vector.
+The prose explicitly says the channel gain remains constant for the whole image, which corresponds to a scalar h repeated over all k channel symbols:
+y_i=h z_i+n_i,\qquad i=1,\ldots,k.
+The prose gives the physical fading-coherence interpretation. The paper does not explicitly write \mathbf h=h\mathbf 1.
+NOT SPECIFIED IN THE PAPER/SOURCE: an explicit reconciliation of the vector notation \operatorname{diag}(\mathbf h)\mathbf z with the prose statement “constant for the whole image.”
+For a standard scalar complex fading coefficient
+h\sim\mathcal{CN}(0,1),
+complex-Gaussian theory implies
+h=h_R+jh_I,
+\qquad
+h_R,h_I\overset{\mathrm{i.i.d.}}{\sim}\mathcal N(0,1/2),
+and
+\mathbb E[|h|^2]=1.
+Its magnitude |h| is Rayleigh distributed and its phase is uniform. [web.stanford]
+The later task-oriented TCS-JSCC source states this model explicitly: h\sim\mathcal{CN}(0,1), Rayleigh amplitude, uniform phase, P=1, and a fading coefficient fixed per image but independently varying across transmissions. It defines
+\mathrm{SNR}
+=
+10\log_{10}
+\left(
+\frac{\mathbb E[|h|^2]P}{\sigma_n^2}
+\right).
+\tag{TCS-JSCC Sec. II}
+This is consistent with unit-mean fading power.[repository.essex.ac]
+J–K. CSI and equalization
+The original DeepJSCC slow-Rayleigh experiment explicitly assumes:
+No CSI at transmitter.
+No CSI at receiver.
+No explicit pilot transmission.
+No channel estimation.
+No explicit equalizer such as \tilde y=y/h.
+The decoder receives the faded/noisy channel output and is trained end-to-end to recover the source from it.[discovery.ucl.ac]
+Thus the original SISO slow-Rayleigh processing order is:
+\mathbf z
+\rightarrow
+h\mathbf z
+\rightarrow
+h\mathbf z+\mathbf n
+\rightarrow
+g_\phi(\hat{\mathbf z}).
+There is no paper-supported division by h in that original setup.
+By contrast, the task-oriented ATROC source assumes full receiver CSI for its modulation chain and uses zero-forcing equalization:
+\check{\mathbf z}
+=
+\frac{h^*}{|h|^2}\mathbf z_{\mathrm{out}},
+\tag{ATROC Eq. 23}
+followed by an additional scaling operation before nearest-constellation detection.[pure.manchester.ac]
+The DeepJSCC-MIMO paper is a different physical-layer setting: it has receiver-side CSI in open-loop MIMO and applies explicit ZF plus a learned residual correction before the decoder; in its closed-loop case it uses SVD-based operations/equalization.[arxiv]
+These sources are not interchangeable.
+Source/scenario
+CSIT
+CSIR
+Equalization before decoder?
+Original DeepJSCC SISO slow Rayleigh
+No
+No
+No
+ATROC task-oriented quantized modulation
+Not required by quoted equalization statement
+Full CSI stated
+Yes, (h^*/
+DeepJSCC-MIMO open-loop
+No
+Yes
+Yes, ZF plus learned correction
+DeepJSCC-MIMO closed-loop
+Yes
+Yes
+Yes, model-driven/SVD-related
+
+L. Decoder input representation
+Mathematically, original DeepJSCC says the decoder is
+g_\phi:\mathbb C^k\rightarrow\mathbb R^n.
+Its reported CNN architecture says the noisy channel samples enter an FC layer of input size 2k in the complex case. That supports a real 2k-coordinate decoder input representation.[discovery.ucl.ac]
+However:
+NOT SPECIFIED IN THE PAPER/SOURCE: batch tensor shape.
+NOT SPECIFIED IN THE PAPER/SOURCE: whether the decoder’s real vector is ordered as [\Re(\mathbf y),\Im(\mathbf y)] or as alternating [\Re y_1,\Im y_1,\ldots].
+NOT SPECIFIED IN THE PAPER/SOURCE: whether channel symbols were stored as a final tensor axis of size two, as two feature channels, or as a flattened FC vector.
+A later DeepJSCC-derived paper makes one possible convention explicit: concatenate \Re(\mathbf y) and \Im(\mathbf y) into a real 2k-vector before decoding. That supports this as a common implementation pattern, but it does not retroactively establish it as the original paper’s specified ordering.[arxiv]
+M–N. Differentiability and backpropagation
+The original DeepJSCC paper explicitly requires the channel transfer function to be differentiable so gradients can be computed and errors backpropagated. It models the channel as a non-trainable layer inside the autoencoder.[discovery.ucl.ac]
+For a sampled AWGN realization,
+\mathbf y=\mathbf z+\mathbf n,
+the derivative with respect to the transmitted vector is
+\frac{\partial \mathbf y}{\partial\mathbf z}=\mathbf I.
+For a sampled fading realization,
+\mathbf y=h\mathbf z+\mathbf n,
+the derivative is
+\frac{\partial\mathbf y}{\partial\mathbf z}=h\mathbf I
+for scalar block fading, or \operatorname{diag}(\mathbf h) for componentwise fading.
+The noise and fading draws are exogenous random values in each forward pass; standard automatic differentiation propagates gradients through the realized arithmetic with respect to \mathbf z. The gradients do not need to differentiate “through the random-number generator” to train the encoder/decoder under this channel model.
+The original DeepJSCC source establishes differentiable channel insertion, but it does not provide a low-level autodiff statement such as “detach noise” or “retain gradients through h.”
+NOT SPECIFIED IN THE PAPER/SOURCE: an exact framework-level rule for requires_grad, detach, random-number seeding, or gradient handling of sampled channel variables.
+The power-normalization map in DeepJSCC Eq. (1) consists of norm, square root, division, and multiplication. It is differentiable for \tilde{\mathbf z}\ne0, so it can remain in the computational graph. That mathematical conclusion is consistent with the paper’s end-to-end differentiable architecture, though it does not publish autodiff source code.[discovery.ucl.ac]
+O–P. Training SNR and evaluation SNR
+The original DeepJSCC experimental protocol reports:
+A separate encoder-decoder pair is trained for each selected SNR and channel bandwidth in the principal AWGN results.
+For the AWGN robustness figure, each model is trained at a fixed \mathrm{SNR}_{\text{train}}, then evaluated over varying \mathrm{SNR}_{\text{test}}.
+For the reported slow-Rayleigh figure, the same target SNR is used in training and evaluation for each plotted case.[discovery.ucl.ac]
+Therefore:
+Training/evaluation claim
+Original DeepJSCC status
+Fixed-SNR-specific model
+Directly supported
+Fixed bandwidth-specific model
+Directly supported
+Train/test SNR mismatch evaluation
+Directly supported for AWGN robustness tests
+Random SNR per sample
+NOT SPECIFIED in original DeepJSCC
+Random SNR per batch
+NOT SPECIFIED in original DeepJSCC
+One universal SNR-range model
+NOT SPECIFIED in original DeepJSCC
+
+A later MIMO DeepJSCC paper explicitly studies a universal model trained with SNR drawn uniformly from a stated range, but this is a later architecture and protocol, not original DeepJSCC.[arxiv]
+The task-oriented TCS-JSCC paper instead uses a curriculum: start at 20 dB and progressively include lower SNRs down to 0 dB. Again, that is paper-specific and not a transferable default.[repository.essex.ac]
+Implementation translation and audit
+S. PyTorch mapping concepts
+This is a translation of the verified mathematics, not a final implementation prescription.
+Mathematical object
+Literature-supported meaning
+Possible PyTorch concept
+Status
+\tilde{\mathbf z}\in\mathbb C^{n_c}
+Unnormalized encoder output before DeepJSCC power layer
+Real network output carrying 2n_c coordinates
+Supported by original CNN’s 2k FC size
+\mathbf z\in\mathbb C^{n_c}
+Complex channel vector after Eq. (1) normalization
+Either a complex tensor or two real tensors
+Project-specific representation choice
+\mathbf z^*\mathbf z
+(\sum_i
+z_i
+^2)
+\mathbf y=\mathbf z+\mathbf n
+Complex AWGN channel
+Add sampled I/Q noise or add a complex random tensor
+Standard convention; exact tensor method unspecified
+\mathbf y=h\mathbf z+\mathbf n
+Complex block fading plus AWGN
+Broadcast one complex h across a codeword if using paper’s whole-image coherence
+Supported only if your FYP explicitly adopts that source convention
+Decoder input
+Complex received vector represented in 2n_c real coordinates in original CNN
+Real tensor with feature size 2n_c
+Real/imag ordering unresolved in original source
+Normalization
+Whole-codeword power normalization
+Reduce energy over the symbol axis, preserving batch axis
+Supported mathematically; batch-axis details are project-specific
+
+A safe symbolic tensor model
+If one later chooses a two-real-component layout, one mathematically transparent representation is
+\mathbf A,\mathbf B\in\mathbb R^{B\times n_c},
+\qquad
+\mathbf z=\mathbf A+j\mathbf B,
+where B is batch size. The per-example energy is
+E_b=\sum_{i=1}^{n_c}\left(A_{b,i}^2+B_{b,i}^2\right).
+A direct real-coordinate equivalent of DeepJSCC Eq. (1) is
+A'_{b,i}
+=
+\sqrt{\frac{n_cP}{E_b}}A_{b,i},
+\qquad
+B'_{b,i}
+=
+\sqrt{\frac{n_cP}{E_b}}B_{b,i}.
+This is an algebraic rendering of Eq. (1), not a claim that the original source published this PyTorch layout.
+For complex AWGN under the \mathcal{CN}(0,\sigma_n^2) convention, the corresponding real-coordinate sampling statement is
+N_R,N_I
+\sim
+\mathcal N\left(0,\frac{\sigma_n^2}{2}\right),
+and
+Y_R=A'+N_R,
+\qquad
+Y_I=B'+N_I.
+For scalar block fading, with h=h_R+jh_I,
+Y_R=h_R A'-h_I B'+N_R,
+Y_I=h_R B'+h_I A'+N_I.
+These two real equations avoid requiring a complex PyTorch dtype while exactly representing complex multiplication.
+Q. Channel-model summary
+Component
+Exact mathematical definition
+Source
+Paper-specific or standard?
+Complex symbol
+\mathbf z\in\mathbb C^k, f_\theta:\mathbb R^n\to\mathbb C^k
+Original DeepJSCC, Sec. III
+Paper-defined
+Real/imag representation
+Encoder FC output size 2k; decoder FC input size 2k for complex channel case
+Original DeepJSCC, Sec. IV
+Paper-defined architecture detail
+Real/imag ordering
+NOT SPECIFIED IN THE PAPER/SOURCE
+—
+Unresolved
+Power constraint
+k^{-1}\mathbb E[\mathbf z^*\mathbf z]\le P
+Original DeepJSCC, Sec. III
+Paper-defined
+Power normalization
+\mathbf z=\sqrt{kP}\tilde{\mathbf z}/\sqrt{\tilde{\mathbf z}^*\tilde{\mathbf z}}
+Original DeepJSCC Eq. (1)
+Paper-defined
+Unit power
+P=1 in AWGN and slow-Rayleigh experiments
+Original DeepJSCC, Sec. IV
+Paper-specific experiment setting
+Real AWGN
+\operatorname{Im}z=\operatorname{Im}n=0, \operatorname{Re}n\sim\mathcal N(0,N_0I)
+Original DeepJSCC, Sec. IV
+Paper-specific AWGN experiment
+Complex AWGN
+\mathbf n\sim\mathcal{CN}(0,\sigma_n^2\mathbf I)
+Standard; task-oriented papers
+Standard communication convention
+I/Q noise variance
+\operatorname{Var}(n_R)=\operatorname{Var}(n_I)=\sigma_n^2/2
+Tse & Viswanath, Appendix A
+Standard mathematical convention
+SNR
+P/\sigma_n^2 under per-complex-symbol signal/noise power convention
+Standard complex-baseband interpretation; TCS-JSCC states fading version
+Standard, but must be declared
+Rayleigh coefficient
+h\sim\mathcal{CN}(0,1)
+TCS-JSCC Sec. II; original DeepJSCC uses H_c=1
+Supported by multiple sources
+Fading normalization
+(\mathbb E
+h
+^2=1)
+Fading coherence
+Constant for whole image; independently changes next image
+Original DeepJSCC, Sec. IV
+Paper-defined
+CSI
+No CSIT, no CSIR, no pilots in original slow-Rayleigh experiment
+Original DeepJSCC, Sec. IV
+Paper-defined
+Equalization
+None in original DeepJSCC; ATROC uses (h^*/
+h
+^2) with full CSIR
+Decoder input
+Complex received vector; reported FC input 2k in original CNN
+Original DeepJSCC, Sec. IV
+Partly paper-defined
+Gradient flow
+Channel included as non-trainable differentiable layer
+Original DeepJSCC, Sec. III
+Paper-defined high-level requirement
+Training SNR
+Separate fixed-SNR models in original reported results
+Original DeepJSCC, Sec. IV
+Paper-defined experiment protocol
+Evaluation SNR
+Fixed target cases plus AWGN train/test SNR mismatch sweep
+Original DeepJSCC, Sec. IV
+Paper-defined experiment protocol
+
+R. Critical convention conflicts
+Issue
+Source 1
+Source 2
+What must remain internally consistent
+Real versus complex channel
+Original DeepJSCC has a real-valued AWGN case with FC size k
+Original slow-Rayleigh case is complex, FC size 2k
+Tensor dimensions, noise variance, channel-use count, and SNR denominator
+Channel fade/CSI
+Original DeepJSCC: no CSI/pilots, no equalization
+ATROC: full CSIR and explicit (h^*/
+h
+SNR under fading
+Original DeepJSCC varies N_0, sets P=H_c=1, does not state extracted closed-form SNR equation
+TCS-JSCC: (\mathrm{SNR}=10\log_{10}(\mathbb E
+h
+Normalization pipeline
+Original DeepJSCC normalizes continuous codeword with Eq. (1)
+ATROC quantizes, then normalizes quantized symbols with Eq. (22)
+Whether normalization occurs before/after quantization and what the decoder knows
+Fading model notation
+Original DeepJSCC prose says one gain constant for complete image
+Its equation uses \operatorname{diag}(\mathbf h)\mathbf z
+State scalar-block versus per-symbol coefficient explicitly
+SNR training protocol
+Original DeepJSCC reports fixed SNR-specific models
+TCS-JSCC uses curriculum from 20 dB to 0 dB; MIMO work studies random SNR training
+SNR distribution, sampling unit, availability of SNR to encoder/decoder, and test protocol
+Complex representation
+Original DeepJSCC defines complex vectors and FC size 2k
+Papers often implement complex values through real concatenation, but original ordering is unstated
+One real/imag layout must be fixed end-to-end
+
+T. Decision classification
+Decision
+Classification
+Verification status
+Define DeepJSCC channel vector as complex
+1. Directly specified by cited paper
+Original DeepJSCC
+Use 2n_c real neural coordinates for n_c complex symbols
+1. Directly specified for original CNN architecture
+Original DeepJSCC
+Normalize each codeword using \sqrt{n_cP/\|\tilde z\|^2}
+1. Directly specified by cited paper
+Original DeepJSCC Eq. (1)
+Set P=1
+1. Directly specified only for cited experiments
+Original DeepJSCC experimental setting
+Interpret \mathcal{CN}(0,\sigma^2) as I/Q variance \sigma^2/2
+3. Standard mathematical/communication convention
+Complex Gaussian reference
+Use \sigma^2=10^{-\mathrm{SNR}_{dB}/10} when P=1 and SNR means P/\sigma^2
+3. Standard convention conditional on declared SNR definition
+Must not be mixed with real-channel convention
+Use h\sim\mathcal{CN}(0,1) and (\mathbb E
+h
+^2=1)
+Use one h per whole UAV state codeword
+4. Project-specific design choice unless FYP adopts original “whole image” coherence assumption
+Original paper supports its image experiment only
+No CSI/no equalization
+1. Directly specified only for original DeepJSCC slow-Rayleigh experiment
+Not universal
+Full CSIR plus ZF equalization
+1. Directly specified by ATROC/MIMO sources, but not original DeepJSCC
+Alternative design, not a default
+Native PyTorch complex tensors
+4. Project-specific implementation choice
+NOT SPECIFIED in original paper
+Real/imag tensor ordering
+5. Still unresolved
+NOT SPECIFIED in original paper
+Fixed, curriculum, or random SNR training
+4. Project-specific experiment choice
+Multiple conflicting source protocols
+Exact state-to-channel-use ratio for UAV state
+4. Project-specific metric choice
+Needs formal FYP definition
+
+Parameters That Must NOT Be Assumed Before Final Specification
+Complex tensor representation: native PyTorch complex dtype versus real-valued tensors carrying I/Q components is not specified by the original DeepJSCC paper.
+I/Q packing order: stacked [\Re(\mathbf y),\Im(\mathbf y)], alternating I/Q coordinates, separate tensor axis, or separate feature channels is not specified by the original paper.
+Source-to-channel bandwidth ratio: the original paper’s k/n definition is for image dimensions and complex channel uses; your UAV-state definition must be formally declared.
+Meaning of one channel use: one complex I/Q symbol versus one real scalar dimension must be fixed before reporting bandwidth efficiency.
+Channel type for each experiment: real AWGN and complex AWGN have different dimensions and different noise-variance handling in the original DeepJSCC study.
+Noise-variance convention: whether a stated \sigma^2 means total complex noise power or variance of each real coordinate must be declared. Do not apply the factor 1/2 twice or omit it.
+SNR definition: pre-fading P/\sigma_n^2, average faded \mathbb E|h|^2P/\sigma_n^2, instantaneous |h|^2P/\sigma_n^2, and post-equalization SNR are different quantities.
+Rayleigh fading coherence: original DeepJSCC’s narrative uses one coefficient for an entire image; a UAV-state experiment must specify one coefficient per state, per trajectory segment, per packet, or per symbol.
+Rayleigh notation reconciliation: if adopting the original paper, clarify whether \operatorname{diag}(\mathbf h) means a repeated scalar block fade or genuinely elementwise fading.
+CSI assumptions: no CSIT/no CSIR, CSIR only, imperfect CSIR, or CSIT/CSIR lead to different valid models and cannot be mixed.
+Equalization: original DeepJSCC does not equalize its slow-Rayleigh signal; ATROC and MIMO papers do. Do not insert y/h, ZF, MMSE, or channel inversion without specifying the corresponding CSI model.
+Order of receiver operations: faded/noisy signal directly into decoder versus equalize then decode versus pass CSI to decoder must be frozen.
+Power-normalization location: continuous encoder output before channel, or quantized constellation symbols after quantization, are distinct paper-defined pipelines.
+Power-normalization granularity: per codeword is supported by original DeepJSCC Eq. (1); batch-level and dataset-level alternatives are not supported by that equation.
+SNR training distribution: fixed SNR-specific, curriculum, uniform random per batch, or uniform random per sample are different protocols found across papers.
+Evaluation protocol: matched train/test SNR, SNR sweep, unseen-SNR generalization, and fading realization averaging must be explicitly specified.
+Whether the UAV receiver’s task loss is trained through the physical channel: task-oriented papers differ in architecture and objective. The navigation loss, state estimator, and control-policy interface require a project-level specification rather than an inferred DeepJSCC default.
+

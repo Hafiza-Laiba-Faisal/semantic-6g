@@ -1,0 +1,295 @@
+
+TASK-ORIENTED DEEP JOINT SOURCE-CHANNEL CODING FOR UAV NAVIGATION UNDER NOISY AND FADING WIRELESS CHANNELS
+Final Year Project Research Proposal
+Department of Electrical Engineering
+Lahore College for Women University (LCWU)
+Submitted By:
+Student Name
+Roll Number
+Areesha Sohail
+1005
+Amna Shahid
+1004
+Hafiza Laiba Faisal
+1015
+
+
+Program: B.E. Electrical Engineering
+Supervisor: Ismat Hira
+Date: ______________________
+
+
+2. Abstract
+Reliable and bandwidth-efficient wireless transmission of navigation-relevant information is a core requirement for autonomous unmanned aerial vehicle (UAV) operation over noisy and fading wireless links. Conventional digital communication systems and reconstruction-oriented Deep Joint Source-Channel Coding (DeepJSCC) schemes are optimized to recover the transmitted signal with minimum distortion, independent of how that signal will subsequently be used. This project investigates a Task-Oriented DeepJSCC communication system in which the encoder and decoder are trained end-to-end to directly optimize UAV navigation (goal-reaching) performance rather than reconstruction fidelity.
+A compact UAV kinematic state representation, comprising position, velocity, and goal-relative information, is transmitted over Additive White Gaussian Noise (AWGN) and Rayleigh fading channels and used by a UAV navigation controller operating on a simplified two-dimensional kinematic model. The Task-Oriented DeepJSCC system is benchmarked against a conventional digital communication baseline and a reconstruction-oriented DeepJSCC baseline under matched channel, signal-to-noise ratio (SNR), and bandwidth conditions. The project is entirely simulation-based, implemented in Python/PyTorch, and does not involve physical UAV hardware, software-defined radios, or real flight tests.
+A structured literature verification (Section 7) confirms that task-oriented and semantic communication has already been investigated for UAV command-and-control transmission, UAV swarm tracking control, and UAV vision-based localization, and that task-oriented DeepJSCC trained directly against a closed-loop control objective has been demonstrated for autonomous driving. The specific combination targeted here — a DeepJSCC encoder/decoder trained on a UAV navigation/goal-reaching objective, operating on a low-dimensional kinematic state rather than imagery, and systematically evaluated under both AWGN and Rayleigh fading against conventional and reconstruction-oriented baselines — has not been reported in the reviewed literature and forms the focus of this Final Year Project. The expected outcome is an empirically grounded characterization of when, and by how much, task-oriented optimization improves UAV navigation robustness relative to conventional and reconstruction-oriented alternatives under wireless channel impairments.
+3. Introduction
+Small, low-power unmanned aerial vehicles (UAVs) are increasingly used for surveillance, delivery, inspection, and search-and-rescue missions, in architectures where the UAV depends on a wireless link to a ground station or remote controller for navigation-relevant information exchange. This link is rarely ideal: it is subject to additive thermal noise, and, because UAVs move through space with time-varying line-of-sight conditions and multipath reflections from terrain, buildings, or foliage, it is also subject to small-scale fading. Under such impairments, conventional bit-level communication pipelines, which separate source compression from channel coding and aim to reconstruct the transmitted signal exactly, are known to suffer from the so-called "cliff effect": performance degrades gracefully until the channel SNR falls below the design threshold, after which the system fails abruptly (Bourtsoulatze, Kurka & Gündüz, 2019).
+Deep Joint Source-Channel Coding (DeepJSCC) replaces the separate source and channel coding stages with a pair of jointly trained neural networks that map source symbols directly to complex-valued channel input symbols, and has been shown both under AWGN and slow Rayleigh fading to degrade gracefully rather than catastrophically as SNR deteriorates (Bourtsoulatze, Kurka & Gündüz, 2019). The great majority of DeepJSCC research, however, is reconstruction-oriented: the encoder and decoder are trained to minimize a distortion metric between the transmitted and received signal, independent of what the received information will subsequently be used for. In parallel, a body of work on task-oriented and goal-oriented communication argues that when the purpose of transmission is a downstream decision or control action, the communication system should instead be optimized directly against that downstream task's performance rather than against signal fidelity (Gündüz et al., 2023; Shao, Mao & Zhang, 2022).
+This project investigates the intersection of these two ideas for a specific and practically relevant downstream task: UAV navigation toward a goal position. It asks whether training a DeepJSCC encoder/decoder pair directly on navigation/goal-reaching performance, rather than on reconstruction error, yields a communication system that is more robust to wireless channel impairments in the sense that matters to the mission — reaching the goal — even if it is not necessarily better at reproducing the original navigation state bit-for-bit.
+
+
+4. Background
+2.1 Deep Joint Source-Channel Coding
+Classical digital communication systems follow Shannon's source-channel separation principle: a source coder compresses the data and a channel coder adds redundancy for error protection, with the two designed independently. While asymptotically optimal for point-to-point channels with unbounded blocklength, separation-based systems are known to perform poorly at short blocklengths and to fail abruptly when the operating SNR drops below the design point. DeepJSCC instead parameterizes the encoder and decoder as convolutional or transformer-based neural networks trained end-to-end as an autoencoder, with a non-trainable channel layer inserted between them to model the wireless channel (Bourtsoulatze, Kurka & Gündüz, 2019). Subsequent work has extended DeepJSCC with attention modules for content-adaptive coding (Xu et al., 2022), bandwidth-agile and variable-rate transmission (Kurka & Gündüz, 2021), and explicit multipath/fading and MIMO channel models (Yang, Bian & Kim, 2022; Wu et al., 2024).
+2.2 Semantic, Goal-Oriented, and Task-Oriented Communication
+The terms semantic communication, goal-oriented communication, and task-oriented communication are often used loosely in the literature; this proposal adopts the distinctions summarized in Gündüz et al. (2023). Semantic communication is concerned with conveying the meaning of a message rather than its exact bit sequence, typically evaluated by a semantic-level similarity measure. Goal-oriented communication extends this by explicitly tying the value of transmitted information to a specific goal or action to be taken by the receiver, often using metrics such as the age of information (AoI) or value of information (VoI). Task-oriented communication, the framing adopted in this project, specifically optimizes the communication system — encoder, and where relevant the decoder and downstream model — against the performance of a defined downstream inference or control task, commonly formalized through an information bottleneck (IB) objective that trades off representation compactness against task-relevant informativeness (Shao, Mao & Zhang, 2022).
+A Task-Oriented DeepJSCC system, as investigated in this project, combines both ideas: it uses the DeepJSCC architecture (a jointly trained neural encoder/decoder mapping directly to channel symbols, without explicit source/channel separation) but replaces the reconstruction-based training objective with a task-oriented loss defined on the downstream task's performance.
+2.3 UAV Wireless Communication Challenges
+UAV communication links differ from static or slowly moving terrestrial links in that the channel can vary rapidly due to the UAV's own motion, altitude changes, and antenna orientation, producing time-varying multipath and Doppler effects. Bandwidth is also often constrained by regulatory allocation and by the need to share spectrum with other aerial or ground users. These characteristics motivate the choice of AWGN and Rayleigh fading as the two channel models investigated in this project: AWGN represents a noise-limited baseline case, while Rayleigh fading represents a non-line-of-sight, richly scattering environment representative of low-altitude urban or cluttered operation.
+
+
+5. Problem Statement
+When a UAV's navigation-relevant state information (position, velocity, and goal information) is transmitted over a noisy or fading wireless channel using either a conventional digital pipeline or a reconstruction-oriented DeepJSCC scheme, the communication system is optimized to minimize a generic distortion measure on the transmitted state vector. This measure does not necessarily correspond to what matters operationally: the UAV's ability to reach its goal safely and efficiently. Under a fixed bandwidth and SNR budget, a communication system that spends its limited channel-use budget reproducing every component of the state vector with equal fidelity may perform worse, in terms of navigation outcome, than a system that allocates its representational capacity toward the state information that is most relevant to the navigation decision. The problem addressed in this project is therefore whether, and to what extent, training a DeepJSCC encoder/decoder directly against a navigation-task objective — a Task-Oriented DeepJSCC system — improves UAV navigation performance relative to conventional digital communication and reconstruction-oriented DeepJSCC, under identical AWGN and Rayleigh fading channel conditions.
+6. Research Motivation
+From a communications engineering perspective, this project is motivated by three considerations. First, UAV platforms are typically bandwidth- and power-constrained, so any reduction in the channel resources needed to achieve a given navigation reliability is operationally valuable. Second, the graceful-degradation property already demonstrated for reconstruction-oriented DeepJSCC under AWGN and Rayleigh fading (Bourtsoulatze, Kurka & Gündüz, 2019) suggests that a task-oriented variant may inherit similar robustness while additionally concentrating representational capacity on task-relevant information, potentially widening the performance gap over conventional digital transmission at low SNR. Third, while task-oriented DeepJSCC has already been shown to improve closed-loop control task performance under noisy channels in the autonomous-driving domain (Diao et al., 2024, 2025), it has not been evaluated for UAV navigation using a compact kinematic state representation, leaving open whether the same benefits transfer to a lower-dimensional, non-visual source and to a mobile aerial channel environment.
+7. Literature Review
+The literature review below is organized around the five concept areas the project must distinguish: foundational DeepJSCC, task-oriented communication theory, UAV-specific semantic/task-oriented communication, task-oriented communication applied to closed-loop control, and channel-aware DeepJSCC under fading.
+7.1 Foundational Deep Joint Source-Channel Coding
+Bourtsoulatze, Kurka and Gündüz (2019) introduced DeepJSCC for wireless image transmission, showing that a jointly trained convolutional encoder/decoder mapping pixel values directly to channel symbols outperforms JPEG/JPEG2000-plus-capacity-achieving-channel-coding baselines at low SNR and small bandwidth, avoids the cliff effect under AWGN, and, under slow Rayleigh fading, learns fading-resilient representations that significantly outperform separation-based digital transmission at all tested SNR and bandwidth values. This paper establishes both the DeepJSCC architecture and the AWGN/Rayleigh evaluation protocol adopted in this project. Subsequent works extended the architecture with attention modules for content/channel-adaptive coding (Xu et al., 2022), variable-rate and bandwidth-agile coding (Kurka & Gündüz, 2021), explicit OFDM-based multipath fading channels (Yang, Bian & Kim, 2022), and MIMO fading channels (Wu et al., 2024). These works confirm that channel-aware DeepJSCC under AWGN and Rayleigh (and richer fading models) is a mature, well-validated methodology, but remain reconstruction-oriented: the training objective is signal fidelity (e.g., mean-squared error or a perceptual metric), not a downstream task outcome.
+7.2 Task-Oriented Communication Theory
+Gündüz et al. (2023) provide the tutorial framing adopted in this proposal, distinguishing semantic, goal-oriented, and task-oriented communication and surveying information-theoretic and learning-based approaches to each. Shao, Mao and Zhang (2022) formalize task-oriented communication for edge inference using a variational information bottleneck (VIB) objective that jointly optimizes feature extraction, source coding, and channel coding to target a downstream classification task rather than data reconstruction, and further propose a dynamic, channel-adaptive feature-length scheme. A related paper extends this to multi-device cooperative inference using a distributed information bottleneck (Shao, Mao & Zhang, 2021, preprint). These works establish task-oriented communication as a rigorous, IB-grounded paradigm, but their downstream task is classification/inference on a held-out label, not a closed-loop control or navigation objective, and their evaluated source is high-dimensional imagery rather than a low-dimensional kinematic state vector.
+7.3 UAV-Specific Semantic and Task-Oriented Communication
+Several papers apply semantic or task-oriented ideas specifically to UAVs, but none trains a DeepJSCC-style neural channel-symbol encoder directly against a navigation/goal-reaching objective. Xu, Zhou and Deng (2023) propose a task-oriented semantics-aware (TOSA) framework for UAV command-and-control (C&C) transmission that defines the value of information using similarity and age-of-information metrics; this addresses scheduling and importance-weighting of C&C messages rather than learning a joint source-channel neural code. Wu, Yang, Deng and Aghvami (2024) propose goal-oriented semantic communication for robotic (including UAV) waypoint transmission, using a deep reinforcement learning agent to generate optimal C&C data and a proactive repetition scheme (DeepPro) to combat channel unreliability; again, this is a scheduling/repetition strategy layered on generated commands rather than a trained DeepJSCC encoder/decoder. Tang, Feng and Quek (2024, 2025) study decentralized semantic communication and cooperative tracking control for a UAV swarm over MIMO fading channels, using a semantic triggering rule (whether to transmit at all, based on tracking-error cost and channel state) combined with a Lyapunov drift-plus-penalty control law; this addresses when to transmit, not how to jointly encode the state into channel symbols. Fang et al. (2025) propose a task-oriented communication framework for UAV visual localization/navigation in GPS-denied environments, using an orthogonally-constrained variational information bottleneck (O-VIB) encoder to compress multi-camera image features before transmission to an edge server for position estimation; the wireless link here is modeled through a Shannon-capacity/rate expression incorporating path loss, shadowing, and small-scale fading as a scalar channel gain, rather than as a differentiable, symbol-level AWGN/Rayleigh channel embedded directly in end-to-end training, and the task is position estimation (localization) rather than closed-loop goal-reaching control.
+7.4 Task-Oriented DeepJSCC for Closed-Loop Control
+The methodologically closest precedent to this project is a series of papers by Diao and colleagues on task-oriented source-channel coding for autonomous driving. Diao, Meng, Xu, She and Zhao (2024) propose a Task-oriented Source-Channel Coding (TSCC) framework that uses a modified conditional variational autoencoder guided by an autonomous-driving agent to jointly optimize source and channel coding, tested under different communication channel conditions on a driving simulator. Diao, Zhang, De Martini, Zhao and Li (2025) extend this to a task-oriented co-design of communication, computing, and control for industrial cyber-physical systems, combining a VIB-based task-oriented JSCC with a delay-aware control-prediction strategy, reporting large bandwidth reductions with maintained driving performance under low-SNR conditions in the CARLA simulator. A related paper, Diao, Zhang, She, Zhao and Li (2025), proposes an alignment between task-oriented and reconstruction-oriented communication for edge intelligence, and the associated doctoral thesis (Diao, 2025) consolidates this line of work, explicitly reporting large communication-bandwidth reductions while maintaining driving performance under noisy channels. This body of work demonstrates conclusively that a DeepJSCC-style, end-to-end-trained system optimized directly against closed-loop control-task performance under a noisy channel is both feasible and beneficial — but exclusively for ground-vehicle autonomous driving using camera imagery as the source, not for UAV navigation using a compact kinematic state vector, and without a systematic, matched-bandwidth comparison across both AWGN and Rayleigh fading of the kind proposed here.
+7.5 Summary Table
+Table 7.1: Positioning of existing work relative to the proposed research gap
+Existing Work
+Application
+Communication Method
+Channel Model
+Task Metric
+What It Solves
+Remaining Limitation
+Bourtsoulatze, Kurka & Gündüz (2019)
+Image transmission
+Reconstruction-oriented DeepJSCC (CNN autoencoder)
+AWGN; slow Rayleigh fading
+PSNR / reconstruction distortion
+Graceful degradation vs. cliff effect; fading-resilient coding
+Reconstruction-oriented; not applied to control/navigation task
+Shao, Mao & Zhang (2022)
+Edge inference (image classification)
+Task-oriented VIB encoder + channel coding
+Generic/AWGN-like link
+Inference accuracy, rate-relevance tradeoff
+Task-oriented compression for classification
+Classification task, not control; high-dimensional image source
+Xu, Zhou & Deng (2023)
+UAV command-and-control transmission
+Task-oriented semantics-aware (TOSA) scheduling
+Cellular/URLLC link (not DeepJSCC channel)
+Value of information / age of information
+Prioritizes important C&C data for QoS
+No neural joint source-channel encoder; not navigation-outcome trained
+Wu, Yang, Deng & Aghvami (2024)
+Robotic / UAV waypoint (C&C) transmission
+RL-generated commands + proactive repetition (DeepPro)
+Unreliable wireless link (packet loss model)
+Value and age of information
+Goal-oriented scheduling and repetition for C&C
+Not a DeepJSCC encoder; channel is packet-loss abstraction
+Tang, Feng & Quek (2024/2025)
+UAV swarm cooperative tracking control
+Semantic event-triggering + Lyapunov control
+MIMO fading channels
+Tracking error, power cost
+Decides when to transmit; stabilizes swarm tracking
+Scheduling/triggering, not a trained channel-symbol codec
+Fang et al. (2025)
+UAV visual localization / navigation (GPS-denied)
+Task-oriented O-VIB feature compression
+Shannon-capacity/rate abstraction (path loss, shadowing, fading gain)
+Localization error, bandwidth
+Bandwidth-efficient, accurate localization
+Channel not modeled as differentiable AWGN/Rayleigh symbol channel; task is localization, not goal-reaching control
+Diao et al. (2024, 2025)
+Autonomous driving / industrial CPS control
+Task-oriented JSCC (CVAE/VIB) trained on control task
+Noisy channel, varying SNR
+Driving score, bandwidth reduction, task success
+DeepJSCC directly optimized for closed-loop control under noisy channel
+Ground-vehicle, camera-image source; not UAV kinematic-state navigation; no systematic AWGN-vs-Rayleigh comparison
+
+
+8. Research Gap
+The literature confirms that (i) DeepJSCC under AWGN and Rayleigh fading is a mature methodology for reconstruction-oriented image transmission; (ii) task-oriented communication, formalized via an information bottleneck objective, is well established for downstream inference/classification tasks; (iii) UAV-specific semantic and task-oriented communication has been investigated for command-and-control scheduling, swarm tracking control, and vision-based localization; and (iv) task-oriented DeepJSCC trained directly against a closed-loop control-task objective under a noisy channel has been demonstrated for autonomous driving. None of the reviewed works combines a DeepJSCC neural encoder/decoder, trained end-to-end so its loss is defined directly on UAV navigation/goal-reaching performance, operating on a compact kinematic state vector rather than imagery, and evaluated systematically against conventional digital and reconstruction-oriented DeepJSCC baselines under both AWGN and Rayleigh fading at matched bandwidth and SNR.
+This project therefore targets a specific, narrowed and defensible gap: extending the task-oriented DeepJSCC-for-control paradigm — already validated for autonomous driving on image sources (Diao et al., 2024, 2025) — to the UAV navigation domain using a low-dimensional kinematic state representation, with an explicit, differentiable AWGN and Rayleigh fading channel embedded in end-to-end training, and a systematic comparison against conventional digital communication and reconstruction-oriented DeepJSCC. This is presented as a domain transfer and systematic empirical study rather than as the introduction of a fundamentally new communication paradigm, consistent with the requirement to avoid unsupported novelty claims.
+9. Research Questions
+RQ1 (Task/Communication Performance): To what extent does a Task-Oriented DeepJSCC framework, trained end-to-end to optimize UAV navigation (goal-reaching) performance, outperform conventional digital communication and reconstruction-oriented DeepJSCC in transmitting UAV navigation state information over AWGN and Rayleigh fading channels?
+RQ2 (Robustness / Channel and Resource Sensitivity): How do channel type (AWGN vs. Rayleigh fading), signal-to-noise ratio (SNR), and bandwidth/channel-use ratio affect the navigation performance gap between the Task-Oriented DeepJSCC system and the conventional and reconstruction-oriented baselines?
+10. Aim
+The aim of this project is to design, implement, and empirically evaluate a Task-Oriented DeepJSCC communication system for UAV navigation state transmission, and to characterize, through controlled simulation experiments under AWGN and Rayleigh fading channels, the conditions under which optimizing the communication system directly for navigation/goal-reaching performance yields measurable benefits over conventional digital communication and reconstruction-oriented DeepJSCC.
+11. Objectives
+Objective 1: Design and implement an end-to-end Task-Oriented DeepJSCC framework for transmitting a compact UAV navigation-state representation over AWGN and Rayleigh fading channels.
+Objective 2: Integrate the communication framework with a simplified two-dimensional UAV kinematic navigation model and quantify the effect of communication-induced state degradation on navigation/goal-reaching performance.
+Objective 3: Benchmark the Task-Oriented DeepJSCC system against a conventional digital communication baseline and a reconstruction-oriented DeepJSCC baseline under identical channel, SNR, and bandwidth conditions.
+12. KPIs for Each Objective
+Objective 1 KPIs
+Functional task-oriented encoder f? and decoder gf implemented in PyTorch, with a defined channel-use (bandwidth) ratio k/n.
+Differentiable AWGN channel layer implemented and validated (empirical received noise variance within an acceptable tolerance of the specified SNR).
+Differentiable Rayleigh fading channel layer implemented and validated (empirical fading coefficient distribution matching the specified Rayleigh statistics).
+Stable training convergence, defined as a plateauing task-loss curve across at least three independent random seeds.
+At least three discrete bandwidth/channel-use ratios supported by the framework.
+Objective 2 KPIs
+Goal-reaching success rate (%) across a fixed set of test episodes and initial/goal configurations.
+Mean final position error and path deviation (in simulation distance units) relative to an ideal noiseless-communication trajectory.
+Mean goal-reaching time / normalized time-to-goal.
+Control-command error relative to the full-information (noiseless) baseline.
+Episode failure rate (timeout or divergence from the goal region).
+Objective 3 KPIs
+Navigation task success rate vs. SNR curves for all three methods (conventional digital, reconstruction-oriented DeepJSCC, Task-Oriented DeepJSCC).
+Bit error rate / block error rate (BER/BLER) of the conventional digital baseline, where applicable.
+Reconstruction error (e.g., mean-squared error of the decoded state) for the reconstruction-oriented baseline, contrasted with the Task-Oriented DeepJSCC system's task performance.
+Performance gap (percentage points of success rate, or normalized error) between the Task-Oriented DeepJSCC system and each baseline at matched bandwidth/channel-use ratio.
+Performance degradation slope from AWGN to Rayleigh fading, computed separately for each of the three methods.
+13. Proposed Methodology
+The project follows a simulation-based, empirical machine-learning methodology structured in four stages. First, a simplified two-dimensional UAV kinematic simulation environment is implemented, providing ground-truth navigation states and a navigation/control policy that can operate on either ground-truth or communication-degraded state estimates. Second, a conventional digital communication baseline (quantization/compression appropriate to a low-dimensional state vector, followed by a channel code, modulation, the wireless channel, demodulation, and decoding) and a reconstruction-oriented DeepJSCC baseline (an encoder/decoder pair trained to minimize state reconstruction error under the channel) are implemented and validated independently of the navigation task. Third, the proposed Task-Oriented DeepJSCC system is implemented, in which the encoder and decoder are trained end-to-end with a loss function defined directly on navigation/goal-reaching performance (Section 17), with the wireless channel (Section 18) embedded as a differentiable layer so that gradients can propagate from the navigation objective back through the decoder, channel, and encoder. Fourth, all three systems are evaluated under an identical experimental matrix (Section 20) spanning channel type, SNR, and bandwidth/channel-use ratio, using the metrics defined in Section 21, followed by the ablation studies described in Section 20.
+14. System Architecture
+The communication architecture considered is a UAV-to-ground-station (or UAV-to-remote-controller) link, in which the UAV transmits its navigation-relevant state information over the wireless channel, and the receiver decodes a task-relevant representation used by a navigation controller to compute the next control action, whose effect is applied back to the UAV's kinematic state. This architecture is appropriate for scenarios in which higher-level navigation decisions, monitoring, or override capability are located at a ground segment rather than fully onboard the UAV; it is the same directional structure considered in the UAV command-and-control and waypoint-transmission literature reviewed in Section 7.3. The transmitter and receiver roles are therefore fixed and unambiguous: the UAV is always the transmitter of state information, and the ground-based navigation controller is always the receiver and decision-maker. The end-to-end block structure is as follows: UAV state/navigation information ? Task-Oriented Encoder ? DeepJSCC channel symbols ? AWGN / Rayleigh fading channel ? Task-Oriented Decoder ? navigation information / control representation ? UAV navigation controller ? control action ? UAV state update, closing the loop back to the UAV kinematic model.
+Figure 14.1 (to be produced during implementation): Block diagram of the UAV–ground-station Task-Oriented DeepJSCC navigation loop, showing the encoder, channel, decoder, and navigation controller as described above.
+15. UAV Mathematical Model
+The UAV is modeled using a simplified two-dimensional point-mass kinematic model, appropriate for evaluating the communication system's effect on a downstream navigation task without introducing the complexity of full flight dynamics. The navigation-relevant state at discrete time step t is defined as:
+        st = [ xt, yt, vx,t, vy,t, xg, yg ]                                                        (1)
+where (xt, yt) is the UAV's two-dimensional position, (vx,t, vy,t) is its velocity, and (xg, yg) is the fixed target/goal position for the episode. The kinematics evolve as:
+        pt+1 = pt + vt ?t                                                        (2)
+        vt+1 = vt + ut ?t                                                        (3)
+where pt = (xt, yt) is position, vt is velocity, ut is the control input (commanded acceleration) issued by the navigation controller, and ?t is the simulation time step. Velocity and control input are bounded, |vt| = vmax and |ut| = umax, to keep the platform within a physically reasonable operating envelope. An episode terminates successfully when the UAV enters a goal-tolerance radius around (xg, yg), and terminates as a failure on timeout or if the UAV diverges beyond a bounded simulation area. This model deliberately omits full six-degree-of-freedom aerodynamics, propulsion dynamics, and environmental disturbances, consistent with the scope defined in Section 24: its purpose is to provide a realistic and reproducible downstream engineering task against which the communication system is evaluated, not to contribute a new UAV control algorithm.
+16. Communication / System Model
+At each transmission instant, the UAV encodes its current navigation state st into a channel-symbol representation and transmits it to the ground-based navigation controller over the wireless channel. The receiver decodes a task-relevant representation rt, which the navigation controller uses, together with the known goal position, to compute the control input ut applied at the UAV. This defines a closed communication–control loop in which communication-induced degradation of rt relative to st propagates directly into control error and, ultimately, into navigation/goal-reaching performance. The system model is intentionally kept general enough to instantiate three specific methods sharing this same loop structure: (i) a conventional digital communication baseline, (ii) a reconstruction-oriented DeepJSCC baseline, and (iii) the proposed Task-Oriented DeepJSCC system; these differ only in how the encoder, decoder, and training objective are defined (Sections 17 and 19), not in the overall architecture of Section 14.
+17. DeepJSCC Model
+The Task-Oriented DeepJSCC encoder maps the navigation state directly to a complex-valued channel-symbol vector:
+        zt = f?(st)                                                        (4)
+where f? is a learned neural encoder with parameters ?, and zt ? Cn is the transmitted channel-symbol vector, subject to an average power constraint E[|zt|²] = P. The bandwidth/channel-use ratio is defined as k/n, where k is the dimensionality of the source state st and n is the number of channel uses (symbols) allocated per transmission; this ratio is treated as an experimental variable (Section 20). The channel maps zt to a received signal yt as defined in Section 18. The decoder maps the received signal to a task-relevant representation:
+        rt = gf(yt)                                                        (5)
+where gf is a learned neural decoder with parameters f. Critically, and in contrast to the reconstruction-oriented baseline, rt is not required to reconstruct the full source state st; it is only required to be sufficient for the navigation controller to compute an effective control action. This is the architectural distinction that operationalizes "task-oriented" in this project: the decoder output is a control-relevant representation (for example, an estimate of goal-relative position and velocity, or, in an alternative instantiation investigated as an ablation, a directly predicted control action), rather than a reconstruction of every component of st with equal fidelity.
+The navigation controller then computes ut = p(rt), where p is a fixed, lightweight, non-learned or separately-trained control policy (for example, a proportional-derivative controller acting on the goal-relative position and velocity estimated from rt), so that the effect of communication quality on navigation performance can be attributed to the communication system rather than to a jointly-changing control policy. This choice keeps the project's contribution centered on communication rather than on control-algorithm design, consistent with the scope in Section 24.
+18. Channel Models
+18.1 Additive White Gaussian Noise (AWGN) Channel
+Under the AWGN model, the received signal is:
+        yt = zt + nt                                                        (6)
+where nt ~ CN(0, s²In) is complex Gaussian noise with per-symbol variance s², independent of the transmitted symbol and identically distributed across channel uses. The channel SNR is defined as SNR = P/s², commonly expressed in dB, where P is the average transmit power per symbol. AWGN is used as the baseline channel because it isolates the effect of thermal noise from multipath effects, provides a controlled reference against which the added difficulty of fading can be measured, and is the channel condition under which the foundational DeepJSCC result (Bourtsoulatze, Kurka & Gündüz, 2019) was first established.
+18.2 Rayleigh Fading Channel
+Under the Rayleigh fading model, the received signal is:
+        yt = ht zt + nt                                                        (7)
+where ht is a complex fading coefficient with ht ~ CN(0, 1), so that |ht| follows a Rayleigh distribution, and nt is AWGN as defined above. Rayleigh fading models a richly scattering, non-line-of-sight propagation environment in which the received signal is the superposition of many independently-attenuated and phase-shifted multipath components, with no single dominant line-of-sight path; this is representative of UAV operation at low altitude in urban or cluttered environments. A slow, block-fading assumption is adopted, consistent with the original DeepJSCC formulation (Bourtsoulatze, Kurka & Gündüz, 2019): the fading coefficient ht is held constant over one transmission (one state vector) and drawn independently for the next, and, where instantaneous channel state information (CSI) is assumed available at the decoder, the received signal may be equalized (e.g., via zero-forcing division by ht) before decoding, with the effect of imperfect CSI treated as a possible ablation (Section 20) rather than a default assumption. Because ht is drawn from a continuous distribution and the encoder/decoder are neural networks, the channel is fully differentiable, allowing gradients from the navigation-task loss to propagate through the channel during training. Rician fading is noted as a natural extension representing partial line-of-sight conditions, but is not included in the core experimental matrix, consistent with the scope defined in Section 24; it may be added as a future extension if time permits without risk to the core deliverables.
+19. Baselines
+19.1 Baseline 1 — Conventional Digital Communication
+The conventional digital baseline follows the classical separation-based pipeline appropriate to a low-dimensional continuous state vector: quantization of each state component to a fixed number of bits, a standard forward error-correcting channel code (e.g., a low-density parity-check or convolutional code) sized to the available bandwidth, digital modulation (e.g., QAM) matched to the channel, transmission over the same AWGN/Rayleigh channel model as the other two methods, and the corresponding demodulation, channel decoding, and dequantization at the receiver. Because the source here is a compact kinematic state vector rather than an image, an image-specific codec such as JPEG is not appropriate and is not used; this substitution is made explicitly to keep Baseline 1 a fair representation of conventional digital communication for the actual source considered.
+19.2 Baseline 2 — Reconstruction-Oriented DeepJSCC
+The reconstruction-oriented baseline uses the same DeepJSCC architecture (encoder f?, channel, decoder gf) as the proposed method, but is trained to minimize the mean-squared reconstruction error between the decoded and original state vectors, E[|st - st|²], independent of navigation outcome. This isolates the effect of the training objective (reconstruction vs. task-oriented) while holding the underlying communication architecture, channel model, and bandwidth budget fixed, providing the most direct point of comparison for RQ1.
+19.3 Proposed Method — Task-Oriented DeepJSCC
+The proposed method uses the same architecture and channel as Baseline 2, but is trained end-to-end on the task-oriented loss defined in Section 17 and evaluated through Section 21.
+19.4 Fairness Conditions
+All three methods are compared under identical experimental conditions to ensure a scientifically fair benchmark: the same UAV kinematic environment, initial conditions, and goal configurations; the same channel model and SNR for a given experimental cell; the same bandwidth/channel-use budget (matched, where architecturally possible, in terms of channel symbols per transmission); comparable neural network model complexity between the two DeepJSCC variants (identical encoder/decoder architecture, differing only in training objective); and the same test episodes and evaluation seeds across all three methods.
+20. Experimental Design
+The experimental matrix is designed to directly answer both research questions and to exercise all three objectives, while remaining feasible within the project's six-month scope.
+Table 20.1: Experimental matrix dimensions
+Dimension
+Levels investigated
+Purpose
+Channel
+AWGN; Rayleigh fading
+Core comparison for RQ2; matches Section 18
+SNR
+A range from a low, degraded value to a high, near-ideal value (e.g., approx. 0 dB to 20 dB in fixed steps)
+Characterizes the SNR-vs-performance curve for RQ1/RQ2
+Bandwidth / channel-use ratio (k/n)
+At least three ratios, from bandwidth-constrained to relatively generous
+Assesses whether task-oriented gains persist as bandwidth tightens (RQ2)
+Method
+Conventional digital; Reconstruction-oriented DeepJSCC; Task-Oriented DeepJSCC
+Core comparison for RQ1 (Section 19)
+UAV task
+Single-UAV point-to-point goal-reaching, multiple randomized start/goal configurations
+Provides the downstream performance measure (Section 15, 21)
+
+
+For each (channel, SNR, bandwidth, method) cell in the matrix, the corresponding communication system is trained (where learned) and then evaluated over a fixed, sufficiently large number of test episodes with randomized start and goal positions, using a common random seed set across methods to reduce variance when comparing results. The resulting success-rate and error curves as a function of SNR, for each channel and bandwidth level, directly answer RQ1 (by comparing methods at fixed channel/SNR/bandwidth) and RQ2 (by comparing how each method's curve shifts across channel type, SNR, and bandwidth).
+20.1 Ablation Study
+A focused set of ablations isolates the contribution of individual design choices without expanding the experimental matrix excessively:
+Reconstruction loss vs. task-oriented loss, holding architecture, channel, and bandwidth fixed (directly isolates the training-objective effect underlying RQ1).
+A model trained on AWGN and evaluated on Rayleigh fading (and vice versa), to assess generalization versus channel-matched training.
+Sensitivity to bandwidth/channel-use ratio, using the three ratios from the main experimental matrix.
+Sensitivity to the SNR range used during training versus the SNR range used at test time, to assess robustness to SNR mismatch.
+21. Evaluation Metrics
+21.1 Communication-Level Metrics
+Operating SNR (dB).
+Bit error rate / block error rate (BER/BLER), computed for the conventional digital baseline.
+Bandwidth / channel-use ratio (k/n).
+Reconstruction error (mean-squared error) of the decoded state, computed for the reconstruction-oriented baseline and reported alongside the Task-Oriented DeepJSCC system for contextual comparison.
+21.2 UAV Navigation-Level Metrics
+Goal-reaching success rate (%).
+Final position error / path deviation relative to an ideal (noiseless-communication) trajectory.
+Goal-reaching time / normalized time-to-goal.
+Control-command error relative to the full-information baseline.
+Episode failure rate (timeout or divergence).
+Metrics are deliberately limited to those that map directly onto the research questions, objectives, and KPIs defined in Sections 9, 11, and 12, rather than an exhaustive list of every metric available in the DeepJSCC and UAV-control literature.
+22. Expected Outcomes
+The project is expected to produce: a working, reproducible simulation testbed combining a UAV kinematic navigation environment with a configurable AWGN/Rayleigh wireless channel and three interchangeable communication back-ends; a set of SNR-vs-navigation-performance curves for each channel type, bandwidth ratio, and communication method, directly addressing RQ1 and RQ2; and an evidence-based assessment of the specific conditions (channel type, SNR regime, bandwidth budget) under which task-oriented optimization provides a measurable navigation-performance advantage over conventional digital communication and reconstruction-oriented DeepJSCC, and the conditions under which it does not. Consistent with the requirement to avoid overclaiming, no particular direction or magnitude of improvement is presumed in advance of the experiments.
+23. Expected Contributions
+Development of an end-to-end Task-Oriented DeepJSCC communication framework for UAV navigation-state transmission, adapting the task-oriented JSCC-for-control paradigm previously validated for image-based autonomous driving (Diao et al., 2024, 2025) to a low-dimensional kinematic-state UAV navigation setting.
+A systematic, matched-bandwidth comparison of the proposed method against conventional digital communication and reconstruction-oriented DeepJSCC baselines under both AWGN and Rayleigh fading channels, a comparison not previously reported for UAV navigation in the reviewed literature.
+An empirical characterization of the relationship between wireless channel conditions (channel type, SNR, bandwidth/channel-use ratio) and downstream UAV navigation/goal-reaching performance, applicable as a reference point for future task-oriented communication research in aerial robotics.
+A reproducible open simulation testbed (UAV kinematic model, channel models, and three communication back-ends) that can be extended in future work to richer channel models, multi-UAV settings, or alternative downstream tasks.
+24. Scope
+This Final Year Project is explicitly scoped as follows:
+Simulation-based only; implemented in Python using PyTorch.
+Single-UAV point-to-point navigation/goal-reaching task.
+A simplified two-dimensional kinematic UAV model, as defined in Section 15.
+AWGN and Rayleigh fading channel models only, as defined in Section 18.
+No physical UAV hardware, no software-defined radio (SDR), and no RF hardware of any kind.
+No real-world flight experiments.
+No federated learning and no swarm/multi-agent learning.
+No full six-degree-of-freedom aerodynamic modeling.
+No full 3GPP-standard channel simulator; channel models are the standard information-theoretic AWGN and Rayleigh models used throughout the DeepJSCC literature.
+No unnecessary multi-task learning beyond the single navigation/goal-reaching task.
+No Safe Reinforcement Learning component; the navigation controller is a fixed, lightweight policy (Section 17), and the project's core contribution is the communication system, not a new UAV control algorithm.
+25. Limitations
+The project's conclusions are subject to several limitations inherent to its scope. The simplified two-dimensional kinematic UAV model does not capture aerodynamic disturbances, actuator dynamics, or three-dimensional flight effects, so navigation-performance results should be interpreted as indicative of communication-system behavior under a controlled downstream task rather than as flight-certified performance figures. The AWGN and Rayleigh fading models, while standard in the DeepJSCC literature, do not capture the full complexity of real-world air-to-ground propagation (e.g., Doppler shift from UAV motion, three-dimensional path loss, or standardized 3GPP UAV channel models), so results may not transfer directly to a specific real deployment without further validation. The single-UAV, point-to-point communication architecture does not address multi-UAV interference or swarm coordination. Finally, as with any learning-based system, the trained encoder/decoder's performance is dependent on the training distribution of channel conditions and navigation scenarios, and generalization beyond the tested SNR range and scenario distribution is only partially assessed through the ablation study in Section 20.1.
+26. Tools and Software
+Python 3.x as the primary implementation language.
+PyTorch for neural network implementation, automatic differentiation, and training of the DeepJSCC encoder/decoder models.
+NumPy and SciPy for numerical routines, including channel coefficient generation.
+Matplotlib for result visualization (SNR-vs-performance curves, ablation plots).
+A custom-built lightweight UAV kinematic simulation environment (Section 15), implemented in Python, rather than a full physics-based flight simulator, consistent with the project's scope.
+A standard forward error-correcting code implementation (e.g., via an existing open-source library) for the conventional digital baseline's channel coding stage.
+Version control (Git) for code management and reproducibility.
+27. Six-Month Timeline
+Table 27.1: Six-month project timeline
+Month
+Activities
+Month 1
+Literature review consolidation; problem formulation; finalization of UAV state representation, kinematic model, and evaluation metrics.
+Month 2
+Implementation of the UAV kinematic simulation environment; implementation and validation of the conventional digital communication baseline (Baseline 1) under AWGN.
+Month 3
+Implementation and training of the reconstruction-oriented DeepJSCC baseline (Baseline 2) under AWGN; extension of channel models to include Rayleigh fading.
+Month 4
+Implementation and training of the proposed Task-Oriented DeepJSCC system; integration with the UAV navigation controller and closed-loop evaluation pipeline.
+Month 5
+Full experimental matrix execution (channel × SNR × bandwidth × method); AWGN vs. Rayleigh analysis; ablation studies.
+Month 6
+Results analysis and consolidation; thesis/report writing; final evaluation and defense preparation.
+
+
+28. References
+Bourtsoulatze, E., Kurka, D. B., & Gündüz, D. (2019). Deep joint source-channel coding for wireless image transmission. IEEE Transactions on Cognitive Communications and Networking, 5(3), 567–579. https://doi.org/10.1109/TCCN.2019.2919300
+Diao, Y. (2025). Task-oriented communication for edge intelligence enabled connected robotics systems (Doctoral thesis, University of Glasgow). University of Glasgow Theses Repository.
+Diao, Y., Meng, Z., Xu, X., She, C., & Zhao, P. G. (2024). Task-oriented source-channel coding enabled autonomous driving based on edge computing. In Proceedings of the 17th International Workshop on Networked Robotics and Communication Systems (NetRobiCS 2024), IEEE INFOCOM Workshops. https://doi.org/10.1109/INFOCOMWKSHPS61880.2024.10620735
+Diao, Y., Zhang, Y., De Martini, D., Zhao, P. G., & Li, E. L. (2025). Task-oriented co-design of communication, computing, and control for edge-enabled industrial cyber-physical systems. IEEE Journal on Selected Areas in Communications (accepted / early access). Preprint: arXiv:2503.08661.
+Diao, Y., Zhang, Y., She, C., Zhao, P. G., & Li, E. L. (2025). Aligning task- and reconstruction-oriented communications for edge intelligence. IEEE Journal on Selected Areas in Communications (early access). https://doi.org/10.1109/JSAC.2025.3559121
+Eldeeb, E., Shehab, M., & Alves, H. (2024). A multi-task oriented semantic communication framework for autonomous vehicles. IEEE Wireless Communications Letters, 13(12), 3469–3473.
+Fang, Z., Liu, Z., Wang, J., Hu, S., Guo, Y., Deng, Y., & Fang, Y. (2025). Task-oriented communications for visual navigation with edge-aerial collaboration in low altitude economy [Preprint]. arXiv:2504.18317.
+Gündüz, D., Qin, Z., Aguerri, I. E., Dhillon, H. S., Yang, Z., Yener, A., Wong, K. K., & Chae, C.-B. (2023). Beyond transmitting bits: Context, semantics, and task-oriented communications. IEEE Journal on Selected Areas in Communications, 41(1), 5–41. https://doi.org/10.1109/JSAC.2022.3223408
+Kurka, D. B., & Gündüz, D. (2021). Bandwidth-agile image transmission with deep joint source-channel coding. IEEE Transactions on Wireless Communications, 20(12), 8081–8095.
+Shao, J., Mao, Y., & Zhang, J. (2021). Task-oriented communication for multi-device cooperative edge inference [Preprint]. arXiv:2109.00172.
+Shao, J., Mao, Y., & Zhang, J. (2022). Learning task-oriented communication for edge inference: An information bottleneck approach. IEEE Journal on Selected Areas in Communications, 40(1), 197–211. https://doi.org/10.1109/JSAC.2021.3126087
+Tang, M., Feng, C., & Quek, T. Q. S. (2025). Decentralized semantic communication and cooperative tracking control for a UAV swarm over wireless MIMO fading channels. IEEE Transactions on Vehicular Technology (early access). Preprint: arXiv:2411.06136 (2024).
+Wu, H., Shao, Y., Bian, C., Mikolajczyk, K., & Gündüz, D. (2024). Deep joint source-channel coding for adaptive image transmission over MIMO channels. IEEE Transactions on Wireless Communications, 23(10), 15002–15017.
+Wu, W., Chen, S., Liu, W., Pang, Z., & Deng, Y. (2026). Safety-guaranteed and goal-oriented semantic sensing, communication, and control for robotics [Preprint]. arXiv:2603.13502.
+Wu, W., Yang, Y., Deng, Y., & Aghvami, A. H. (2024). Goal-oriented semantic communications for robotic waypoint transmission: The value and age of information approach [Preprint]. arXiv:2312.13182.
+Xu, J., Ai, B., Chen, W., Yang, A., Sun, P., & Rodrigues, M. (2022). Wireless image transmission using deep source channel coding with attention modules. IEEE Transactions on Circuits and Systems for Video Technology, 32(4), 2315–2328.
+Xu, Y., Zhou, H., & Deng, Y. (2023). Task-oriented semantics-aware communication for wireless UAV control and command transmission. IEEE Communications Letters, 27(8), 2232–2236. https://doi.org/10.1109/LCOMM.2023.3290109
+Yang, M., Bian, C., & Kim, H.-S. (2022). OFDM-guided deep joint source-channel coding for wireless multipath fading channels. IEEE Transactions on Cognitive Communications and Networking, 8(2), 584–599.

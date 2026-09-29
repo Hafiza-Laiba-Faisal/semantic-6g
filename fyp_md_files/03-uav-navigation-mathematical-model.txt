@@ -1,0 +1,823 @@
+Perplexity Prompt 5 — UAV-Specific Mathematical Model & Navigation
+I am developing an FYP titled:
+“Task-Oriented Deep Joint Source-Channel Coding for UAV Navigation Under Noisy and Fading Wireless Channels.” 
+
+
+https://www.perplexity.ai/search/eed6da50-25d9-454c-b836-d4068efd7d44
+
+
+Based on the papers I have reviewed, I can now provide you with a comprehensive research extraction of UAV-specific mathematical models relevant to your FYP. I will organize this according to your requested sections.
+A. Most Relevant UAV Papers
+Paper 1: "Obstacle Avoidance of UAV in Dynamic Environments Using Direction and Velocity-Adaptive Artificial Potential Field" (2025)
+Authors: Nikita Vaibhav Pavle, Shrreya Rajneesh, Rakesh Kumar Sahoo, Manoranjan Sinha
+Source: arXiv:2512.07609v2
+DOI: Not specified (preprint)
+Link: https://arxiv.org/html/2512.07609v2
+Relevance: Contains explicit 3D UAV kinematic/dynamic models with discrete-time formulation suitable for control.
+Extractable Models:
+Continuous-time double integrator model (Eq. 4)
+Discrete-time state-space model (Eq. 6)
+State vector definition (Section 2.1.3)
+MPC cost function (Eq. 8)
+
+Paper 2: "SwarmFly: A simulation platform for UAV swarm experiment design and validation" (2026)
+Authors: Abhishek Phadke, Karthik Kumar Vasudeva, Abhishek Joshi
+Source: arXiv:2606.25146v1
+DOI: Not specified (preprint)
+Link: https://arxiv.org/html/2606.25146v1
+Relevance: Provides discrete-time kinematic models, proportional controllers, and simulation parameters explicitly designed for Python/MATLAB simulation.
+Extractable Models:
+Forward Euler position propagation (Eq. 1)
+Proportional velocity controller (Eq. 9)
+Proportional altitude controller (Eq. 8)
+Complete state/control dimensions in Appendix
+
+Paper 3: "Landing a UAV in harsh winds and turbulent open waters" (2023)
+Authors: Parakh M. Gupta, Eric Pairet, Tiago Nascimento, Martin Saska
+Source: IEEE Robotics and Automation Letters (arXiv:2301.00255)
+DOI: 10.1109/LRA.2022.3231831
+Link: https://arxiv.org/pdf/2301.00255.pdf
+Relevance: Contains discrete linear time-invariant UAV prediction model with jerk control input, suitable for learning-based control.
+Extractable Models:
+Discrete LTI system (Eq. 13-15)
+State vector with position, velocity, acceleration up to jerk
+MPC objective function (Eq. 16)
+
+Paper 4: "Remote UAV Online Path Planning via Neural Network Based Opportunistic Control" (2019)
+Authors: Hamid Shiri, Jihong Park, Mehdi Bennis
+Source: arXiv:1910.04969
+Link: https://arxiv.org/pdf/1910.04969.pdf
+Relevance: Directly addresses communication-aware UAV control with state transmission over wireless links, delay models, and control under communication constraints.
+Extractable Models:
+Continuous-time state dynamics with wind (Eq. 3)
+State vector s(t) = [r(t)?, v(t)?]? ? R4
+Communication delay model (Eq. 10)
+Path loss model with LOS probability (Eq. 11-12)
+Objective function with travel time, distance, energy, control effort (Eq. 1)
+
+Paper 5: "Task-Oriented Communications for Visual Navigation with Edge-Aerial Collaboration in Low Altitude Economy" (2025)
+Authors: Zhengru Fang et al.
+Source: arXiv:2504.18317v3
+Link: https://arxiv.org/html/2504.18317v3
+Relevance: Task-oriented communication for UAV navigation with wireless channel model and localization task.
+Extractable Models:
+Wireless communication model with Shannon capacity (Eq. 2)
+Channel gain with path loss, shadowing, fading (Eq. 2 continuation)
+Task objective: min ??[||Y? - Y?||2²] (Eq. 1)
+Information Bottleneck objective (Eq. 8, 13)
+
+Paper 6: "A Survey of Channel Modeling for UAV Communications" (2018)
+Authors: Aziz Altaf Khuwaja, Yunfei Chen, Nan Zhao, Mohamed-Slim Alouini, Paul Dobbins
+Source: IEEE Communications Surveys & Tutorials
+Link: https://wrap.warwick.ac.uk/id/eprint/104438/1/WRAP-survey-channel-modeling-UAV-communications-Chen-2018.pdf
+Relevance: Comprehensive UAV channel models including air-to-ground, fading distributions, path loss.
+Extractable Models:
+Rayleigh fading channel model
+Rician fading with altitude-dependent K-factor
+Log-distance path loss model
+3GPP urban-micro UAV channel model (Eq. 11-12 in Shiri et al.)
+
+B. UAV State Representation
+Paper 1 (Pavle et al., 2025) - Section 2.1.3
+Exact state vector:
+\mathbf{x} = [x, y, z, v_x, v_y, v_z]^T \in \mathbb{R}^6
+Dimensions: 6 (3D position + 3D velocity)
+Variable meanings:
+x, y, z: Position coordinates in Earth-fixed frame (meters)
+v_x, v_y, v_z: Velocity components (m/s)
+Usage: Directly observed, used by MPC controller, transmitted for state estimation.
+Comparison with your state: Your state s_t=[x_t,y_t,v_{x,t},v_{y,t},x_g,y_g] is 2D (no altitude), includes goal position (x_g, y_g) which Paper 1 does NOT include in the state vector. Paper 1 uses 3D; you use 2D. Paper 1 does not include goal in state; you do.
+
+Paper 2 (Phadke et al., 2026) - Appendix A.1-A.2
+Exact state vector:
+Position: \mathbf{p}_k = [x_k, y_k, z_k]^T \in \mathbb{R}^3
+Velocity: \mathbf{v}_k = [v_{x,k}, v_{y,k}, v_{z,k}]^T \in \mathbb{R}^3
+Heading: \theta_k \in \mathbb{R} (scalar)
+Full state for leader-follower mode:
+\text{State} = \{\mathbf{p}_k, \mathbf{v}_k, \theta_k\}
+Dimensions: 7 (3 position + 3 velocity + 1 heading)
+Variable meanings:
+\mathbf{p}_k: UAV position in local ENU frame (meters)
+\mathbf{v}_k: UAV velocity (m/s)
+\theta_k: Heading angle (radians)
+Usage: Directly observed, used by proportional controller, transmitted in telemetry.
+Comparison with your state: Paper 2 uses 3D position/velocity; you use 2D. Paper 2 includes heading; you do not. Paper 2 does NOT include goal in state; you do.
+
+Paper 3 (Gupta et al., 2023) - Section III.B
+Exact state vector:
+\mathbf{x} = \left[x, \dot{x}, \ddot{x}, y, \dot{y}, \ddot{y}, z, \dot{z}, \ddot{z}, \eta, \dot{\eta}, \ddot{\eta}\right]^T \in \mathbb{R}^{12}
+Dimensions: 12 (position + velocity + acceleration for x, y, z, and heading ?)
+Variable meanings:
+x, y, z: Position (meters)
+\dot{x}, \dot{y}, \dot{z}: Velocity (m/s)
+\ddot{x}, \ddot{y}, \ddot{z}: Acceleration (m/s²)
+\eta: Heading/yaw angle (radians)
+\dot{\eta}, \ddot{\eta}: Angular velocity and acceleration
+Usage: Estimated from onboard sensors, used by MPC prediction model.
+Comparison with your state: Paper 3 includes acceleration and heading dynamics; you do not. Paper 3 is 3D; you are 2D. Paper 3 does NOT include goal; you do.
+
+Paper 4 (Shiri et al., 2019) - Section II.A
+Exact state vector:
+\mathbf{s}(t) = [\mathbf{r}(t)^\top, \mathbf{v}(t)^\top]^\top \in \mathbb{R}^4
+where \mathbf{r}(t) \in \mathbb{R}^2 and \mathbf{v}(t) \in \mathbb{R}^2.
+Dimensions: 4 (2D position + 2D velocity)
+Variable meanings:
+\mathbf{r}(t) = [x(t), y(t)]^T: Position in 2D plane (meters)
+\mathbf{v}(t) = [v_x(t), v_y(t)]^T: Velocity (m/s)
+Usage: Transmitted over wireless link to base station, used by HJB NN controller.
+Comparison with your state: This is the closest match to your proposed state. Paper 4 uses 2D position+velocity (4D total); you use 2D position+velocity+goal (6D total). Paper 4 does NOT include goal in state; goal is implicit in the cost function (destination at origin).
+
+Paper 5 (Fang et al., 2025) - Section II.A
+Exact state vector:
+Position estimate: \hat{\mathbf{Y}}_t = (\hat{x}_t, \hat{y}_t, \hat{z}_t) \in \mathbb{R}^3
+Dimensions: 3 (3D position only)
+Variable meanings:
+\hat{\mathbf{Y}}_t: Estimated UAV 3D position from visual features
+Usage: Estimated from compressed visual features transmitted over wireless channel, used for navigation task.
+Comparison with your state: Paper 5 only estimates position (no velocity, no goal in state). Your state is more complete for control purposes.
+
+C. UAV Dynamics / Kinematic Equations
+Paper 1 (Pavle et al., 2025) - Section 2.1.3-2.1.4
+Continuous-time model (Eq. 4):
+\begin{cases}
+\dot{\mathbf{p}}(t) = \mathbf{v}(t) \\
+\dot{\mathbf{v}}(t) = \mathbf{a}(t)
+\end{cases}
+where \mathbf{p}=[x,y,z]^T, \mathbf{v}=[v_x,v_y,v_z]^T, \mathbf{a}=[a_x,a_y,a_z]^T.
+Discrete-time model (Eq. 6):
+\mathbf{x}(k+1) = A\mathbf{x}(k) + B\mathbf{a}(k)
+with
+A = \begin{pmatrix} I_3 & I_3 \cdot \Delta t \\ 0 & I_3 \end{pmatrix}, \quad B = \begin{pmatrix} \frac{1}{2}\Delta t^2 \cdot I_3 \\ \Delta t \cdot I_3 \end{pmatrix}
+Explicitly given: Yes, Eq. 4 and Eq. 6.
+Time: Discrete-time with timestep ?t (NOT SPECIFIED IN THE PAPER - typical MPC uses 0.01-0.1s)
+Dimensions: 3D position and velocity
+Velocity constraints: NOT SPECIFIED IN THE PAPER (MPC constraints in Eq. 10 include velocity bounds but no numerical values)
+Acceleration constraints: NOT SPECIFIED IN THE PAPER
+Heading dynamics: NOT INCLUDED (double integrator model)
+Altitude dynamics: Included as z-component of 3D model
+
+Paper 2 (Phadke et al., 2026) - Section 4.2, Appendix A.2
+Position propagation (Eq. 1):
+\mathbf{p}_k(t+\Delta t) = \mathbf{p}_k(t) + \mathbf{v}_k(t) \cdot \Delta t
+Explicitly given: Yes, Eq. 1.
+Time: Discrete-time, ?t = 1/f_update where f_update = 10-30 Hz (Section 4.2)
+Dimensions: 3D position, 3D velocity
+Velocity dynamics:
+\mathbf{v}_{\text{follower}} = K_p \cdot (\mathbf{p}_{\text{desired}} - \mathbf{p}_{\text{follower}})
+(Eq. 9 - proportional controller)
+Control input: Velocity command directly
+Velocity constraints: Speed limited to 1.5×V_c (cruise speed) for followers (Section 4.4)
+Acceleration constraints: NOT SPECIFIED IN THE PAPER
+Heading dynamics:
+\mathbf{v}_{\text{wander},k} = V_c \begin{bmatrix} \cos(\omega_1 t + \phi_k) \\ \sin(\omega_2 t + \phi'_k) \\ 0 \end{bmatrix}
+(Eq. 17 - for decentralized mode)
+Altitude dynamics (Eq. 8):
+z_k(t+\Delta t) = z_k(t) + K_z(z_c - z_k(t))\Delta t
+where K_z = 0.3 (proportional gain), z_c = cruise altitude
+
+Paper 3 (Gupta et al., 2023) - Section III.B
+Discrete LTI system (Eq. 13):
+\mathbf{x}(k+1) = D\mathbf{x}(k) + E\mathbf{u}(k)
+with control input \mathbf{u}(k) = [\dddot{x}, \dddot{y}, \dddot{z}, \dddot{\eta}]^T (jerk)
+Matrices (Eq. 14-15):
+D_{12\times 12} = I_{4\times 4} \otimes D'_{3\times 3}, \quad D' = \begin{bmatrix} 1 & \Delta t_{\text{pred}} & \Delta t_{\text{pred}}^2/2 \\ 0 & 1 & \Delta t_{\text{pred}} \\ 0 & 0 & 1 \end{bmatrix}
+E_{12\times 4} = I_{4\times 4} \otimes E'_{3\times 1}, \quad E' = \begin{bmatrix} \Delta t_{\text{pred}}^3/6 \\ \Delta t_{\text{pred}}^2/2 \\ \Delta t_{\text{pred}} \end{bmatrix}
+Explicitly given: Yes, Eq. 13-15.
+Time: Discrete-time, ?t_pred = 0.01 seconds (Section III.B)
+Dimensions: 3D position + velocity + acceleration + heading
+Control input: Jerk (third derivative of position)
+Velocity constraints: Soft constraints in objective function (Section III.C)
+Acceleration constraints: Soft constraints in objective function
+
+Paper 4 (Shiri et al., 2019) - Section II.A
+Continuous-time dynamics (Eq. 3):
+d\mathbf{s}(t) = (A\mathbf{s}(t) + B(\mathbf{a}(t) + c_0\mathbf{v}_o)) dt + G dW(t)
+where
+A = \begin{pmatrix} O & I \\ O & -c_0 I \end{pmatrix}, \quad B = \begin{pmatrix} O \\ I \end{pmatrix}, \quad G = \begin{pmatrix} O \\ V_o \end{pmatrix}
+Explicitly given: Yes, Eq. 3.
+Time: Continuous-time with Wiener process for wind perturbations
+Dimensions: 2D position + 2D velocity (4D total)
+Variable meanings:
+\mathbf{a}(t): Acceleration control input (m/s²)
+\mathbf{v}_o: Average wind velocity (m/s)
+c_0: Positive constant (NOT SPECIFIED NUMERICALLY IN THE PAPER - used as parameter)
+W(t): Wiener process with covariance V_o
+Velocity constraints: NOT SPECIFIED IN THE PAPER
+Acceleration constraints: NOT SPECIFIED IN THE PAPER
+Heading dynamics: NOT INCLUDED (2D planar motion only)
+
+Paper 5 (Fang et al., 2025)
+UAV dynamics: NOT SPECIFIED IN THE PAPER (paper focuses on visual localization, not control)
+
+D. Control Input
+Paper 1 (Pavle et al., 2025) - Section 2.1.3
+Exact control vector:
+\mathbf{a} = [a_x, a_y, a_z]^T \in \mathbb{R}^3
+Physical interpretation: Acceleration command (m/s²)
+Control limits: NOT SPECIFIED IN THE PAPER (MPC constraints in Eq. 10 but no numerical bounds)
+Controller type: Model Predictive Control (MPC)
+Controller equation: Quadratic programming (Eq. 10):
+\min_{\mathbf{U}_k} \frac{1}{2}\mathbf{U}_k^T H \mathbf{U}_k + E^T \mathbf{U}_k
+subject to A_{\text{in}}\mathbf{U}_k \leq b_{\text{in}}, lb \leq \mathbf{U}_k \leq ub
+Controller input: Predicted states \mathbf{X}_k, reference trajectory X_{\text{ref}}
+Controller output: Optimal control sequence \mathbf{U}_k = [\mathbf{a}(k), \mathbf{a}(k+1), ..., \mathbf{a}(k+N-1)]
+Differentiable: Yes (QP with quadratic objective)
+Trained jointly with communication: NO (communication not considered)
+
+Paper 2 (Phadke et al., 2026) - Section 4.4, Appendix A.3
+Exact control vector:
+\mathbf{v}_{\text{follower}} \in \mathbb{R}^3
+Physical interpretation: Velocity command (m/s)
+Control limits: Speed limited to 1.5×V_c for followers
+Controller type: Proportional controller
+Controller equation (Eq. 9):
+\mathbf{v}_{\text{follower}} = K_p \cdot (\mathbf{p}_{\text{desired}} - \mathbf{p}_{\text{follower}})
+where K_p = 2.0 (Section 4.4)
+Controller input: Position error \mathbf{p}_{\text{desired}} - \mathbf{p}_{\text{follower}}
+Controller output: Velocity command
+Differentiable: Yes (linear)
+Trained jointly with communication: NO
+
+Paper 3 (Gupta et al., 2023) - Section III.B
+Exact control vector:
+\mathbf{u}(k) = [\dddot{x}, \dddot{y}, \dddot{z}, \dddot{\eta}]^T \in \mathbb{R}^4
+Physical interpretation: Jerk command (m/s³) and angular jerk (rad/s³)
+Control limits: NOT SPECIFIED IN THE PAPER
+Controller type: MPC with nonlinear optimization (NLOPT library)
+Controller equation: Nonlinear optimization of objective function (Eq. 16)
+Controller input: State vector \mathbf{x}(k), USV motion predictions
+Controller output: Optimal jerk sequence
+Differentiable: Yes (gradient-based optimization)
+Trained jointly with communication: NO
+
+Paper 4 (Shiri et al., 2019) - Section II.B
+Exact control vector:
+\mathbf{a}^*(t) \in \mathbb{R}^2
+Physical interpretation: Acceleration command (m/s²)
+Control limits: NOT SPECIFIED IN THE PAPER
+Controller type: HJB Neural Network (learned controller)
+Controller equation (Eq. 6):
+\mathbf{a}^*(t) = -\frac{1}{2c_3} B^\top \nabla \psi^*(t)
+approximated by NN:
+\mathbf{a}^*(t) \approx -\frac{1}{2c_3} B^\top \nabla \hat{\psi}(t)
+Controller input: State \mathbf{s}(t) = [\mathbf{r}(t)^\top, \mathbf{v}(t)^\top]^\top
+Controller output: Optimal acceleration
+Differentiable: Yes (NN with gradient-based training)
+Trained jointly with communication: NO (communication affects delay but not training)
+
+Paper 5 (Fang et al., 2025)
+Control input: NOT SPECIFIED IN THE PAPER (paper focuses on localization, not control)
+
+E. Goal / Navigation Task
+Paper 1 (Pavle et al., 2025) - Section 2.2.2
+Task definition: Trajectory tracking with reference from APF
+Distance-to-goal: NOT EXPLICITLY DEFINED (reference trajectory X_{\text{ref}} from APF)
+Goal radius: NOT SPECIFIED IN THE PAPER
+Successful navigation: Minimize tracking error in MPC cost function (Eq. 8)
+Trajectory tracking error:
+\text{Error} = \mathbf{X}_k - X_{\text{ref}}
+Collision avoidance: Repulsive potential field (Eq. 11, 13, 20)
+Explicit formulation: NOT in the form d_t \leq r_g
+
+Paper 2 (Phadke et al., 2026) - Section 4.4, 5.4
+Task definition: Waypoint tracking or formation keeping
+Distance-to-goal: NOT EXPLICITLY DEFINED (waypoints are targets)
+Goal radius: NOT SPECIFIED IN THE PAPER
+Successful navigation: Reach waypoints with formation error below threshold
+Formation error (Section 5.2, Eq. 39):
+\text{Formation error} = \frac{1}{N}\sum_{i=1}^N \|\mathbf{p}_i - \mathbf{p}_{i,\text{ideal}}\|
+Collision avoidance: Repulsive force when distance < safe distance (default 5 m, Section 5.4)
+Explicit formulation: NOT in the form d_t \leq r_g
+
+Paper 3 (Gupta et al., 2023) - Section III.C, III.D
+Task definition: Landing on USV during near-zero tilt
+Distance-to-goal: Position error \tilde{\mathbf{x}}_m = \mathbf{x}_m - \mathbf{x}_m^* where \mathbf{x}_m^* is desired state
+Goal radius: NOT SPECIFIED IN THE PAPER
+Successful navigation: Land when USV tilt is near-zero
+Landing cost function (Eq. 17):
+g(\tilde{z}_m, b_{4,m}, b_{5,m}) = f(\tilde{z}_m) \cdot ((b_{4,m})^2 + (b_{5,m})^2)
+where b_{4,m}, b_{5,m} are USV pitch and roll angles, f(\tilde{z}_m) is sigmoid function (Eq. 18)
+Explicit formulation: NOT in the form d_t \leq r_g
+
+Paper 4 (Shiri et al., 2019) - Section II.A
+Task definition: Reach destination at origin from source \mathbf{r}_s
+Distance-to-goal: \|\mathbf{r}(t)\| (distance to origin)
+Goal radius: Threshold r_{\text{th}} > 0 (Algorithm 1-3, Section III.B)
+Successful navigation (Algorithm 1, line 2):
+|\mathbf{r}(t_{o,k})| \leq r_{\text{th}} \quad \text{and} \quad |\mathbf{v}(t_{o,k})| \leq v_{\text{th}}
+Explicit formulation: YES, comparable to d_t \leq r_g:
+Mission ends when |\mathbf{r}(t_{o,k})| \leq r_{\text{th}}
+Numerical values: NOT SPECIFIED IN THE PAPER (treated as parameters)
+Objective function (Eq. 1):
+\psi(t) = \mathbb{E}\left[\int_t^T \underbrace{\frac{\mathbf{v}(\tau)^\top \mathbf{r}(\tau)}{\|\mathbf{r}(\tau)\|} + c_1\|\mathbf{r}(\tau)\|^2 + c_2\|\mathbf{v}(\tau)\|^2}_{\phi_L(\mathbf{s}(\tau))} + c_3\|\mathbf{a}(\tau)\|^2 d\tau\right]
+where:
+First term: Minimize travel time (velocity toward destination)
+Second term: Minimize remaining distance
+Third term: Minimize kinetic energy
+Fourth term: Minimize control effort
+Constants: c_1 = c_2 = 0.015, c_3 = 0.005 (Section IV)
+
+Paper 5 (Fang et al., 2025) - Section II.A
+Task definition: Visual localization in GPS-denied environment
+Distance-to-goal: Localization error \|\hat{\mathbf{Y}}_t - \mathbf{Y}_t\|_2
+Goal radius: NOT SPECIFIED IN THE PAPER
+Successful navigation: Achieve localization error < 10 m (Section IV)
+Explicit formulation: NOT in the form d_t \leq r_g
+Objective function (Eq. 1):
+\min_{\Theta} \mathbb{E}[\|\hat{\mathbf{Y}}_t - \mathbf{Y}_t\|_2^2], \quad \text{s.t. } \mathcal{C}(\mathbf{Z}_t) \leq C_{\max}
+
+F. Navigation / Control Objective
+Paper 1 (Pavle et al., 2025) - Section 2.2.2
+Objective function (Eq. 8):
+J_k = [\mathbf{X}_k - X_{\text{ref}}]^T \mathbf{Q}_{\text{aug}} [\mathbf{X}_k - X_{\text{ref}}] + \mathbf{U}_k^T \mathbf{R}_{\text{aug}} \mathbf{U}_k
+Components:
+Tracking error: [\mathbf{X}_k - X_{\text{ref}}]^T \mathbf{Q}_{\text{aug}} [\mathbf{X}_k - X_{\text{ref}}]
+Control effort: \mathbf{U}_k^T \mathbf{R}_{\text{aug}} \mathbf{U}_k
+Explicitly given: Yes, Eq. 8.
+Relevance to task-oriented communication: Tracking error could serve as task loss for DeepJSCC
+
+Paper 2 (Phadke et al., 2026) - Section 5.2
+Performance metrics (not optimization objectives):
+Swarm spread (Eq. 36)
+Mean inter-UAV distance (Eq. 37)
+Centroid drift (Eq. 38)
+Formation error (Eq. 39)
+Altitude deviation (Eq. 40)
+Explicitly given: Yes, Eq. 36-40.
+Relevance to task-oriented communication: Formation error could serve as task metric
+
+Paper 3 (Gupta et al., 2023) - Section III.C
+Objective function (Eq. 16):
+\min_{\mathbf{u}_1,...,\mathbf{u}_{M_c}} J(\mathbf{x}, \mathbf{u}) = \underbrace{\sum_{m=1}^{M_p} \tilde{\mathbf{x}}_m^T S \tilde{\mathbf{x}}_m + \mathbf{h}_m^T T \mathbf{h}_m}_{J_1} + \underbrace{\sum_{m=1}^{M_p} \alpha_L \times g(\tilde{z}_m, b_{4,m}, b_{5,m})}_{J_2}
+Components:
+J_1: Classical quadratic cost (tracking error + control smoothness)
+J_2: Landing cost (USV tilt penalty)
+\tilde{\mathbf{x}}_m = \mathbf{x}_m - \mathbf{x}_m^*: State error
+\mathbf{h}_m = \mathbf{u}_m - \mathbf{u}_{m-1}: Control rate
+g(\cdot): Landing cost function (Eq. 17)
+Explicitly given: Yes, Eq. 16.
+Relevance to task-oriented communication: J_1 is differentiable and could serve as task loss
+
+Paper 4 (Shiri et al., 2019) - Section II.A
+Objective function (Eq. 1):
+\psi(t) = \mathbb{E}\left[\int_t^T \left(\frac{\mathbf{v}(\tau)^\top \mathbf{r}(\tau)}{\|\mathbf{r}(\tau)\|} + c_1\|\mathbf{r}(\tau)\|^2 + c_2\|\mathbf{v}(\tau)\|^2 + c_3\|\mathbf{a}(\tau)\|^2\right) d\tau\right]
+Components:
+Travel time minimization: \frac{\mathbf{v}(\tau)^\top \mathbf{r}(\tau)}{\|\mathbf{r}(\tau)\|}
+Distance minimization: c_1\|\mathbf{r}(\tau)\|^2
+Energy minimization: c_2\|\mathbf{v}(\tau)\|^2
+Control effort: c_3\|\mathbf{a}(\tau)\|^2
+Explicitly given: Yes, Eq. 1.
+Relevance to task-oriented communication: All terms are differentiable; position error \|\mathbf{r}(t)\|^2 is most relevant
+
+Paper 5 (Fang et al., 2025) - Section III-B4
+Overall training objective (Eq. 14):
+\mathcal{L}(\phi) = \underbrace{\mathbb{E}[\|\mathbf{x} - \hat{\mathbf{x}}\|^2]}_{\text{Reconstruction}} + \alpha \underbrace{\mathbb{E}[\|\mathbf{y} - \hat{\mathbf{y}}\|^2]}_{\text{Localization}} + \beta \underbrace{\mathbb{E}_{\mathbf{x}}[\mathcal{D}_{\text{ARD}}(\mathbf{x})]}_{\text{Information bottleneck}} + \gamma \underbrace{\|\mathbf{W}\mathbf{W}^\top - \mathbf{I}\|_F^2}_{\text{Orthogonality}}
+Components:
+Reconstruction loss
+Localization accuracy (task loss)
+IB rate penalty
+Orthogonality regularization
+Explicitly given: Yes, Eq. 14.
+Relevance to task-oriented communication: This is a task-oriented DeepJSCC-like formulation with explicit task loss (localization error)
+
+G. Controller Structure
+Paper 1 (Pavle et al., 2025)
+Controller: MPC (quadratic programming)
+Controller equation: Eq. 10 (QP)
+Parameters: \mathbf{Q}_{\text{aug}}, \mathbf{R}_{\text{aug}} (weight matrices), prediction horizon N
+Constraints: Velocity, acceleration bounds (Eq. 10)
+Differentiable: Yes
+Trained jointly with communication: NO
+
+Paper 2 (Phadke et al., 2026)
+Controller: Proportional controller
+Controller equation: Eq. 9: \mathbf{v} = K_p (\mathbf{p}_{\text{desired}} - \mathbf{p})
+Parameters: K_p = 2.0, K_z = 0.3
+Constraints: Speed limit 1.5×V_c
+Differentiable: Yes
+Trained jointly with communication: NO
+
+Paper 3 (Gupta et al., 2023)
+Controller: MPC with nonlinear optimization
+Controller equation: Eq. 16 (nonlinear objective)
+Parameters: S, T (penalty matrices), a_L = 1200, M_p = 100, M_c = 40
+Constraints: Soft velocity/acceleration constraints
+Differentiable: Yes
+Trained jointly with communication: NO
+
+Paper 4 (Shiri et al., 2019)
+Controller: HJB Neural Network
+Controller equation: Eq. 6-7, 9
+Parameters: c_1 = c_2 = 0.015, c_3 = 0.005, µ = 0.01 (learning rate)
+Constraints: NOT SPECIFIED IN THE PAPER
+Differentiable: Yes (NN)
+Trained jointly with communication: NO (communication affects delay, not training)
+
+Paper 5 (Fang et al., 2025)
+Controller: NOT SPECIFIED IN THE PAPER (localization only, no control)
+
+H. Communication-Aware UAV Control
+Paper 4 (Shiri et al., 2019) - Section III
+Communication affects control through:
+Downlink delay (state transmission):
+D_{\text{DL},k} = t_{\text{DL},k} - t_{o,k}
+Uplink delay (action/model transmission):
+D_{\text{UL},k} = t_{\text{UL},k} - t_{\text{DL},k}
+End-to-end delay:
+D_{\text{E2E},k} = D_{\text{DL},k} + D_{\text{UL},k} = t_{\text{UL},k} - t_{o,k}
+Delay model (Eq. 10):
+D_{i,k} = \frac{b_i}{W_i \log_2\left(1 + \frac{P_i \cdot 10^{-L(t_{o,k})/10}}{N_i W_i}\right)}
+where:
+b_i: Payload size (bits)
+W_i: Bandwidth (Hz)
+P_i: Transmit power (W)
+L(t): Path loss (dB)
+N_i: Noise spectral density (W/Hz)
+Path loss model (Eq. 11-12): 3GPP urban-micro UAV channel model with LOS probability
+Explicitly given: Yes, Eq. 10-12.
+Mathematical relationship: Communication delay causes outdated state/action information, degrading control performance
+
+Paper 5 (Fang et al., 2025) - Section II.B
+Communication model:
+Shannon capacity (Eq. 2):
+R = B \log_2\left(1 + \frac{P \cdot g}{N_0 \cdot B}\right)
+Channel gain:
+g = g_0 \cdot \left(\frac{d_0}{d}\right)^\alpha \cdot 10^{\frac{\xi}{10}} \cdot |h|^2
+where:
+g_0: Reference channel gain at distance d_0
+d: Distance between UAV and edge server
+\alpha: Path loss exponent (2-4 in urban environments)
+\xi \sim \mathcal{N}(0, \sigma^2): Log-normal shadowing
+h: Small-scale fading
+Transmission delay:
+\tau = \frac{|\mathbf{Z}_t|}{R}
+Explicitly given: Yes, Eq. 2.
+Mathematical relationship: Channel quality affects transmission rate, which affects latency for task execution
+
+I. UAV Wireless Channel Model
+Paper 4 (Shiri et al., 2019) - Section III.A
+Channel model: 3GPP urban-micro UAV channel model
+Path loss (Eq. 11):
+L(t) = \begin{cases}
+30.9 + (22.25 - 0.5 \log_{10} h) \log_{10} d(t) + 20 \log_{10} f_c & \text{if LOS} \\
+\max\{L_{\text{LOS}}, 32.4 + (43.2 - 7.6 \log_{10} h) \log_{10} d(t) + 20 \log_{10} f_c\} & \text{otherwise}
+\end{cases}
+LOS probability (Eq. 12):
+p_{\text{LOS}}(d(t)) = \begin{cases}
+\frac{d_o}{\sqrt{d(t)^2 - h^2}} + \exp\left(-\frac{\sqrt{d(t)^2 - h^2}}{p_o}\right)\left(1 - \frac{d_o}{\sqrt{d(t)^2 - h^2}}\right) & \text{if } \sqrt{d(t)^2 - h^2} > d_o \\
+1 & \text{otherwise}
+\end{cases}
+where d_o = \max\{294.05 \log_{10} h - 432.94, 18\}, p_o = 233.98 \log_{10} h - 0.95
+Fading type: NOT EXPLICITLY SPECIFIED (path loss only, no small-scale fading model)
+Noise model: AWGN with spectral density N_i
+CSI: NOT SPECIFIED IN THE PAPER
+Explicitly given: Yes, Eq. 11-12.
+
+Paper 5 (Fang et al., 2025) - Section II.B
+Channel model:
+Channel gain:
+g = g_0 \cdot \left(\frac{d_0}{d}\right)^\alpha \cdot 10^{\frac{\xi}{10}} \cdot |h|^2
+Components:
+Path loss: (d_0/d)^\alpha
+Shadowing: 10^{\xi/10} with \xi \sim \mathcal{N}(0, \sigma^2)
+Small-scale fading: |h|^2
+Fading type: NOT EXPLICITLY SPECIFIED (generic small-scale fading h)
+Noise model: AWGN with power spectral density N_0
+SNR: \frac{P \cdot g}{N_0 \cdot B}
+Explicitly given: Yes, Eq. 2.
+
+Paper 6 (Khuwaja et al., 2018) - Section III-IV
+Channel models:
+Rayleigh fading: For NLoS air-to-ground links
+Squared channel gain g^2 follows exponential distribution
+Rician fading: For LoS-dominant links
+K-factor depends on altitude
+Log-distance path loss:
+PL(d) = PL_0 + 10\gamma \log_{10}(d/d_0) + X_{\sigma}
+where \gamma is path loss exponent, X_{\sigma} is shadowing
+Free-space path loss:
+L_{\text{FSPL}} = 20 \log(d_{\text{km}}) + 20 \log(f_{\text{MHz}}) + 32.45
+Explicitly given: Yes, throughout Section III-IV.
+
+J. Air-to-Ground Channel Model
+Paper 6 (Khuwaja et al., 2018)
+A-G channel models:
+Probabilistic LoS/NLoS:
+LoS probability depends on elevation angle and environment
+Elevation-angle-dependent models:
+Path loss varies with elevation angle
+Altitude-dependent Rician K-factor:
+K-factor increases with altitude (more LoS)
+Explicit equations: NOT PROVIDED IN DETAIL (survey paper references other works)
+
+Paper 4 (Shiri et al., 2019)
+A-G channel model: 3GPP urban-micro (Eq. 11-12, see Section I above)
+Assumptions:
+UAV altitude 22.5m = h = 300m
+Path loss constant during control interval
+i.i.d. across control intervals
+Appropriate for simplified simulation: Yes, but complex (requires LoS probability calculation)
+
+K. State Transmission / Communication Loop
+Paper 4 (Shiri et al., 2019) - Section III, Algorithm 1-3
+Complete pipeline:
+UAV state measurement: \mathbf{s}(t_{o,k}) at time t_{o,k}
+Downlink transmission (state to BS):
+\text{Delay: } D_{\text{DL},k} = \frac{b_s}{W_{\text{DL}} \log_2\left(1 + \frac{P_{\text{DL}} \cdot 10^{-L(t_{o,k})/10}}{N_{\text{DL}} W_{\text{DL}}}\right)}
+where b_s = 4b (4 state dimensions × b bits)
+BS receives state: At time t_{\text{DL},k} = t_{o,k} + D_{\text{DL},k}
+Controller computes action: \mathbf{a}^*(t_{\text{DL},k}) using HJB NN (Eq. 6)
+Uplink transmission (action to UAV):
+\text{Delay: } D_{\text{UL},k} = \frac{b_a}{W_{\text{UL}} \log_2\left(1 + \frac{P_{\text{UL}} \cdot 10^{-L(t_{o,k})/10}}{N_{\text{UL}} W_{\text{UL}}}\right)}
+where b_a = 2b (2 action dimensions × b bits)
+UAV receives action: At time t_{\text{UL},k} = t_{\text{DL},k} + D_{\text{UL},k}
+UAV applies action: \mathbf{a}^*(t_{\text{DL},k}) to dynamics (Eq. 3)
+Communication errors enter at: Downlink delay (outdated state at BS) and uplink delay (outdated action at UAV)
+Explicitly given: Yes, Algorithm 1-3, Eq. 10-13.
+
+Paper 5 (Fang et al., 2025) - Section II
+Complete pipeline:
+UAV captures images: \mathbf{V}_t = \{V_t^{(1)}, ..., V_t^{(M)}\}
+Feature extraction: \mathbf{X}_t^{(m)} = \Phi(V_t^{(m)}) (Eq. 3)
+Task-oriented compression: \mathbf{Z}_t = \mathcal{E}(\mathbf{X}_t; \Theta_E) (Eq. 4)
+Wireless transmission: Compressed features \mathbf{Z}_t over channel (Eq. 2)
+Edge server receives: \hat{\mathbf{Z}}_t (potentially noisy)
+Position inference: \hat{\mathbf{Y}}_t = \mathcal{F}(\hat{\mathbf{Z}}_t; \Theta_F, \mathcal{D}) (Eq. 5)
+Communication errors enter at: Transmission of \mathbf{Z}_t (channel noise affects localization accuracy)
+Explicitly given: Yes, Eq. 1-6.
+
+L. Relevance to Your Proposed FYP
+Your proposed components:
+State: s_t = [x_t, y_t, v_{x,t}, v_{y,t}, x_g, y_g]
+Dynamics:
+\mathbf{p}_{t+1} = \mathbf{p}_t + \mathbf{v}_t \Delta t
+\mathbf{v}_{t+1} = \mathbf{v}_t + \mathbf{u}_t \Delta t
+Communication:
+s_t \rightarrow f_\theta(s_t) \rightarrow z_t \rightarrow \text{AWGN/Rayleigh} \rightarrow g_\phi(y_t) \rightarrow r_t \rightarrow \pi(r_t) \rightarrow u_t
+
+Classification:
+Component
+Category
+Evidence
+State: 2D position + velocity
+Category 1
+Paper 4 uses identical 2D position+velocity state (4D). Your 6D state adds goal.
+State: Goal in state
+Category 3
+No paper includes goal coordinates in state vector. Goal is in cost function (Paper 4) or reference trajectory (Paper 1).
+Dynamics: Discrete-time double integrator
+Category 1
+Paper 1 Eq. 6, Paper 2 Eq. 1 use identical Euler integration.
+Dynamics: 2D (no altitude)
+Category 2
+Papers use 3D (Paper 1, 2, 3) or 2D (Paper 4). 2D is supported but less common.
+Control: Acceleration input
+Category 1
+Paper 1, Paper 4 use acceleration control.
+Controller: Lightweight fixed controller after decoder
+Category 2
+Paper 2 uses proportional controller (fixed, lightweight). Paper 4 uses HJB NN (learned).
+Channel: AWGN/Rayleigh
+Category 1
+Paper 5, Paper 6 support AWGN + Rayleigh fading.
+Channel: No path loss
+Category 3
+Papers include path loss (Paper 4, 5, 6), but you can omit for simplified simulation.
+Task loss: Differentiable navigation objective
+Category 2
+Paper 4 Eq. 1, Paper 5 Eq. 14 provide differentiable task losses (position error, localization error).
+State transmission over wireless link
+Category 1
+Paper 4 explicitly models state transmission with delay.
+Communication affects control loop
+Category 1
+Paper 4 models delay in control loop explicitly.
+
+
+M. Task Loss from Literature
+Paper 4 (Shiri et al., 2019) - Eq. 1
+Differentiable task loss:
+\mathcal{L}_{\text{task}} = \frac{\mathbf{v}(t)^\top \mathbf{r}(t)}{\|\mathbf{r}(t)\|} + c_1\|\mathbf{r}(t)\|^2 + c_2\|\mathbf{v}(t)\|^2 + c_3\|\mathbf{a}(t)\|^2
+Position error term: c_1\|\mathbf{r}(t)\|^2 where \mathbf{r}(t) is distance to goal
+Explicitly given: Yes, Eq. 1.
+Suitable for DeepJSCC: Yes, differentiable w.r.t. state and action.
+
+Paper 5 (Fang et al., 2025) - Eq. 14
+Differentiable task loss:
+\mathcal{L}_{\text{task}} = \alpha \mathbb{E}[\|\mathbf{y} - \hat{\mathbf{y}}\|^2]
+Position error term: \|\mathbf{y} - \hat{\mathbf{y}}\|^2 (localization error)
+Explicitly given: Yes, Eq. 14.
+Suitable for DeepJSCC: Yes, this is a task-oriented DeepJSCC formulation.
+
+Paper 1 (Pavle et al., 2025) - Eq. 8
+Differentiable task loss:
+\mathcal{L}_{\text{task}} = [\mathbf{X}_k - X_{\text{ref}}]^T \mathbf{Q}_{\text{aug}} [\mathbf{X}_k - X_{\text{ref}}] + \mathbf{U}_k^T \mathbf{R}_{\text{aug}} \mathbf{U}_k
+Position error term: Tracking error [\mathbf{X}_k - X_{\text{ref}}]^T \mathbf{Q}_{\text{aug}} [\mathbf{X}_k - X_{\text{ref}}]
+Explicitly given: Yes, Eq. 8.
+Suitable for DeepJSCC: Yes, differentiable quadratic cost.
+
+Result: The UAV literature DOES provide directly transferable differentiable task losses for DeepJSCC setup (Paper 4 Eq. 1, Paper 5 Eq. 14, Paper 1 Eq. 8).
+
+N. Implementation-Relevant Parameters
+Parameter
+Paper 1 (Pavle)
+Paper 2 (Phadke)
+Paper 3 (Gupta)
+Paper 4 (Shiri)
+Paper 5 (Fang)
+State dimension
+6
+7 (with heading)
+12
+4
+3 (position only)
+Position dimension
+3
+3
+3
+2
+3
+Velocity dimension
+3
+3
+3
+2
+NOT SPECIFIED
+Control dimension
+3 (acceleration)
+3 (velocity)
+4 (jerk)
+2 (acceleration)
+NOT SPECIFIED
+?t
+NOT SPECIFIED
+0.033-0.1s (10-30 Hz)
+0.01s
+0.1s
+NOT SPECIFIED
+Max velocity
+NOT SPECIFIED
+1.5×V_c
+NOT SPECIFIED
+NOT SPECIFIED
+NOT SPECIFIED
+Max acceleration
+NOT SPECIFIED
+NOT SPECIFIED
+NOT SPECIFIED
+NOT SPECIFIED
+NOT SPECIFIED
+Goal radius
+NOT SPECIFIED
+NOT SPECIFIED
+NOT SPECIFIED
+r_th (value NOT SPECIFIED)
+NOT SPECIFIED
+Initial-state distribution
+NOT SPECIFIED
+NOT SPECIFIED
+NOT SPECIFIED
+Source r_s (value NOT SPECIFIED)
+NOT SPECIFIED
+Goal distribution
+NOT SPECIFIED
+Waypoints
+Landing on USV
+Origin (0,0)
+NOT SPECIFIED
+Episode length
+NOT SPECIFIED
+NOT SPECIFIED
+NOT SPECIFIED
+Until |r| = r_th
+NOT SPECIFIED
+Controller
+MPC (QP)
+Proportional
+MPC (nonlinear)
+HJB NN
+NOT SPECIFIED
+Channel model
+NOT SPECIFIED
+NOT SPECIFIED
+NOT SPECIFIED
+3GPP urban-micro (Eq. 11-12)
+Shannon capacity + path loss + shadowing + fading (Eq. 2)
+SNR
+NOT SPECIFIED
+NOT SPECIFIED
+NOT SPECIFIED
+NOT SPECIFIED
+\frac{P \cdot g}{N_0 \cdot B}
+Noise model
+NOT SPECIFIED
+NOT SPECIFIED
+NOT SPECIFIED
+AWGN (N_i)
+AWGN (N_0)
+Fading model
+NOT SPECIFIED
+NOT SPECIFIED
+NOT SPECIFIED
+NOT SPECIFIED
+Generic small-scale fading h
+CSI
+NOT SPECIFIED
+NOT SPECIFIED
+NOT SPECIFIED
+NOT SPECIFIED
+NOT SPECIFIED
+
+
+O. Final Mathematical Extraction
+1. Strongly literature-supported
+State vector (2D position + velocity):
+\mathbf{s}(t) = [\mathbf{r}(t)^\top, \mathbf{v}(t)^\top]^\top \in \mathbb{R}^4
+Source: Paper 4 (Shiri et al., 2019), Section II.A
+Discrete-time double integrator dynamics:
+\mathbf{p}(k+1) = \mathbf{p}(k) + \mathbf{v}(k) \Delta t
+\mathbf{v}(k+1) = \mathbf{v}(k) + \mathbf{a}(k) \Delta t
+Source: Paper 1 (Pavle et al., 2025), Eq. 1; Paper 2 (Phadke et al., 2026), Eq. 1
+Acceleration control input:
+\mathbf{u}_t = \mathbf{a}_t \in \mathbb{R}^2
+Source: Paper 4 (Shiri et al., 2019), Eq. 3
+AWGN channel:
+\mathbf{y} = \mathbf{x} + \mathbf{n}, \quad \mathbf{n} \sim \mathcal{N}(0, \sigma^2 I)
+Source: Paper 5 (Fang et al., 2025), Section II.B; Paper 6 (Khuwaja et al., 2018)
+Rayleigh fading channel:
+\mathbf{y} = h\mathbf{x} + \mathbf{n}, \quad h \sim \text{Rayleigh}, \quad |h|^2 \sim \text{Exponential}
+Source: Paper 6 (Khuwaja et al., 2018), Section III
+Task loss (position error):
+\mathcal{L}_{\text{task}} = \|\mathbf{r}(t)\|^2
+Source: Paper 4 (Shiri et al., 2019), Eq. 1 (term c_1\|\mathbf{r}(t)\|^2)
+Communication delay model:
+D = \frac{b}{W \log_2\left(1 + \frac{P \cdot g}{N_0 W}\right)}
+Source: Paper 4 (Shiri et al., 2019), Eq. 10
+
+2. Literature-supported but requiring adaptation
+Goal in state vector:
+Your formulation: s_t = [x_t, y_t, v_{x,t}, v_{y,t}, x_g, y_g]
+Literature: Goal NOT in state (Paper 1, 2, 3, 4). Goal is in cost function or reference trajectory.
+Adaptation required: Include goal as part of task loss, not state, OR keep in state but note this is your design choice.
+3D vs 2D:
+Literature predominantly uses 3D (Paper 1, 2, 3). Paper 4 uses 2D.
+Adaptation required: Justify 2D for simulation simplicity (Paper 4 supports this).
+Path loss:
+Literature includes path loss (Paper 4, 5, 6).
+Adaptation required: You can omit for simplified simulation, but note this differs from realistic models.
+
+3. Project-specific choices
+Goal radius threshold r_g:
+Your formulation: Navigation successful when d_t \leq r_g
+Literature: Paper 4 uses threshold r_{\text{th}} but value NOT SPECIFIED.
+Your design choice: Select numerical value (e.g., 1-5 m based on application).
+Timestep ?t:
+Literature: 0.01s (Paper 3), 0.033-0.1s (Paper 2), 0.1s (Paper 4)
+Your design choice: Select based on simulation stability (e.g., 0.01-0.1s).
+Velocity/acceleration constraints:
+Literature: NOT SPECIFIED numerically in most papers.
+Your design choice: Select based on UAV specifications (e.g., v_max = 5-15 m/s, a_max = 2-5 m/s²).
+Proportional controller after decoder:
+Your formulation: \pi(r_t) \rightarrow u_t
+Literature: Paper 2 uses proportional controller (fixed), Paper 4 uses HJB NN (learned).
+Your design choice: Use fixed proportional controller (Paper 2 supports this) or learn policy.
+
+4. Still unresolved
+CSI availability:
+Literature: NOT SPECIFIED in Papers 1-5.
+Unresolved: Whether decoder receives CSI for equalization.
+Channel normalization:
+Literature: NOT SPECIFIED in Papers 1-5.
+Unresolved: Whether channel gain is normalized in DeepJSCC training.
+Joint training of communication + controller:
+Literature: NO paper trains communication jointly with controller.
+Unresolved: Whether to train encoder/decoder/controller jointly (your contribution) or separately.
+Exact task loss for goal-reaching:
+Literature provides position error terms, but NOT exact formulation for "reach goal within radius r_g".
+Unresolved: Differentiable approximation of indicator function \mathbb{I}(d_t \leq r_g).
+
+P. Sources Summary
+Paper
+Full Citation
+DOI/Link
+Paper 1
+Pavle, N. V., Rajneesh, S., Sahoo, R. K., & Sinha, M. (2025). Obstacle Avoidance of UAV in Dynamic Environments Using Direction and Velocity-Adaptive Artificial Potential Field. arXiv:2512.07609v2.
+https://arxiv.org/html/2512.07609v2
+Paper 2
+Phadke, A., Vasudeva, K. K., & Joshi, A. (2026). SwarmFly: A simulation platform for UAV swarm experiment design and validation. arXiv:2606.25146v1.
+https://arxiv.org/html/2606.25146v1
+Paper 3
+Gupta, P. M., Pairet, E., Nascimento, T., & Saska, M. (2023). Landing a UAV in harsh winds and turbulent open waters. IEEE Robotics and Automation Letters. arXiv:2301.00255.
+DOI: 10.1109/LRA.2022.3231831
+Paper 4
+Shiri, H., Park, J., & Bennis, M. (2019). Remote UAV Online Path Planning via Neural Network Based Opportunistic Control. arXiv:1910.04969.
+https://arxiv.org/pdf/1910.04969.pdf
+Paper 5
+Fang, Z., Liu, Z., Wang, J., Hu, S., Guo, Y., Deng, Y., & Fang, Y. (2025). Task-Oriented Communications for Visual Navigation with Edge-Aerial Collaboration in Low Altitude Economy. arXiv:2504.18317v3.
+https://arxiv.org/html/2504.18317v3
+Paper 6
+Khuwaja, A. A., Chen, Y., Zhao, N., Alouini, M.-S., & Dobbins, P. (2018). A Survey of Channel Modeling for UAV Communications. IEEE Communications Surveys & Tutorials.
+https://wrap.warwick.ac.uk/id/eprint/104438/1/WRAP-survey-channel-modeling-UAV-communications-Chen-2018.pdf
+
+
+This extraction provides you with explicit equations, variable definitions, and source locations from peer-reviewed papers. You can now compare these with DeepJSCC papers to finalize your FYP mathematical specification.

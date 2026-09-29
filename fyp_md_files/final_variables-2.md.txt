@@ -1,0 +1,573 @@
+Haan. Main **Final Parameter Configuration v1** bana deta hoon, lekin ek important baat: uploaded source search se exact numerical values retrieve nahi ho rahi hain. Isliye main **koi number paper ke naam par invent nahi karunga**. Jahan proposal/source exact value nahi deta, wahan `TBD / project-specific` rahega. Yeh implementation ke liye safer hai.
+
+# Final Parameter Configuration v1
+
+## A. UAV simulation
+
+| Parameter                |                  v1 specification | Status           |
+| ------------------------ | --------------------------------: | ---------------- |
+| State                    |         \([x,y,v_x,v_y,x_g,y_g]\) | Proposal-defined |
+| Position dimension       |                               2-D | Proposal-defined |
+| Velocity dimension       |                               2-D | Proposal-defined |
+| Control                  |                   \(u=[u_x,u_y]\) | Proposal-defined |
+| Dynamics                 |       \(p_{t+1}=p_t+v_t\Delta t\) | Proposal-defined |
+| Dynamics                 |       \(v_{t+1}=v_t+u_t\Delta t\) | Proposal-defined |
+| \(\Delta t\)             |                           **TBD** | Project-specific |
+| \(v_{\max}\)             |                           **TBD** | Project-specific |
+| \(u_{\max}\)             |                           **TBD** | Project-specific |
+| Simulation horizon \(T\) |                           **TBD** | Project-specific |
+| Goal tolerance \(r_g\)   |                           **TBD** | Project-specific |
+| Failure condition        | timeout / bounded-area divergence | Proposal-defined |
+
+---
+
+## B. Navigation controller
+
+Fixed controller:
+
+$$
+e_p=p_g-p_t
+$$
+
+$$
+e_v=-v_t
+$$
+
+$$
+\tilde u_t=K_pe_p+K_de_v
+$$
+
+$$
+u_t=\operatorname{clip}(\tilde u_t,-u_{\max},u_{\max})
+$$
+
+| Parameter                       |      v1 |
+| ------------------------------- | ------: |
+| Controller                      |      PD |
+| \(K_p\)                         | **TBD** |
+| \(K_d\)                         | **TBD** |
+| Controller learning             |      No |
+| Same controller for all methods | **Yes** |
+
+This is essential for fair comparison: **we are evaluating communication, not three different controllers.**
+
+---
+
+# C. Task representation
+
+For Task-Oriented DeepJSCC:
+
+$$
+\boxed{
+q_t=
+[x_g-x_t,\;
+y_g-y_t,\;
+v_{x,t},\;
+v_{y,t}]
+}
+$$
+
+So:
+
+$$
+q_t\in\mathbb R^4.
+$$
+
+The decoder produces:
+
+$$
+\hat q_t=g_\phi(y_t).
+$$
+
+Then the fixed controller operates on \(\hat q_t\):
+
+$$
+\boxed{
+\tilde u_t=
+K_p\hat e_{p,t}-K_d\hat v_t.
+}
+$$
+
+**Status:** project-specific design choice, not a literature-prescribed numerical parameter.
+
+---
+
+# D. DeepJSCC communication budget
+
+Original state:
+
+$$
+d_s=6.
+$$
+
+We define:
+
+$$
+\rho=\frac{d_s}{n_c}
+$$
+
+where \(n_c\) is the number of complex channel uses per transmission.
+
+For the three proposed ratios:
+
+| \(\rho\) | Complex channel uses \(n_c\) |
+| -------: | ---------------------------: |
+|  \(1/6\) |                           36 |
+|  \(1/3\) |                           18 |
+|  \(1/2\) |                           12 |
+
+**Important correction to my previous message:** if we define the ratio as **source dimensions / channel uses**, then \(k=1,2,3\) was backwards. For the six-dimensional state, the channel-use counts above are the consistent interpretation.
+
+We'll use this definition consistently in the code.
+
+---
+
+# E. Power normalization
+
+For transmitted complex vector \(z\):
+
+$$
+z\leftarrow
+\sqrt{
+\frac{n_cP}
+{\|z\|_2^2+\epsilon}
+}z
+$$
+
+so that approximately:
+
+$$
+\frac{1}{n_c}\|z\|_2^2=P.
+$$
+
+For implementation:
+
+$$
+\boxed{P=1}
+$$
+
+is a convenient **normalization convention**, not a physical UAV transmit-power claim.
+
+---
+
+# F. AWGN
+
+$$
+y=z+n
+$$
+
+with
+
+$$
+n\sim\mathcal{CN}(0,\sigma_n^2I).
+$$
+
+With \(P=1\):
+
+$$
+\boxed{
+\sigma_n^2=10^{-\mathrm{SNR}_{dB}/10}
+}
+$$
+
+and each real I/Q component uses
+
+$$
+\boxed{
+\sigma_{\mathrm{I/Q}}
+=
+\sqrt{\frac{\sigma_n^2}{2}}.
+}
+$$
+
+---
+
+# G. Rayleigh fading
+
+$$
+\boxed{
+y=hz+n
+}
+$$
+
+where
+
+$$
+h\sim\mathcal{CN}(0,1).
+$$
+
+v1:
+
+* block fading
+* one \(h\) per transmission
+* independent realization between transmissions
+* perfect CSIR for the main experiment
+* equalization before decoder
+
+$$
+\tilde y=\frac{y}{h+\epsilon}.
+$$
+
+Imperfect CSI = **ablation**, not core experiment.
+
+---
+
+# H. SNR configuration
+
+Proposal specifies approximately:
+
+$$
+0\text{ dB}\rightarrow20\text{ dB}.
+$$
+
+So v1 test grid:
+
+$$
+\boxed{
+\mathrm{SNR}_{test}
+=
+\{0,2,4,\ldots,20\}\text{ dB}
+}
+$$
+
+**Status:** project-specific realization of the proposal's stated 0–20 dB range.
+
+Training SNR distribution:
+
+$$
+\boxed{\text{TBD after training-protocol verification}}
+$$
+
+We should not silently choose a training SNR distribution until the Prompt 8 source is checked.
+
+---
+
+# I. Reconstruction DeepJSCC
+
+Input:
+
+$$
+s_t\in\mathbb R^6
+$$
+
+Output:
+
+$$
+\hat s_t\in\mathbb R^6.
+$$
+
+Loss:
+
+$$
+\boxed{
+L_{\mathrm{rec}}
+=
+\frac1T\sum_t
+\|s_t-\hat s_t\|_2^2
+}
+$$
+
+with the same:
+
+* architecture
+* channel
+* SNR
+* bandwidth
+* power normalization
+
+as Task-Oriented DeepJSCC.
+
+Only the **training objective/output requirement** changes.
+
+---
+
+# J. Task-Oriented DeepJSCC
+
+Input:
+
+$$
+s_t\in\mathbb R^6
+$$
+
+Output:
+
+$$
+\hat q_t\in\mathbb R^4.
+$$
+
+Closed loop:
+
+$$
+s_t
+\rightarrow
+f_\theta
+\rightarrow
+z_t
+\rightarrow
+channel
+\rightarrow
+y_t
+\rightarrow
+g_\phi
+\rightarrow
+\hat q_t
+\rightarrow
+PD
+\rightarrow
+u_t
+\rightarrow
+s_{t+1}.
+$$
+
+This is the central implementation.
+
+---
+
+# K. Task loss
+
+We will initially implement a weighted differentiable rollout loss:
+
+$$
+\boxed{
+L_{task}
+=
+\lambda_pL_p+
+\lambda_vL_v+
+\lambda_uL_u+
+\lambda_TL_T
+}
+$$
+
+where
+
+$$
+L_p=
+\frac1T
+\sum_t
+\|p_t-p_g\|^2
+$$
+
+$$
+L_v=
+\frac1T
+\sum_t
+\|v_t\|^2
+$$
+
+$$
+L_u=
+\frac1T
+\sum_t
+\|u_t\|^2
+$$
+
+and
+
+$$
+L_T=
+\|p_T-p_g\|^2.
+$$
+
+### Numerical weights
+
+$$
+\lambda_p,\lambda_v,\lambda_u,\lambda_T
+$$
+
+remain **TBD**.
+
+We should **not arbitrarily set them to 1** yet because their relative scaling can materially change training.
+
+---
+
+# L. Normalization
+
+We need normalized neural-network inputs because the state contains quantities with different units/scales.
+
+For each state component:
+
+$$
+\boxed{
+s^{norm}_i=
+\frac{s_i-\mu_i}
+{\sigma_i+\epsilon}
+}
+$$
+
+or fixed physical-range normalization if the final state bounds are specified.
+
+But:
+
+$$
+\mu_i,\sigma_i
+$$
+
+and/or physical ranges are **TBD**.
+
+Important: normalization statistics must be calculated **from training data only**, then frozen for validation/test.
+
+---
+
+# M. Conventional digital baseline
+
+The baseline will be:
+
+$$
+\boxed{
+s
+\rightarrow
+normalization
+\rightarrow
+quantization
+\rightarrow
+FEC
+\rightarrow
+QAM
+\rightarrow
+channel
+\rightarrow
+demodulation
+\rightarrow
+FEC\ decoding
+\rightarrow
+dequantization
+\rightarrow
+controller
+}
+$$
+
+### Candidate implementation
+
+| Component         | v1 status            |
+| ----------------- | -------------------- |
+| Source            | 6-D continuous state |
+| Quantizer         | TBD                  |
+| Quantization bits | TBD                  |
+| FEC               | TBD                  |
+| Code rate         | TBD                  |
+| Modulation        | TBD                  |
+| Channel           | same AWGN/Rayleigh   |
+| SNR               | same as DeepJSCC     |
+| Controller        | same PD              |
+| Test episodes     | same                 |
+
+**Do not put JPEG here.** Your proposal correctly specifies that JPEG is inappropriate for this low-dimensional continuous state source.
+
+---
+
+# N. Experimental matrix
+
+Core experiment:
+
+$$
+\boxed{
+2\;channels
+\times
+11\;SNRs
+\times
+3\;bandwidths
+\times
+3\;methods
+}
+$$
+
+= **198 experimental cells**.
+
+Channels:
+
+* AWGN
+* Rayleigh
+
+SNR:
+
+$$
+0,2,4,\ldots,20\text{ dB}
+$$
+
+Bandwidth ratios:
+
+$$
+1/6,\;1/3,\;1/2
+$$
+
+Methods:
+
+1. Digital
+2. Reconstruction DeepJSCC
+3. Task-Oriented DeepJSCC
+
+---
+
+# O. Test metrics
+
+### Primary metric
+
+$$
+\boxed{\text{Goal-reaching success rate}}
+$$
+
+### Secondary
+
+* final position error
+* minimum distance to goal
+* time-to-goal
+* control-command error
+* failure rate
+
+### Communication metrics
+
+* SNR
+* channel-use ratio
+* BER/BLER for digital
+* reconstruction MSE
+* task loss
+
+---
+
+# P. What is officially frozen vs not
+
+### ? Frozen now
+
+* 2-D UAV model
+* 6-D source state
+* goal-relative 4-D task representation
+* fixed PD controller concept
+* DeepJSCC structure
+* complex channel representation
+* power normalization concept
+* AWGN equation
+* Rayleigh equation
+* block fading
+* main perfect-CSI assumption
+* three bandwidth ratios
+* AWGN/Rayleigh comparison
+* 0–20 dB test range
+* three communication methods
+* matched experimental conditions
+* navigation metrics
+
+### ?? Still must be verified before code
+
+* \(\Delta t\)
+* \(T\)
+* \(v_{\max}\)
+* \(u_{\max}\)
+* \(K_p,K_d\)
+* \(r_g\)
+* exact start/goal ranges
+* exact loss weights
+* exact normalization bounds/statistics
+* neural-network architecture
+* exact digital quantization
+* FEC type
+* FEC rate
+* modulation order
+* exact digital-vs-DeepJSCC resource matching
+* training SNR distribution
+* exact number of episodes
+* number of seeds
+
+**This is the point where we should not guess.** These remaining values are exactly the things we should pull from your Prompt 6–9 outputs and verify one-by-one before coding.
+
+So **Step 2 structure is ready**, but I would not call the numerical configuration completely frozen yet. The next step should be **Step 2.1: extract and verify every remaining numerical parameter from your collected Perplexity outputs**, then we can produce the final `config.py` specification from which the implementation will be written.
+

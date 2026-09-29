@@ -1,0 +1,915 @@
+We are developing an FYP titled:
+"TASK-ORIENTED DEEP JOINT SOURCE-CHANNEL CODING FOR UAV NAVIGATION UNDER NOISY AND FADING WIRELESS CHANNELS" The project is simulation-only and uses Python/PyTorch. We have already researched and verified the following areas:
+1. DeepJSCC foundation and encoder/decoder structure. 2. Complex-to-real PyTorch representation. 3. Power normalization. 4. AWGN and Rayleigh fading channel models. 5. SNR/noise conventions. 6. CSI/equalization considerations. 7. Bandwidth ratio. 8. Conventional digital communication baseline. 9. Training/validation/test protocol. 10. Seeds, SNR ranges, bandwidth ratios, ablations, and statistical evaluation. 11. UAV mathematical model at a basic level. Our UAV model is:
+with dynamics:
+where is bounded acceleration/control input. The UAV communicates its state to a ground station. The communication system is:
+We need to determine the mathematically correct task-oriented training formulation before implementation. IMPORTANT:
+
+Use ORIGINAL PAPERS whenever possible. Prioritize the original Diao 2024/2025 papers, Diao's PhD thesis, and other primary taskoriented communication/control papers. Do NOT invent equations, controller gains, thresholds, loss weights, training procedures, or architecture details. If something is not specified in the literature, explicitly write: "NOT SPECIFIED IN SOURCE -- PROJECT-SPECIFIC DECISION." Clearly separate:
+1. Literature-supported facts 2. Mathematical interpretation/inference 3. Project-specific decisions Do not silently transfer CARLA/autonomous-driving parameters into the UAV problem. The goal is to produce a defensible mathematical formulation for our UAV project, not to claim that the literature already specifies our exact UAV system.
+PART 1 -- Verify the task-oriented objective in Diao's work
+Study the relevant Diao papers and thesis and answer:
+A. What exactly is the task variable?
+Determine whether the task-oriented communication system is optimizing:
+reconstructed state, task representation, control action, future trajectory, task performance, or a combination. Give the exact mathematical formulation from the source where available.
+B. What does the decoder actually output?
+Determine whether the decoder produces:
+reconstructed source/state, latent task representation, control command, future trajectory, or another representation. Give the exact architecture/objective relationship.
+
+C. What is the task loss?
+Find the exact task-oriented loss used by Diao. For example, determine whether it contains terms corresponding to:
+information bottleneck terms, or other components. Give equations exactly or faithfully paraphrased from the source. Explain what each term means.
+D. DTCP / trajectory-guided control prediction
+For the 2025 communication-computing-control work, verify: what DTCP means, what it predicts, whether it predicts control actions or trajectories, whether it is learned, how it interacts with communication, how its loss is defined, whether the controller is fixed or learned, whether communication and control are jointly optimized.
+Do NOT assume the CARLA implementation directly transfers to UAV dynamics.
+PART 2 -- Determine the appropriate UAV task representation
+For our UAV state:
+investigate which task representation is mathematically appropriate. Consider these possibilities:
+
+Option A -- Full state reconstruction
+Decoder outputs:
+$$ \hat s_t
+[\hat x_t,\hat y_t,\hat v_{x,t},\hat v_{y,t},\hat x_g,\hat y_g] $$ and a fixed controller uses .
+Option B -- Goal-relative state
+Define:
+and potentially:
+so the decoder outputs something such as:
+or another task-relevant representation.
+Option C -- Direct control prediction
+Decoder directly produces:
+which is then applied to the UAV.
+Option D -- Future trajectory / control sequence
+Decoder predicts:
+or
+For each option: find literature precedent if available, explain what objective it naturally supports,
+
+explain whether it is differentiable, explain whether it fits our project scope, identify advantages/disadvantages, and explicitly state if the literature does NOT provide enough evidence to choose one. Do NOT simply choose the most sophisticated option.
+PART 3 -- Verify the UAV controller formulation
+Investigate whether a simple fixed goal-reaching controller can be used to isolate the communication problem.
+One candidate formulation is:
+
+followed by control saturation:
+
+Determine:
+
+1. Whether this is mathematically appropriate for the stated double-integrator UAV model.
+
+2. Whether a PD controller is sufficient for this project.
+
+3. Whether literature provides suitable gain-selection guidance.
+
+4. Whether
+
+should be fixed.
+
+5. Whether the controller should be learned jointly with the communication model.
+
+6. Whether fixing the controller gives a cleaner evaluation of the communication system.
+
+IMPORTANT:
+
+Do NOT invent numerical values for:
+
+If the literature does not specify them for our exact model, mark them as: PROJECT-SPECIFIC PARAMETERS -- TO BE SELECTED AND JUSTIFIED SEPARATELY.
+
+PART 4 -- Most important: differentiable training objective
+Our main problem is that the final navigation success criterion is:
+This is useful for evaluation, but the binary indicator
+is not an appropriate direct gradient-training objective. Investigate how task-oriented communication can instead be trained using differentiable surrogate losses. Compare the following possible formulations.
+Candidate 1 -- Control imitation loss
+If an ideal controller generates:
+then train the communication system so that the received representation produces:
+Possible loss:
+$$ \mathcal L_{control}
+\frac{1}{T} \sum_{t=1}^{T} |\hat u_t-u_t*|_22. $$ Determine whether this formulation is supported by literature or would be our project-specific adaptation.
+Candidate 2 -- One-step state prediction/navigation loss
+Use the communication output to generate a control input and predict:
+Then minimize a differentiable state/position error such as:
+
+$$ \mathcal L_{step}
+|p_{t+1}-p_g|2^2 + \lambda_v|v{t+1}|_2^2.
+$$
+Determine whether this is supported by literature and whether it is suitable for our system.
+Candidate 3 -- Multi-step closed-loop trajectory loss
+Roll out the UAV for steps:
+Then optimize something like:
+$$ \mathcal L_{traj}
+\sum_{t=1}^{T} \alpha_t |p_t-p_g|2^2 + \lambda_v \sum{t=1}{T}|v_t|_22 + \lambda_u \sum_{t=0}{T-1}|u_t|_22.
+$$
+Determine:
+whether this is differentiable, whether backpropagation through the UAV dynamics is possible, whether backpropagation through the controller is possible, whether this resembles task-oriented control training in the literature, computational implications, stability issues, and whether it is appropriate for our FYP.
+
+Candidate 4 -- Terminal navigation loss
+Use:
+$$ \mathcal L_{terminal}
+|p_T-p_g|_2^2. $$ Investigate:
+whether this is sufficient, whether it can produce poor intermediate trajectories, whether it encourages overshoot, whether velocity should also be penalized.
+Candidate 5 -- Hybrid task loss
+Investigate whether a combination such as:
+$$ \mathcal L_{task}
+\lambda_1\mathcal L_{terminal} + \lambda_2\mathcal L_{traj} + \lambda_3\mathcal L_{control} $$ would be justified. Do NOT choose the weights without evidence.
+PART 5 -- Closed-loop backpropagation
+This is critical. Determine whether our full system can be trained end-to-end:
+Analyze differentiability through: 1. encoder,
+
+2. power normalization, 3. AWGN, 4. Rayleigh fading, 5. equalization/CSI, 6. decoder, 7. controller, 8. control clipping, 9. UAV dynamics, 10. multi-step rollout. For each component, identify whether it is differentiable and whether gradient-based training is practical.
+Pay particular attention to:
+hard clipping, discrete digital communication baseline, success/failure indicators, quantization, modulation/demodulation, stochastic channel noise, Rayleigh fading, CSI assumptions. Explain why the digital baseline does NOT need to be trained end-to-end in the same way as DeepJSCC.
+PART 6 -- Fixed controller vs learned controller
+Our project aims to compare:
+1. Conventional digital communication 2. Reconstruction-oriented DeepJSCC 3. Task-oriented DeepJSCC Investigate whether the controller should remain identical across all three methods.
+Analyze the fairness implications.
+For example:
+Digital:
+
+Reconstruction DeepJSCC:
+Task-oriented DeepJSCC:
+Determine whether using the same fixed controller is necessary/desirable for a fair comparison. If the task-oriented decoder outputs something other than the full state, explain how the controller can use it fairly.
+PART 7 -- Training loss vs evaluation metric
+Clearly distinguish:
+Training objective
+A differentiable loss used to optimize:
+from:
+Evaluation metrics
+Such as: success rate, final position error, time-to-goal, path deviation, control error, failure rate.
+Determine whether success rate should be used ONLY for evaluation rather than direct gradient training. Also determine whether reconstruction MSE should be included in the task-oriented model's training loss.
+
+PART 8 -- Communication update frequency
+Investigate whether the UAV should transmit:
+Every simulation step
+or communicate every steps and hold/interpolate the received representation between transmissions. Search relevant task-oriented communication/control literature for guidance. If the literature does not specify this for our UAV model, mark it as project-specific.
+PART 9 -- Goal-reaching definition
+Determine appropriate distinctions between:
+Training
+Differentiable losses such as:
+and
+Evaluation
+Binary success:
+Investigate how goal tolerance , maximum episode horizon , and timeout should be treated. Do NOT invent numerical values unless a source specifically supports them.
+PART 10 -- Final mathematical specification
+After reviewing the literature, produce a proposed mathematical formulation for our exact FYP. The final answer MUST contain:
+1. State
+
+2. Goal representation
+3. UAV dynamics
+4. Controller
+5. DeepJSCC encoder
+6. Channel
+AWGN and Rayleigh equations.
+7. Decoder
+8. Control generation
+9. Closed-loop dynamics
+10. Task-oriented training loss
+Give the exact recommended equation.
+11. Reconstruction DeepJSCC loss
+Give its equation.
+12. Digital baseline pipeline
+Give the exact conceptual chain.
+
+13. Evaluation metrics
+Give mathematical definitions where appropriate.
+14. Training vs evaluation distinction
+Clearly explain which quantities are optimized and which are only measured.
+
+PART 11 -- Evidence classification table
+Create a table with these columns:
+Item Exact literature evidence Source Literature-specified? Project-specific?
+Include at least:
+state vector goal representation UAV dynamics controller controller gains control limits decoder output task loss reconstruction loss goal tolerance episode horizon communication frequency AWGN Rayleigh fading CSI power normalization bandwidth ratio SNR training objective success metric closed-loop training number of rollout steps
+
+Recommended treatment
+
+PART 12 -- DO NOT ASSUME LIST
+End the report with a section:
+"Things we must NOT assume from the literature."
+List every parameter/equation/design choice that is NOT actually specified by the sources and therefore must be selected separately for this FYP.
+Be especially careful not to copy:
+CARLA vehicle dynamics, autonomous-driving controller parameters, driving trajectory definitions, driving-specific task losses, driving-specific horizons, driving-specific normalization, driving-specific control limits into the UAV model without justification.
+FINAL REQUIREMENT
+The most important output is NOT a generic explanation.
+We need a source-backed, mathematically coherent, implementation-ready formulation for:
+If the literature does not provide enough information to make a particular decision, explicitly say:
+"NOT SPECIFIED IN SOURCE -- PROJECT-SPECIFIC DECISION."
+Do not fill that gap with an invented citation or an unsupported numerical value.
+The Diao papers provide strong evidence for task-oriented communication whose downstream target is a driving action, and for jointly training a JSCC encoder with a learned driving agent. They do not provide a ready-made UAV double-integrator controller, UAV navigation loss, goal radius, rollout horizon, or UAV-specific parameter values. For your FYP, the most defensible formulation is therefore: a fixed, shared goal-reaching PD controller; a task-oriented DeepJSCC decoder that produces a goal-relative navigation representation; and end-to-end training of only the DeepJSCC encoder/decoder through a differentiable closed-loop UAV rollout.
+
+Evidence boundary: what Diao actually does
+A. Task variable in Diao's work
+Literature-supported fact. In Diao et al.'s 2025 communication-computing-control paper, the task target is principally a driving action , not a reconstructed input image, reconstructed vehicle state, or a UAV trajectory. The input is a camera image ; the transmitter produces JSCC symbols ; the channel produces ; then an autonomous-driving agent estimates an action using received symbols, side information , and CSI . The paper writes
+Its abstract task objective is to minimize expected distortion between ground-truth and estimated actions:
+subject to a bandwidth-compression constraint and the channel/power constraints. Thus, Diao's target is task performance represented through action prediction, with task-relevant side information and CSI available to the agent. [1] Literature-supported fact. Diao then reformulates this through an information-bottleneck objective:
+or, with a Lagrange multiplier,
+[ \mathcal L_{\rm IB}
+-I(A;\hat Z,M,H) + \beta I(X;\hat Z). ] The first term rewards retention of action-relevant information; the second penalizes information/rate associated with the transmitted representation. [1]
+
+B. What Diao's receiver outputs
+Diao's 2025 architecture does not use a conventional source decoder that reconstructs the transmitted camera image. The received/equalized JSCC symbols are fed directly to the driving agent. The agent outputs estimated driving actions and, within DTCP, auxiliary task-critical variables such as features, target velocity, waypoint-related outputs, and predicted control commands. [1]
+This distinction matters for your FYP:
+
+Question Does the decoder reconstruct the input image? Is the task output an action? Are latent/task features used?
+Are trajectories involved?
+Is the plant state rolled out in the stated IB formulation?
+
+Diao 2025 answer
+No, not as the principal task output
+Yes; approximates ground-truth Yes, internally in DTCP Yes, DTCP has a trajectory branch and planned waypoints
+Not in the abstract IB objective
+
+Implication for the UAV FYP
+A task-oriented UAV receiver need not reconstruct
+Direct control prediction has precedent
+A receiver representation is defensible
+Trajectory prediction has precedent, but is driving-specific
+A differentiable UAV plant rollout is your extension
+
+C. Diao's exact task-oriented loss
+Literature-supported fact. Diao's tractable variational information-bottleneck upper bound is
+[ \mathcal L_{\rm VIB}
+\mathbb E_{a,x} \left[ \mathbb E_{\hat z\mid x;\phi} \left[ \mathbb E_{m,h} \left[ -\log q_\psi(a\mid \hat z,m,h) \right] \right] + \beta D_{\rm KL} \left( p_\phi(\hat z\mid x) \Vert q(\hat z) \right)
+
+\right]. ]
+The empirical minibatch estimate given in the paper is
+
+Here,
+
+is the task-prediction term and the KL term is the variational rate/information-
+
+bottleneck regularizer. [1]
+
+Important limitation. Diao's VIB task term is an action-posterior negative log-likelihood
+
+because the driving agent's action is represented probabilistically. It is not the same as your
+
+deterministic UAV goal-reaching loss. Directly copying this term would be unjustified unless
+
+you first define a probabilistic model
+
+for your UAV controls.
+
+NOT SPECIFIED IN SOURCE -- PROJECT-SPECIFIC DECISION: Whether your low-dimensional UAV-state DeepJSCC system should use VIB/KL regularization. Because your project already enforces a fixed channel-use budget and power constraint, a trajectory/control objective without a VIB term is mathematically valid. A VIB extension can be reported as an ablation, not as a required component of task-oriented DeepJSCC.
+
+D. DTCP: what it is--and is not
+Literature-supported fact. DTCP means Delay-aware Trajectory-guided Control Prediction. It was designed for Diao's delayed, edge-enabled autonomous-driving system, where camera data become stale during uplink transmission, edge inference, downlink communication, and control execution. [1]
+DTCP combines two learned branches:
+A trajectory branch extracts trajectory features, autoregressively predicts future waypointrelated information, and uses a low-level PID controller to generate trajectory commands. A control branch predicts a sequence of future control commands using recurrent processing and information from the trajectory branch. A conditional combination rule fuses trajectory-branch and control-branch commands based on driving context, delay, and a threshold. [1] The paper defines end-to-end delay as
+[ \delta
+\delta_e+\delta_u+\delta_a+\delta_d+\delta_c, ]
+where encoding, uplink, agent computation, downlink, and control execution delays are included. A prediction horizon is selected to compensate perceived delay, which is described
+
+as
+
+. [1]
+
+Mathematical interpretation. DTCP is more than one-step action prediction. It predicts sequences of future driving commands, and its trajectory branch predicts waypoint-related outputs. It is learned and co-designed with communication, but its architecture, timing model, CARLA vehicle interface, route representation, steering/throttle/brake command format, turning condition, and PID details belong to the autonomous-driving problem.
+
+Do not transfer this directly. For your simulator there is no stated communication delay model, no CARLA image stream, no waypoint route planner, and no vehicle steering/braking action space. Therefore:
+
+NOT SPECIFIED IN SOURCE -- PROJECT-SPECIFIC DECISION: whether to model communication/computation delay and use delay-compensating action or trajectory prediction for the UAV.
+
+For the initial FYP scope, do not implement DTCP. It would add an additional research problem --delay-aware predictive control--rather than isolating task-oriented source-channel coding.
+
+Representation and controller choice
+
+Options for the UAV receiver
+Your physical state is
+
+with
+
+The following table distinguishes literature precedent from suitability for your exact FYP.
+
+Option
+A: full reconstruction
+
+Receiver output
+
+Relevant precedent
+Reconstructionoriented DeepJSCC reconstructs its source using MSE
+
+Natural training target
+State reconstruction MSE, optionally followed by fixed control
+
+Differentiable? Yes
+
+FYP assessment
+Necessary as the reconstruction DeepJSCC baseline; not the strongest taskoriented design
+
+Option
+
+Receiver output
+
+B: goal-relative representation
+
+, ideally representing
+
+C: direct control
+D: trajectory or or command sequence
+
+Relevant precedent
+Functional/tasksufficient representation follows the taskoriented communication principle; Diao uses task features rather than full image reconstruction
+Diao's task variable is an action and its agent predicts driving commands
+Diao DTCP predicts future commands and has a trajectory branch
+
+Natural training target
+Closed-loop navigation cost, representation loss, or action imitation
+or a rollout navigation cost
+Multi-horizon trajectory/control loss
+
+Differentiable?
+Yes
+Yes, if output activation is differentiable
+Yes
+
+FYP assessment
+Recommended primary taskoriented design
+Defensible but mixes communication quality with a learned controller/policy Possible extension, but excessive for the initial no-delay doubleintegrator scope
+
+Recommended task representation
+For your core experiment, define a deterministic task map
+[ q(s_t) r_t^\star
+
+. ]
+
+The task-oriented decoder produces
+[ \hat r_t g_\phi(\hat z_t)
+
+. ]
+
+The receiver then applies the same fixed controller mapping to that an ideal state-feedback controller would apply to .
+
+This is not a claim that Diao specifies this UAV representation. It is the cleanest project adaptation because:
+
+It removes the absolute-coordinate redundancy inherent in transmitting and separately when the navigation law depends on their difference.
+
+It retains the velocity information necessary for damping.
+
+It permits a fixed and transparent controller.
+
+It gives a direct, fair comparison against reconstructed-state methods.
+
+It keeps the research focus on whether DeepJSCC preserves what navigation needs under AWGN and fading.
+
+NOT SPECIFIED IN SOURCE -- PROJECT-SPECIFIC DECISION: the exact UAV task
+
+representation
+
+.
+
+Fixed PD controller
+For the continuous-time double integrator
+
+the goal equilibrium is
+
+. Define
+
+The candidate controller
+
+is equivalent to the familiar regulation law
+
+For scalar gains applied identically on both axes, use
+
+Without saturation, the error dynamics are
+Thus, positive definite and yield the usual damped second-order regulation structure. PD feedback is a standard stabilizing feedback structure for a double integrator. [2] [3] For the discrete-time simulation, use the stated dynamics:
+
+The operational control law is
+
+[ \tilde u_t
+K_p\hat e_{p,t}-K_d\hat v_t, ]
+
+[ u_t
+\operatorname{clip} \left( \tilde u_t, -u_{\max}, u_{\max} \right). ]
+
+The sign is correct because the received velocity estimate is the actual velocity
+
+representation; damping requires
+
+. If instead the decoder output is defined as
+
+,
+
+then the equivalent form is
+
+.
+
+Controller decisions
+Question Is PD appropriate?
+
+Is it sufficient?
+
+Does Diao specify gains for this UAV?
+
+Should
+
+be fixed?
+
+Defensible conclusion Yes, for the stated planar double-integrator goal-regulation model Yes, for a simulation-only FYP that isolates communication effects; it is not a full quadrotor flight controller
+No
+Yes, for the primary benchmark
+
+Question Should the controller be learned jointly?
+Why fixed?
+Can learned control be added?
+
+Defensible conclusion
+Not for the primary comparison
+It prevents task-oriented DeepJSCC from gaining performance merely by using a more powerful controller than its baselines Yes, as a clearly labeled separate ablation, not as the fair main comparison
+
+PROJECT-SPECIFIC PARAMETERS -- TO BE SELECTED AND JUSTIFIED SEPARATELY: , , , any , and .
+A principled controller-selection procedure is to choose these values first using a noiseless, full-state, perfect-communication simulator; verify stable convergence for the training/test initial-state and goal distribution; freeze them; then use the same values for all communication methods. That is a methodology recommendation, not a parameter prescription from Diao.
+
+Recommended closed-loop formulation
+
+1. State, goal, and plant
+Use
+[ s_t=
+
+\in\mathbb R^6. ]
+Use the task variable
+
+[ r_t^\star=q(s_t)
+\in\mathbb R^4. ] The discrete UAV plant is
+[ s_{t+1}=F(s_t,u_t)
+. ] The goal is fixed within an episode:
+2. Task-oriented DeepJSCC
+A clean task-oriented transmitter can take the full physical state:
+Pair real components into complex symbols and normalize to a per-codeword average-power target :
+This is the same normalization principle used in the original DeepJSCC formulation, which maps a source to complex channel symbols subject to an average power constraint. [4] For AWGN,
+For flat Rayleigh fading,
+Under a perfect-CSI equalization assumption,
+
+[ \hat z_t
+\frac{h_t\ast}{|h_t|2} \odot \tilde z_t^{\rm ch}. ] Diao's 2025 model likewise uses a complex fading channel,
+and assumes perfect CSI for zero-forcing equalization,
+However, Diao uses a frequency-selective OFDM model for the driving system, not your scalar/flat Rayleigh UAV channel. [1] The task-oriented decoder is
+[ \hat r_t=g_\phi(\hat z_t)
+. ] The fixed controller is
+[ \tilde u_t
+K_p\hat e_{p,t}-K_d\hat v_t, ]
+Thus the complete trainable loop is
+
+3. Recommended task-oriented loss
+The recommended primary loss is a finite-horizon closed-loop navigation objective:
+[ \boxed{ \mathcal L_{\rm TO}
+\mathbb E_{\xi} \left[ \sum_{t=1}^{T} \alpha_t |p_t-p_g|2^2 + \lambda_v \sum{t=1}^{T} |v_t|2^2 + \lambda_u \sum{t=0}^{T-1} |u_t|_2^2 + \lambda_T |p_T-p_g|2^2 + \lambda{v,T} |v_T|_2^2 \right] } ]
+subject to the closed-loop system above.
+Here, denotes random episode variables: initial state, goal, AWGN samples, fading coefficients, and possibly sampled SNR. The terminal position term is intentionally retained even though the running position term already includes ; it lets you explicitly emphasize terminal goal reaching if desired.
+This is an implementation-ready equation, but its specific weights are not supplied by Diao or by a source for your exact UAV model:
+NOT SPECIFIED IN SOURCE -- PROJECT-SPECIFIC DECISION: , , , , and .
+This choice is mathematically defensible because differentiable predictive-control literature explicitly uses automatic differentiation through closed-loop dynamics and constraint penalties to learn policies/parameters. It is also aligned in spirit with task-oriented
+
+communication: optimize downstream control performance rather than source reconstruction. It is not an equation copied from Diao. [5]
+
+4. Candidate losses: decision
+
+Candidate
+
+Status
+
+1. Control imitation
+
+2. One-step navigation loss
+3. Multi-step rollout loss
+4. Terminal-only loss
+
+Running position, velocity, effort, and terminal terms
+
+5. Hybrid loss
+
+Terminal + rollout + imitation
+
+Assessment
+Literature-aligned through Diao's action-centered formulation, but this exact UAV loss is a project-specific adaptation
+Differentiable but myopic; not recommended as the only objective
+Recommended primary loss; differentiable through your analytic dynamics
+Differentiable but insufficient alone; it can permit poor intermediate behavior and nonzero terminal velocity
+Valid only if each term has a clear role; weights require tuning and ablation
+
+Candidate 1: control imitation
+Let the noiseless full-state expert command be
+[ u_t^\star
+\operatorname{clip} \left( K_p(p_g-p_t)-K_dv_t, -u_{\max},u_{\max} \right). ]
+If the task decoder produces a control estimate directly, then
+[ \mathcal L_{\rm control}
+\frac{1}{T} \sum_{t=0}^{T-1} |\hat u_t-u_t\star|_22. ]
+For the recommended representation-based decoder, define instead
+
+[ \hat u_t^{\rm pre}
+K_p\hat e_{p,t}-K_d\hat v_t, ]
+[ \mathcal L_{\rm control}
+\frac{1}{T} \sum_{t=0}^{T-1} |\hat u_t^{\rm pre}-u_t^{\star,\rm pre}|_2^2. ]
+This is a useful optional auxiliary loss because Diao's task target is action prediction. But the exact UAV equation is not specified by Diao.
+NOT SPECIFIED IN SOURCE -- PROJECT-SPECIFIC DECISION: whether to include , and its coefficient.
+Candidate 2: one-step loss
+Because
+
+does not contain , a position-only one-step term
+
+does not directly provide a gradient to The control affects , which affects objective.
+
+under your specified forward-Euler position update. . Therefore it is a particularly weak standalone
+
+A one-step loss becomes more control-sensitive if you evaluate the next velocity,
+
+[ \mathcal L_{\rm step}
+|p_{t+1}-p_g|2^2 + \lambda_v|v{t+1}|_2^2, ]
+
+but it remains short-sighted. Use it only as an auxiliary diagnostic or an initial curriculum stage if later justified experimentally.
+
+Candidate 3: multi-step rollout loss
+This is the strongest choice for your model. The encoder/decoder must preserve the state information that enables repeated navigation decisions under noisy channels, not merely one action at one time instant.
+Backpropagation is available because:
+[ \frac{\partial v_{t+1}}{\partial u_t}
+\Delta t I_2, ]
+[ \frac{\partial p_{t+1}}{\partial v_t}
+\Delta t I_2. ]
+The effect of reaches position at the subsequent step in the stated discretization. Autograd can therefore propagate gradients through unrolled state transitions, controller operations, and neural networks.
+The practical costs are:
+Memory grows approximately with rollout length , because intermediate activations must be retained. Long rollouts can create exploding or vanishing gradients. Saturation can create regions with zero or weak gradient. Random fading/noise makes gradients stochastic; train using Monte Carlo channel samples and minibatch averaging. A curriculum from short to longer horizons may help, but this is NOT SPECIFIED IN SOURCE -- PROJECT-SPECIFIC DECISION.
+Candidate 4: terminal loss
+[ \mathcal L_{\rm terminal}
+|p_T-p_g|_2^2 ]
+is differentiable, but it alone does not penalize:
+high speed at arrival,
+
+large detours, oscillations, excessive actuation, unsafe or unstable intermediate behavior. Add terminal velocity:
+[ \mathcal L_{\rm terminal+v}
+|p_T-p_g|2^2 + \lambda{v,T}|v_T|_2^2. ]
+Even then, a running trajectory term is preferable for controlled, non-oscillatory convergence.
+Candidate 5: hybrid loss
+A transparent optional extension is
+[ \mathcal L_{\rm hybrid}
+\mathcal L_{\rm TO} + \lambda_{\rm ctrl}\mathcal L_{\rm control}. ]
+Use this only after establishing the primary rollout-only model. It tests whether expertcommand supervision improves robustness and convergence. Do not set or report as literature-derived.
+5. Reconstruction DeepJSCC baseline
+The reconstruction baseline must reconstruct the full state, using the same channel-use budget, channel distribution, SNR convention, power target, and controller.
+
+[ \mathcal L_{\rm rec}
+\mathbb E_{\xi} \left[ \frac{1}{T} \sum_{t=0}^{T-1} |D_s^{-1}(\bar s_t-\hat{\bar s}t)|{W_s}^2 \right]. ]
+
+Here denotes the normalized state used by the network, reverses normalization if you
+
+want physical-unit weighting, and
+
+is a stated state-component weighting matrix. For a
+
+simplest baseline:
+
+[ \mathcal L_{\rm rec}
+\frac{1}{T} \sum_{t=0}^{T-1} |s_t-\hat s_t|_2^2. ]
+
+The original DeepJSCC formulation uses average MSE between source input and
+reconstruction; transferring that principle to a state vector is a valid reconstruction-baseline adaptation, not an equation literally printed for UAV states.[4]
+
+The controller receives
+
+[ \hat e_{p,t}
+\hat p_{g,t}-\hat p_t, \qquad \hat v_t, ]
+
+and applies
+
+NOT SPECIFIED IN SOURCE -- PROJECT-SPECIFIC DECISION: state normalization, whether state MSE is physically weighted, and the selected state-loss scaling.
+
+6. Digital baseline
+The digital baseline is a fixed separated chain:
+
+It does not need an end-to-end gradient because its quantization, coding, modulation, demodulation, and decoding blocks are predefined algorithms, not neural parameters being optimized. It is evaluated over the same channel/SNR conditions and an explicitly matched communication budget.
+NOT SPECIFIED IN SOURCE -- PROJECT-SPECIFIC DECISION: quantizer design, bit allocation, packetization, error-correcting code, modulation order, code rate, outage/packet-loss behavior, retransmission policy, and exact budget-matching rule for a six-dimensional state.
+Differentiability and fair evaluation
+
+Gradient path audit
+
+Component
+
+Neural encoder
+
+Yes
+
+Complex-to-real Yes conversion
+
+Differentiable?
+
+Power normalization
+
+Yes except at zero norm
+
+AWGN injection
+Rayleigh fading multiplication
+
+Yes with respect to input for a sampled noise realization
+Yes with respect to for sampled
+
+Perfect-CSI equalization Yes almost everywhere when
+
+Decoder Fixed PD controller Hard clipping
+
+Yes
+Yes
+Piecewise differentiable; derivative is zero in saturated regions
+
+UAV plant
+
+Yes
+
+Multi-step rollout Binary success indicator Quantization
+
+Yes No Not ordinarily differentiable
+
+Practical training judgment
+
+Standard backpropagation
+
+A reshape/pairing operation; no mathematical obstacle
+
+Add a numerically safe in implementation; is a numerical implementation choice
+
+Use reparameterized sampling
+
+,
+
+Sample during training; gradients flow through multiplication
+Deep fades can amplify noise and gradients; use a clearly declared regularized equalizer if needed
+Standard backpropagation
+Linear in decoder outputs before saturation
+Usable, but can impair learning
+Affine dynamics; ideal for closed-loop backpropagation
+Memory/gradient stability become practical constraints
+Evaluation only
+Do not use it in the end-to-end DeepJSCC training path
+
+Component
+Digital coding/modulation chain
+
+Differentiable? Generally nondifferentiable/discrete
+
+Practical training judgment
+Evaluate algorithmically; do not force joint neural training
+
+Saturation
+For evaluation, preserve the physical actuator constraint:
+
+Hard clipping has a derivative of zero outside the unsaturated interval. This does not make training impossible, but it can stall learning when the decoder repeatedly generates commands beyond limits.
+You have two defensible choices:
+Train and evaluate with hard clipping, while monitoring saturation frequency. Train with a smooth bounded actuator map such as
+then evaluate with the same smooth map. The second choice changes the controller nonlinearity. Therefore:
+NOT SPECIFIED IN SOURCE -- PROJECT-SPECIFIC DECISION: hard clipping versus a smooth bounded control parameterization.
+Do not train with and silently evaluate with a different hard-clipped plant; if you do compare them, report it as an ablation.
+CSI and fading
+Your Rayleigh experiments need an explicit receiver assumption:
+Perfect CSI: receiver knows and equalizes. This is a clean initial benchmark. No CSI: decoder receives raw and must implicitly handle fading. Estimated CSI: receiver uses , introducing channel-estimation error. Diao explicitly assumes perfect CSI in its channel equalization equation. That supports perfect CSI as a benchmark assumption, but not as a claim of UAV realism.[1]
+NOT SPECIFIED IN SOURCE -- PROJECT-SPECIFIC DECISION: CSI acquisition, pilot overhead, estimation error, and whether CSI is appended to the decoder input.
+
+Fair controller rule
+For the main comparison, use one fixed controller design and one set of frozen gains:
+
+Method Digital Reconstruction DeepJSCC Task-oriented DeepJSCC
+
+Receiver output
+
+Controller interface
+
+Compute
+
+, use
+
+Exactly the same mapping
+
+The same PD mapping
+
+This is fair because all methods ultimately use the same control law. The task-oriented model is allowed to avoid reconstructing task-irrelevant information, but it is not allowed to use a more capable learned policy.
+
+A directly learned-control decoder,
+
+, should be treated as a separate experiment
+
+because it changes both the communication representation and the control policy.
+
+Training versus evaluation
+The binary success event is
+[ \operatorname{Succ}
+\mathbf 1 \left[ \exists t\in{0,···,T}: |p_t-p_g|_2\leq r_g \right]. ]
+Across test episodes,
+[ \operatorname{SuccessRate}
+\frac{1}{N} \sum_{i=1}^{N} \operatorname{Succ}^{(i)}. ]
+This indicator is non-differentiable and must be used as an evaluation metric, not the primary gradient-training loss.
+Recommended evaluation quantities are:
+
+[ e_{\rm final}
+|p_T-p_g|_2, ]
+[ e_{\rm min}
+\min_{0\leq t\leq T}|p_t-p_g|_2, ]
+[ t_{\rm goal}
+\min \left{ t: |p_t-p_g|_2\leq r_g \right}, ]
+with timeout recorded if the set is empty,
+[ J_u
+\sum_{t=0}^{T-1} |u_t|_2^2, ]
+[ J_v
+\sum_{t=1}^{T} |v_t|_2^2, ]
+and, if desired, communication-relevant measures such as state/representation MSE, average channel uses, and saturation frequency.
+PROJECT-SPECIFIC PARAMETERS -- TO BE SELECTED AND JUSTIFIED SEPARATELY: goal radius , horizon , timeout definition, initial-state distribution, goal distribution, and whether success requires stopping velocity below a specified tolerance.
+
+Communication update frequency
+The clean initial protocol is one transmission and control update at every simulation step:
+
+This makes the effect of communication noise observable without adding age-of-information, zero-order hold, intermittent observation, or latency-compensation confounders.
+
+Diao's DTCP uses time slots and explicitly models delayed observations/commands for an edge-
+enabled driving scenario. It does not specify whether your UAV should communicate every double-integrator steps. [1]
+
+NOT SPECIFIED IN SOURCE -- PROJECT-SPECIFIC DECISION: communication period , zero-order hold versus interpolation, age-of-information model, and whether delay is in scope.
+
+If you later introduce communication every
+
+steps, define it explicitly:
+
+unless a local predictor or controller is added. That is a separate intermittent-communication experiment, not part of the initial comparison.
+Evidence classification and non-assumptions
+
+Evidence classification table
+
+Item State vector
+Goal representation
+UAV dynamics
+
+Exact literature evidence
+Diao uses image input plus driving state information; not a six-state UAV vector
+Diao state information includes destination coordinates, but no goalrelative UAV vector
+Diao uses CARLA autonomous driving, not a planar double integrator
+
+Source Diao 2025 Diao 2025 Diao 2025
+
+Literaturespecified?
+
+Projectspecific?
+
+Recommended treatment
+
+No Yes Use the stated
+
+No
+
+Yes
+
+Use
+
+No Yes Use the supplied discrete double-integrator plant
+
+Item
+Controller
+Controller gains Control limits Decoder output
+Task loss
+Reconstruction loss Goal tolerance
+Episode horizon
+Communication frequency AWGN
+
+Exact literature evidence
+Diao DTCP includes learned branches and a low-level PID in the trajectory branch
+No gains for your plant
+No UAV
+Diao agent outputs estimated driving action and DTCP task variables
+Action distortion objective; VIB negative log posterior plus KL term
+Original DeepJSCC uses source reconstruction MSE
+No UAV goal radius
+DTCP prediction horizon is delay-related, not a UAV goalreaching horizon
+Diao uses time slots and a delay model; no UAV
+Complex Gaussian channel noise is used
+
+Source
+Diao 2025
+Diao 2025 Diao 2025 Diao 2025
+Diao 2025
+Bourtsoulatze et al. Diao / DeepJSCC
+Diao 2025
+Diao 2025 Diao 2025; DeepJSCC
+
+Literaturespecified?
+Not for UAV
+No No Yes, for driving
+Yes, for driving formulation
+Yes, for images No
+No
+No
+Yes
+
+Projectspecific?
+Yes
+Yes Yes Yes, for UAV form
+Yes, for UAV rollout loss
+Yes, for state vector Yes
+Yes
+Yes
+No, for basic model
+
+Recommended treatment
+Use a fixed PD controller
+Freeze after noiseless calibration Define and justify separately Decode goal-relative state representation
+Use rollout navigation cost; optionally test action imitation
+Use full-state MSE baseline Evaluation-only
+Define separately
+Start with every step Use stated complex AWGN convention consistently
+
+Item Rayleigh fading
+CSI
+Power normalization
+Bandwidth ratio
+SNR
+Training objective
+Success metric Closed-loop training
+
+Exact literature evidence
+Diao uses a frequencyselective OFDM fading model, not necessarily i.i.d. flat Rayleigh
+Perfect CSI and zero-forcing equalization assumed
+Original DeepJSCC normalizes symbols to satisfy average power constraint
+Diao defines ;
+DeepJSCC defines channel uses relative to source dimension
+Channel-noise and power conventions are modeldependent
+Diao jointly optimizes communication and driving agent; no UAV plant rollout objective stated
+Diao reports driving score; no UAV binary radius success
+Diao jointly trains JSCC and agent; not an explicit UAVdynamics BPTT formulation
+
+Source Diao 2025
+Diao 2025
+Bourtsoulatze et al.
+Diao 2025; Bourtsoulatze et al.
+DeepJSCC / Diao
+Diao 2025
+Diao 2025
+Diao 2025
+
+Literaturespecified? Partially Yes Yes
+Yes
+Partially
+Yes, broadly No Partially
+
+Projectspecific?
+
+Recommended treatment
+
+Yes State flat Rayleigh model separately
+
+Yes, for realism level
+
+Use perfect CSI benchmark, then ablate if feasible
+
+No, principle
+
+Apply per-codeword normalization
+
+Yes, for lowdimensional state budget
+
+Define exact convention
+
+Yes Freeze one convention for all systems
+
+Yes, exact equation
+
+Use above
+
+Yes Use success rate only at evaluation
+Yes Backpropagate through analytic
+
+Item Rollout steps
+Digital baseline
+Learned controller
+
+Exact literature evidence
+Diao's DTCP horizons compensate delay; not an FYP navigation rollout length
+DeepJSCC literature compares against separated coding; no sixstate UAV packet standard is specified
+Diao jointly trains a learned driving agent
+
+Source Diao 2025
+Bourtsoulatze et al.
+Diao 2025
+
+Literaturespecified? No
+Partially
+Yes, for driving
+
+Projectspecific? Yes
+Yes
+Yes, for fair UAV benchmark
+
+Recommended treatment Select and report sensitivity
+Define a matched-budget fixed digital chain
+Keep controller fixed in main study
+
+Diao's thesis explicitly frames task-oriented communication as transmitting only information needed for downstream machine decision-making rather than full data fidelity, and identifies the autonomous-driving work as an application-specific communication/control co-design. The thesis and 2025 paper support your conceptual direction, but neither fills the UAV-specific gaps listed above. [6]
+
+Things we must NOT assume from the literature
+Do not assume Diao's CARLA vehicle dynamics are valid for a UAV.
+Do not reuse CARLA steering, throttle, brake, waypoint, route, lane-following, collision, or driving-score definitions.
+Do not transfer Diao's trajectory branch, control GRU, image-attention blocks, or DTCP architecture into the low-dimensional UAV-state problem without separately justifying them.
+Do not treat Diao's delay threshold, delay decomposition, conditional branch-combination rule, or prediction horizon as UAV parameters.
+Do not claim Diao's action-posterior VIB loss is your UAV navigation loss.
+Do not claim that Diao specifies a double-integrator UAV controller.
+Do not invent , , , , , , or , or label any selected values "from Diao."
+Do not assume that decoding the full source state is required for task-oriented communication; Diao's architecture instead feeds received JSCC symbols to a task agent.
+Do not assume that direct control prediction is automatically fair against statereconstruction baselines; it changes the control architecture unless carefully controlled.
+
+Do not assume that a terminal-only objective ensures safe, smooth, or low-energy navigation. Do not use binary success indicators as gradient objectives. Do not assume every-step transmission, communication period , packet hold behavior, latency, or age-of-information behavior from Diao's driving setup. Do not assume perfect CSI is realistic merely because it is used in Diao; state it as a benchmark assumption. Do not copy Diao's OFDM frequency-selective fading model into an i.i.d. flat-Rayleigh experiment without explicitly redefining the channel. Do not compare methods under different channel-use budgets, unequal SNR definitions, unequal power constraints, different controller gains, or different initial/goal distributions. Do not train the digital baseline end-to-end merely to make its training pipeline look similar to DeepJSCC; its role is a fixed algorithmic separated-communication comparator. Do not add a reconstruction MSE term to the primary task-oriented model by default. If included, it must be a separately motivated multi-objective ablation, because it partly changes the method back toward reconstruction-oriented communication. Do not present the recommended goal-relative representation or rollout loss as though they were copied from Diao. They are the proposed, mathematically coherent adaptation for this FYP.
+
+1. https://www.arxiv.org/pdf/2503.08661.pdf 2. https://lewisgroup.uta.edu/ee4343/lectures99/pidLL.pdf 3. https://scispace.com/pdf/time-sub-optimal-nonlinear-pi-and-pid-controllers-applied-to-1irc0ifzjo.pdf 4. https://discovery.ucl.ac.uk/id/eprint/10077850/1/JSCC_AE_ICASSP2019.pdf 5. https://arxiv.org/abs/2004.11184 6. https://theses.gla.ac.uk/85353/1/2025DiaoPhD.pdf 7. https://www.gla.ac.uk/schools/computing/staff/emmali/ 8. https://www.diva-portal.org/ 9. https://www.gla.ac.uk/schools/computing/research/researchsections/systems-section/news/ 10. https://orcid.org/0000-0003-4200-0669 11. https://theses.gla.ac.uk/view/subjects/T1.html 12. https://theses.gla.ac.uk/85353/ 13. https://yufeng-diao.github.io/publications/ 14. https://yufeng-diao.github.io/ 15. https://www.linkedin.com/in/yufeng-diao-b96552255 16. https://socialcdt.org/students/aligned-students/ 17. https://ieeexplore.ieee.org/document/10620735
+
+18. https://www.imperial.ac.uk/media/imperial-college/research-centres-and-groups/ipc-lab/JGM_ICASSP20.pdf 19. https://www.gla.ac.uk/pgrs/xiangminxu/ 20. https://dblp.dagstuhl.de/rec/journals/tccn/BourtsoulatzeKG19.html 21. https://web3.arxiv.org/pdf/2508.00715 22. https://www.research-collection.ethz.ch/bitstream/handle/20.500.11850/402967/64.pdf?sequence=1&isAllowed=y 23. https://ar5iv.labs.arxiv.org/html/2502.15472 24. https://cs-conference-ranking.org/author/yufeng-diao 25. https://cs-conference-ranking.org/author/zhen-meng 26. https://cs-conference-ranking.org/author/changyang-she 27. https://rpg.ifi.uzh.ch/docs/CoRL24_Yunlong.pdf 28. https://ifatwww.et.uni-magdeburg.de/ifac2020/media/pdfs/3112.pdf 29. https://courses.grainger.illinois.edu/ece486/fa2025/documentation/lectures/slides_2014/lec12.pdf 30. https://arxiv.org/html/2512.19177v1 31. https://www.research-collection.ethz.ch/server/api/core/bitstreams/b5cf1b9d-abc9-499e-b648-e7bf6d0f3557/content 32. https://lo.unisa.edu.au/pluginfile.php/3833762/mod_glossary/attachment/42392/l_pid.pdf 33. https://www.roboticsproceedings.org/rss20/p003.pdf 34. https://openreview.net/pdf?id=ryxC6kSYPr 35. https://mediatum.ub.tum.de/doc/1539142/document.pdf 36. https://skoge.folk.ntnu.no/prost/proceedings/dycops-2025/DYCOPS2025_offline_program/contents/papers/0007.pdf 37. https://feng.stafpu.bu.edu.eg/Electrical Engineering/871/crs-18473/Files/EEC_321_Automatic Control
+(1)_Lect(2)_2022.pdf 38. http://www.ee.ic.ac.uk/pcheung/teaching/DE2_EE/Lecture 16 - PID controller (notes).pdf 39. https://www.perplexity.ai/search/47c5abb9-a463-43b1-82ce-255a1b04035a 40. https://www.perplexity.ai/search/2846ac4a-bc9b-41e1-929d-4afb4e5c4b6f 41. https://www.perplexity.ai/search/02e28d96-6967-4de0-91ea-daaf936a2b57 42. https://www.perplexity.ai/search/eed6da50-25d9-454c-b836-d4068efd7d44 43. https://www.perplexity.ai/search/9481c056-ba07-4402-ad09-6d23ec672738 44. https://www.perplexity.ai/search/1660ad38-f74a-4080-8032-6ab85e8cc0a5 45. https://www.perplexity.ai/search/8f42ca56-a113-4476-a36b-c61624e11259 46. https://www.perplexity.ai/search/ccb14842-6c4b-421c-b185-381e13e53b24 47. https://www.perplexity.ai/search/762bc4e3-b85f-448a-8679-83c1089d3116 48. https://www.semanticscholar.org/paper/Task-Oriented-Co-Design-of-Communication,-and-for-Diao-Zhang/44ea09ba5
+b995ea22f152ef6eb413600b69784ec 49. https://research.manchester.ac.uk/files/361287122/2024_JSAC_SI_on_C3ICPS_University_Backup_.pdf 50. https://www.gla.ac.uk/schools/engineering/staff/index.html/staffcontact/person/4edcece0809e
+
+

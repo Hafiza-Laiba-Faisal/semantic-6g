@@ -1,0 +1,643 @@
+
+Haan. Step 1 ko ab properly freeze karte hain — lekin sirf utna jo sources support karte hain. Sab numerical project-specific values ko bina justification ke invent nahi karunga. Tumhare own source explicitly kehta hai ke final implementation specification mein har item ya to paper-backed ho ya explicitly project design choice ho.
+Step 1 — Frozen Mathematical & Implementation Specification
+1. UAV state
+Hum project ka state:
+st=[xt,yt,vx,t,vy,t,xg,yg]T?R6\boxed{ s_t= [x_t,y_t,v_{x,t},v_{y,t},x_g,y_g]^T \in\mathbb R^6 }
+rakhenge.
+Yani:
+xt,ytx_t,y_t: current position
+vx,t,vy,tv_{x,t},v_{y,t}: current velocity
+xg,ygx_g,y_g: goal position
+Status: project specification, literature se exact six-dimensional state impose nahi hota.
+
+2. UAV dynamics
+2-D double-integrator:
+pt+1=pt+vt?t\boxed{ p_{t+1}=p_t+v_t\Delta t } vt+1=vt+ut?t\boxed{ v_{t+1}=v_t+u_t\Delta t }
+where
+pt=[xt,yt]T,vt=[vx,t,vy,t]T,ut=[ux,t,uy,t]T.p_t=[x_t,y_t]^T,\qquad v_t=[v_{x,t},v_{y,t}]^T,\qquad u_t=[u_{x,t},u_{y,t}]^T.
+Constraints:
+?vt?=vmax?\|v_t\|\leq v_{\max}
+and
+ut=clip?(u~t,-umax?,umax?).u_t=\operatorname{clip}(\tilde u_t,-u_{\max},u_{\max}).
+Status: project-specific simplified navigation model. The UAV source material supports simplified discrete kinematic models, but does not prescribe these exact FYP parameters.
+
+3. Task representation
+Yahan ek important distinction hai.
+Task-oriented model ko simply reconstructed full state banana nahi hai.
+Primary task representation:
+q(st)=[ex,t,ey,t,vx,t,vy,t]\boxed{ q(s_t)= [e_{x,t},e_{y,t},v_{x,t},v_{y,t}] }
+where
+ex,t=xg-xt,ey,t=yg-yt.e_{x,t}=x_g-x_t,\qquad e_{y,t}=y_g-y_t.
+So:
+qt=[pg-pt, ?vt]?R4.\boxed{ q_t= [p_g-p_t,\;v_t] } \in\mathbb R^4.
+Iska reason simple hai: controller ko absolute x,y,xg,ygx,y,x_g,y_g separately dene ki bajaye goal-relative position + velocity directly navigation-relevant information deta hai.
+Important: this is our project-specific task representation, not something we should falsely cite as Diao's exact representation. Your source explicitly notes that the literature does not specify whether the UAV task representation must equal reconstructed state dimension.
+
+4. Controller
+Fixed PD controller:
+ep,t=pg-pte_{p,t}=p_g-p_t ev,t=-vte_{v,t}=-v_t u~t=Kpep,t+Kdev,t\boxed{ \tilde u_t = K_p e_{p,t}+K_d e_{v,t} }
+then
+ut=clip?(u~t,-umax?,umax?)\boxed{ u_t= \operatorname{clip} (\tilde u_t,-u_{\max},u_{\max}) }
+For the communication methods, the receiver gets an estimate of the task representation:
+q^t=[e^p,t,v^t]\hat q_t = [\hat e_{p,t},\hat v_t]
+and uses
+u~t=Kpe^p,t-Kdv^t.\boxed{ \tilde u_t = K_p\hat e_{p,t}-K_d\hat v_t. }
+Fairness rule
+Same Kp,Kd,umax?K_p,K_d,u_{\max} for all three methods.
+So:
+Digital
+   ?
+decoded task/state information
+   ?
+same PD controller
+
+Reconstruction DeepJSCC
+   ?
+decoded state/task information
+   ?
+same PD controller
+
+Task-Oriented DeepJSCC
+   ?
+decoded task representation
+   ?
+same PD controller
+This is important because otherwise communication architecture and controller architecture become confounded.
+The source material specifically recommends keeping the controller fixed for the main benchmark rather than mixing communication gains with a learned-controller advantage.
+
+5. DeepJSCC pipeline
+The core pipeline is:
+st?f?zt?channelyt?g?q^t\boxed{ s_t \xrightarrow{f_\theta} z_t \xrightarrow{\text{channel}} y_t \xrightarrow{g_\phi} \hat q_t }
+For reconstruction DeepJSCC:
+st?f?reczt?channelyt?g?recs^t.s_t \xrightarrow{f_\theta^{rec}} z_t \xrightarrow{\text{channel}} y_t \xrightarrow{g_\phi^{rec}} \hat s_t.
+For Task-Oriented DeepJSCC:
+st?f?taskzt?channelyt?g?taskq^t.s_t \xrightarrow{f_\theta^{task}} z_t \xrightarrow{\text{channel}} y_t \xrightarrow{g_\phi^{task}} \hat q_t.
+The general encoder ? channel ? decoder structure is directly supported by the DeepJSCC/task-oriented source material.
+
+6. Complex channel representation
+Encoder produces 2k2k real values:
+at?R2k.a_t\in\mathbb R^{2k}.
+Pair them into kk complex channel symbols:
+zt,i=at,i+j?at,k+i,i=1,…,k.\boxed{ z_{t,i}=a_{t,i}+j\,a_{t,k+i}, \quad i=1,\ldots,k. }
+Thus:
+zt?Ck.\boxed{z_t\in\mathbb C^k.}
+This gives us exactly kk complex channel uses.
+Implementation note: the exact I/Q tensor ordering is a project implementation choice and must be kept consistent throughout encoder/channel/decoder; the source explicitly says the original paper does not prescribe the PyTorch packing order.
+
+7. Power normalization
+Before the channel:
+zt?kP?zt?22+??zt\boxed{ z_t \leftarrow \sqrt{ \frac{kP} {\|z_t\|_2^2+\epsilon} } \,z_t }
+with a small numerical ?>0\epsilon>0.
+Therefore the transmitted codeword approximately satisfies:
+1k?zt?2=P.\frac{1}{k}\|z_t\|^2=P.
+We'll use codeword-level normalization, because that is the normalization granularity supported by the original DeepJSCC formulation.
+
+8. AWGN channel
+yt=zt+nt\boxed{ y_t=z_t+n_t }
+where
+nt~CN(0,sn2I).n_t\sim\mathcal{CN}(0,\sigma_n^2 I).
+Our SNR convention:
+SNR=Psn2\boxed{ \mathrm{SNR} = \frac{P}{\sigma_n^2} }
+and therefore:
+sn2=P?10-SNRdB/10.\boxed{ \sigma_n^2 = P\,10^{-\mathrm{SNR}_{dB}/10}. }
+If we choose normalized P=1P=1:
+sn2=10-SNRdB/10.\boxed{ \sigma_n^2=10^{-\mathrm{SNR}_{dB}/10}. }
+For I/Q implementation:
+sreal=sn22.\boxed{ \sigma_{\text{real}} = \sqrt{\frac{\sigma_n^2}{2}}. }
+This factor 1/21/2 is critical: complex Gaussian variance is total complex noise power, not the variance of each I/Q coordinate.
+
+9. Rayleigh fading
+Primary model:
+yt=htzt+nt\boxed{ y_t=h_tz_t+n_t }
+with
+ht~CN(0,1).\boxed{ h_t\sim\mathcal{CN}(0,1). }
+We'll initially use one block-fading coefficient per transmitted UAV state/codeword, not independently for every symbol.
+That is an explicit project design choice; the source warns that fading coherence for the UAV experiment must be specified rather than silently copied from an image experiment.
+
+10. CSI / equalization
+For the main benchmark, we will use:
+perfect CSIR\boxed{\text{perfect CSIR}}
+and equalize:
+y~t=ytht+?h\boxed{ \tilde y_t=\frac{y_t}{h_t+\epsilon_h} }
+before the decoder.
+But this needs one clarification:
+perfect CSI/equalization is a benchmark assumption, not a claim of realistic UAV channel estimation.
+The source material explicitly distinguishes perfect CSI/equalization choices from the original DeepJSCC slow-Rayleigh setup and other task-oriented papers.
+So later we can have:
+Ablation: perfect CSI vs imperfect/no CSI.
+Not part of the first implementation.
+
+11. Bandwidth ratio
+Define:
+?=kn\boxed{ \rho=\frac{k}{n} }
+where:
+n=6n=6: UAV source-state dimensions
+kk: number of complex channel uses.
+Therefore:
+k=?n.\boxed{ k=\rho n. }
+For the initial experimental ratios:
+??{16,13,12}.\boxed{ \rho\in \left\{ \frac16,\frac13,\frac12 \right\}. }
+But: because n=6n=6, these give:
+k?{1,2,3}.k\in\{1,2,3\}.
+That is actually convenient for our low-dimensional problem.
+The source protocol explicitly lists 1/6,1/3,1/21/6,1/3,1/2 as supported bandwidth ratios, while also warning that the exact UAV state-to-channel-use definition is project-specific.
+For the task representation qt?R4q_t\in\mathbb R^4, we will not redefine ?\rho. The communication budget is tied to the original six-dimensional source state so that all three methods have the same declared resource budget.
+
+12. Task-oriented loss
+This is the most important part.
+We will not use binary success as the training loss.
+Instead, primary task training will use differentiable closed-loop rollout:
+LTO=E?[?t=0T-1at?pt-pg?22+?v?t=0T-1?vt?22+?u?t=0T-1?ut?22+?T?pT-pg?22+?v,T?vT?22].\boxed{ \mathcal L_{\mathrm{TO}} = \mathbb E_{\xi} \left[ \sum_{t=0}^{T-1} \alpha_t \|p_t-p_g\|_2^2 + \lambda_v \sum_{t=0}^{T-1}\|v_t\|_2^2 + \lambda_u \sum_{t=0}^{T-1}\|u_t\|_2^2 + \lambda_T\|p_T-p_g\|_2^2 + \lambda_{v,T}\|v_T\|_2^2 \right]. }
+where ?\xi includes:
+initial state
+goal
+channel realization
+noise
+SNR/channel condition.
+This is a project-specific closed-loop objective, not a claim that Diao gave this exact UAV equation. The literature establishes task-oriented communication and task losses, but your source explicitly identifies the UAV navigation loss as something that still needs an explicit project specification.
+Why not success-rate loss?
+Because:
+1[min?t?pt-pg?=rg]\mathbf 1 [ \min_t\|p_t-p_g\|\le r_g ]
+is appropriate for evaluation, but is not a useful smooth training signal.
+
+13. Reconstruction baseline loss
+For Reconstruction DeepJSCC:
+Lrec=E[1T?t=0T-1?st-s^t?22].\boxed{ \mathcal L_{\mathrm{rec}} = \mathbb E \left[ \frac1T \sum_{t=0}^{T-1} \|s_t-\hat s_t\|_2^2 \right]. }
+This is the UAV-state adaptation of the conventional DeepJSCC MSE objective.
+We will not call it a literature-defined six-dimensional UAV loss.
+
+14. Goal-reaching evaluation
+For an episode:
+Success=1[?t?{0,…,T}:?pt-pg?2=rg].\boxed{ \mathrm{Success} = \mathbf 1 \left[ \exists t\in\{0,\ldots,T\}: \|p_t-p_g\|_2\le r_g \right]. }
+Then:
+SuccessRate=1N?i=1NSuccessi.\boxed{ \mathrm{SuccessRate} = \frac1N \sum_{i=1}^{N}\mathrm{Success}_i. }
+Additional metrics:
+efinal=?pT-pg?2e_{\mathrm{final}} = \|p_T-p_g\|_2 emin?=min?t?pt-pg?2e_{\min} = \min_t\|p_t-p_g\|_2
+and time-to-goal:
+tgoal=min?{t:?pt-pg?2=rg}.t_{\mathrm{goal}} = \min \{t:\|p_t-p_g\|_2\le r_g\}.
+These align with the proposal's stated navigation metrics.
+
+15. Communication update
+Initial implementation:
+one communication transmission/control update per simulation step\boxed{\text{one communication transmission/control update per simulation step}}
+So:
+t
+ ?
+state
+ ?
+transmit
+ ?
+channel
+ ?
+decode
+ ?
+controller
+ ?
+u_t
+ ?
+UAV dynamics
+ ?
+t+1
+This deliberately avoids introducing latency/AoI/zero-order-hold effects in the first version.
+
+16. Training/evaluation split
+Use episodes, not randomly mixed states.
+Initial protocol:
+70% train,15% validation,15% test.\boxed{ 70\% \text{ train},\quad 15\% \text{ validation},\quad 15\% \text{ test}. }
+Test episodes are frozen and shared across all three methods.
+That paired evaluation is explicitly recommended in the training/evaluation source.
+
+17. Methods to compare
+Exactly three:
+A — Conventional digital
+state?quantization?channel coding?modulation?channel?demodulation?decoding?dequantization\boxed{ \text{state} \rightarrow \text{quantization} \rightarrow \text{channel coding} \rightarrow \text{modulation} \rightarrow \text{channel} \rightarrow \text{demodulation} \rightarrow \text{decoding} \rightarrow \text{dequantization} }
+B — Reconstruction DeepJSCC
+st?f?rec?channel?g?rec?s^t\boxed{ s_t\rightarrow f_{\theta}^{rec} \rightarrow channel \rightarrow g_{\phi}^{rec} \rightarrow\hat s_t }
+trained with MSE.
+C — Task-Oriented DeepJSCC
+st?f?task?channel?g?task?q^t?PD?UAV\boxed{ s_t\rightarrow f_{\theta}^{task} \rightarrow channel \rightarrow g_{\phi}^{task} \rightarrow\hat q_t \rightarrow PD \rightarrow UAV }
+trained with closed-loop task loss.
+
+18. Fairness constraints
+This is non-negotiable.
+All three must have identical:
+UAV dynamics
+initial/goal episode distribution
+test episodes
+SNR
+channel type
+power constraint
+bandwidth/channel-use budget
+communication update frequency
+controller
+Kp,KdK_p,K_d
+umax?u_{\max}
+vmax?v_{\max}
+goal criterion
+simulation horizon.
+Only the communication method should differ.
+The proposal itself defines the core comparison as conventional digital vs reconstruction DeepJSCC vs task-oriented DeepJSCC under matched channel/SNR/bandwidth conditions.
+
+19. What is STILL NOT frozen
+This is important: Step 1 is not 100% numerically frozen yet.
+These are project-specific and need actual values:
+Parameter
+Status
+?t\Delta t
+TBD
+TT
+TBD
+vmax?v_{\max}
+TBD
+umax?u_{\max}
+TBD
+Kp,KdK_p,K_d
+TBD
+rgr_g
+TBD
+?v,?u,?T,?v,T\lambda_v,\lambda_u,\lambda_T,\lambda_{v,T}
+TBD
+at\alpha_t
+TBD
+initial/goal distribution
+TBD exact ranges
+digital quantizer
+TBD
+digital FEC/code rate
+TBD
+modulation
+TBD
+exact SNR training law
+TBD
+train/val/test episode counts
+TBD exact count
+network architecture
+TBD
+
+And this is not a problem. The source explicitly says the digital baseline's quantizer/code/modulation and several UAV parameters cannot legitimately be claimed as prescribed by the DeepJSCC literature.
+My verdict
+Core mathematical structure is now sufficiently fixed to move forward.
+But I would not write the final training code yet, because the table above contains parameters that materially affect the experiment. The next step should be to freeze those numerical values and the digital chain before implementation.
+So next we should do Step 2 — Numerical parameter freeze + exact digital baseline, especially:
+?t, ?T, ?vmax?, ?umax?, ?Kp, ?Kd, ?rg,?’s,state normalization,quantizer,FEC,modulation.\boxed{ \Delta t,\;T,\;v_{\max},\;u_{\max},\;K_p,\;K_d,\;r_g, \lambda\text{'s}, \text{state normalization}, \text{quantizer}, \text{FEC}, \text{modulation}. }
+That is the last major specification step before we start writing the actual PyTorch modules.
+
+Haan. Step 2 mein hum numerical parameters ko freeze karenge, lekin ek important rule rakhenge: jo value papers mein prescribed nahi hai usay “paper ka value” nahi kahenge. Uploaded sources mein exact UAV numerical values ka complete prescription nahi mil raha, isliye un values ko controlled project-design choices ke taur par set karna hoga.
+
+Step 2 — Numerical Parameter Freeze
+2.1 UAV simulation
+
+Initial implementation ke liye:
+
+Parameter	Proposed value	Status
+\(\Delta t\)	0.1 s	Project choice
+Episode horizon \(T\)	100 steps	Project choice
+Simulation duration	10 s	Derived
+\(v_{\max}\)	5 m/s	Project choice
+\(u_{\max}\)	2 m/s²	Project choice
+Goal radius \(r_g\)	0.5 m	Project choice
+Simulation boundary	20 m × 20 m	Project choice
+
+So:
+
+$$ p_{t+1}=p_t+v_t\Delta t $$ $$ v_{t+1}=v_t+\operatorname{clip}(u_t,-u_{\max},u_{\max})\Delta t. $$
+
+Important: agar tumhare collected Prompt 8/9 outputs mein different values explicitly recommended hain, unko priority deni hai. Ye values abhi implementation defaults hain, literature claims nahi.
+
+2.2 Initial and goal generation
+
+Hum random episodes generate karenge.
+
+Initial position:
+
+$$ p_0=(x_0,y_0) $$
+
+and goal:
+
+$$ p_g=(x_g,y_g). $$
+
+Recommended initial range:
+
+$$ x_0,y_0\sim U(-8,8) $$ $$ x_g,y_g\sim U(-8,8). $$
+
+Lekin invalid/too-close cases reject karenge:
+
+$$ \boxed{ \|p_g-p_0\| \ge d_{\min} } $$
+
+with, initially,
+
+$$ d_{\min}=4\text{ m}. $$
+
+Initial velocity:
+
+$$ \boxed{v_0=(0,0)} $$
+
+rakhenge.
+
+Isse experiments reproducible aur controller behavior easy-to-interpret rahega.
+
+2.3 Fixed PD controller
+
+Initial controller:
+
+$$ u_t=K_p e_p+K_d e_v $$
+
+where
+
+$$ e_p=p_g-p_t $$
+
+and
+
+$$ e_v=-v_t. $$
+
+For starting implementation:
+
+$$ \boxed{K_p=1.0} $$ $$ \boxed{K_d=1.0} $$
+
+and then
+
+$$ u_t=\operatorname{clip} (K_p e_p-K_dv_t,-u_{\max},u_{\max}). $$
+Lekin yahan ek important verification hai
+
+\(K_p=1,\ K_d=1\) ko final scientific value abhi declare nahi karenge.
+
+Pehle noiseless full-information controller ko test karenge:
+
+goal
+ ?
+perfect state
+ ?
+PD controller
+ ?
+UAV
+
+Agar woh reasonable success rate achieve nahi karta, communication model ko blame karna scientifically invalid hoga.
+
+So controller parameters ko baseline sanity test se freeze karenge.
+
+2.4 Goal-reaching condition
+$$ \boxed{ \|p_t-p_g\|_2\leq0.5\,m } $$
+
+? success.
+
+Failure if:
+
+\(T=100\) steps complete ho jayein, or
+UAV simulation boundary se bahar nikal jaye.
+2.5 State normalization
+
+Neural networks ke liye raw meters/velocity directly use nahi karenge.
+
+State:
+
+$$ s_t=[x,y,v_x,v_y,x_g,y_g]. $$
+
+Positions ko known simulation range se normalize karenge.
+
+For position:
+
+$$ \boxed{ x_{\mathrm{norm}}=\frac{x}{8} } $$
+
+and similarly \(y,x_g,y_g\).
+
+Velocity:
+
+$$ \boxed{ v_{x,\mathrm{norm}}=\frac{v_x}{v_{\max}}, \qquad v_{y,\mathrm{norm}}=\frac{v_y}{v_{\max}}. } $$
+
+Therefore approximately:
+
+$$ s_t^{norm}\in[-1,1]^6. $$
+
+This is a neural-network conditioning choice, not a claim that the DeepJSCC papers mandate this exact normalization.
+
+2.6 Task representation
+
+Decoder output:
+
+$$ \boxed{ \hat q_t= [ \hat e_x, \hat e_y, \hat v_x, \hat v_y ]. } $$
+
+where:
+
+$$ e_x=x_g-x $$ $$ e_y=y_g-y. $$
+
+We'll normalize these consistently before feeding them to the controller.
+
+2.7 Task loss weights
+
+Start simple.
+
+Rather than introducing many arbitrary weights, primary loss:
+
+$$ \boxed{ \mathcal L_{\mathrm{task}} = \frac1T \sum_{t=0}^{T-1} \|p_t-p_g\|_2^2 + \lambda_T \|p_T-p_g\|_2^2. } $$
+
+Use:
+
+$$ \boxed{\lambda_T=2.0} $$
+
+initially.
+
+Why? Final position should matter somewhat more than an intermediate position.
+
+But this is a project-design hyperparameter and must be validated by ablation.
+
+We don't want to introduce velocity/control penalties immediately because they can make the interpretation of the communication objective unnecessarily complicated.
+
+2.8 Reconstruction loss
+
+For Reconstruction DeepJSCC:
+
+$$ \boxed{ \mathcal L_{\mathrm{rec}} = \frac1{6} \|s_t-\hat s_t\|_2^2. } $$
+
+Because components are normalized first, position and velocity dimensions don't dominate merely because of their units.
+
+2.9 SNR values
+
+Core experiment:
+
+$$ \boxed{ \mathrm{SNR}\in \{0,2,4,6,8,10,12,14,16,18,20\}\;dB } $$
+
+This gives a sufficiently broad curve from severely degraded to near-clean conditions.
+
+Training should not train a separate model for every test SNR.
+
+Instead, for the learned models:
+
+$$ \boxed{ \mathrm{SNR}_{train}\sim U(0,20)\text{ dB} } $$
+
+or discrete sampling from the same range.
+
+Then test at the fixed SNR points above.
+
+This prevents the model from simply memorizing one SNR.
+
+2.10 Bandwidth ratios
+
+Core:
+
+$$ \boxed{ \rho=k/n \in \left\{ \frac16,\frac13,\frac12 \right\} } $$
+
+with source dimension:
+
+$$ n=6. $$
+
+Therefore:
+
+\(\rho\)	Complex channel uses \(k\)
+\(1/6\)	1
+\(1/3\)	2
+\(1/2\)	3
+
+Same channel-use budget must be applied to all three methods.
+
+2.11 Random seeds
+
+Use:
+
+$$ \boxed{ \{42,43,44\} } $$
+
+for the three independent training runs.
+
+At minimum:
+
+same test episodes
+same test seeds
+same environment generation
+independent model initialization.
+
+Then report:
+
+$$ \text{mean}\pm\text{standard deviation}. $$
+
+The proposal already specifies stability across at least three independent random seeds as a KPI.
+
+2.12 Dataset/episode counts
+
+For initial development:
+
+Training
+$$ \boxed{10,000\text{ episodes}} $$
+Validation
+$$ \boxed{2,000\text{ episodes}} $$
+Test
+$$ \boxed{5,000\text{ fixed episodes}} $$
+
+The exact counts are computational design choices, not literature requirements.
+
+The crucial point is that the same 5,000 test episodes are used for Digital, Reconstruction DeepJSCC, and Task-Oriented DeepJSCC.
+
+2.13 Conventional digital baseline
+
+This needs particular care.
+
+Pipeline:
+
+$$ \boxed{ s \rightarrow \text{normalize} \rightarrow \text{quantize} \rightarrow \text{channel coding} \rightarrow \text{QPSK} \rightarrow \text{channel} \rightarrow \text{demodulation} \rightarrow \text{channel decoding} \rightarrow \text{dequantization} } $$
+Quantization
+
+Initially:
+
+$$ \boxed{8\text{ bits/component}} $$
+
+for the six state components.
+
+So:
+
+$$ 6\times8=48\text{ source bits/state}. $$
+
+However, we cannot simply throw these 48 bits into the same \(k=1,2,3\) complex-symbol budget without defining the digital rate/code/modulation relationship.
+
+This is exactly why the digital baseline must be specified carefully before coding.
+
+2.14 Digital channel coding
+
+Recommended first implementation:
+
+$$ \boxed{\text{rate-}1/2\text{ convolutional code}} $$
+
+with a standard generator configuration.
+
+But I would not freeze this as final yet.
+
+Reason: the code rate changes the number of coded bits, which directly changes how many QPSK symbols are needed. Therefore it affects the fairness comparison.
+
+We need to solve:
+
+$$ \boxed{ \text{source bits} \rightarrow \text{coded bits} \rightarrow \text{modulation symbols} \rightarrow \text{available channel uses} } $$
+
+under the same bandwidth budget.
+
+2.15 Digital baseline fairness
+
+This is the biggest thing we must settle before coding.
+
+For DeepJSCC:
+
+$$ \rho=\frac{6}{k} $$
+
+in the proposal's source/channel-use convention.
+
+For the digital system, the number of available bits is determined by:
+
+$$ N_{\mathrm{bits}} = 2kR_c $$
+
+for QPSK, because QPSK carries 2 coded bits/symbol.
+
+Thus with \(R_c=1/2\):
+
+$$ N_{\mathrm{bits}}=k. $$
+
+For \(k=1,2,3\), this gives only:
+
+$$ 1,\;2,\;3 $$
+
+information bits per state.
+
+That is clearly incompatible with our naive 48-bit quantized state.
+
+Therefore:
+
+Do NOT code the digital baseline yet.
+
+We need one more explicit fairness decision:
+
+How exactly are source bits, quantization precision, FEC rate, modulation order, and channel-use budget matched?
+
+Otherwise the digital baseline can become artificially weak or artificially strong.
+
+2.16 What Step 2 has successfully frozen
+
+We now have a working numerical starting configuration:
+
+dt                  = 0.1 s
+episode horizon     = 100 steps
+vmax                = 5 m/s
+umax                = 2 m/s²
+goal radius         = 0.5 m
+initial velocity     = [0, 0]
+workspace            = [-8,8] × [-8,8]
+minimum start-goal   = 4 m
+Kp                  = 1.0       (to be sanity-validated)
+Kd                  = 1.0       (to be sanity-validated)
+SNR test             = 0...20 dB, 2-dB steps
+SNR training         = 0...20 dB sampled
+bandwidth ratios     = 1/6, 1/3, 1/2
+seeds                = 42,43,44
+train episodes       = 10,000
+validation episodes  = 2,000
+test episodes        = 5,000
+task representation  = [goal-relative position, velocity]
+But one thing remains deliberately open
+
+Digital baseline fairness.
+
+And this is not a minor detail—it affects the validity of RQ1.
+
+So before writing the actual code, Step 3 should specifically freeze the conventional digital baseline mathematically: quantization precision ? bit budget ? FEC ? modulation ? exact number of channel uses ? AWGN/Rayleigh BER/BLER ? dequantization.
+
+Uske baad hum actual Python/PyTorch implementation start kar sakte hain, module-by-module.
+
+Message delivery timed out. Please try again.
+
+Retry
+

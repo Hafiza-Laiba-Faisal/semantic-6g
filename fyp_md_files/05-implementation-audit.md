@@ -417,7 +417,7 @@ Date: 2026-09-29
 
 Step: 7
 Status: PASS
-Commit: <recorded after the step-7 commit>
+Commit: 787ca849b9bcf76ecc8091fcbb63820dadb847eb
 Branch: main
 Tests: 18/18 Step-7 checks (Gates A-H); full regression 11 + 43 + 21 + 10 + 28 + 33
 Date: 2026-09-29

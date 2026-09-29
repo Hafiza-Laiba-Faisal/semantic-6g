@@ -76,7 +76,7 @@ training — requires explicit approval and a compute plan)
 - step4:   8e4dc95
 - step5:   bb82334584949d76719d4a035a80af44c24f7727
 - step6:   f58cb77b23555635b331761b52987f062130161a
-- step7:   (recorded in fyp_md_files/05-implementation-audit.md checkpoint entry)
+- step7:   787ca849b9bcf76ecc8091fcbb63820dadb847eb
 
 ## Repository State
 Clean after checkpoint: YES

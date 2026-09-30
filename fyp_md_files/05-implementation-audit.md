@@ -366,6 +366,8 @@ Rules: M2 is the primary three-way comparison (equal k, equal power, equal episo
 
 *Implementation status: Steps 0–6 complete and verified as recorded in §9 below (regression totals 11 + 43 + 21 + 10 + 28 + 33). Step 7 complete and verified: `project/evaluation/` harness — metrics.py (exact audit row-15 formulas, identical schema for oracle/recon/task/digital), statistics.py (mean/std, success counts, Wilson 95% CI, continuity-corrected McNemar, paired t via incomplete beta — dependency-free), evaluate.py (Condition dataclass + pre-generated paired episodes/noise/h handed bitwise-identically to all methods; explicit structured infeasible status for digital at k ∈ {1,2,3}); 18/18 checks (Gates A–H); minimal backward-compatible channel extension for pre-generated realizations (Step-3 equations untouched). Known smoke-scale observations for full training: encoder grad norms grow late in training (global-norm clip 1.0 does the real work — monitor/lower LR in full runs); λ_u = 0 so control effort legitimately rose as a diagnostic; reconstruction-MSE diagnostic rose while task loss fell (the expected task-vs-fidelity trade-off). Decision status: A1, A11, controller gains, task-loss λ, Step-6 LLR conventions, Step-7 evaluation conventions FROZEN; A2–A12 otherwise carry proposed defaults (A6 resolved: no d_max needed).*
 
+*Step 8 complete and verified: training & experiment infrastructure — `project/training/common.py` (deterministic setup, optimizer, finite-value checks, JSON serialization, checkpoint save/load with reproduction metadata + RNG capture, `models_identical`), `project/experiments/{config,matrix,runner}.py` + top-level `main.py` (explicit ExperimentConfig with presets m1/m2/m3/m4_secondary/m5, structured dry-run with ZERO side effects, smoke runner wired to the frozen trainers + Step-7 harness + checkpoints, structural M1–M5 matrix validation of the full 132-cell frozen proposal, `run_mode='full'` BLOCKED at config + runner + CLI levels). Training SNR policy is configuration-visible (`train_snr_policy` = U(0,20) dB per batch), not hard-coded at call sites. Supported neural k values: {1, 2, 3} ∪ {12, 18, 24, 30, 54}. 12/12 training-common checks (Gates A–B) + 63/63 experiments checks (Gates C–L); full regression 11 + 43 + 21 + 10 + 28 + 33 + 18 + oracle gate all green. **Full-scale M1–M5 execution was NOT performed in Step 8 — no long training, no results, no figures, no method ranking; smoke numbers are infrastructure validation only (explicitly non-scientific).** Known checkpoint limitation (stated, not hidden): the Step-4/5 trainers instantiate their purpose generators internally, so bitwise mid-run continuation of those specific loops is not claimed; checkpoint model/optimizer/step/history/RNG payload itself is exact and full-run reproduction is by the documented seed+config protocol.*
+
 ---
 
 ## 9. CHECKPOINT LOG (git checkpoint policy — one entry per completed step)
@@ -421,6 +423,15 @@ Commit: 787ca849b9bcf76ecc8091fcbb63820dadb847eb
 Branch: main
 Tests: 18/18 Step-7 checks (Gates A-H); full regression 11 + 43 + 21 + 10 + 28 + 33
 Date: 2026-09-29
+
+Step: 8
+Status: PASS
+Commit: (recorded in the follow-up checkpoint commit)
+Branch: main
+Tests: 12/12 training-common (Gates A-B) + 63/63 experiments (Gates C-L);
+  full regression 11 + 43 + 21 + 10 + 28 + 33 + 18 + oracle gate PASS.
+  Full-scale M1-M5 execution NOT performed (blocked pending explicit approval).
+Date: 2026-09-30
 ```
 
 Step-7 gate results (tests/test_evaluation.py):
@@ -466,6 +477,52 @@ Gate E (full chain): noiseless output == quantizer-only reconstruction (dev 0.0)
   closed-loop digital navigation (B=8, k=54, 14 dB) reaches 0.174 m in 60 steps.
 Infeasibility: k ∈ {1,2,3} raises InfeasibleDigitalConfig (k_min = 12) — reported as
   architectural infeasibility, never relaxed.
+```
+
+Step-8 gate results (tests/test_training_common.py + tests/test_experiments.py):
+
+```text
+Gate A (common API): setup_deterministic returns all 5 purpose generators;
+  build_optimizer = Adam @ frozen lr; finite loss/grad checks; grad_norm;
+  log_history + to_jsonable round-trip. 5/5.
+Gate B (checkpoint round-trip): save -> load -> models_identical BITWISE;
+  step/seed/metadata/history restored; Adam exp_avg optimizer state bitwise
+  equal; torch RNG capture/restore continues the exact stream (4th draw
+  reproduced); missing file raises FileNotFoundError; reproduction metadata
+  fields (method/k/channel/seed/steps/model_config/snr_policy) enforced.
+Gate C (config validation): unknown experiment/method/channel/run_mode,
+  seed outside {42,43,44}, test seed != 10042, k<=0, digital without B,
+  run_mode='full' BLOCKED — all rejected; validate_or_raise raises.
+Gate D (matrix validation): full frozen 132-cell M1-M5 proposal VALID;
+  counts M1=36 runs/132 conditions, M2=90/150, M3=3, M4=10; digital-in-M1,
+  wrong M2 budget (B!= (k-6)/6), wrong M2 SNR grid, wrong M2 k, missing
+  seeds, M2-carrying-B=8 (M2/M4 confusion), M4 wrong budget/k, and an
+  unexpectedly-FEASIBLE M3 cell all rejected; M4 always warned SECONDARY.
+Gate E (digital budget): exact fits k∈{12,18,24,30,54} with pad=0;
+  k∈{1,2,3} infeasible with k_min=12 arithmetic; M3 config VALID as
+  expected-infeasible; harness returns structured infeasible status.
+Gate F (dry run): structured summary covers experiment/method/k/rho/seeds/
+  training+evaluation+model config/digital feasibility/checkpoint path;
+  training_will_occur=False; ZERO files written; run(dry_run=True) trains
+  nothing.
+Gate G (smoke recon): 30 steps -> loss 0.257->0.044 (83% reduction), 0 NaN,
+  finite history; Step-7 harness rows at 5/10 dB; checkpoint round-trip
+  with full metadata; loaded weights != fresh init.
+Gate H (smoke task): finite train/eval totals; frozen lambdas
+  (ld=1, lu=0, lv=0, lT=2) visible in the report; harness row; checkpoint
+  history restored.
+Gate I (AWGN + Rayleigh): both channels through recon smoke (20 steps,
+  finite, 0 NaN) and Rayleigh task smoke (block fading + ZF inside the
+  closed loop); harness aggregates finite.
+Gate J (harness integration): ExperimentConfig -> Condition ->
+  evaluate_condition aggregate schema intact; pre-generated realizations
+  bitwise-identical across regeneration.
+Gate K (determinism): identical seed/config reruns -> BITWISE-equal loss
+  histories, BITWISE-equal model parameters, equal (NaN-aware) aggregate
+  eval rows, bitwise-identical evaluation realizations. Exact, no tolerance
+  loosened.
+Gate L (in-process regression): Step-3 43/43, Step 0-2 11/11,
+  Step-4 structural 21/21, Step-5 core, Step-6 core — all PASS in-process.
 ```
 
 Continuation marker: `fyp_md_files/PROJECT_STATUS.md` (machine-independent handoff; resume procedure inside).

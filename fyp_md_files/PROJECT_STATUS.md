@@ -8,18 +8,23 @@ Reconstruction DeepJSCC vs a conventional digital baseline under AWGN and
 slow Rayleigh fading with a frozen UAV navigation task.
 
 ## Current Status
-Step 7 — PASS (checkpointed)
+Step 8 — PASS (checkpointed)
 
 ## Last Completed Step
-Step 7 — Evaluation Harness (project/evaluation/: paired episodes +
-identical noise/h realizations across methods, frozen metrics,
-Wilson CI + McNemar + paired-t statistics)
+Step 8 — Training & Experiment Infrastructure
+(project/training/common.py: deterministic setup, optimizer, checkpoint
+save/load with reproduction metadata + RNG capture, finite-value checks,
+JSON serialization; project/experiments/{config,matrix,runner}.py +
+main.py: explicit ExperimentConfig, zero-side-effect dry-run, smoke runner
+wired to the frozen trainers + Step-7 harness, structural M1–M5 matrix
+validation of the full 132-cell frozen proposal, run_mode='full' BLOCKED)
 
 ## Next Step
-Step 8 — NOT STARTED / awaiting specification
-(candidates per coding order: training/common.py full protocol,
-experiments/ runners + main.py, then the M1–M5 matrix with full-scale
-training — requires explicit approval and a compute plan)
+BLOCKED PENDING EXPLICIT USER APPROVAL.
+Next allowed action: full-scale M1–M5 training/execution — requires the
+user's explicit approval AND a compute plan. No full run, no results, no
+figures, no method ranking has been produced. All smoke numbers are
+infrastructure validation only (non-scientific).
 
 ## Frozen Decisions
 - UAV state: 6D [x, y, vx, vy, x_g, y_g]
@@ -60,6 +65,9 @@ training — requires explicit approval and a compute plan)
 - Step 5: PASS (task-oriented closed-loop training with frozen task loss)
 - Step 6: PASS (digital baseline: quantizer, conv coding, Gray-QPSK, Viterbi, framing)
 - Step 7: PASS (evaluation harness: metrics, statistics, paired evaluation)
+- Step 8: PASS (training/common.py + experiments/{config,matrix,runner}.py
+  + main.py: checkpoint infra, dry-run, smoke runner, matrix validation;
+  full M1–M5 execution NOT performed)
 
 ## Last Verification
 - Step 0-2: 11/11 unit tests + oracle gate PASS (SR 100%, 0/5000 exits)
@@ -69,6 +77,14 @@ training — requires explicit approval and a compute plan)
 - Step 6: 33/33 checks PASS (Gates A-E incl. BER-vs-theory on 8e6 bits/point)
 - Step 7: 18/18 checks PASS (Gates A-H; full regression 11 + 43 + 21 + 10 +
   28 + 33 re-verified)
+- Step 8: 12/12 training-common checks (Gates A-B) + 63/63 experiments
+  checks (Gates C-L); full regression 11 + 43 + 21 + 10 + 28 + 33 + 18 +
+  oracle gate re-verified PASS. Determinism gate: identical reruns ->
+  bitwise-equal loss histories, bitwise-equal model parameters, equal
+  eval rows, bitwise-identical evaluation realizations (exact, no
+  tolerance loosened). Dry-run PASS (zero side effects); smoke runs PASS
+  (recon AWGN 83% loss reduction in 30 steps, task AWGN/Rayleigh, digital
+  k=54, checkpoints round-trip).
 
 ## Last Commit
 - step0-2: ddc41b0 (root commit)
@@ -77,6 +93,7 @@ training — requires explicit approval and a compute plan)
 - step5:   bb82334584949d76719d4a035a80af44c24f7727
 - step6:   f58cb77b23555635b331761b52987f062130161a
 - step7:   787ca849b9bcf76ecc8091fcbb63820dadb847eb
+- step8:   (see audit §9 checkpoint entry / git log for the step-8 commit)
 
 ## Repository State
 Clean after checkpoint: YES
@@ -99,7 +116,11 @@ origin = https://github.com/Hafiza-Laiba-Faisal/semantic-6g.git
   `.venv/bin/python -m tests.test_step02` (POSIX)
 - Test modules: tests/test_step02.py, tests/test_channels.py,
   tests/test_deepjscc.py, tests/test_reconstruction_smoke.py,
-  tests/test_task_oriented.py; oracle gate: tests/sanity_noiseless.py
+  tests/test_task_oriented.py, tests/test_digital.py,
+  tests/test_evaluation.py, tests/test_training_common.py (Step 8),
+  tests/test_experiments.py (Step 8); oracle gate: tests/sanity_noiseless.py
+- Step-8 CLI: python main.py config | dry-run | validate-matrix |
+  smoke <experiment> <method> <channel> <k> <seed> ; main.py full -> REFUSED
 
 ## Important Rules
 - Do not modify frozen mathematical conventions without explicit approval.

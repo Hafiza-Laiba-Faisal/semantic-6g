@@ -368,6 +368,8 @@ Rules: M2 is the primary three-way comparison (equal k, equal power, equal episo
 
 *Step 8 complete and verified: training & experiment infrastructure — `project/training/common.py` (deterministic setup, optimizer, finite-value checks, JSON serialization, checkpoint save/load with reproduction metadata + RNG capture, `models_identical`), `project/experiments/{config,matrix,runner}.py` + top-level `main.py` (explicit ExperimentConfig with presets m1/m2/m3/m4_secondary/m5, structured dry-run with ZERO side effects, smoke runner wired to the frozen trainers + Step-7 harness + checkpoints, structural M1–M5 matrix validation of the full 132-cell frozen proposal, `run_mode='full'` BLOCKED at config + runner + CLI levels). Training SNR policy is configuration-visible (`train_snr_policy` = U(0,20) dB per batch), not hard-coded at call sites. Supported neural k values: {1, 2, 3} ∪ {12, 18, 24, 30, 54}. 12/12 training-common checks (Gates A–B) + 63/63 experiments checks (Gates C–L); full regression 11 + 43 + 21 + 10 + 28 + 33 + 18 + oracle gate all green. **Full-scale M1–M5 execution was NOT performed in Step 8 — no long training, no results, no figures, no method ranking; smoke numbers are infrastructure validation only (explicitly non-scientific).** Known checkpoint limitation (stated, not hidden): the Step-4/5 trainers instantiate their purpose generators internally, so bitwise mid-run continuation of those specific loops is not claimed; checkpoint model/optimizer/step/history/RNG payload itself is exact and full-run reproduction is by the documented seed+config protocol.*
 
+*Step 9A complete and verified — full-experiment PREFLIGHT ONLY (no training, no execution): frozen-convention checks 10/10; workload independently reconstructed and matched to code (M1: 36 neural training runs / 132 paired eval conditions; M2: 60 neural training runs + 30 digital evaluation-only seed rows / 150 paired eval conditions; M3: 3 infeasible display cells; M4: 10 SECONDARY digital eval conditions; M5: 0 — NOT EXECUTABLE YET, specification incomplete; TOTAL 96 neural training runs, 292 evaluation cells). One Step-8 mislabel corrected: `expected_cells()["M2_training_runs"]=90` wrongly counted the training-free digital baseline as trainable → renamed `M2_neural_training_runs=60` + `M2_digital_eval_only_seeds=30`. Run identity + recovery designed (`project/experiments/identity.py`): `run_id` + full-config sha256 hash → `results/<EXP>/<run_id>__<hash>/` with DONE/RUNNING/FAILED markers (completed→skip, interrupted→resume, missing→train); smoke/full outputs can never collide. Environment verified: Windows 10, Python 3.9.7, torch 2.4.1+CPU (NO GPU/CUDA), 12 logical cores / 6 torch threads, 15.83 GB RAM, 219.8 GB free disk. Tiny measured benchmark (non-scientific): recon ≈ 4.6 µs/state (k=3) to 7.0 µs/state (k=54); task ≈ 36.5 µs/episode-step (k=3) to 45.7 µs/episode-step (k=54); digital eval ≈ 156 µs/episode-step — CAUTIOUS extrapolation (estimate, not measured) ≈ 3–4 days single-process sequential for the illustrative 10k-step budget, dominated by task training; eval ≈ 15 min; storage ≈ 0.3–0.5 GB total. OPEN DECISIONS FLAGGED (not assumed): (1) full-scale training budget (steps/epochs) is NOT frozen in any source document — config's 70/15/15 + N_TRAIN_EPISODES are unused placeholders; (2) M5 ablation set unspecified; (3) push pending user PAT (Step-8/9A commits local). **FULL M1–M5 EXECUTION NOT STARTED.***
+
 ---
 
 ## 9. CHECKPOINT LOG (git checkpoint policy — one entry per completed step)
@@ -432,6 +434,15 @@ Branch: main
 Tests: 12/12 training-common (Gates A-B) + 63/63 experiments (Gates C-L);
   full regression 11 + 43 + 21 + 10 + 28 + 33 + 18 + oracle gate PASS.
   Full-scale M1-M5 execution NOT performed (blocked pending explicit approval).
+Date: 2026-09-30
+
+Step: 9A
+Status: PASS (preflight only)
+Commit: (see git log - the step9a preflight commit; push pending user PAT)
+Branch: main
+Tests: preflight PASS (0 blockers) + full regression re-verified
+  11 + 43 + 21 + 10 + 28 + 33 + 18 + 12 + 63 + oracle gate.
+  FULL M1-M5 EXECUTION NOT STARTED (hard stop honored).
 Date: 2026-09-30
 ```
 

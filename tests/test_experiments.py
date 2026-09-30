@@ -161,7 +161,8 @@ def test_gate_d():
     counts = expected_cells()
     check("D/expected-counts",
           counts["M1_training_runs"] == 2 * 3 * 2 * 3
-          and counts["M2_training_runs"] == 3 * 5 * 2 * 3
+          and counts["M2_neural_training_runs"] == 2 * 5 * 2 * 3
+          and counts["M2_digital_eval_only_seeds"] == 5 * 2 * 3
           and counts["M3_infeasible_cells"] == 3
           and counts["M4_secondary_eval_conditions"] == 10,
           str(counts))

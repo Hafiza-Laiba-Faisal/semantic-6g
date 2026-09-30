@@ -8,23 +8,27 @@ Reconstruction DeepJSCC vs a conventional digital baseline under AWGN and
 slow Rayleigh fading with a frozen UAV navigation task.
 
 ## Current Status
-Step 8 — PASS (checkpointed)
+Step 9A — PASS (preflight only; checkpointed)
 
 ## Last Completed Step
-Step 8 — Training & Experiment Infrastructure
-(project/training/common.py: deterministic setup, optimizer, checkpoint
-save/load with reproduction metadata + RNG capture, finite-value checks,
-JSON serialization; project/experiments/{config,matrix,runner}.py +
-main.py: explicit ExperimentConfig, zero-side-effect dry-run, smoke runner
-wired to the frozen trainers + Step-7 harness, structural M1–M5 matrix
-validation of the full 132-cell frozen proposal, run_mode='full' BLOCKED)
+Step 9A — Full Experiment Preflight & Compute Plan
+(frozen-matrix verification 10/10, exact workload: 96 neural training runs
++ 292 eval cells + 3 infeasible + 10 secondary; environment verified
+CPU-only; tiny measured benchmark; run-identity/recovery design
+(project/experiments/identity.py); preflight PASS with 0 blockers;
+NO training, NO execution, NO scientific results)
 
 ## Next Step
 BLOCKED PENDING EXPLICIT USER APPROVAL.
-Next allowed action: full-scale M1–M5 training/execution — requires the
-user's explicit approval AND a compute plan. No full run, no results, no
-figures, no method ranking has been produced. All smoke numbers are
-infrastructure validation only (non-scientific).
+Next permitted action: FULL M1–M5 experiment execution — requires the
+user's explicit approval AND two open decisions:
+1. full-scale training budget (steps/epochs) — NOT frozen anywhere;
+   config's 70/15/15 split + N_TRAIN_EPISODES=10,000 are unused
+   placeholders (trainers are step-based)
+2. M5 ablation set — NOT EXECUTABLE YET (specification incomplete)
+Also pending: user PAT push of the local commits (see Last Commit).
+Execution order when approved: Stage A pilot → M1 → M2 → M3 (display) →
+M4 (secondary) → M5 only when specified.
 
 ## Frozen Decisions
 - UAV state: 6D [x, y, vx, vy, x_g, y_g]
@@ -68,6 +72,10 @@ infrastructure validation only (non-scientific).
 - Step 8: PASS (training/common.py + experiments/{config,matrix,runner}.py
   + main.py: checkpoint infra, dry-run, smoke runner, matrix validation;
   full M1–M5 execution NOT performed)
+- Step 9A: PASS (preflight only: matrix verification, exact workload
+  counts, environment + benchmark, identity/recovery design, per-cell
+  validation; execution NOT started; M5 flagged NOT EXECUTABLE YET;
+  full-scale training budget flagged as an open user decision)
 
 ## Last Verification
 - Step 0-2: 11/11 unit tests + oracle gate PASS (SR 100%, 0/5000 exits)
@@ -85,6 +93,13 @@ infrastructure validation only (non-scientific).
   tolerance loosened). Dry-run PASS (zero side effects); smoke runs PASS
   (recon AWGN 83% loss reduction in 30 steps, task AWGN/Rayleigh, digital
   k=54, checkpoints round-trip).
+- Step 9A: preflight PASS (0 blockers; results/preflight/step9a_preflight.json);
+  full regression re-verified 11 + 43 + 21 + 10 + 28 + 33 + 18 + 12 + 63
+  + oracle gate. Benchmark (non-scientific, measured): recon ≈ 4.6 µs/state
+  (k=3) to 7.0 µs/state (k=54); task ≈ 36.5 µs/episode-step (k=3) to
+  45.7 µs/episode-step (k=54); digital eval ≈ 156 µs/episode-step.
+  Environment: Python 3.9.7, torch 2.4.1+CPU, NO GPU, 12 cores,
+  15.83 GB RAM, 219.8 GB free disk.
 
 ## Last Commit
 - step0-2: ddc41b0 (root commit)
@@ -93,7 +108,8 @@ infrastructure validation only (non-scientific).
 - step5:   bb82334584949d76719d4a035a80af44c24f7727
 - step6:   f58cb77b23555635b331761b52987f062130161a
 - step7:   787ca849b9bcf76ecc8091fcbb63820dadb847eb
-- step8:   c3dd8fb7a787ecaac4ed48dac19bfd0d95e09feb (+ bookkeeping commit)
+- step8:   c3dd8fb7a787ecaac4ed48dac19bfd0d95e09feb (+ bookkeeping commit
+  7d2306e; PUSH PENDING — user PAT required, 403 from this machine)
 
 ## Repository State
 Clean after checkpoint: YES

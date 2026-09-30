@@ -54,8 +54,13 @@ def expected_cells() -> Dict[str, int]:
         # 2 methods x 3 k x 2 channels x 3 seeds
         "M1_training_runs": 2 * len(M1_K_VALUES) * len(CHANNELS) * len(TRAINING_SEEDS),
         "M1_eval_conditions": 2 * len(M1_K_VALUES) * n_eval_m1,
-        # 3 methods x 5 k x 2 channels x 3 seeds
-        "M2_training_runs": 3 * len(M2_K_VALUES) * len(CHANNELS) * len(TRAINING_SEEDS),
+        # NEURAL methods only (2 x 5 k x 2 channels x 3 seeds); the digital
+        # baseline needs NO training (Step-9A preflight correction: the
+        # former M2_training_runs=90 wrongly counted digital as trainable)
+        "M2_neural_training_runs": 2 * len(M2_K_VALUES) * len(CHANNELS) * len(TRAINING_SEEDS),
+        # digital evaluation-only seed rows (5 k x 2 channels x 3 seeds);
+        # deterministic given (k, B, channel, SNR, test seed)
+        "M2_digital_eval_only_seeds": len(M2_K_VALUES) * len(CHANNELS) * len(TRAINING_SEEDS),
         "M2_eval_conditions": 3 * len(M2_K_VALUES) * n_eval_m2,
         "M3_infeasible_cells": len((1, 2, 3)),          # k in {1, 2, 3}
         # SECONDARY digital reference: both channels x SNR grid (>= 1 seed)

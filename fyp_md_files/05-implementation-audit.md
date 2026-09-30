@@ -426,7 +426,8 @@ Date: 2026-09-29
 
 Step: 8
 Status: PASS
-Commit: (recorded in the follow-up checkpoint commit)
+Commit: c3dd8fb7a787ecaac4ed48dac19bfd0d95e09feb (step8 infrastructure;
+  bookkeeping commit records this hash)
 Branch: main
 Tests: 12/12 training-common (Gates A-B) + 63/63 experiments (Gates C-L);
   full regression 11 + 43 + 21 + 10 + 28 + 33 + 18 + oracle gate PASS.

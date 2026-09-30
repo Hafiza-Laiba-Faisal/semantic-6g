@@ -93,7 +93,7 @@ infrastructure validation only (non-scientific).
 - step5:   bb82334584949d76719d4a035a80af44c24f7727
 - step6:   f58cb77b23555635b331761b52987f062130161a
 - step7:   787ca849b9bcf76ecc8091fcbb63820dadb847eb
-- step8:   (see audit §9 checkpoint entry / git log for the step-8 commit)
+- step8:   c3dd8fb7a787ecaac4ed48dac19bfd0d95e09feb (+ bookkeeping commit)
 
 ## Repository State
 Clean after checkpoint: YES

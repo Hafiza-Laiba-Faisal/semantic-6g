@@ -30,6 +30,43 @@ Also pending: user PAT push of the local commits (see Last Commit).
 Execution order when approved: Stage A pilot → M1 → M2 → M3 (display) →
 M4 (secondary) → M5 only when specified.
 
+## Step 9B Planning — PROPOSED / PENDING APPROVAL (NOT frozen)
+
+Everything in this section is a PROPOSAL from Step 9B (source review +
+smoke-scale convergence probe, seed 42, non-scientific). Nothing here is
+frozen until the user approves it. Audit §2.6 stays authoritative: the
+"~20k steps + early stop on val" line is [PROJ] TBD, NOT a frozen value.
+
+Evidence (measured, smoke-scale): recon k=3 plateaus by ~1000 steps
+(0.243 -> 0.019 AWGN / 0.047 Rayleigh, late-vs-mid within ±3%); task
+k=3 T=100 is still improving at 150 steps (Rayleigh late-vs-mid −19%;
+eval SR 0.03 -> 0.88 AWGN / 0.00 -> 0.47 Rayleigh); 0 NaN/Inf anywhere.
+Measured full-scale-batch costs on this machine: recon ≈ 20–29 ms/step
+(batch 4096); task ≈ 1.02–1.17 s/step (batch 256, T=100).
+
+Candidate budgets (M1+M2 = 48 recon runs + 48 task runs, single-process):
+- A conservative: recon 2,000 / task 1,000 steps → ≈ 15 h total;
+  risk: task (esp. Rayleigh) possibly under-trained
+- B balanced:   recon 5,000 / task 3,000 steps → ≈ 46 h (~2 days);
+  risk: low-moderate
+- C extended:   recon 10,000 / task 6,000 steps → ≈ 91 h (~3.8 days);
+  risk: lowest; audit's 20k-everywhere ≈ 12 days (impractical on CPU)
+
+Proposed (pending approval): **Candidate B**; task training T = 100
+(= frozen eval horizon; trainer default); audit §2.6 batch sizes 4096
+states / 256 episodes; fixed-step budgets WITHOUT early stopping (early
+stop remains unimplemented and is not silently introduced); checkpoints:
+final + one rolling checkpoint every 1,000 steps (overwritten, ≤3 files
+per run, ≈ 1 MB each) with the existing full metadata + config-hash
+identity; M5 stays EXCLUDED from primary execution (Outcome B — the three
+additional M5 items: task-loss-component removals, uncoded-digital cells,
+cross-channel definition — are all under-specified in the sources).
+
+Differently-budgeted recon vs task is justified methodologically:
+recon plateaus ~10× sooner in steps AND costs ~50× less per step; both
+are trained to their own convergence evidence, which is equal
+methodological treatment (not equal step counts).
+
 ## Frozen Decisions
 - UAV state: 6D [x, y, vx, vy, x_g, y_g]
 - Dynamics: 2D double integrator, dt = 0.1 s, T_max = 100

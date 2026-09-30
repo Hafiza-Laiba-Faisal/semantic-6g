@@ -141,11 +141,50 @@ Status key: **[FROZEN]** specified by the research design (your prompt) · **[LI
 | Optimizer | Adam | [LIT] |
 | Learning rate | 1e-3 | [LIT] default; validate on val set |
 | Batch size | 256 episodes (task rollouts) / 4096 states (recon) | [PROJ] |
-| Duration | ~20k gradient steps + early stop on val | [PROJ] TBD |
+| Duration | **FROZEN Step 9C (2026-09-30): recon 5,000 / task 3,000 fixed steps — see the Step-9C freeze block below.** (Former proposal "~20k gradient steps + early stop on val" was [PROJ] TBD and is superseded, NOT silently adopted.) | [PROJ→FROZEN 9C] |
 | Split | episodes 70/15/15 | [PROJ] protocol |
 | Checkpoint rule | val success (task) / val recon MSE (recon) | [PROJ] protocol |
 | Episodes | 10,000 train / 2,000 val | [PROJ] (draft) |
 | Gradient clipping | global-norm 1.0 | [PROJ] numerics |
+
+### 2.6.1 STEP 9C — FINAL TRAINING PROTOCOL FREEZE (2026-09-30, dated)
+
+User-approved freeze (Candidate B of the Step-9B review). All budget values
+are **PROJECT DESIGN DECISIONS, NOT literature-derived** — the reviewed
+papers explicitly do not specify epochs/steps/batch (02 §446, §1321,
+§1514), and the former §2.6 duration line was [PROJ] TBD.
+
+```text
+RECON_TRAIN_STEPS = 5000      [PROJ→FROZEN 9C]  (M1+M2, every recon run)
+TASK_TRAIN_STEPS  = 3000      [PROJ→FROZEN 9C]  (M1+M2, every task run)
+TASK_TRAINING_T   = 100       [PROJ→FROZEN 9C]  (= frozen eval horizon T_max)
+BATCH_STATES      = 4096      [PROJ] audit §2.6 (smoke values stay smoke-only)
+BATCH_EPISODES    = 256       [PROJ] audit §2.6
+Optimizer         = Adam      [LIT]
+LEARNING_RATE     = 1e-3      [LIT]
+GRAD_CLIP_NORM    = 1.0       [PROJ]
+Training SNR      = U(0,20) dB per batch  [LIT]+[PROJ] (A8 refinement)
+Training seeds    = {42,43,44}            [FROZEN]
+Early stopping    = DISABLED for primary execution  [PROJ→FROZEN 9C]
+                    (fixed-step deterministic budgets; the audit's val
+                     protocol line remains UNIMPLEMENTED — not invented)
+Checkpoint policy = final checkpoint per run via the Step-8 identity/
+                    marker infrastructure; interrupted runs RETRAINED
+                    (deterministic by seed+config); no periodic system.
+M5_STATUS         = DEFERRED; M5_EXECUTION_ENABLED = False  [PROJ→FROZEN 9C]
+                    (specification incomplete: task-loss-component
+                     removals, uncoded-digital reference, cross-channel
+                     definition are categories only — not invented)
+```
+
+Differently-budgeted recon (5k) vs task (3k) is a deliberate methodological
+choice: recon plateaus ~10× sooner in steps and costs ~50× less per step
+(measured); both are trained to their own convergence evidence.
+M1 remains the primary task-vs-reconstruction comparison at low k — it is
+NOT reclassified as an M5 ablation. Evidence basis: Step-9B smoke-scale
+convergence probe (seed 42, non-scientific): recon late-vs-mid within ±3%
+at 1000 steps; task still improving at 150 steps; 0 NaN/Inf. Full M1–M5
+execution had NOT started at the time of this freeze.
 
 ### 2.7 Digital baseline
 

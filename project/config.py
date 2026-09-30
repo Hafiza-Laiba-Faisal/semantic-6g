@@ -195,6 +195,36 @@ LEARNING_RATE = 1e-3        # Adam                               [LIT]
 GRAD_CLIP_NORM = 1.0        # global-norm clipping               [PROJ]
 BATCH_EPISODES = 256        # task rollout batches               [PROJ]
 BATCH_STATES = 4096         # reconstruction state batches       [PROJ]
+
+# ---------------------------------------------------------------------------
+# FULL-SCALE TRAINING BUDGET — FROZEN Step 9C (2026-09-30, user-approved
+# Candidate B). PROJECT DESIGN DECISIONS, NOT literature-derived: the
+# reviewed papers explicitly do not specify epochs/steps/batch, and the
+# audit §2.6 duration line ("~20k steps + early stop on val") was [PROJ]
+# TBD — superseded by this freeze, NOT silently adopted.
+#   Evidence (Step-9B smoke-scale probe, seed 42, non-scientific):
+#   recon k=3 plateaus by ~1000 steps; task k=3 T=100 still improving at
+#   150 steps; 0 NaN/Inf. Fixed-step budgets => deterministic compute,
+#   reproducible across seeds. Early stopping stays DISABLED for the
+#   primary execution (no validation machinery is silently introduced;
+#   the audit's val protocol line remains unimplemented).
+RECON_TRAIN_STEPS = 5_000   # reconstruction optimizer steps     [PROJ->FROZEN 9C]
+TASK_TRAIN_STEPS = 3_000    # task-oriented optimizer steps      [PROJ->FROZEN 9C]
+TASK_TRAINING_T = T_MAX     # task rollout horizon == frozen eval horizon
+                            #                                    [PROJ->FROZEN 9C]
+EARLY_STOPPING = False      # fixed-step primary protocol        [PROJ->FROZEN 9C]
+
+# Checkpoint policy (Step 9C): final checkpoint per run via the Step-8
+# checkpoint/identity infrastructure (results/<EXP>/<run_id>__<hash>/ with
+# DONE/RUNNING/FAILED markers); NO periodic-checkpoint system is built.
+# Interrupted runs are retrained (runs are deterministic by seed+config).
+
+# M5 ablation matrix — DEFERRED (Step 9C): specification INCOMPLETE
+# (task-loss-component removals, uncoded-digital reference, cross-channel
+# definition are categories only). Not invented to fill the matrix.
+M5_STATUS = "deferred"      #                                   [PROJ->FROZEN 9C]
+M5_EXECUTION_ENABLED = False
+
 N_TRAIN_EPISODES = 10_000   #                                    [PROJ]
 N_VAL_EPISODES = 2_000      #                                    [PROJ]
 N_TEST_EPISODES = 5_000     # 500 for smoke tests                [PROJ]
@@ -288,6 +318,12 @@ def validate() -> None:
         assert pkt["n_padding_symbols"] == 0, (
             f"M2 digital point k={k} must exactly fit (audit 8.6)")
     assert 0.0 < LEARNING_RATE
+    assert RECON_TRAIN_STEPS > 0 and TASK_TRAIN_STEPS > 0
+    assert TASK_TRAINING_T == T_MAX, (
+        "task training horizon must stay aligned with the frozen eval horizon")
+    assert EARLY_STOPPING is False, (
+        "primary protocol is fixed-step; early stopping is a later decision")
+    assert M5_STATUS == "deferred" and M5_EXECUTION_ENABLED is False
     assert len(TRAINING_SEEDS) >= 3, "at least 3 training seeds"
     for lam in (LAMBDA_DISTANCE, LAMBDA_CONTROL, LAMBDA_VELOCITY,
                 LAMBDA_TERMINAL):
@@ -321,6 +357,10 @@ def describe() -> str:
         f"(B = {[DIGITAL_B_BY_K[k] for k in sorted(DIGITAL_B_BY_K)]})",
         "Protocol",
         f"  training seeds     = {TRAINING_SEEDS}",
+        f"  train budget (9C)  = recon {RECON_TRAIN_STEPS} / task "
+        f"{TASK_TRAIN_STEPS} steps (fixed, T={TASK_TRAINING_T}, "
+        f"no early stop)",
+        f"  M5                 = {M5_STATUS} (specification incomplete)",
         f"  test episodes      = {N_TEST_EPISODES} (smoke {N_TEST_EPISODES_SMOKE})",
         f"  device             = {get_device()}",
     ]

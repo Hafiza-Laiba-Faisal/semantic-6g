@@ -8,7 +8,7 @@ Reconstruction DeepJSCC vs a conventional digital baseline under AWGN and
 slow Rayleigh fading with a frozen UAV navigation task.
 
 ## Current Status
-Step 9A — PASS (preflight only; checkpointed)
+Step 9C — PASS (training protocol FROZEN; M5 deferred; checkpointed)
 
 ## Last Completed Step
 Step 9A — Full Experiment Preflight & Compute Plan
@@ -19,16 +19,40 @@ CPU-only; tiny measured benchmark; run-identity/recovery design
 NO training, NO execution, NO scientific results)
 
 ## Next Step
-BLOCKED PENDING EXPLICIT USER APPROVAL.
-Next permitted action: FULL M1–M5 experiment execution — requires the
-user's explicit approval AND two open decisions:
-1. full-scale training budget (steps/epochs) — NOT frozen anywhere;
-   config's 70/15/15 split + N_TRAIN_EPISODES=10,000 are unused
-   placeholders (trainers are step-based)
-2. M5 ablation set — NOT EXECUTABLE YET (specification incomplete)
-Also pending: user PAT push of the local commits (see Last Commit).
+**Step 9D — Final Execution Readiness / User Approval Gate**
+(NOT full execution yet). The training protocol is now FROZEN (Step 9C);
+M5 is DEFERRED. Also pending: user PAT push of the local commits (see
+Last Commit).
 Execution order when approved: Stage A pilot → M1 → M2 → M3 (display) →
 M4 (secondary) → M5 only when specified.
+
+## Step 9C — Final Training Protocol (FROZEN, 2026-09-30)
+
+The Step-9B proposals (below) were USER-APPROVED and are now FROZEN in
+`project/config.py` + audit §2.6.1. Classification: PROJECT DESIGN
+DECISIONS, NOT literature-derived (papers explicitly unspecified; the
+"~20k + early stop" audit line was [PROJ] TBD and is superseded).
+
+- RECON_TRAIN_STEPS = 5000; TASK_TRAIN_STEPS = 3000 (fixed-step; M1+M2,
+  every channel, every seed)
+- TASK_TRAINING_T = 100 (== frozen eval horizon; trainer default)
+- BATCH_STATES = 4096 / BATCH_EPISODES = 256 (audit §2.6; smoke values
+  remain smoke-only)
+- Adam, lr 1e-3, grad-clip 1.0, SNR ~ U(0,20) dB per batch, seeds
+  {42,43,44} (unchanged)
+- EARLY_STOPPING = False — the audit's val protocol stays unimplemented;
+  fixed-step budgets are the primary protocol (deterministic,
+  reproducible)
+- Checkpoints: final checkpoint per run via the Step-8
+  identity/marker infrastructure; interrupted runs retrained
+  (deterministic); no periodic-checkpoint system built
+- M5_STATUS = DEFERRED, M5_EXECUTION_ENABLED = False — specification
+  incomplete (task-loss-component removals, uncoded-digital reference,
+  cross-channel definition). M1 stays the PRIMARY task-vs-reconstruction
+  comparison; it is not an M5 substitute.
+- Full M1–M5 execution: NOT STARTED. Next permitted action:
+  **Step 9D — Final Execution Readiness / User Approval Gate** (NOT
+  execution itself).
 
 ## Step 9B Planning — PROPOSED / PENDING APPROVAL (NOT frozen)
 

@@ -277,7 +277,8 @@ methodological treatment (not equal step counts).
   7d2306e; PUSH PENDING — user PAT required, 403 from this machine)
 - step9a:  4dc4859 | step9b: cb7bdee | step9c freeze: d065acd
   (PUSH PENDING — user PAT required, 403 from this machine)
-- step9d:  <see git log after the Step-9D commit; PUSH PENDING>
+- step9d:  8c87355dc2ea2c7ed2f137af7d967533502a98a2 (PUSH PENDING —
+  user PAT required, 403 from this machine)
 
 ## Repository State
 Clean after checkpoint: YES

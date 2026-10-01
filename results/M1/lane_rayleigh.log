@@ -1,0 +1,14 @@
+== M1 training queue (frozen 9C budgets) ==  [lane: rayleigh]
+[ 1/18] SKIP M1_reconstruction_rayleigh_k1_seed42 (already complete)
+[ 2/18] SKIP M1_reconstruction_rayleigh_k1_seed43 (already complete)
+[ 3/18] SKIP M1_reconstruction_rayleigh_k1_seed44 (already complete)
+[ 4/18] SKIP M1_task_rayleigh_k1_seed42 (already complete)
+[ 5/18] SKIP M1_task_rayleigh_k1_seed43 (already complete)
+[ 6/18] SKIP M1_task_rayleigh_k1_seed44 (already complete)
+[ 7/18] SKIP M1_reconstruction_rayleigh_k2_seed42 (already complete)
+[ 8/18] SKIP M1_reconstruction_rayleigh_k2_seed43 (already complete)
+[ 9/18] SKIP M1_reconstruction_rayleigh_k2_seed44 (already complete)
+[10/18] SKIP M1_task_rayleigh_k2_seed42 (already complete)
+[11/18] SKIP M1_task_rayleigh_k2_seed43 (already complete)
+[12/18] RETRAIN-after-INTERRUPTION M1_task_rayleigh_k2_seed44 (stale RUNNING marker; environmental; frozen 9C policy)
+[12/18] TRAIN M1_task_rayleigh_k2_seed44 hash=9e4af76b8a5cdb51 steps=3000 batch=256xT100

@@ -8,23 +8,122 @@ Reconstruction DeepJSCC vs a conventional digital baseline under AWGN and
 slow Rayleigh fading with a frozen UAV navigation task.
 
 ## Current Status
-Step 9C — PASS (training protocol FROZEN; M5 deferred; checkpointed)
+Step 9D — PASS (Stage-A production pilots complete; CLEARED FOR FULL
+EXECUTION; M1–M4 NOT started; awaiting user approval for Step 10)
 
 ## Last Completed Step
-Step 9A — Full Experiment Preflight & Compute Plan
-(frozen-matrix verification 10/10, exact workload: 96 neural training runs
-+ 292 eval cells + 3 infeasible + 10 secondary; environment verified
-CPU-only; tiny measured benchmark; run-identity/recovery design
-(project/experiments/identity.py); preflight PASS with 0 blockers;
-NO training, NO execution, NO scientific results)
+Step 9C — Final Training Protocol FROZEN (commit d065acd)
 
 ## Next Step
-**Step 9D — Final Execution Readiness / User Approval Gate**
-(NOT full execution yet). The training protocol is now FROZEN (Step 9C);
-M5 is DEFERRED. Also pending: user PAT push of the local commits (see
-Last Commit).
-Execution order when approved: Stage A pilot → M1 → M2 → M3 (display) →
-M4 (secondary) → M5 only when specified.
+**Step 10 — Full M1 Execution** — ONLY after explicit user approval.
+The frozen protocol (Step 9C) and the Stage-A pilot (Step 9D) prove the
+pipeline executes safely at production scale. M5 stays DEFERRED. Also
+pending: user PAT push of the local commits (see Last Commit).
+Execution order when approved: M1 → M2 → M3 (display) → M4 (secondary) →
+M5 only when specified.
+
+## Step 9D — Stage-A Production Pilot (2026-09-30)
+
+Objective: prove the FROZEN Step-9C protocol executes correctly and
+safely at PRODUCTION scale before launching the full matrix. Exactly two
+production-scale runs (AWGN, k=3, seed 42), full frozen budgets, no
+substitutions. **NON-SCIENTIFIC — no performance conclusions drawn; the
+numbers below are execution/readiness evidence only.**
+
+Pre-pilot verification (tools/pilot_step9d.py, new tool):
+- `verify`: 13/13 PASS — every frozen 9C value asserted programmatically
+  (5000/3000/T=100/4096/256/Adam/1e-3/clip 1.0/U(0,20)/seeds {42,43,44}/
+  test 10042/early-stop off/M5 deferred+disabled); any mismatch would
+  STOP the pilot.
+- `identitytest`: ALL PASS — run identity distinguishes method, channel,
+  k, seed and config hash; completed runs SKIP; incompatible configs
+  create NEW identities; output paths deterministic; marker semantics
+  correct (DONE > FAILED > RUNNING); results/ and *.pth not tracked by
+  Git; no silent overwrite across seeds/configs.
+- `resumetest`: ALL PASS — model + Adam moments restore bitwise; with
+  data-generator state checkpointed, continuation is bitwise-identical.
+  Honest limitation (documented, not hidden): the Step-4/5 trainers own
+  their generators internally, so mid-run continuation of those loops is
+  finite but NOT bitwise; per the FROZEN 9C policy, recovery = RETRAIN
+  (deterministic by seed+config), not mid-run resume.
+
+### Pilot A — Reconstruction (production scale)
+- Config: method=reconstruction, channel=AWGN, k=3, seed=42,
+  steps=5000 (RECON_TRAIN_STEPS), batch_states=4096, Adam lr 1e-3,
+  grad-clip 1.0, SNR ~ U(0,20) dB per batch — frozen values, no changes.
+- Runtime: 90.1 s wall (18.0 ms/step) on CPU (torch 2.4.1+cpu).
+- Loss: start → final as recorded in pilotA_report.json; 0 NaN/Inf;
+  gradient-finite checks PASS throughout.
+- Identity: run_id STEP_9D_PILOT_reconstruction_awgn_k3_seed42,
+  config_hash fb564626b2e8603f.
+- Checkpoint: results/STEP_9D_PILOT/STEP_9D_PILOT/
+  STEP_9D_PILOT_reconstruction_awgn_k3_seed42__fb564626b2e8603f/
+  final_ckpt.pt (gitignored); exit status: complete.
+- Integrity (`checkint A`): 11/11 PASS (exists, readable, stored config,
+  seed, method/channel/k, final step == 5000, params finite, optimizer
+  state finite, identity match, config-hash match).
+- Skip test: identical re-invocation → "SKIP: completed pilot found";
+  no retraining, no overwrite.
+- Resources: no OOM, no runaway RAM, normal disk growth (~0.4 MB ckpt).
+
+### Pilot B — Task-oriented (production scale)
+- Config: method=task, channel=AWGN, k=3, seed=42, steps=3000
+  (TASK_TRAIN_STEPS), batch_episodes=256, T=100 (TASK_TRAINING_T),
+  lambdas {ld=1.0, lu=0.0, lv=0.0, lT=2.0} — frozen values, no changes.
+- Runtime: attempt 2 = 1106.0 s wall (0.3687 s/step). Attempt 1 (1088 s)
+  had completed all 3000 steps but was killed by a Freebuff desktop
+  restart seconds before marker writing — ENVIRONMENTAL finding (desktop
+  restarts kill detached background processes), not a code failure.
+- Task loss: 3275.1 → 912.0 (fluctuates with per-batch U(0,20) SNR by
+  frozen protocol). Diagnostics (NOT performance claims):
+  recon-MSE-diag 0.253 → 36.08 (the expected task-vs-fidelity trade-off,
+  seen already at smoke scale in Step 5); eval SR 0.0195 → 0.0391.
+- Numerical health: 0 NaN/Inf; gradient-finite checks PASS (pre-clip
+  norms large late in training; clip 1.0 bounds them, as anticipated in
+  the audit).
+- Identity: run_id STEP_9D_PILOT_task_awgn_k3_seed42, config_hash
+  bd6f10e92d2aced3.
+- Checkpoint: results/STEP_9D_PILOT/STEP_9D_PILOT/
+  STEP_9D_PILOT_task_awgn_k3_seed42__bd6f10e92d2aced3/final_ckpt.pt
+  (gitignored); exit status: complete.
+- Integrity (`checkint B`): 11/11 PASS.
+- Skip test: PASS (skip, no retraining, no overwrite).
+- Resume/determinism evidence: attempt 1 and attempt 2 — independent
+  processes, same seed+config — produced BITWISE-IDENTICAL final task
+  loss (911.971923828125), directly demonstrating the frozen 9C
+  retrain-on-interruption policy is deterministic across processes.
+- Resources: no OOM, no runaway RAM, normal disk growth (~0.4 MB ckpt).
+
+### Runtime update (measured vs Step-9B estimate)
+| Run | 9B estimate | Measured | Factor |
+|---|---|---|---|
+| Recon, batch 4096 | 20–29 ms/step | 18.0 ms/step | ~1.1–1.6× faster |
+| Task, batch 256, T=100 | 1.02–1.17 s/step | 0.3687 s/step | ~3× faster |
+
+The task deviation is material and explained: the 9B extrapolation
+assumed linear scaling from a batch-64 smoke measurement to batch 256;
+the real scaling is sub-linear. No frozen value was changed because of
+runtime.
+
+Updated full-matrix estimate from MEASURED rates (single process,
+CPU-only, sequential): 48 recon runs ≈ 1.2 h; 48 task runs ≈ 14.7 h;
+96 neural training runs ≈ **16 h total** (vs the 9B estimate of ~46 h),
+plus eval-only digital cells and 292 evaluation cells (small).
+
+### Contamination control
+All pilot artifacts live under results/STEP_9D_PILOT/ with STEP_9D_PILOT
+labels in run_id, directory names and both report JSONs
+("STEP_9D_PILOT": true, "non_scientific": true); results/ and *.pth are
+gitignored. No pilot artifact can enter final M1–M4 tables or paper
+claims. Post-pilot regression: 11 + 43 + 21 + 10 + 28 + 33 + 18 + 12 +
+63 + oracle gate ALL PASS.
+
+### Decision
+Both production-scale pilots completed successfully, stayed finite,
+produced valid integrity-verified checkpoints, passed skip tests, and
+left the regression suite green. **STEP 9D PASS — CLEARED FOR FULL
+EXECUTION. M1–M4 NOT STARTED.** Next: Step 10 — Full M1 Execution,
+only on explicit user approval.
 
 ## Step 9C — Final Training Protocol (FROZEN, 2026-09-30)
 
@@ -161,6 +260,11 @@ methodological treatment (not equal step counts).
   45.7 µs/episode-step (k=54); digital eval ≈ 156 µs/episode-step.
   Environment: Python 3.9.7, torch 2.4.1+CPU, NO GPU, 12 cores,
   15.83 GB RAM, 219.8 GB free disk.
+- Step 9D: verify 13/13; identitytest ALL PASS; resumetest ALL PASS (with
+  the documented trainer-generator limitation); pilots A+B complete at
+  production scale (0 NaN/Inf, grads finite); integrity 11/11 both;
+  skip tests PASS; post-pilot regression re-verified 11 + 43 + 21 + 10 +
+  28 + 33 + 18 + 12 + 63 + oracle gate ALL PASS.
 
 ## Last Commit
 - step0-2: ddc41b0 (root commit)
@@ -171,6 +275,9 @@ methodological treatment (not equal step counts).
 - step7:   787ca849b9bcf76ecc8091fcbb63820dadb847eb
 - step8:   c3dd8fb7a787ecaac4ed48dac19bfd0d95e09feb (+ bookkeeping commit
   7d2306e; PUSH PENDING — user PAT required, 403 from this machine)
+- step9a:  4dc4859 | step9b: cb7bdee | step9c freeze: d065acd
+  (PUSH PENDING — user PAT required, 403 from this machine)
+- step9d:  <see git log after the Step-9D commit; PUSH PENDING>
 
 ## Repository State
 Clean after checkpoint: YES

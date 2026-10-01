@@ -186,6 +186,55 @@ convergence probe (seed 42, non-scientific): recon late-vs-mid within ±3%
 at 1000 steps; task still improving at 150 steps; 0 NaN/Inf. Full M1–M5
 execution had NOT started at the time of this freeze.
 
+### 2.6.2 STEP 9D — STAGE-A PRODUCTION PILOT (2026-09-30, dated)
+
+Execution-readiness pilot ONLY (non-scientific; no performance
+conclusions). Exactly two production-scale runs at the FULL frozen
+budgets — no smoke substitutions, no frozen value touched:
+reconstruction AWGN k=3 seed 42 (5000 steps, batch 4096) and
+task-oriented AWGN k=3 seed 42 (3000 steps, batch 256, T=100).
+`tools/pilot_step9d.py verify` asserts every frozen 9C value
+programmatically before launch (13/13 PASS).
+
+Findings:
+- Identity/recovery verified (`identitytest`): method/channel/k/seed/
+  config-hash all distinguish runs; completed runs SKIP; incompatible
+  configs create NEW identities; paths deterministic; no Git tracking of
+  results/checkpoints; no silent overwrite.
+- Resume semantics verified honestly (`resumetest`): checkpointed model
+  + Adam moments restore bitwise; with the data-generator state
+  checkpointed, continuation is bitwise-identical. LIMITATION (stated,
+  not hidden): the Step-4/5 trainers own their generators internally, so
+  mid-run continuation of those loops is finite but NOT bitwise — the
+  frozen 9C recovery policy (RETRAIN, deterministic by seed+config)
+  remains the operative rule.
+- Pilot A: 90.1 s (18.0 ms/step), 0 NaN/Inf, grads finite, integrity
+  11/11, skip test PASS (config hash fb564626b2e8603f).
+- Pilot B: 1106.0 s (0.3687 s/step), 0 NaN/Inf, grads finite, integrity
+  11/11, skip test PASS (config hash bd6f10e92d2aced3). Pilot-B attempt 1
+  completed all 3000 steps but was killed by a Freebuff desktop restart
+  seconds before marker writing — ENVIRONMENTAL finding (desktop
+  restarts kill detached background processes), NOT a code failure.
+  Attempts 1 and 2 (independent processes, same seed+config) produced a
+  BITWISE-IDENTICAL final task loss (911.971923828125) — direct evidence
+  that the RETRAIN-on-interruption policy is deterministic across
+  processes.
+- Measured vs Step-9B estimate: recon 18.0 vs 20–29 ms/step (≈1.1–1.6×
+  faster); task 0.3687 vs 1.02–1.17 s/step (≈3× faster — the 9B
+  extrapolation wrongly assumed linear batch-64→256 scaling; real
+  scaling is sub-linear). Updated full-matrix estimate from MEASURED
+  rates: ≈ 16 h single-process for the 96 neural training runs (vs ~46 h
+  in 9B). NO frozen budget was changed because of runtime.
+- Contamination control: pilot artifacts under results/STEP_9D_PILOT/
+  with STEP_9D_PILOT labels and "non_scientific": true markers;
+  gitignored; can never enter final M1–M4 tables.
+- Post-pilot regression: 11 + 43 + 21 + 10 + 28 + 33 + 18 + 12 + 63 +
+  oracle gate ALL PASS.
+
+Verdict: **STEP 9D PASS — CLEARED FOR FULL EXECUTION. M1–M4 NOT
+STARTED** (Step 10 — Full M1 Execution requires explicit user approval).
+All 2.6.1 frozen values UNCHANGED.
+
 ### 2.7 Digital baseline
 
 | Parameter | Proposed value | Status |
@@ -410,6 +459,8 @@ Rules: M2 is the primary three-way comparison (equal k, equal power, equal episo
 *Step 9A complete and verified — full-experiment PREFLIGHT ONLY (no training, no execution): frozen-convention checks 10/10; workload independently reconstructed and matched to code (M1: 36 neural training runs / 132 paired eval conditions; M2: 60 neural training runs + 30 digital evaluation-only seed rows / 150 paired eval conditions; M3: 3 infeasible display cells; M4: 10 SECONDARY digital eval conditions; M5: 0 — NOT EXECUTABLE YET, specification incomplete; TOTAL 96 neural training runs, 292 evaluation cells). One Step-8 mislabel corrected: `expected_cells()["M2_training_runs"]=90` wrongly counted the training-free digital baseline as trainable → renamed `M2_neural_training_runs=60` + `M2_digital_eval_only_seeds=30`. Run identity + recovery designed (`project/experiments/identity.py`): `run_id` + full-config sha256 hash → `results/<EXP>/<run_id>__<hash>/` with DONE/RUNNING/FAILED markers (completed→skip, interrupted→resume, missing→train); smoke/full outputs can never collide. Environment verified: Windows 10, Python 3.9.7, torch 2.4.1+CPU (NO GPU/CUDA), 12 logical cores / 6 torch threads, 15.83 GB RAM, 219.8 GB free disk. Tiny measured benchmark (non-scientific): recon ≈ 4.6 µs/state (k=3) to 7.0 µs/state (k=54); task ≈ 36.5 µs/episode-step (k=3) to 45.7 µs/episode-step (k=54); digital eval ≈ 156 µs/episode-step — CAUTIOUS extrapolation (estimate, not measured) ≈ 3–4 days single-process sequential for the illustrative 10k-step budget, dominated by task training; eval ≈ 15 min; storage ≈ 0.3–0.5 GB total. OPEN DECISIONS FLAGGED (not assumed): (1) full-scale training budget (steps/epochs) is NOT frozen in any source document — config's 70/15/15 + N_TRAIN_EPISODES are unused placeholders; (2) M5 ablation set unspecified; (3) push pending user PAT (Step-8/9A commits local). **FULL M1–M5 EXECUTION NOT STARTED.***
 
 ---
+
+*Step 9D complete and verified — Stage-A production pilot ONLY (two production-scale runs, non-scientific; no performance conclusions): frozen-config programmatic verification 13/13; identity/recovery checks ALL PASS; honest resume-semantics probe (trainer-internal generators not checkpointed → frozen RETRAIN policy); Pilot A (recon AWGN k=3 s42, 5000×4096) 90.1 s, 0 NaN, integrity 11/11, skip PASS; Pilot B (task AWGN k=3 s42, 3000×256, T=100) 1106.0 s, 0 NaN, integrity 11/11, skip PASS; attempt-1 kill by a desktop restart = environmental finding; attempt-1/2 bitwise-identical final task loss demonstrates cross-process determinism of the retrain policy. Measured rates beat the 9B estimate (task ≈3×; sub-linear batch scaling), full-matrix estimate now ≈ 16 h. No frozen value changed. Post-pilot regression 11 + 43 + 21 + 10 + 28 + 33 + 18 + 12 + 63 + oracle gate ALL PASS. STEP 9D PASS — CLEARED FOR FULL EXECUTION; M1–M4 NOT STARTED.*
 
 ## 9. CHECKPOINT LOG (git checkpoint policy — one entry per completed step)
 

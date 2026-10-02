@@ -8,19 +8,58 @@ Reconstruction DeepJSCC vs a conventional digital baseline under AWGN and
 slow Rayleigh fading with a frozen UAV navigation task.
 
 ## Current Status
-Step 9D — PASS (Stage-A production pilots complete; CLEARED FOR FULL
-EXECUTION; M1–M4 NOT started; awaiting user approval for Step 10)
+Step 10E — PASS (McNemar p-value corrected; MSE train/eval discrepancy resolved via matched-checkpoint diagnostic; M2 NOT STARTED pending user approval)
 
 ## Last Completed Step
-Step 9C — Final Training Protocol FROZEN (commit d065acd)
+Step 10E — McNemar Correction and MSE Diagnostic Resolution (2026-10-02); see commit 88e107a and `.agents/tasks/step10e-report.md`.
+
+**Technical findings:**
+- McNemar two-sided p-value formula corrected in `project/evaluation/statistics.py` (removed spurious 0.5× factor at line 107)
+- Historical evaluation JSONs preserved unchanged; corrected p-values derivable from stored chi2 statistics using formula: p_corrected = erfc(sqrt(chi2/2)) = 2 × p_stored
+- MSE train/eval discrepancy quantitatively explained: ~160× ratio is structural (single-step diagnostic vs trajectory-averaged metric with post-exit zero-error bypass), not a measurement bug
+- All tests pass: 5/5 new McNemar tests (`tests/test_mcnemar_corrected.py`), 18/18 evaluation regression tests
+- Matched-checkpoint diagnostic created: `diagnostics/matched_mse_diagnostic.py`
+- **Critical limitation documented:** Low trajectory MSE does not imply successful navigation. In the matched diagnostic, all 500/500 episodes exited the workspace, yielding undefined MSE_active (NaN); the small MSE_full reflects metric structure (post-exit zero-error bypass), not task performance quality.
+
+**Repository state:** Commit 88e107a on local `main`, ahead of `origin/main` by 1 commit; PROJECT_STATUS.md update pending commit.
 
 ## Next Step
-**Step 10 — Full M1 Execution** — ONLY after explicit user approval.
-The frozen protocol (Step 9C) and the Stage-A pilot (Step 9D) prove the
-pipeline executes safely at production scale. M5 stays DEFERRED. Also
-pending: user PAT push of the local commits (see Last Commit).
-Execution order when approved: M1 → M2 → M3 (display) → M4 (secondary) →
-M5 only when specified.
+**M2 Execution** — Requires explicit user approval. M1 numerical audit is complete. M2–M5 remain NOT STARTED; M5 stays DEFERRED.
+
+## Step 10E — McNemar Correction and MSE Diagnostic Resolution (2026-10-02)
+
+**Changes committed in 88e107a:**
+- Fixed: `project/evaluation/statistics.py` line 107, removed `0.5 *` factor from McNemar p-value calculation
+- Added: `tests/test_mcnemar_corrected.py` with 5 exact-value test cases pinning the corrected formula
+- Added: `diagnostics/matched_mse_diagnostic.py` for matched-checkpoint MSE verification
+- Added: `.agents/tasks/step10e-report.md` documenting all findings
+
+**MSE discrepancy resolution:**
+The Step 10D "unresolved train/evaluation MSE gap" is now quantitatively explained:
+- Training diagnostic `recon_mse_diag_final` ≈ 54.7 (single-step, t=0, random SNR ∈ U(0,20 dB))
+- Evaluation `MSE_full` ≈ 0.378 (trajectory-averaged, T=100 steps, fixed SNR, with post-exit bypass)
+- Matched diagnostic at seed42, k=1 AWGN: MSE_initial/MSE_full ≈ 164× at 0 dB, ≈ 156× at 10 dB
+- The ~160× ratio arises from: (1) different metric definitions (single-step vs trajectory-averaged), (2) post-exit zero-error bypass effect (all 500 test episodes exited; inactive episodes contribute zero MSE after exit)
+- This is NOT a measurement bug or data error; it is a structural difference between the quantities being compared
+
+**McNemar p-value correction:**
+- All 198 stored p-values are exactly half the correct two-sided chi-square(1) survival probability
+- Corrected formula: p = erfc(sqrt(chi2/2))  [NOT 0.5 × erfc(sqrt(chi2/2))]
+- All significance conclusions unchanged (corrected values remain ≪ 0.05)
+- Historical JSONs preserved; corrected values derivable on-demand from stored chi2
+
+**Test verification:**
+- 5/5 McNemar tests PASS (symmetric, unequal, zero-discordant, reference, symmetry cases)
+- 18/18 evaluation regression tests PASS (Gates A–H)
+
+**Verdict: STEP 10E PASS — all numerical issues resolved. M2 technically ready; awaiting user approval.**
+
+## Step 10D — Independent M1 Numerical Reconciliation (2026-10-02)
+
+- Recomputed pooled success rates from all 198 evaluation JSONs; each pooled method/k/channel/SNR cell is 3 seeds × 5,000 episodes = 15,000. The 10B success-rate tables, selected Wilson intervals, and pooled distance/control means reproduce at their reported precision.
+- All 198 paired cells favor reconstruction and have n10 > n01. The stored McNemar chi-square statistics reproduce, but the p-value implementation returned half the correct chi-square(1) survival probability. Significance conclusions were unaffected. **[Resolved in Step 10E]**
+- The quoted 10.9-230.3 range matches the final `recon_mse_diag` endpoints in the 18 task `train_report.json` files. The reported train/evaluation MSE gap was flagged for matched-window comparison. **[Resolved in Step 10E via matched diagnostic]**
+- **Verdict: STEP 10D identified issues; Step 10E resolved them.**
 
 ## Step 9D — Stage-A Production Pilot (2026-09-30)
 
@@ -236,6 +275,10 @@ methodological treatment (not equal step counts).
   counts, environment + benchmark, identity/recovery design, per-cell
   validation; execution NOT started; M5 flagged NOT EXECUTABLE YET;
   full-scale training budget flagged as an open user decision)
+- Step 9B: PASS (source review + smoke-scale convergence probe; proposed budgets)
+- Step 9C: PASS (final training protocol frozen: 5000/3000 steps, T=100, batch sizes, no early stop)
+- Step 9D: PASS (Stage-A production pilots complete; cleared for full execution)
+- Step 10E: PASS (McNemar p-value corrected, MSE discrepancy resolved; M2 technically ready)
 
 ## Last Verification
 - Step 0-2: 11/11 unit tests + oracle gate PASS (SR 100%, 0/5000 exits)
@@ -265,6 +308,10 @@ methodological treatment (not equal step counts).
   production scale (0 NaN/Inf, grads finite); integrity 11/11 both;
   skip tests PASS; post-pilot regression re-verified 11 + 43 + 21 + 10 +
   28 + 33 + 18 + 12 + 63 + oracle gate ALL PASS.
+- Step 10E: 5/5 McNemar corrected formula tests PASS; 18/18 evaluation
+  regression tests PASS; historical JSON integrity verified (no changes
+  to results/M1/eval/ relative to parent commit 01338fa); matched-checkpoint
+  MSE diagnostic confirms structural metric difference (~160× ratio explained).
 
 ## Last Commit
 - step0-2: ddc41b0 (root commit)
@@ -279,6 +326,8 @@ methodological treatment (not equal step counts).
   (PUSH PENDING — user PAT required, 403 from this machine)
 - step9d:  8c87355dc2ea2c7ed2f137af7d967533502a98a2 (PUSH PENDING —
   user PAT required, 403 from this machine)
+- step10e: 88e107a35e7688a2f59fa2f938c41dd4a264ad07 (PUSH PENDING —
+  user PAT required; local main ahead of origin/main by 1 commit)
 
 ## Repository State
 Clean after checkpoint: YES

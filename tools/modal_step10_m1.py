@@ -133,8 +133,12 @@ def run_all():
 
 @app.local_entrypoint()
 def main():
-    out = run_all.remote()
-    print(out[-3000:])
+    # spawn() + `modal run --detach`: the local client exits immediately while
+    # the cloud function keeps running, so a client shutdown can never cancel
+    # the in-flight run (observed 2026-10-02: a blocking .remote() call was
+    # cancelled mid-training when the local CLI process was terminated).
+    run_all.spawn()
+    print("spawned detached run_all; cloud continues independently of this client")
     print("\nNEXT: fetch results with")
     print("  .venv/Scripts/python.exe -m modal run tools/modal_step10_m1.py::sync_down")
 

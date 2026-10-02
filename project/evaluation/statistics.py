@@ -104,7 +104,7 @@ def mcnemar_test(success_a, success_b) -> Dict[str, float]:
         return {"n01": n01, "n10": n10, "n_pairs": n_pairs,
                 "chi2": 0.0, "p_value": 1.0}
     chi2 = (abs(n01 - n10) - 1) ** 2 / (n01 + n10)
-    p = 0.5 * math.erfc(math.sqrt(max(chi2, 0.0) / 2.0))
+    p = math.erfc(math.sqrt(max(chi2, 0.0) / 2.0))
     return {"n01": n01, "n10": n10, "n_pairs": n_pairs,
             "chi2": float(chi2), "p_value": float(p)}
 

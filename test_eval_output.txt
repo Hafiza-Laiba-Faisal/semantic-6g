@@ -1,0 +1,152 @@
+﻿========================================================================
+STEP 7 EVALUATION HARNESS TESTS (Gates A-H)
+========================================================================
+PASS  [A]  (success=True, ttg=True, fd=True, avg=True, Eu=True, mse=True, sentinel=True)
+PASS  [B/k=7,n=50]  (CI=[0.069508, 0.261862])
+PASS  [B/k=0,n=10]  (CI=[0.000000, 0.277533])
+PASS  [B/k=10,n=10]  (CI=[0.722467, 1.000000])
+PASS  [B/n=0]  (n=0 handled safely)
+PASS  [C]  (mean=0.700000, std=2.087163)
+PASS  [D/task]  (noise bitwise=True, h bitwise=True)
+PASS  [D/digital]  (noise bitwise=True, h bitwise=True)
+PASS  [D/materialization-deterministic]
+PASS  [E]  (bitwise-identical metric tables across reruns)
+PASS  [F/schema-parity]  (metric methods: ['oracle', 'reconstruction', 'task']; digital k=3 -> infeasible)
+PASS  [F/infeasible-status]  (payload needs 12 channel uses but budget is k=2; reduce B (b)
+PASS  [G]  (mcnemar=True, paired-t=True)
+PASS  [1a] to_complex shape [B,2k] -> [B,k]  ((64, 14) -> (64, 7))
+PASS  [1b] real->complex->real round-trip exact
+PASS  [1c] no factor-of-2 scaling: ||z||^2 == ||x||^2 (ratio)
+      expected=1.0  empirical=1  tol=1e-06
+PASS  [1d] stacked I/Q order z_i = a_i + j*a_{k+i}
+PASS  [1e] odd last dim rejected
+PASS  [1f] NaN codeword rejected
+PASS  [2a] per-codeword avg power == P over k x B grid (max dev)
+      expected=0.0  empirical=4.17233e-07  tol=1e-05
+PASS  [2b] real-stacked path == complex path (max dev)
+      expected=0.0  empirical=1.19209e-07  tol=1e-06
+PASS  [2c] zero-energy codeword: finite output (eps guard)
+PASS  [3a(snr=0)] E[|n|^2] == sigma^2
+      expected=1.0  empirical=1.00115  tol=0.01
+PASS  [3b(snr=0)] Var(Re n) == sigma^2/2
+      expected=0.5  empirical=0.500053  tol=0.01
+PASS  [3b(snr=0)] Var(Im n) == sigma^2/2
+      expected=0.5  empirical=0.501094  tol=0.01
+PASS  [3a(snr=10)] E[|n|^2] == sigma^2
+      expected=0.1  empirical=0.100115  tol=0.01
+PASS  [3b(snr=10)] Var(Re n) == sigma^2/2
+      expected=0.05  empirical=0.0500053  tol=0.01
+PASS  [3b(snr=10)] Var(Im n) == sigma^2/2
+      expected=0.05  empirical=0.0501094  tol=0.01
+PASS  [4(snr=0)] empirical received SNR (dB)
+      expected=0.0  empirical=-0.00540111  tol=0.2
+PASS  [4(snr=5)] empirical received SNR (dB)
+      expected=5.0  empirical=4.9946  tol=0.2
+PASS  [4(snr=10)] empirical received SNR (dB)
+      expected=10.0  empirical=9.9946  tol=0.2
+PASS  [4(snr=20)] empirical received SNR (dB)
+      expected=20.0  empirical=19.9946  tol=0.2
+PASS  [4r] AWGN reproducible with fixed seed (bitwise)
+PASS  [4r] different seed -> different noise
+PASS  [4p] complex and real-stacked AWGN paths identical (max dev)
+      expected=0.0  empirical=0  tol=0.0
+PASS  [5a] E[|h|^2] == 1
+      expected=1.0  empirical=1.00118  tol=0.01
+PASS  [5b] Var(h_re) == 1/2 (CN(0,1))
+      expected=0.5  empirical=0.500707  tol=0.01
+PASS  [5b] Var(h_im) == 1/2 (CN(0,1))
+      expected=0.5  empirical=0.500472  tol=0.01
+PASS  [5b] E[h_re] == 0
+      expected=0.0  empirical=0.000333164  tol=0.01
+PASS  [5c] Rayleigh amplitude: P(|h| > 1) == e^-1
+      expected=0.36787944117144233  empirical=0.367714  tol=0.01
+PASS  [5c] Rayleigh amplitude: P(|h| > 2) == e^-4
+      expected=0.01831563888873418  empirical=0.018384  tol=0.005
+PASS  [5d] no post-sampling renormalization of h (batch means fluctuate, not pinned to 1)  (means 1.001212, 1.000527)
+PASS  [6a] within-codeword: y_i/z_i identical for all i (max dev)
+      expected=0.0  empirical=5.3312e-07  tol=0.0001
+PASS  [6b] cross-codeword |E[h1 conj(h2)]| ~ 0 (independence)
+      expected=0.0  empirical=0.00383054  tol=0.02
+PASS  [7a] noiseless ZF: equalized h*z recovers z (max rel err)
+      expected=0.0  empirical=1.93976e-07  tol=1e-05
+PASS  [7b] guard == exact ZF whenever |h|^2 >> eps (max dev)
+      expected=0.0  empirical=1.8128e-07  tol=1e-05
+PASS  [7c] |h|=1e-6: equalized output finite (eps_eq guard)
+PASS  [7d] real-stacked equalization path identical (max dev)
+      expected=0.0  empirical=0  tol=0.0
+PASS  [8a] Rayleigh reproducible with fixed seed (bitwise y, h)
+PASS  [9a] SNR math: 10 dB, P=1 -> sigma^2 == 0.1
+      expected=0.1  empirical=0.1  tol=1e-12
+PASS  [9a] SNR math: 0 dB, P=1 -> sigma^2 == 1.0
+      expected=1.0  empirical=1  tol=1e-12
+PASS  [9a] SNR round-trip sigma2_to_snr_db(snr_db_to_sigma2(s)) == s
+      expected=17.5  empirical=17.5  tol=1e-09
+PASS  [9b] complex noise uses sigma^2/2 per component (verified separately in 3b)
+PASS  [9c] Rayleigh uses E|h|^2 = 1, block fading, no h renormalization (verified in 5, 6)
+PASS  [9d] invalid power rejected
+PASS  [9e] invalid variance rejected
+PASS  [REG/Step-3]  (43/43)
+PASS  config: values, packet arithmetic, infeasibility handling
+PASS  normalization: round-trip exact within 1e-6 on 512 in-range states
+PASS  normalization: endpoints map to +-1; clipping verified both ways
+PASS  dynamics: matches closed-form double integrator within 1e-6
+PASS  dynamics: autograd reaches p, v and u with exact analytic grads
+PASS  dynamics: v_max rescaling correct; untouched inside the ball
+PASS  controller: matches u = clip(-Kp(p-pg) - Kv v, +-u_max)
+PASS  controller: saturation at +-u_max exact; gradient flows to estimate
+PASS  environment: success/first-entry semantics consistent (t_goal=41, d_final=0.004 m)
+PASS  environment: exit freezes the episode deterministically (A5)
+PASS  environment: seeds 42/43/44, d_min, finiteness, success consistency
+PASS  [REG/Step 0-2]  (11/11)
+PASS  [2]  (True)
+PASS  [5]  (True)
+PASS  [11/B=1,k=1]  ((1, 6)->(1, 2)->(1, 1)->(1, 6))
+PASS  [11/B=1,k=2]  ((1, 6)->(1, 4)->(1, 2)->(1, 6))
+PASS  [11/B=1,k=3]  ((1, 6)->(1, 6)->(1, 3)->(1, 6))
+PASS  [11/B=1,k=12]  ((1, 6)->(1, 24)->(1, 12)->(1, 6))
+PASS  [11/B=1,k=54]  ((1, 6)->(1, 108)->(1, 54)->(1, 6))
+PASS  [11/B=4,k=1]  ((4, 6)->(4, 2)->(4, 1)->(4, 6))
+PASS  [11/B=4,k=2]  ((4, 6)->(4, 4)->(4, 2)->(4, 6))
+PASS  [11/B=4,k=3]  ((4, 6)->(4, 6)->(4, 3)->(4, 6))
+PASS  [11/B=4,k=12]  ((4, 6)->(4, 24)->(4, 12)->(4, 6))
+PASS  [11/B=4,k=54]  ((4, 6)->(4, 108)->(4, 54)->(4, 6))
+PASS  [11/B=16,k=1]  ((16, 6)->(16, 2)->(16, 1)->(16, 6))
+PASS  [11/B=16,k=2]  ((16, 6)->(16, 4)->(16, 2)->(16, 6))
+PASS  [11/B=16,k=3]  ((16, 6)->(16, 6)->(16, 3)->(16, 6))
+PASS  [11/B=16,k=12]  ((16, 6)->(16, 24)->(16, 12)->(16, 6))
+PASS  [11/B=16,k=54]  ((16, 6)->(16, 108)->(16, 54)->(16, 6))
+PASS  [12a]  (per-codeword power == P through the model (max dev 2.98e-07))
+PASS  [12b]  (model uses the verified Step-3 power function (max dev 0.00e+00))
+PASS  [10/awgn]  (grad_fn=True, enc |g|=6.613e-01, dec |g|=5.969e-01, all finite)
+PASS  [10/rayleigh]  (grad_fn=True, enc |g|=4.125e-01, dec |g|=6.046e-01, all finite)
+PASS  [REG/Step-4 structural]  (21/21)
+PASS  [A: L_d (t0 excluded)]  (0.5000000 vs 0.5)
+PASS  [A: L_u]  (2.6562500 vs 2.65625)
+PASS  [A: L_v (t0 excluded)]  (7.0000000 vs 7.0)
+PASS  [A: L_T]  (0.0000000 vs 0)
+PASS  [A: total (frozen lambdas)]  (0.5000000 vs 0.5)
+PASS  [A: weighted sum (2,1,0.5,3)]  (7.1562500 vs 7.15625)
+PASS  [B: rollout shapes]  (pos (4, 11, 2), ctl (4, 10, 2), vel (4, 11, 2))
+PASS  [B: scalar loss + diagnostics]
+PASS  [C: stay-at-goal trajectory -> all components 0]  (L_d=0.00e+00 L_u=0.00e+00 L_v=0.00e+00 L_T=0.00e+00 total=0.00e+00)
+PASS  [D: closed-loop grads awgn]  (enc 8/8 params |g|=5.592e+02, dec 8/8 params |g|=3.413e+02)
+PASS  [D: closed-loop grads rayleigh]  (enc 8/8 params |g|=2.677e+02, dec 8/8 params |g|=1.968e+02)
+PASS  [E: controller manual state]  (u = [[1.0, 0.0]])
+PASS  [E: clip intact (hard clamp, no surrogate)]  (u = [[-2.0, -0.0]])
+PASS  [E: dynamics frozen update]  (p' = [[1.0549999475479126, 1.899999976158142]], v' = [[0.6000000238418579, -1.0]])
+PASS  [REG/Step-5 core]  (14/14)
+PASS  [A/B=1]  (delta=2.0000, max_err=0.99989 <= delta/2, endpoints+clip+roundtrip OK)
+PASS  [A/B=2]  (delta=0.6667, max_err=0.33333 <= delta/2, endpoints+clip+roundtrip OK)
+PASS  [A/B=3]  (delta=0.2857, max_err=0.14285 <= delta/2, endpoints+clip+roundtrip OK)
+PASS  [A/B=4]  (delta=0.1333, max_err=0.06667 <= delta/2, endpoints+clip+roundtrip OK)
+PASS  [A/B=8]  (delta=0.0078, max_err=0.00392 <= delta/2, endpoints+clip+roundtrip OK)
+PASS  [C/hand-vector]  (got [1, 1, 0, 1, 0, 0, 1, 1, 1, 1, 1, 0, 1, 1])
+PASS  [C/zero-tail]
+PASS  [C/noiseless-exact]  (0 bit errors in 7680)
+PASS  [C/corruption-recovery]  (0 residual bit errors after 1-symbol hit (Viterbi limits spread))
+PASS  [C/pack-order]  (component-major MSB-first round-trip exact)
+PASS  [C/msb-first]  (level 1 -> [0, 0, 0, 0, 0, 0, 0, 1])
+PASS  [REG/Step-6 quantizer+viterbi]  (11/11)
+
+========================================================================
+SUMMARY: 18/18 checks passed

@@ -12,3 +12,7 @@ __pycache__/
 # experiment outputs
 results/
 *.pth
+
+# modal fetch mirrors (binary checkpoints; reproducible via deterministic retrain)
+fetch_m1b/
+fetch_modal/

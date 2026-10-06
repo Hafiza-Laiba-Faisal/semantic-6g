@@ -8,7 +8,7 @@ Reconstruction DeepJSCC vs a conventional digital baseline under AWGN and
 slow Rayleigh fading with a frozen UAV navigation task.
 
 ## Current Status
-Step 10E — PASS (McNemar p-value corrected; MSE train/eval discrepancy resolved via matched-checkpoint diagnostic; M2 NOT STARTED pending user approval)
+Step 14 — M1 analysis & reporting COMPLETE (read-only; no re-training/re-evaluation). M3 + M4 COMPLETE. M2 EXECUTING: 34/60 neural runs done, k12 fully evaluated (12 train + 30 eval), k18/k24 training in progress under a self-driving watcher.
 
 ## Last Completed Step
 Step 10E — McNemar Correction and MSE Diagnostic Resolution (2026-10-02); see commit 88e107a and `.agents/tasks/step10e-report.md`.
@@ -21,10 +21,10 @@ Step 10E — McNemar Correction and MSE Diagnostic Resolution (2026-10-02); see 
 - Matched-checkpoint diagnostic created: `diagnostics/matched_mse_diagnostic.py`
 - **Critical limitation documented:** Low trajectory MSE does not imply successful navigation. In the matched diagnostic, all 500/500 episodes exited the workspace, yielding undefined MSE_active (NaN); the small MSE_full reflects metric structure (post-exit zero-error bypass), not task performance quality.
 
-**Repository state:** Commit 88e107a on local `main`, ahead of `origin/main` by 1 commit; PROJECT_STATUS.md update pending commit.
+**Repository state:** M2/M3/M4 executors, self-driving watcher, and 2026-10-06 reports committed on local `main`; user pushes via PAT.
 
 ## Next Step
-**M2 Execution** — Requires explicit user approval. M1 numerical audit is complete. M2–M5 remain NOT STARTED; M5 stays DEFERRED.
+**M2 completion** — k18/k24 training + all remaining evaluations run unattended (marker-idempotent watcher, 24h cap), then validate + finalize → `results/M2/step11_m2_summary.json`. **Open supervisor decision:** 2 deterministic-failed task cells (`M2_task_awgn_k30_seed43`, `M2_task_awgn_k54_seed42`; final-step `grads_finite=False` with otherwise-healthy finite checkpoints, frozen 9C has no in-policy retry) — conditional accept / protocol amendment / exclude. M5 stays DEFERRED. M1 analysis: `fyp_md_files/m1_analysis_2026-10-06.md`.
 
 ## Step 10E — McNemar Correction and MSE Diagnostic Resolution (2026-10-02)
 

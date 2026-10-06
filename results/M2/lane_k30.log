@@ -1,0 +1,20 @@
+== M2 training queue (frozen 9C budgets) ==  [lane: k30]
+[ 1/12] SKIP M2_reconstruction_awgn_k30_seed42 (already complete)
+[ 2/12] SKIP M2_reconstruction_awgn_k30_seed43 (already complete)
+[ 3/12] SKIP M2_reconstruction_awgn_k30_seed44 (already complete)
+[ 4/12] SKIP M2_task_awgn_k30_seed42 (already complete)
+[ 5/12] RETRAIN-after-FAILURE M2_task_awgn_k30_seed43 (frozen 9C policy: deterministic by seed+config)
+[ 5/12] TRAIN M2_task_awgn_k30_seed43 hash=d270bfa0b913b678 steps=3000 batch=256xT100
+[ 5/12] NUMERICAL ALERT M2_task_awgn_k30_seed43: nan_batches=0 grads_finite=False loss_finite=True
+[ 5/12] INCOMPLETE M2_task_awgn_k30_seed43 (nan_batches=0, grads_finite=False)
+[ 6/12] SKIP M2_task_awgn_k30_seed44 (already complete)
+[ 7/12] SKIP M2_reconstruction_rayleigh_k30_seed42 (already complete)
+[ 8/12] SKIP M2_reconstruction_rayleigh_k30_seed43 (already complete)
+[ 9/12] SKIP M2_reconstruction_rayleigh_k30_seed44 (already complete)
+[10/12] SKIP M2_task_rayleigh_k30_seed42 (already complete)
+[11/12] RETRAIN-after-INTERRUPTION M2_task_rayleigh_k30_seed43 (stale RUNNING marker; environmental; frozen 9C policy)
+[11/12] TRAIN M2_task_rayleigh_k30_seed43 hash=aa5897de2953b917 steps=3000 batch=256xT100
+[11/12] DONE  M2_task_rayleigh_k30_seed43  2193.5s  task_loss_final=1865.6730
+[12/12] TRAIN M2_task_rayleigh_k30_seed44 hash=03886b2ee701048b steps=3000 batch=256xT100
+[12/12] DONE  M2_task_rayleigh_k30_seed44  1846.6s  task_loss_final=187.8741
+-- training queue finished: trained=3 skipped=9 retrained=2 failed=1 train_wall=6195.2s

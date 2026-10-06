@@ -1,0 +1,12 @@
+== M4: secondary digital reference (B=8, k=54) — 10 conditions ==
+  EVAL awgn snr=  0.0 SR digital=0.9736 (22.6s)
+  EVAL awgn snr=  5.0 SR digital=1.0000 (22.9s)
+  EVAL awgn snr= 10.0 SR digital=1.0000 (23.1s)
+  EVAL awgn snr= 15.0 SR digital=1.0000 (22.6s)
+  EVAL awgn snr= 20.0 SR digital=1.0000 (24.6s)
+  EVAL rayleigh snr=  0.0 SR digital=0.7178 (25.1s)
+  EVAL rayleigh snr=  5.0 SR digital=0.9908 (28.3s)
+  EVAL rayleigh snr= 10.0 SR digital=0.9984 (25.6s)
+  EVAL rayleigh snr= 15.0 SR digital=0.9998 (25.1s)
+  EVAL rayleigh snr= 20.0 SR digital=1.0000 (28.1s)
+-- M4 eval finished: 10 new this session, 10/10 complete, eval_wall=248.0s

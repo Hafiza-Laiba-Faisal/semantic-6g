@@ -1,0 +1,75 @@
+{
+  "STEP": "12",
+  "experiment": "M3",
+  "status": "complete",
+  "definition": "Structural display: the matched-budget digital baseline cannot exist at k in {1,2,3} because the smallest packet needs 6B+6 = 7 channel uses at B=1. No training or evaluation exists for these cells BY DESIGN (audit 8.5); this is a feasibility boundary, not a measured result.",
+  "cells": [
+    {
+      "run_id": null,
+      "experiment": "M3",
+      "method": "digital",
+      "k": 1,
+      "bits_per_component": 1,
+      "required_channel_uses": 12,
+      "available_channel_uses": 1,
+      "deficit": 11,
+      "expected_infeasible": true,
+      "status": "infeasible-by-design",
+      "reason": "payload needs 12 channel uses but budget is k=1; reduce B (bits/component) or raise k"
+    },
+    {
+      "run_id": null,
+      "experiment": "M3",
+      "method": "digital",
+      "k": 2,
+      "bits_per_component": 1,
+      "required_channel_uses": 12,
+      "available_channel_uses": 2,
+      "deficit": 10,
+      "expected_infeasible": true,
+      "status": "infeasible-by-design",
+      "reason": "payload needs 12 channel uses but budget is k=2; reduce B (bits/component) or raise k"
+    },
+    {
+      "run_id": null,
+      "experiment": "M3",
+      "method": "digital",
+      "k": 3,
+      "bits_per_component": 1,
+      "required_channel_uses": 12,
+      "available_channel_uses": 3,
+      "deficit": 9,
+      "expected_infeasible": true,
+      "status": "infeasible-by-design",
+      "reason": "payload needs 12 channel uses but budget is k=3; reduce B (bits/component) or raise k"
+    }
+  ],
+  "m2_contrast_feasible_points": {
+    "12": {
+      "B": 1,
+      "feasible": true,
+      "n_info_bits": 12
+    },
+    "18": {
+      "B": 2,
+      "feasible": true,
+      "n_info_bits": 18
+    },
+    "24": {
+      "B": 3,
+      "feasible": true,
+      "n_info_bits": 24
+    },
+    "30": {
+      "B": 4,
+      "feasible": true,
+      "n_info_bits": 30
+    },
+    "54": {
+      "B": 8,
+      "feasible": true,
+      "n_info_bits": 54
+    }
+  },
+  "interpretation_note": "M3 is architectural infeasibility, NOT an empirical performance result. The M3/M4 distinction: M4's B=8 reference transmits the same 54 channel uses as the k=54 neural cells and is labeled SECONDARY."
+}

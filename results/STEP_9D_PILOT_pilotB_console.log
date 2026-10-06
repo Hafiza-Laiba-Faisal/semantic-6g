@@ -1,0 +1,29 @@
+== Pilot B: task awgn k=3 s42 steps=3000 batch_episodes=256 T=100 ==
+  [task awgn k=3] step    0 snr  19.9  total  3275.105  Ld  470.307  LT  1402.399  recon(diag) 0.2533  |g| 6.63e+04/7.99e+04
+  [task awgn k=3] step  500 snr  12.4  total   363.101  Ld   77.461  LT   142.820  recon(diag) 2.4404  |g| 5.15e+13/8.05e+12
+  [task awgn k=3] step 1000 snr   1.9  total  2621.599  Ld  350.710  LT  1135.444  recon(diag) 8.9357  |g| 3.60e+05/1.52e+05
+  [task awgn k=3] step 1500 snr   7.0  total   583.813  Ld  133.441  LT   225.186  recon(diag) 10.2774  |g| 1.88e+10/1.49e+09
+  [task awgn k=3] step 2000 snr   3.3  total   795.835  Ld  134.729  LT   330.553  recon(diag) 15.5344  |g| 1.22e+09/5.20e+07
+  [task awgn k=3] step 2500 snr   0.6  total  1879.276  Ld  262.197  LT   808.539  recon(diag) 21.6123  |g| 2.05e+07/1.66e+06
+  [task awgn k=3] step 2999 snr  14.7  total   911.972  Ld  162.471  LT   374.751  recon(diag) 36.0805  |g| 1.32e+13/1.26e+12
+{
+  "run_id": "STEP_9D_PILOT_task_awgn_k3_seed42",
+  "config_hash": "bd6f10e92d2aced3",
+  "wall_s": 1106.0,
+  "s_per_step": 0.3687,
+  "final_step": 3000,
+  "exit_status": "complete",
+  "nan_batches": 0
+}
+== checkpoint integrity ==
+PASS  [ckpt-exists]  (results\STEP_9D_PILOT\STEP_9D_PILOT\STEP_9D_PILOT_task_awgn_k3_seed42__bd6f10e92d2aced3\final_ckpt.pt)
+PASS  [ckpt-readable]
+PASS  [ckpt-config-matches]
+PASS  [ckpt-seed-matches]
+PASS  [ckpt-method-channel-k]
+PASS  [ckpt-final-step==budget]  (step=3000)
+PASS  [ckpt-model-params-finite]
+PASS  [ckpt-optimizer-policy]  (no optimizer_state saved (documented limitation; retraining is the recovery path and is deterministic by seed+config))
+PASS  [ckpt-identity-matches]  (STEP_9D_PILOT_task_awgn_k3_seed42)
+PASS  [ckpt-config-hash-matches]  (bd6f10e92d2aced3)
+PASS  [exit-status-complete]

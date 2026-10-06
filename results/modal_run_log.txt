@@ -1,0 +1,114 @@
+Note that running a local entrypoint in detached mode only keeps the last triggered Modal function alive after the parent process has been killed or disconnected.
+✓ Initialized. View run at 
+https://modal.com/apps/hafizalaibafaisal/main/ap-fWg5mDzlWR8CwqqCI4ku7x
+✓ Created objects.
+├── ✓ Uploaded C:\Users\EE LAB\Documents\semantic-6g\tools\modal_step10_m1.py
+├── ✓ Uploaded C:\Users\EE LAB\Documents\semantic-6g
+└── ✓ Created Function run_all.
+== cloud frozen-protocol verify ==
+== frozen Step-9C protocol verification (Step-10 gate) ==
+PASS  [recon_steps==5000]
+PASS  [task_steps==3000]
+PASS  [task_training_T==100]
+PASS  [batch_states==4096]
+PASS  [batch_episodes==256]
+PASS  [lr==1e-3]
+PASS  [grad_clip==1.0]
+PASS  [training_snr==U(0,20)/batch]
+PASS  [seeds=={42,43,44}]
+PASS  [test_seed==10042]
+PASS  [early_stopping==disabled]
+PASS  [M5==deferred+disabled]
+PASS  [m1_eval_grid=={0,2,...,20}]
+PASS  [m1_k_values=={1,2,3}]
+PASS  [task_lambdas_frozen]
+PASS  [n_test_episodes==5000]
+PASS  [goal_radius==0.5]
+PASS  [horizon_T_max==100_dt==0.1]
+PASS  [tool_has_no_M2_M3_M4_M5_paths]  (this tool implements M1 only)
+config.validate() OK
+PASS  [workload==36_training_runs]
+PASS  [workload==198_paired_eval_units]  (396 per-method rows == 198 paired units x 2 methods)
+PASS  [pooled_eval_conditions==132]
+ALL PASS
+
+== training: two disjoint channel lanes in parallel ==
+Container terminated due to preemption. Your Function will be restarted with the same input. For more details, see https://modal.com/docs/guide/preemption
+== cloud frozen-protocol verify ==
+== frozen Step-9C protocol verification (Step-10 gate) ==
+PASS  [recon_steps==5000]
+PASS  [task_steps==3000]
+PASS  [task_training_T==100]
+PASS  [batch_states==4096]
+PASS  [batch_episodes==256]
+PASS  [lr==1e-3]
+PASS  [grad_clip==1.0]
+PASS  [training_snr==U(0,20)/batch]
+PASS  [seeds=={42,43,44}]
+PASS  [test_seed==10042]
+PASS  [early_stopping==disabled]
+PASS  [M5==deferred+disabled]
+PASS  [m1_eval_grid=={0,2,...,20}]
+PASS  [m1_k_values=={1,2,3}]
+PASS  [task_lambdas_frozen]
+PASS  [n_test_episodes==5000]
+PASS  [goal_radius==0.5]
+PASS  [horizon_T_max==100_dt==0.1]
+PASS  [tool_has_no_M2_M3_M4_M5_paths]  (this tool implements M1 only)
+config.validate() OK
+PASS  [workload==36_training_runs]
+PASS  [workload==198_paired_eval_units]  (396 per-method rows == 198 paired units x 2 methods)
+PASS  [pooled_eval_conditions==132]
+ALL PASS
+
+== training: two disjoint channel lanes in parallel ==
+Stopping app - user stopped from CLI.
+Runner terminated.
+┌───────────────────── Traceback (most recent call last) ─────────────────────┐
+│ C:\Users\EE LAB\Documents\semantic-6g\tools/modal_step10_m1.py:136 in main  │
+│                                                                             │
+│   135 def main():                                                           │
+│ > 136 │   out = run_all.remote()                                            │
+│   137 │   print(out[-3000:])                                                │
+│                                                                             │
+│ C:\Users\EE                                                                 │
+│ LAB\AppData\Roaming\Python\Python311\site-packages\modal\_object.py:45 in   │
+│ wrapped                                                                     │
+│                                                                             │
+│    44 │   │   await self.hydrate()                                          │
+│ >  45 │   │   return await method(self, *args, **kwargs)                    │
+│    46                                                                       │
+│                                                                             │
+│ C:\Users\EE                                                                 │
+│ LAB\AppData\Roaming\Python\Python311\site-packages\modal\_functions.py:2067 │
+│ in remote                                                                   │
+│                                                                             │
+│   2066 │   │                                                                │
+│ > 2067 │   │   return await self._call_function(args, kwargs)               │
+│   2068                                                                      │
+│                                                                             │
+│ C:\Users\EE                                                                 │
+│ LAB\AppData\Roaming\Python\Python311\site-packages\modal\_functions.py:2004 │
+│ in _call_function                                                           │
+│                                                                             │
+│   2003 │   │                                                                │
+│ > 2004 │   │   return await invocation.run_function()                       │
+│   2005                                                                      │
+│                                                                             │
+│ C:\Users\EE                                                                 │
+│ LAB\AppData\Roaming\Python\Python311\site-packages\modal\_functions.py:496  │
+│ in run_function                                                             │
+│                                                                             │
+│    495 │   │   │   if await_response.output.result.status in TERMINAL_STATU │
+│ >  496 │   │   │   │   return await _process_result(                        │
+│    497 │   │   │   │   │   await_response.output.result, await_response.out │
+│                                                                             │
+│ C:\Users\EE                                                                 │
+│ LAB\AppData\Roaming\Python\Python311\site-packages\modal\_utils\function_ut │
+│ ils.py:574 in _process_result                                               │
+│                                                                             │
+│   573 │   │                                                                 │
+│ > 574 │   │   raise RemoteError(result.exception)                           │
+│   575                                                                       │
+└─────────────────────────────────────────────────────────────────────────────┘
+RemoteError

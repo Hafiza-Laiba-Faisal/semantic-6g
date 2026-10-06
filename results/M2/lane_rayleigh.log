@@ -1,0 +1,10 @@
+== M2 training queue (frozen 9C budgets) ==  [lane: rayleigh]
+[ 1/30] TRAIN M2_reconstruction_rayleigh_k12_seed42 hash=b7ac5dae2e5252f9 steps=5000 batch=4096
+[ 1/30] DONE  M2_reconstruction_rayleigh_k12_seed42  153.8s  loss_final=0.0221
+[ 2/30] TRAIN M2_reconstruction_rayleigh_k12_seed43 hash=47d8dfc5f36f69c9 steps=5000 batch=4096
+[ 2/30] DONE  M2_reconstruction_rayleigh_k12_seed43  144.9s  loss_final=0.0327
+[ 3/30] TRAIN M2_reconstruction_rayleigh_k12_seed44 hash=50f55b26d27d1daa steps=5000 batch=4096
+[ 3/30] DONE  M2_reconstruction_rayleigh_k12_seed44  137.7s  loss_final=0.0261
+[ 4/30] TRAIN M2_task_rayleigh_k12_seed42 hash=5f51792cbfbd6770 steps=3000 batch=256xT100
+[ 4/30] DONE  M2_task_rayleigh_k12_seed42  1599.6s  task_loss_final=561.9690
+[ 5/30] TRAIN M2_task_rayleigh_k12_seed43 hash=d762d7cd968318a8 steps=3000 batch=256xT100

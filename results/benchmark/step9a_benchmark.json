@@ -1,0 +1,67 @@
+{
+  "environment": {
+    "platform": "Windows-10-10.0.17763-SP0",
+    "python": "3.9.7",
+    "torch": "2.4.1+cpu",
+    "cuda_available": false,
+    "cuda_version": null,
+    "cpu": "Intel64 Family 6 Model 158 Stepping 10, GenuineIntel",
+    "cpu_count_logical": 12,
+    "torch_num_threads": 6,
+    "ram_total_gb": 15.83,
+    "ram_available_gb": 7.96,
+    "disk_free_gb": 219.81,
+    "code_size_mb": 2.61,
+    "results_size_mb": 0.45
+  },
+  "benchmarks": [
+    {
+      "name": "recon_awgn_k3",
+      "wall_s": 0.278,
+      "units": 61440,
+      "s_per_unit": 0.0
+    },
+    {
+      "name": "recon_rayleigh_k3",
+      "wall_s": 0.316,
+      "units": 61440,
+      "s_per_unit": 1e-05
+    },
+    {
+      "name": "recon_awgn_k54",
+      "wall_s": 0.43,
+      "units": 61440,
+      "s_per_unit": 1e-05
+    },
+    {
+      "name": "task_awgn_k3",
+      "wall_s": 0.838,
+      "units": 23040,
+      "s_per_unit": 4e-05
+    },
+    {
+      "name": "task_rayleigh_k3",
+      "wall_s": 0.943,
+      "units": 23040,
+      "s_per_unit": 4e-05
+    },
+    {
+      "name": "task_awgn_k54_probe",
+      "wall_s": 0.568,
+      "units": 12480,
+      "s_per_unit": 5e-05
+    },
+    {
+      "name": "eval_digital_rayleigh_k54_x100ep",
+      "wall_s": 1.561,
+      "units": 10000,
+      "s_per_unit": 0.00016
+    },
+    {
+      "name": "eval_neural_awgn_k3_x250ep",
+      "wall_s": 0.335,
+      "units": 50000,
+      "s_per_unit": 1e-05
+    }
+  ]
+}

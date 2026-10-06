@@ -1,0 +1,10 @@
+== M2 training queue (frozen 9C budgets) ==  [lane: k18]
+[ 1/12] TRAIN M2_reconstruction_awgn_k18_seed42 hash=d30534b06082cab4 steps=5000 batch=4096
+[ 1/12] DONE  M2_reconstruction_awgn_k18_seed42  180.0s  loss_final=0.0027
+[ 2/12] TRAIN M2_reconstruction_awgn_k18_seed43 hash=762a86d595e4ee1b steps=5000 batch=4096
+[ 2/12] DONE  M2_reconstruction_awgn_k18_seed43  198.4s  loss_final=0.0045
+[ 3/12] TRAIN M2_reconstruction_awgn_k18_seed44 hash=12f152999392feaf steps=5000 batch=4096
+[ 3/12] DONE  M2_reconstruction_awgn_k18_seed44  168.3s  loss_final=0.0033
+[ 4/12] TRAIN M2_task_awgn_k18_seed42 hash=fe10bf4900fa3a85 steps=3000 batch=256xT100
+[ 4/12] DONE  M2_task_awgn_k18_seed42  1610.0s  task_loss_final=1807.6572
+[ 5/12] TRAIN M2_task_awgn_k18_seed43 hash=347dd85341970c91 steps=3000 batch=256xT100

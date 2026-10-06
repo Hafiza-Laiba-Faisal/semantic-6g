@@ -1,0 +1,46 @@
+== M2 training queue (frozen 9C budgets) ==  [lane: k12]
+[ 1/12] SKIP M2_reconstruction_awgn_k12_seed42 (already complete)
+[ 2/12] SKIP M2_reconstruction_awgn_k12_seed43 (already complete)
+[ 3/12] SKIP M2_reconstruction_awgn_k12_seed44 (already complete)
+[ 4/12] SKIP M2_task_awgn_k12_seed42 (already complete)
+[ 5/12] RETRAIN-after-INTERRUPTION M2_task_awgn_k12_seed43 (stale RUNNING marker; environmental; frozen 9C policy)
+[ 5/12] TRAIN M2_task_awgn_k12_seed43 hash=f0f9701cbc18a55c steps=3000 batch=256xT100
+[ 5/12] DONE  M2_task_awgn_k12_seed43  1746.1s  task_loss_final=4459.4263
+[ 6/12] TRAIN M2_task_awgn_k12_seed44 hash=f355430c45242b95 steps=3000 batch=256xT100
+[ 6/12] DONE  M2_task_awgn_k12_seed44  1978.1s  task_loss_final=261.0693
+[ 7/12] SKIP M2_reconstruction_rayleigh_k12_seed42 (already complete)
+[ 8/12] SKIP M2_reconstruction_rayleigh_k12_seed43 (already complete)
+[ 9/12] SKIP M2_reconstruction_rayleigh_k12_seed44 (already complete)
+[10/12] SKIP M2_task_rayleigh_k12_seed42 (already complete)
+[11/12] RETRAIN-after-INTERRUPTION M2_task_rayleigh_k12_seed43 (stale RUNNING marker; environmental; frozen 9C policy)
+[11/12] TRAIN M2_task_rayleigh_k12_seed43 hash=d762d7cd968318a8 steps=3000 batch=256xT100
+== M2 training queue (frozen 9C budgets) ==  [lane: k12]
+[ 1/12] SKIP M2_reconstruction_awgn_k12_seed42 (already complete)
+[ 2/12] SKIP M2_reconstruction_awgn_k12_seed43 (already complete)
+[ 3/12] SKIP M2_reconstruction_awgn_k12_seed44 (already complete)
+[ 4/12] SKIP M2_task_awgn_k12_seed42 (already complete)
+[ 5/12] SKIP M2_task_awgn_k12_seed43 (already complete)
+[ 6/12] SKIP M2_task_awgn_k12_seed44 (already complete)
+[ 7/12] SKIP M2_reconstruction_rayleigh_k12_seed42 (already complete)
+[ 8/12] SKIP M2_reconstruction_rayleigh_k12_seed43 (already complete)
+[ 9/12] SKIP M2_reconstruction_rayleigh_k12_seed44 (already complete)
+[10/12] SKIP M2_task_rayleigh_k12_seed42 (already complete)
+[11/12] RETRAIN-after-INTERRUPTION M2_task_rayleigh_k12_seed43 (stale RUNNING marker; environmental; frozen 9C policy)
+[11/12] TRAIN M2_task_rayleigh_k12_seed43 hash=d762d7cd968318a8 steps=3000 batch=256xT100
+== M2 training queue (frozen 9C budgets) ==  [lane: k12]
+[ 1/12] SKIP M2_reconstruction_awgn_k12_seed42 (already complete)
+[ 2/12] SKIP M2_reconstruction_awgn_k12_seed43 (already complete)
+[ 3/12] SKIP M2_reconstruction_awgn_k12_seed44 (already complete)
+[ 4/12] SKIP M2_task_awgn_k12_seed42 (already complete)
+[ 5/12] SKIP M2_task_awgn_k12_seed43 (already complete)
+[ 6/12] SKIP M2_task_awgn_k12_seed44 (already complete)
+[ 7/12] SKIP M2_reconstruction_rayleigh_k12_seed42 (already complete)
+[ 8/12] SKIP M2_reconstruction_rayleigh_k12_seed43 (already complete)
+[ 9/12] SKIP M2_reconstruction_rayleigh_k12_seed44 (already complete)
+[10/12] SKIP M2_task_rayleigh_k12_seed42 (already complete)
+[11/12] RETRAIN-after-INTERRUPTION M2_task_rayleigh_k12_seed43 (stale RUNNING marker; environmental; frozen 9C policy)
+[11/12] TRAIN M2_task_rayleigh_k12_seed43 hash=d762d7cd968318a8 steps=3000 batch=256xT100
+[11/12] DONE  M2_task_rayleigh_k12_seed43  2137.8s  task_loss_final=476.9323
+[12/12] TRAIN M2_task_rayleigh_k12_seed44 hash=aa342e7584618ff4 steps=3000 batch=256xT100
+[12/12] DONE  M2_task_rayleigh_k12_seed44  1978.8s  task_loss_final=327.8300
+-- training queue finished: trained=2 skipped=10 retrained=1 failed=0 train_wall=4116.5s

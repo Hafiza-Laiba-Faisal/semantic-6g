@@ -1,0 +1,28 @@
+== M1 training queue (frozen 9C budgets) ==  [lane: rayleigh]
+[ 1/18] SKIP M1_reconstruction_rayleigh_k1_seed42 (already complete)
+[ 2/18] SKIP M1_reconstruction_rayleigh_k1_seed43 (already complete)
+[ 3/18] SKIP M1_reconstruction_rayleigh_k1_seed44 (already complete)
+[ 4/18] SKIP M1_task_rayleigh_k1_seed42 (already complete)
+[ 5/18] SKIP M1_task_rayleigh_k1_seed43 (already complete)
+[ 6/18] SKIP M1_task_rayleigh_k1_seed44 (already complete)
+[ 7/18] SKIP M1_reconstruction_rayleigh_k2_seed42 (already complete)
+[ 8/18] SKIP M1_reconstruction_rayleigh_k2_seed43 (already complete)
+[ 9/18] SKIP M1_reconstruction_rayleigh_k2_seed44 (already complete)
+[10/18] SKIP M1_task_rayleigh_k2_seed42 (already complete)
+[11/18] SKIP M1_task_rayleigh_k2_seed43 (already complete)
+[12/18] RETRAIN-after-INTERRUPTION M1_task_rayleigh_k2_seed44 (stale RUNNING marker; environmental; frozen 9C policy)
+[12/18] TRAIN M1_task_rayleigh_k2_seed44 hash=9e4af76b8a5cdb51 steps=3000 batch=256xT100
+[12/18] DONE  M1_task_rayleigh_k2_seed44  1631.9s  task_loss_final=1580.7892
+[13/18] TRAIN M1_reconstruction_rayleigh_k3_seed42 hash=6cdc1fe5d4495161 steps=5000 batch=4096
+[13/18] DONE  M1_reconstruction_rayleigh_k3_seed42  118.7s  loss_final=0.0596
+[14/18] TRAIN M1_reconstruction_rayleigh_k3_seed43 hash=093063533fe00535 steps=5000 batch=4096
+[14/18] DONE  M1_reconstruction_rayleigh_k3_seed43  121.5s  loss_final=0.0789
+[15/18] TRAIN M1_reconstruction_rayleigh_k3_seed44 hash=9b08ae0c69fb4124 steps=5000 batch=4096
+[15/18] DONE  M1_reconstruction_rayleigh_k3_seed44  124.7s  loss_final=0.0648
+[16/18] TRAIN M1_task_rayleigh_k3_seed42 hash=e8b9ffffbb353c6d steps=3000 batch=256xT100
+[16/18] DONE  M1_task_rayleigh_k3_seed42  1668.3s  task_loss_final=1324.7971
+[17/18] TRAIN M1_task_rayleigh_k3_seed43 hash=c690e502fbd59f50 steps=3000 batch=256xT100
+[17/18] DONE  M1_task_rayleigh_k3_seed43  1454.2s  task_loss_final=2572.8643
+[18/18] TRAIN M1_task_rayleigh_k3_seed44 hash=ed0fad75cb2ca4d4 steps=3000 batch=256xT100
+[18/18] DONE  M1_task_rayleigh_k3_seed44  1185.0s  task_loss_final=1288.0168
+-- training queue finished: trained=7 skipped=11 retrained=1 failed=0 train_wall=6304.3s

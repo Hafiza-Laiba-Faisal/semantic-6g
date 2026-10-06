@@ -1,0 +1,23 @@
+{
+  "STEP": "14",
+  "purpose": "M1 analysis tables (read-only derivation)",
+  "source": "results/M1/step10_m1_summary.json + 198 eval unit JSONs",
+  "mcnemar_audit": {
+    "cells": 198,
+    "recon_wins": 198,
+    "significant_corrected_p_lt_0.05": 198,
+    "max_corrected_p": 1.0371840148597786e-26,
+    "max_corrected_p_cell": "k1_rayleigh_s43@0dB",
+    "n01_range": [
+      0,
+      387
+    ],
+    "n10_range": [
+      471,
+      1563
+    ],
+    "correction": "corrected p = 2 x stored p (Step-10E)"
+  },
+  "per_seed_agreement_conditions": 66,
+  "of_conditions": 66
+}

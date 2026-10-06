@@ -1,0 +1,34 @@
+== M1 training queue (frozen 9C budgets) ==
+[ 1/36] TRAIN M1_reconstruction_awgn_k1_seed42 hash=cf2dba78c95b01db steps=5000 batch=4096
+[ 1/36] DONE  M1_reconstruction_awgn_k1_seed42  71.5s  loss_final=0.1200
+[ 2/36] TRAIN M1_reconstruction_awgn_k1_seed43 hash=f26c56c9f653a6af steps=5000 batch=4096
+[ 2/36] DONE  M1_reconstruction_awgn_k1_seed43  70.6s  loss_final=0.1400
+[ 3/36] TRAIN M1_reconstruction_awgn_k1_seed44 hash=a87f491c1c9fbf61 steps=5000 batch=4096
+[ 3/36] DONE  M1_reconstruction_awgn_k1_seed44  69.8s  loss_final=0.1288
+[ 4/36] TRAIN M1_task_awgn_k1_seed42 hash=7a41dabe6895102d steps=3000 batch=256xT100
+[ 4/36] DONE  M1_task_awgn_k1_seed42  1006.5s  task_loss_final=4096.8721
+[ 5/36] TRAIN M1_task_awgn_k1_seed43 hash=9183dc681d07c9fe steps=3000 batch=256xT100
+[ 5/36] DONE  M1_task_awgn_k1_seed43  1021.6s  task_loss_final=720.7753
+[ 6/36] TRAIN M1_task_awgn_k1_seed44 hash=d8b93cf96b86ec36 steps=3000 batch=256xT100
+[ 6/36] DONE  M1_task_awgn_k1_seed44  1120.2s  task_loss_final=366.9846
+[ 7/36] TRAIN M1_reconstruction_rayleigh_k1_seed42 hash=71fcd658537401ce steps=5000 batch=4096
+[ 7/36] DONE  M1_reconstruction_rayleigh_k1_seed42  82.0s  loss_final=0.1468
+[ 8/36] TRAIN M1_reconstruction_rayleigh_k1_seed43 hash=ef30d49cb9a01f38 steps=5000 batch=4096
+[ 8/36] DONE  M1_reconstruction_rayleigh_k1_seed43  75.6s  loss_final=0.1683
+[ 9/36] TRAIN M1_reconstruction_rayleigh_k1_seed44 hash=9f1626b4836a9427 steps=5000 batch=4096
+[ 9/36] DONE  M1_reconstruction_rayleigh_k1_seed44  73.7s  loss_final=0.1577
+[10/36] TRAIN M1_task_rayleigh_k1_seed42 hash=1bdb063cef0b930f steps=3000 batch=256xT100
+[10/36] DONE  M1_task_rayleigh_k1_seed42  1083.6s  task_loss_final=2096.0706
+[11/36] TRAIN M1_task_rayleigh_k1_seed43 hash=c8d19cec249d9467 steps=3000 batch=256xT100
+[11/36] DONE  M1_task_rayleigh_k1_seed43  1071.9s  task_loss_final=327.4061
+[12/36] TRAIN M1_task_rayleigh_k1_seed44 hash=9715d77a9055ed3f steps=3000 batch=256xT100
+[12/36] DONE  M1_task_rayleigh_k1_seed44  1088.2s  task_loss_final=316.7672
+[13/36] TRAIN M1_reconstruction_awgn_k2_seed42 hash=0c853570bc0e2a38 steps=5000 batch=4096
+[13/36] DONE  M1_reconstruction_awgn_k2_seed42  84.8s  loss_final=0.0420
+[14/36] TRAIN M1_reconstruction_awgn_k2_seed43 hash=87a1c382e96015fa steps=5000 batch=4096
+[14/36] DONE  M1_reconstruction_awgn_k2_seed43  85.4s  loss_final=0.0603
+[15/36] TRAIN M1_reconstruction_awgn_k2_seed44 hash=052f4e460e93f5b6 steps=5000 batch=4096
+[15/36] DONE  M1_reconstruction_awgn_k2_seed44  82.7s  loss_final=0.0499
+[16/36] TRAIN M1_task_awgn_k2_seed42 hash=1e0ff240c5dbed6a steps=3000 batch=256xT100
+[16/36] DONE  M1_task_awgn_k2_seed42  1112.6s  task_loss_final=1011.6961
+[17/36] TRAIN M1_task_awgn_k2_seed43 hash=e8facc768351b473 steps=3000 batch=256xT100

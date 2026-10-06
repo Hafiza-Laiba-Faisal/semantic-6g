@@ -1,0 +1,67 @@
+{
+  "preflight": "PASS",
+  "failures": [],
+  "counts": {
+    "M1_training_runs": 36,
+    "M1_eval_conditions": 132,
+    "M2_neural_training_runs": 60,
+    "M2_digital_eval_only_seeds": 30,
+    "M2_eval_conditions": 150,
+    "M3_infeasible_cells": 3,
+    "M4_secondary_eval_conditions": 10,
+    "M5_infrastructure_only": 0
+  },
+  "table": {
+    "M1": {
+      "neural_training_runs": 36,
+      "eval_cells_neural": 132,
+      "digital_eval_cells": 0,
+      "infeasible": 0,
+      "secondary": 0
+    },
+    "M2": {
+      "neural_training_runs": 60,
+      "eval_cells_neural": 100,
+      "digital_eval_cells": 50,
+      "infeasible": 0,
+      "secondary": 0
+    },
+    "M3": {
+      "neural_training_runs": 0,
+      "eval_cells_neural": 0,
+      "digital_eval_cells": 0,
+      "infeasible": 3,
+      "secondary": 0
+    },
+    "M4": {
+      "neural_training_runs": 0,
+      "eval_cells_neural": 0,
+      "digital_eval_cells": 10,
+      "infeasible": 0,
+      "secondary": 10
+    },
+    "M5": {
+      "neural_training_runs": 0,
+      "eval_cells_neural": 0,
+      "digital_eval_cells": 0,
+      "infeasible": 0,
+      "secondary": 0
+    }
+  },
+  "total_training_runs": 96,
+  "total_eval_cells": 292,
+  "matrix_valid": true,
+  "matrix_warnings": [
+    "cell[129] M4/digital/awgn/k=54: M4 must remain labeled SECONDARY in every table/legend (audit 8.7)",
+    "cell[130] M4/digital/rayleigh/k=54: M4 must remain labeled SECONDARY in every table/legend (audit 8.7)",
+    "cell[131] M5/task/awgn/k=3: M5 is ablation infrastructure only - no ablation cells are invented in this step"
+  ],
+  "trainable_cells": 97,
+  "digital_eval_cells": 32,
+  "infeasible_cells": 3,
+  "open_decisions": [
+    "full-scale training budget (steps/epochs) not yet frozen",
+    "M5 ablation specification incomplete -> NOT EXECUTABLE YET"
+  ],
+  "push_pending": "step8 commits awaiting user PAT push"
+}

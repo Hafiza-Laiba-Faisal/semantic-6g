@@ -1,0 +1,14 @@
+== M2 paired evaluation queue (Step-7 harness, 3 methods, 5000 episodes) ==  [lane: rayleigh]
+-- per-run checkpoint integrity gate --
+REFUSED: M2_reconstruction_rayleigh_k18_seed42: not complete
+REFUSED: M2_reconstruction_rayleigh_k18_seed43: not complete
+REFUSED: M2_reconstruction_rayleigh_k18_seed44: not complete
+REFUSED: M2_task_rayleigh_k18_seed42: not complete
+REFUSED: M2_task_rayleigh_k18_seed43: not complete
+REFUSED: M2_task_rayleigh_k18_seed44: not complete
+REFUSED: M2_reconstruction_rayleigh_k24_seed42: not complete
+REFUSED: M2_reconstruction_rayleigh_k24_seed43: not complete
+REFUSED: M2_reconstruction_rayleigh_k24_seed44: not complete
+REFUSED: M2_task_rayleigh_k24_seed42: not complete
+REFUSED: M2_task_rayleigh_k24_seed43: not complete
+REFUSED: M2_task_rayleigh_k24_seed44: not complete

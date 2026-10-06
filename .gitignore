@@ -9,10 +9,6 @@ __pycache__/
 # agent-local state
 .freebuff/
 
-# experiment outputs
-results/
+# large legacy torch binaries only (current checkpoints are small .pt files,
+# intentionally tracked as a private-repo recovery backup)
 *.pth
-
-# modal fetch mirrors (binary checkpoints; reproducible via deterministic retrain)
-fetch_m1b/
-fetch_modal/

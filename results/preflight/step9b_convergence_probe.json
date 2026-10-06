@@ -1,0 +1,54 @@
+{
+  "recon_awgn": {
+    "first": 0.24246175587177277,
+    "q25": 0.03946203957684338,
+    "mid": 0.02448889540624805,
+    "q75": 0.02783484299480915,
+    "last": 0.01920514926314354,
+    "late_vs_mid_pct": 3.11,
+    "n_steps": 1000,
+    "wall_s_per_step": 0.0106,
+    "nan_batches": 0
+  },
+  "recon_rayleigh": {
+    "first": 0.24291476607322693,
+    "q25": 0.0907063732072711,
+    "mid": 0.04867822881322354,
+    "q75": 0.05265747486799956,
+    "last": 0.046694811433553696,
+    "late_vs_mid_pct": 1.22,
+    "n_steps": 1000,
+    "wall_s_per_step": 0.0104,
+    "nan_batches": 0
+  },
+  "task_awgn": {
+    "first": 2906.09033203125,
+    "q25": 402.73756674173717,
+    "mid": 17.127983411153156,
+    "q75": 55.668614738865905,
+    "last": 20.8355770111084,
+    "late_vs_mid_pct": 26.97,
+    "n_steps": 150,
+    "wall_s_per_step_T100": 0.2548,
+    "nan_batches": 0,
+    "eval_before_total": 3615.426025390625,
+    "eval_after_total": 18.068225860595703,
+    "eval_before_success": 0.03125,
+    "eval_after_success": 0.875
+  },
+  "task_rayleigh": {
+    "first": 2929.44140625,
+    "q25": 299.84197467082254,
+    "mid": 23.664807033538818,
+    "q75": 43.71488558618646,
+    "last": 21.45674705505371,
+    "late_vs_mid_pct": -19.34,
+    "n_steps": 150,
+    "wall_s_per_step_T100": 0.2919,
+    "nan_batches": 0,
+    "eval_before_total": 3717.292724609375,
+    "eval_after_total": 19.284639358520508,
+    "eval_before_success": 0.0,
+    "eval_after_success": 0.46875
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "STEP_9D_PILOT": true,
+  "non_scientific": true,
+  "run_id": "STEP_9D_PILOT_reconstruction_awgn_k3_seed42",
+  "config_hash": "fb564626b2e8603f",
+  "config": {
+    "experiment": "STEP_9D_PILOT",
+    "method": "reconstruction",
+    "channel": "awgn",
+    "k": 3,
+    "training_seed": 42,
+    "train_steps": 5000,
+    "batch_states": 4096,
+    "batch_episodes": 256,
+    "t_max": 100,
+    "lr": 0.001,
+    "batch": "states4096"
+  },
+  "wall_s": 90.1,
+  "s_per_step": 0.018,
+  "final_step": 5000,
+  "nan_batches": 0,
+  "grads_finite": true,
+  "exit_status": "complete",
+  "checkpoint": "results\\STEP_9D_PILOT\\STEP_9D_PILOT\\STEP_9D_PILOT_reconstruction_awgn_k3_seed42__fb564626b2e8603f\\final_ckpt.pt",
+  "optimizer_state_saved": false,
+  "optimizer_note": "trainer-internal optimizer not exposed (documented Step-8 limitation); reproduction is by seed+config",
+  "loss_reduction_pct": 89.56644693122605,
+  "loss_initial": 0.2421053797006607,
+  "loss_final": 0.025260193273425102
+}

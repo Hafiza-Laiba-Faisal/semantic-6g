@@ -1,0 +1,60 @@
+{
+  "STEP_9D_PILOT": true,
+  "non_scientific": true,
+  "run_id": "STEP_9D_PILOT_task_awgn_k3_seed42",
+  "config_hash": "bd6f10e92d2aced3",
+  "config": {
+    "experiment": "STEP_9D_PILOT",
+    "method": "task",
+    "channel": "awgn",
+    "k": 3,
+    "training_seed": 42,
+    "train_steps": 3000,
+    "batch_states": 4096,
+    "batch_episodes": 256,
+    "t_max": 100,
+    "lr": 0.001,
+    "batch": "episodes256_T100"
+  },
+  "wall_s": 1088.0,
+  "s_per_step": 0.3627,
+  "final_step": 3000,
+  "nan_batches": 0,
+  "grads_finite": true,
+  "exit_status": "complete",
+  "checkpoint": "results\\STEP_9D_PILOT\\STEP_9D_PILOT\\STEP_9D_PILOT_task_awgn_k3_seed42\\final_ckpt.pt",
+  "optimizer_state_saved": false,
+  "optimizer_note": "trainer-internal optimizer not exposed (documented Step-8 limitation); reproduction is by seed+config",
+  "eval_snr_db": 10.0,
+  "eval_episodes": 256,
+  "task_loss_initial": 3275.10546875,
+  "task_loss_final": 911.971923828125,
+  "recon_mse_diag_initial": 0.25332367420196533,
+  "recon_mse_diag_final": 36.08052444458008,
+  "eval_before": {
+    "total": 2839.86279296875,
+    "L_d": 398.2425842285156,
+    "L_u": 2.2281556129455566,
+    "L_v": 12.869511604309082,
+    "L_T": 1220.81005859375,
+    "final_distance_mean": 32.58087921142578,
+    "min_distance_mean": 7.52079963684082,
+    "success_rate": 0.01953125
+  },
+  "eval_after": {
+    "total": 780.8198852539062,
+    "L_d": 145.81329345703125,
+    "L_u": 7.927877426147461,
+    "L_v": 6.934018611907959,
+    "L_T": 317.5032958984375,
+    "final_distance_mean": 14.571512222290039,
+    "min_distance_mean": 6.3284077644348145,
+    "success_rate": 0.0390625
+  },
+  "lambdas": {
+    "ld": 1.0,
+    "lu": 0.0,
+    "lv": 0.0,
+    "lT": 2.0
+  }
+}

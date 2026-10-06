@@ -1,0 +1,82 @@
+{
+  "STEP": "10",
+  "experiment": "M1",
+  "unit": "k1_rayleigh_seed43",
+  "k": 1,
+  "channel": "rayleigh",
+  "seed": 43,
+  "snr_db": 0.0,
+  "test_seed": 10042,
+  "episodes": 5000,
+  "t_max": 100,
+  "paired": true,
+  "wall_s": 2.0,
+  "aggregate_reconstruction": {
+    "episodes": 5000,
+    "success_count": 507,
+    "failure_count": 4493,
+    "success_rate": 0.1014,
+    "final_distance_mean": 5.048634052276611,
+    "avg_distance_mean": 5.97599983215332,
+    "control_effort_mean": 659.9267578125,
+    "min_distance_mean": 3.4577465057373047,
+    "mse_mean": 0.12745434045791626,
+    "ttg_success_mean": 47.00788879394531,
+    "ttg_success_median": 44.0
+  },
+  "aggregate_task": {
+    "episodes": 5000,
+    "success_count": 226,
+    "failure_count": 4774,
+    "success_rate": 0.0452,
+    "final_distance_mean": 6.819392204284668,
+    "avg_distance_mean": 7.212254047393799,
+    "control_effort_mean": 775.4781494140625,
+    "min_distance_mean": 5.610671520233154,
+    "mse_mean": 0.7601239085197449,
+    "ttg_success_mean": 45.47344970703125,
+    "ttg_success_median": 36.0
+  },
+  "wilson_reconstruction": {
+    "wilson_low": 0.09333670876034915,
+    "wilson_high": 0.1100753032302504,
+    "p_hat": 0.1014,
+    "success_count": 507,
+    "total": 5000
+  },
+  "wilson_task": {
+    "wilson_low": 0.03978255839785057,
+    "wilson_high": 0.051315743291373395,
+    "p_hat": 0.0452,
+    "success_count": 226,
+    "total": 5000
+  },
+  "mcnemar_task_vs_recon": {
+    "n01": 202,
+    "n10": 483,
+    "n_pairs": 5000,
+    "chi2": 114.45255474452554,
+    "p_value": 5.185920074298893e-27
+  },
+  "paired_t_final_distance_task_vs_recon": {
+    "mean_diff": 1.7707580398522318,
+    "t_stat": 25.599969813858216,
+    "dof": 4999,
+    "p_value": 6.251999509426285e-136,
+    "n": 5000
+  },
+  "paired_t_avg_distance_task_vs_recon": {
+    "mean_diff": 1.2362536039352416,
+    "t_stat": 26.79879606597429,
+    "dof": 4999,
+    "p_value": 6.102905653825157e-148,
+    "n": 5000
+  },
+  "paired_t_control_effort_task_vs_recon": {
+    "mean_diff": 115.5513676147461,
+    "t_stat": 81.14740109450962,
+    "dof": 4999,
+    "p_value": 0.0,
+    "n": 5000
+  }
+}

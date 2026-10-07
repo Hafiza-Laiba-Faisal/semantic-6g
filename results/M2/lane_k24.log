@@ -8,3 +8,19 @@
 [ 4/12] TRAIN M2_task_awgn_k24_seed42 hash=11194fd4b5bf9fa3 steps=3000 batch=256xT100
 [ 4/12] DONE  M2_task_awgn_k24_seed42  1631.5s  task_loss_final=4259.6113
 [ 5/12] TRAIN M2_task_awgn_k24_seed43 hash=28eb490e2e2bb540 steps=3000 batch=256xT100
+[ 5/12] DONE  M2_task_awgn_k24_seed43  1673.0s  task_loss_final=2175.2324
+[ 6/12] TRAIN M2_task_awgn_k24_seed44 hash=dee4a3e84d046d08 steps=3000 batch=256xT100
+[ 6/12] DONE  M2_task_awgn_k24_seed44  1666.2s  task_loss_final=2600.8193
+[ 7/12] TRAIN M2_reconstruction_rayleigh_k24_seed42 hash=307ece13a3426cce steps=5000 batch=4096
+[ 7/12] DONE  M2_reconstruction_rayleigh_k24_seed42  188.1s  loss_final=0.0134
+[ 8/12] TRAIN M2_reconstruction_rayleigh_k24_seed43 hash=66db5884ab958699 steps=5000 batch=4096
+[ 8/12] DONE  M2_reconstruction_rayleigh_k24_seed43  169.7s  loss_final=0.0191
+[ 9/12] TRAIN M2_reconstruction_rayleigh_k24_seed44 hash=6564e5bb95954c33 steps=5000 batch=4096
+[ 9/12] DONE  M2_reconstruction_rayleigh_k24_seed44  138.8s  loss_final=0.0156
+[10/12] TRAIN M2_task_rayleigh_k24_seed42 hash=f744e2c7fd36a449 steps=3000 batch=256xT100
+[10/12] DONE  M2_task_rayleigh_k24_seed42  1759.6s  task_loss_final=3461.4016
+[11/12] TRAIN M2_task_rayleigh_k24_seed43 hash=11e25f88979afa8e steps=3000 batch=256xT100
+[11/12] DONE  M2_task_rayleigh_k24_seed43  1744.0s  task_loss_final=136.6495
+[12/12] TRAIN M2_task_rayleigh_k24_seed44 hash=afd3e668283e27f4 steps=3000 batch=256xT100
+[12/12] DONE  M2_task_rayleigh_k24_seed44  1701.2s  task_loss_final=97.4715
+-- training queue finished: trained=12 skipped=0 retrained=0 failed=0 train_wall=11233.6s

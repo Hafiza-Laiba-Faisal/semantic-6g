@@ -87,7 +87,7 @@ def main():
             for k in (30, 54):
                 if train_complete(k) and not eval_complete(k) \
                         and not launched(f"eval_k{k}"):
-                    spawn(f"eval_k{k}", [["evaluate", str(k)]])
+                    spawn(f"eval_k{k}", [["evaluate", f"k{k}"]])
             # 3: k18 + k24 lanes once both k30/k54 finished training
             if train_complete(30) and train_complete(54):
                 for k in (18, 24):
@@ -97,7 +97,7 @@ def main():
             for k in (18, 24):
                 if train_complete(k) and not eval_complete(k) \
                         and not launched(f"eval_k{k}"):
-                    spawn(f"eval_k{k}", [["evaluate", str(k)]])
+                    spawn(f"eval_k{k}", [["evaluate", f"k{k}"]])
             # 4.5: k30/k54 rayleigh evals once k18+k24 trained — their per-k
             # gates stay blocked by the 2 deterministic-failed awgn cells,
             # so drive the clean rayleigh lane explicitly

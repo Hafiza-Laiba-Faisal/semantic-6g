@@ -1,0 +1,7 @@
+== M2 paired evaluation queue (Step-7 harness, 3 methods, 5000 episodes) ==  [lane: k24]
+-- per-run checkpoint integrity gate --
+   integrity gate passed for lane=k24 (12 runs)
+  EVAL k24_awgn_seed42 snr=  0.0 SR recon=0.2576 task=0.0178 digital=0.3088 (13.8s)
+  EVAL k24_awgn_seed42 snr=  5.0 SR recon=0.2432 task=0.0184 digital=0.3052 (14.2s)
+  EVAL k24_awgn_seed42 snr= 10.0 SR recon=0.2384 task=0.0184 digital=0.3052 (13.6s)
+  EVAL k24_awgn_seed42 snr= 15.0 SR recon=0.2436 task=0.0186 digital=0.3052 (18.3s)

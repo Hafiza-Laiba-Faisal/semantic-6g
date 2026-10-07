@@ -1,0 +1,3 @@
+== M2 paired evaluation queue (Step-7 harness, 3 methods, 5000 episodes) ==  [lane: k30]
+-- per-run checkpoint integrity gate --
+REFUSED: M2_task_awgn_k30_seed43: ['report-complete']

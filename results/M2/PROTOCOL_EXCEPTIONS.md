@@ -1,9 +1,19 @@
-# M2 Protocol Exceptions — 2 Excluded Training Cells (2026-10-06)
+# M2 Protocol Exceptions — 2 Conditionally-Accepted Training Cells (2026-10-06)
 
-**Decision:** EXCLUDE + DOCUMENT (user-approved 2026-10-06; supervisor to be
-informed). M2 final evaluable state: **58/60 training runs, 120/150 paired
-evaluation units**. No data was fabricated; the evaluation integrity gate
-was never bypassed.
+**Decision (UPDATED later the same day): CONDITIONAL ACCEPT** — user-approved
+2026-10-06; supervisor ratification pending. The 2 cells below are accepted
+**for evaluation only** via an explicit, code-documented allowlist
+(`CONDITIONAL_ACCEPT` in `tools/run_step11_m2.py`). Their
+`train_report.json` files were NEVER edited (`exit_status: "incomplete"`
+preserved) — the acceptance is visible in the diff itself. M2 target state:
+**60/60 training rows (2 flagged incomplete), 150/150 paired evaluation
+units**.
+
+**Earlier the same day the decision was EXCLUDE + DOCUMENT (120/150);** it
+was superseded when the user chose the conditional-accept route. Original
+text: "M2 final evaluable state: 58/60 training runs, 120/150 paired
+evaluation units. No data was fabricated; the evaluation integrity gate
+was never bypassed."
 
 ## The two excluded cells
 
@@ -55,10 +65,12 @@ was never bypassed.
 
 ## Options that were considered
 
-1. **EXCLUDE + DOCUMENT** (chosen): 120/150, honest documented exception.
-2. Conditional accept (supervisor-approved code change to the integrity
-   gate + explicit allowlist): would reach 150/150 — requires supervisor
-   sign-off; not taken unilaterally.
+1. **EXCLUDE + DOCUMENT** (chosen first, later superseded): 120/150, honest
+   documented exception.
+2. **CONDITIONAL ACCEPT** (chosen finally): supervisor-approved allowlist in
+   the evaluation gate for exactly these 2 runs — 150/150, with the
+   acceptance visible in code + this document. **Chosen by the user on
+   2026-10-06; supervisor ratification to be recorded here.**
 3. Protocol amendment to the completion gate (e.g., trailing-window grad
    health): future-work item; requires supervisor approval and re-runs.
 

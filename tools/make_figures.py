@@ -107,10 +107,6 @@ for ch, fname in (("awgn", "fig2_m2_awgn.png"),
         if k == 54:  # secondary B=8 reference
             ax.plot(SNR2, M4[ch], ":*", color="0.35", ms=7,
                     label="digital B=8 (secondary)")
-        if ch == "awgn" and k in (30, 54):
-            ax.text(0.5, 0.42, "EXCLUDED\n(2 protocol-strict failures)",
-                    transform=ax.transAxes, ha="center", va="center",
-                    fontsize=8.5, color="0.35")
     axes[0].set_ylabel("Success rate")
     axes[0].legend(loc="upper left")
     fig.suptitle(f"M2 matched-budget 3-way comparison — {ch.upper()} "
@@ -130,10 +126,10 @@ for ax, snr in zip(axes, (0.0, 20.0)):
     ax.set_title(f"AWGN @ {snr:g} dB")
     ax.set_xlabel("k (channel uses per state)")
     ax.set_xticks(KS2)
-    ax.set_ylim(0, 0.55)
-    ax.axvspan(27, 58, color="0.94", zorder=0)
-    ax.text(40, 0.47, "k=30, 54 excluded\n(2 cells)", ha="center",
-            fontsize=8, color="0.35")
+    ax.set_ylim(0, 1.05)
+    ax.axvspan(46, 58, color="0.94", zorder=0)
+    ax.text(52, 0.5, "B=8\nreference", ha="center", fontsize=8,
+            color="0.35")
 axes[0].set_ylabel("Success rate")
 axes[0].annotate("digital overtakes recon\nbetween k=18 and k=24",
                  xy=(24, 0.305), xytext=(27, 0.12), fontsize=8.5,
@@ -158,14 +154,11 @@ ax.plot(KS2, [sr2("task", k, "awgn", 0.0) for k in KS2],
 ax.plot(KS2, [sr2("digital", k, "awgn", 0.0) for k in KS2],
         "-^", color=C_DIG, ms=6, label="digital (M2)")
 ax.axvline(7.5, color="0.6", lw=1, ls=":")
-ax.axvspan(27, 58, color="0.94", zorder=0)
-ax.text(40, 0.05, "k=30, 54 excluded\n(2 cells)", ha="center", fontsize=8,
-        color="0.35")
 ax.text(4.2, 0.33, "M1 regime\nρ ≤ 1/2", ha="center", fontsize=9,
         color="0.3")
 ax.text(27, 0.33, "M2 regime\nρ ≥ 2", ha="center", fontsize=9, color="0.3")
 ax.set_xticks(k_all)
-ax.set_ylim(0, 0.4)
+ax.set_ylim(0, 1.05)
 ax.set_xlabel("k (channel uses per 6-D state)")
 ax.set_ylabel("Success rate @ 0 dB (AWGN)")
 ax.legend(ncol=3, loc="upper right")

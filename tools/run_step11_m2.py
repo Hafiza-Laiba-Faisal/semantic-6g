@@ -472,6 +472,18 @@ def _integrity_failures(cfg):
 # 3-method paired evaluation queue
 # ---------------------------------------------------------------------------
 
+# Frozen-protocol exception, user-approved 2026-10-06 (supervisor ratification
+# pending): these 2 runs failed ONLY the final-step grads_finite probe —
+# nan_batches=0, finite final loss, finite checkpoint weights, full 3000
+# gradient steps executed. They are conditionally accepted for EVALUATION
+# only; their train_report.json exit_status remains "incomplete" (never
+# edited). Full decision trail: results/M2/PROTOCOL_EXCEPTIONS.md.
+CONDITIONAL_ACCEPT = frozenset({
+    "M2_task_awgn_k30_seed43__d270bfa0b913b678",
+    "M2_task_awgn_k54_seed42__59f19c2c451a8106",
+})
+
+
 def _paired_stats3(cell):
     """Wilson CI per method + 3 McNemar + 3x3 paired t from one paired unit."""
     out = {}
@@ -499,7 +511,10 @@ def cmd_evaluate(lane=None):
               if (f_channel is None or c.channel == f_channel)
               and (f_k is None or c.k == f_k)]
     for cfg in neural:
-        if cell_state(cfg, results_root="results") != "done":
+        st = cell_state(cfg, results_root="results")
+        if st != "done":
+            if f"{run_id(cfg)}__{config_hash(cfg)}" in CONDITIONAL_ACCEPT:
+                continue          # documented protocol exception (eval only)
             blocked.append(f"{run_id(cfg)}: not complete")
         else:
             bad = _integrity_failures(cfg)

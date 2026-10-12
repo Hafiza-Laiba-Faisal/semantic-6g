@@ -123,12 +123,17 @@ def train_task_oriented(
     eval_episodes: int = 256,
     eval_snr_db: float = 10.0,
     verbose_every: int = 0,
+    lambdas: Optional[Tuple[float, float, float, float]] = None,
 ) -> Tuple[ReconstructionDeepJSCC, dict]:
     """Smoke-scale task-oriented training; returns (model, report).
 
     Deterministic: fixed seeds for init/episodes/SNR/noise; a fixed
     evaluation episode set is drawn once and reused for the before/after
     task-loss comparison with identical channel realizations.
+
+    Wave-A amendment (non-frozen, opt-in): ``lambdas`` overrides the
+    frozen task-loss weights (ld, lu, lv, lT). None = frozen config
+    values (bitwise-identical training path).
     """
     if channel not in ("awgn", "rayleigh"):
         raise ValueError(f"unknown channel {channel!r}")
@@ -167,7 +172,14 @@ def train_task_oriented(
         pos, ctl, vel = closed_loop_rollout(model, s0, t_max=t_max,
                                             snr_db=snr_db, channel=channel,
                                             generator=gen_noise)
-        out = task_loss(pos, ctl, vel, goal)
+        if lambdas is None:
+            out = task_loss(pos, ctl, vel, goal)
+        else:
+            out = task_loss(pos, ctl, vel, goal,
+                            lambda_distance=lambdas[0],
+                            lambda_control=lambdas[1],
+                            lambda_velocity=lambdas[2],
+                            lambda_terminal=lambdas[3])
         loss = out["total"]
 
         # detached diagnostics only (never optimized)
@@ -212,10 +224,11 @@ def train_task_oriented(
         "steps": steps, "batch_episodes": batch_episodes, "t_max": t_max,
         "lr": lr, "snr_range_db": snr_range,
         "eval_episodes": eval_episodes, "eval_snr_db": eval_snr_db,
-        "lambdas": {"ld": config.LAMBDA_DISTANCE,
-                    "lu": config.LAMBDA_CONTROL,
-                    "lv": config.LAMBDA_VELOCITY,
-                    "lT": config.LAMBDA_TERMINAL},
+        "lambdas": {"ld": config.LAMBDA_DISTANCE if lambdas is None else lambdas[0],
+                    "lu": config.LAMBDA_CONTROL if lambdas is None else lambdas[1],
+                    "lv": config.LAMBDA_VELOCITY if lambdas is None else lambdas[2],
+                    "lT": config.LAMBDA_TERMINAL if lambdas is None else lambdas[3]},
+        "lambdas_amendment": lambdas is not None,
         "eval_before": {key: float(val) for key, val in eval_before.items()},
         "eval_after": {key: float(val) for key, val in eval_after.items()},
         "train_total_initial": history[0]["total"] if history else float("nan"),

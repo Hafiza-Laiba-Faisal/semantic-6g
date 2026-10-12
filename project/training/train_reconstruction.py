@@ -52,11 +52,16 @@ def train_reconstruction(
     lr: Optional[float] = None,
     snr_range: Tuple[float, float] = config.SNR_TRAIN_RANGE_DB,
     verbose_every: int = 0,
+    state_weights: Optional[Tuple[float, ...]] = None,
 ) -> Tuple[ReconstructionDeepJSCC, dict]:
     """Train the reconstruction baseline; return (model, report).
 
     The default budget is the SMOKE scale required by Step 4 (proof of
     finite, reproducible, meaningful learning) - not the final protocol.
+
+    Wave-A amendment (non-frozen, opt-in): ``state_weights`` selects the
+    task-aware weighted reconstruction loss (component_weights passthrough;
+    None = frozen uniform loss, bitwise-identical training path).
     """
     config.set_global_seed(seed)          # weight init
     gen_states = config.derive_generator("episodes", seed)
@@ -89,7 +94,8 @@ def train_reconstruction(
                                          generator=gen_noise)
         target = normalize(s)             # clean normalized ground truth
 
-        loss = reconstruction_loss(s_bar_hat, target)
+        loss = reconstruction_loss(s_bar_hat, target,
+                                   component_weights=state_weights)
 
         if not bool(torch.isfinite(loss)):
             nan_batches += 1
@@ -124,6 +130,8 @@ def train_reconstruction(
         "batch_states": batch_states,
         "lr": lr,
         "snr_range_db": snr_range,
+        "state_weights": list(state_weights) if state_weights is not None else None,
+        "state_weights_amendment": state_weights is not None,
         "loss_initial": loss_initial,
         "loss_final": history[-1] if history else float("nan"),
         "loss_reduction_pct": (100.0 * (1.0 - history[-1] / loss_initial)

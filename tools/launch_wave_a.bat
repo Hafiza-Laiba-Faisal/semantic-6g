@@ -6,7 +6,12 @@ REM     tools\launch_wave_a.bat              (full run, resumable)
 REM     tools\launch_wave_a.bat awgn         (lane: awgn only)
 REM     tools\launch_wave_a.bat rayleigh     (lane: rayleigh only)
 REM     tools\launch_wave_a.bat status       (see progress only)
+REM     tools\launch_wave_a.bat watcher      (SELF-DRIVING mode:
+REM                                           train->eval->finalize->
+REM                                           dashboard auto-refresh;
+REM                                           recommended for 2-day runs)
 REM  Safe to re-run anytime: completed runs SKIP automatically.
+REM  Internet NOT required after initial setup.
 REM ============================================================
 setlocal
 cd /d "%~dp0.."
@@ -19,6 +24,12 @@ echo == [2/6] Quick smoke (100-step sanity, isolated, auto-tidy) ==
 .venv\Scripts\python.exe tools\run_wave_a.py train smoke:fixsnr_10db
 
 set LANE=%1
+if "%LANE%"=="watcher" (
+    echo == SELF-DRIVING MODE ==
+    echo train -^> evaluate -^> finalize -^> dashboard auto-refresh
+    .venv\Scripts\python.exe -u tools\wave_a_watcher.py
+    goto :end
+)
 if "%LANE%"=="status" (
     .venv\Scripts\python.exe tools\run_wave_a.py status
     goto :end

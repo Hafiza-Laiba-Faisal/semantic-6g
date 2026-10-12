@@ -1,39 +1,11 @@
 Respected Mam,
 
-Thank you for your review of our FYP. We have prepared responses to all three points and respectfully request four small approvals (A1-A4 below).
+Aapne jo Phase-2 diagnostics aur ablations banaye thay, wo implement ho kar smoke-test pass ho chuke hain (46 runs, frozen results bilkul untouched, sirf naye experiment IDs ke neeche isolated). Inhe second PC par aaj hi launch karne ka plan hai.
 
-*1. "UAV khud ko message send kar rahi hai?" - Architecture clarification*
+*Sirf 2 short sawal:*
 
-Our implemented system is *UAV-to-ground-station (uplink)*, not UAV-to-self. The UAV is the *transmitter* of its 6-D state [x, y, vx, vy, xg, yg], and the *ground station* is a separate receiver node that decodes a task-relevant representation and computes the control, which is applied back to the UAV. This is the standard C&C scenario where navigation computation is offloaded from a compute-constrained drone to the ground segment - the same link direction as the UAV command-and-control literature (proposal Section 14). The original topic statement described the symmetric downlink; the implemented, defensible scope is the state-report uplink, the bandwidth-critical direction of that same C&C loop. *One sentence will be added* to the system model: "the return command downlink is assumed ideal and out of scope; the wireless bottleneck studied is the uplink state transmission."
+1. Kya yehi naye ablation runs thesis mein diagnostic-amendment chapter ke tor par include karne theek hain? (Haan/Nahi)
 
-*2. Research Question wording*
+2. Thesis pehle finalize karein, paper uske baad? (Haan/Nahi)
 
-You are right: RQ1 ("to what extent does task-oriented outperform...") presumes the direction of the result, and contradicts proposal Section 22 ("no direction presumed in advance"). We request replacing RQ1 with the neutral, conditional form:
-
-*"RQ1 (revised): Under what conditions - channel type (AWGN vs Rayleigh), SNR, and bandwidth ratio - does task-oriented DeepJSCC trained directly on navigation performance outperform, match, or underperform conventional digital communication and reconstruction-oriented DeepJSCC for UAV state transmission?"*
-
-This matters scientifically: our completed experiments (150/150 cells, 3 seeds, 5,000 paired test episodes per unit, McNemar + Wilson CI statistics) show the answer is *regime-dependent* - reconstruction beats task-oriented training at low bandwidth, and digital wins decisively at sufficient bandwidth. The neutral RQ turns this from a "failed confirmation" into the project's central finding: a characterized regime boundary with root-cause diagnosis.
-
-*3. Novelty*
-
-Our defensible, evidence-backed claims are:
-(1) Domain transfer + closed-loop extension: Diao et al.'s task-oriented JSCC-for-control is image-based autonomous driving; we transfer it to a low-dimensional UAV kinematic state AND backpropagate end-to-end through closed-loop UAV dynamics, which the source literature does not specify for UAVs (documented in our audit).
-(2) First systematic matched-bandwidth three-way comparison (digital vs reconstruction vs task-oriented) for UAV navigation under both AWGN and Rayleigh fading - not present in the reviewed literature.
-(3) Regime-mapping: exactly when task-orientation helps vs hurts as a function of bandwidth/SNR, with root-cause diagnosis.
-(4) A reproducible frozen-protocol testbed.
-
-We do *not* claim a new coding paradigm; our claim is deliberately modest and matches the evidence.
-
-*Requested approvals (A1-A4)*
-
-A1: Adopt the revised neutral RQ1 above.
-A2: Align title/problem statement with the implemented system: "Task-Oriented DeepJSCC for the UAV Navigation State Uplink."
-A3: Add the one-sentence return-link scope note quoted above.
-A4: Approve two small extension waves (diagnostic ablations, run separately from the frozen protocol, which stays 100% untouched):
-  - Wave A1: task-loss weight ablations (non-zero control/velocity weights) to test whether loss shaping is the root cause of the task-oriented gap.
-  - Wave A2: task-aware weighted reconstruction (position/goal weighted) as a cheap "aligned" method, plus 3 extra training seeds to quantify training instability.
-All frozen M1-M4 results remain byte-identical; the waves run under new experiment IDs with the same seeds/eval machinery and are clearly labeled amendments.
-
-*Screenshots attached below:* our RQ1/RQ2 wording and pipeline figures for your reference.
-
-Jazak Allah khair - we await your guidance on A1-A4 and whether thesis-first then journal submission is the right order.
+Jawab milte hi launch + writing dono parallel start ho jayenge.

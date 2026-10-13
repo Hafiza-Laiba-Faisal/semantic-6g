@@ -12,3 +12,6 @@ __pycache__/
 # large legacy torch binaries only (current checkpoints are small .pt files,
 # intentionally tracked as a private-repo recovery backup)
 *.pth
+
+# local Freebuff chat export (contains conversation data)
+results/freebuff_chat_semantic-6g.txt

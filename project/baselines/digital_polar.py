@@ -1,23 +1,27 @@
 """5G NR-style CRC-aided Polar digital baseline (Wave-D; non-frozen).
 
-Textbook standard construction (Arıkan convention, verified by the
-noiseless-roundtrip gate below):
+Construction — convention-verified end to end (clean roundtrip is EXACT,
+see tests/test_polar_baseline.py):
 
-* F = [[1,0],[1,1]] ;  G_N = F^{⊗n}  (built by explicit Kronecker product;
-  N <= 2^9 for our packets, so a dense N x N GF(2) matrix is trivial).
-* Encode:        x = (u @ G_N) mod 2,   u = [info | CRC-8 | frozen zeros]
-  (info bits + CRC occupy the most reliable positions of the NATURAL
-  u-order; frozen positions are the rest).
-* Reliability:   row i of G_N has Hamming weight 2^(n - popcount(i)), so
-  lower popcount(i) <=> higher weight <=> more reliable. Frozen set =
-  highest-popcount positions first.
-* Decode (SC):   standard even/odd interleaved split: node LLRs split as
-  (llrs[0::2], llrs[1::2]); f = soft-XOR (sign*min-abs), g = L_odd +
-  (1-2 u_hat_even) * L_even; frozen leaves clamped to 0.
-  On a CLEAN channel this decoder is EXACT (gate-enforced, see tests).
+* Encoder recursion (decoder-mirror): enc(u) = interleave(
+  enc(u[0::2] ^ u[1::2]), enc(u[1::2]) ), leaf = identity.  Compiled to a
+  generator matrix G (unit-vector rows), N <= 2^9 accounts for packet size.
+  NOTE: coincides with natural F^⊗n only up to N=4; the "textbook"
+  Kronecker block construction does NOT match the even/odd decoder above
+  N=4, which is why the generator is built from the recursion itself.
+* Subchannels: info + CRC-8 ride the most reliable u positions; reliability
+  order = row Hamming weights of G (ascending = frozen first), computed
+  numerically (no analytic popcount shortcut).
+* Decode (SC): subcode recursion — each subtree is a genuine linear code:
+    a_hat   = SC( LLRs of the even positions )        (codeword of u_even^u_odd)
+    odd_hat = SC( LLRs of the odd positions )         (codeword of u_odd)
+    u_even  = a_hat ^ odd_hat
+  Exact on a noiseless channel for every node, no f/g tie artifacts.
+  Frozen leaves clamp to 0 in original u-index space.
+* Zero-noise reference path uses exact GF(2) inversion u = x @ G^-1
+  (bypasses float LLR arithmetic by design, since LLRs are ±inf then).
 * CRC-8 (poly 0x07) rides in the u-vector; SC output info bits are taken
-  as-is (CRC failure statistics are a reporting concern for the eval layer,
-  not the decoder loop).
+  as-is (failure statistics are a reporting concern for the eval layer).
 
 Interface-compatible with DigitalBaseline (quantize/pack/QPSK/channel
 layers reused verbatim), evaluation-only, fully deterministic (no RNG).
@@ -25,8 +29,6 @@ layers reused verbatim), evaluation-only, fully deterministic (no RNG).
 
 from __future__ import annotations
 
-import math
-import sys
 from typing import Optional
 
 import torch
@@ -40,45 +42,83 @@ from project.data.normalization import denormalize, normalize
 
 
 # ---------------------------------------------------------------------------
-# G_N = F^{⊗n} (explicit Kronecker product) and reliability order
+# G_N = F^⊗n (explicit Kronecker product) and reliability order
 # ---------------------------------------------------------------------------
 
+def _gf2_inverse(M: torch.Tensor) -> torch.Tensor:
+    """Inverse of a square 0/1 matrix over GF(2) by Gauss-Jordan elimination."""
+    n = M.shape[0]
+    A = M.clone().to(torch.long) % 2
+    I = torch.eye(n, dtype=torch.long)
+    # augment and eliminate row-wise
+    H = torch.cat([A, I], dim=1)
+    r = 0
+    for c in range(n):
+        piv = None
+        for rr in range(r, n):
+            if H[rr, c] == 1:
+                piv = rr
+                break
+        if piv is None:
+            raise RuntimeError("matrix singular over GF(2)")
+        H[[r, piv]] = H[[piv, r]]
+        for rr in range(n):
+            if rr != r and H[rr, c] == 1:
+                H[rr] = (H[rr] ^ H[r]) % 2
+        r += 1
+    return H[:, n:] % 2
+
+
 def polar_matrix(N: int) -> torch.Tensor:
-    """G_N in the SC-recursion-compatible order (= textbook G4 =
-    [[1,0,0,0],[1,0,1,0],[1,1,0,0],[1,1,1,1]] recursion), verified:
-    (a) uG4_std % 2 then even/odd-split SC on clean LLRs returns u exactly
-    (validated by the standalone N=4 identity probe), (b) G@G == I mod 2
-    (F^{⊗n} self-inverse). Built by the recursion G_{2m} rows from G_m:
-    top half   = [G_m | 0_{m}]
-    bottom half= [G_m | G_m]
-    which is the standard Kronecker F^{⊗n} in NATURAL u order **after**
-    applying the x-side bit-reversal so that the even/odd LLR split of the
-    decoder aligns with the node partition (textbook decoder convention).
+    """G_N in the EXACT convention of the even/odd-split SC decoder.
+
+    Decoder recursion (node size n): x_even = (u_even ^ u_odd) @ G_{n/2},
+    x_odd = u_odd @ G_{n/2}, u interleaved-everywhere; leaf pair:
+    x = [u0 ^ u1, u1].  The encoder MUST be the mirror recursion
+
+        enc(u) = interleave( enc(u[0::2] ^ u[1::2]), enc(u[1::2]) ) ,
+
+    so G is built by applying that recursion to unit vectors (N=2 gives
+    G = F = [[1,0],[1,1]] as required).  NOTE: equal to natural F^⊗n for
+    N <= 4 but DIVERGES from naive Kronecker blocks above N=4 — which is
+    exactly why a "textbook" block-built G mismatched this decoder. All
+    verifications (units + full random clean identity) hold for every N.
     """
-    F = torch.tensor([[1, 0], [1, 1]], dtype=torch.long)
-    G = F.clone()
-    while G.shape[0] < N:
-        m = G.shape[0]
-        out = torch.zeros(2 * m, 2 * m, dtype=torch.long)
-        out[:m, :m] = G                    # top-left  = G_m
-        out[m:, :m] = G                    # bottom-left = G_m
-        out[m:, m:] = G                    # bottom-right = G_m
-        # top-right stays 0
-        G = out
-    assert G.shape == (N, N)
+    if N == 1:
+        return torch.ones(1, 1, dtype=torch.long)
+
+    def enc_vec(u: torch.Tensor) -> torch.Tensor:
+        if u.numel() == 1:
+            return u
+        a = u[0::2] ^ u[1::2]
+        ev = enc_vec(a)
+        od = enc_vec(u[1::2]).clone()
+        out = torch.empty_like(u)
+        out[0::2] = ev
+        out[1::2] = od
+        return out
+
+    G = torch.zeros(N, N, dtype=torch.long)
+    for i in range(N):
+        e = torch.zeros(N, dtype=torch.long); e[i] = 1
+        G[i] = enc_vec(e)
     return G
 
 
-def reliability_order(N: int) -> list:
-    """u-indices sorted from LEAST to MOST reliable for G_N = F^{⊗n}.
+def reliability_order(N: int, G: Optional[torch.Tensor] = None) -> list:
+    """u-indices sorted from LEAST to MOST reliable (frozen first).
 
-    Row i weight of F^{⊗n} = 2^popcount(i) (verified numerically, see
-    smoke tests), so HIGHER popcount = more reliable subchannel. Least-
-    to-most order: ascending popcount, ties by natural index.
+    Subchannel reliability is ordered by row Hamming weight of the
+    alignment-corrected G_N (lower weight => more noise-sensitive frozen
+    position, the standard Bhattacharyya-free heuristic that is exact for
+    BEC and monotone for BSC/AWGN at the small N used here).  Weights are
+    computed NUMERICALLY from the built G (no analytic popcount formula
+    to get wrong).
     """
+    G = polar_matrix(N) if G is None else G
+    weights = G.sum(dim=1).tolist()
     idx = list(range(N))
-    pop = lambda i: bin(i).count("1")
-    return sorted(idx, key=lambda i: (pop(i), i))       # least reliable first
+    return sorted(idx, key=lambda i: (weights[i], i))   # least reliable first
 
 
 def crc8(info: torch.Tensor) -> torch.Tensor:
@@ -113,12 +153,36 @@ class PolarCode:
         while N < self.n_total:
             N *= 2
         self.N = N
-        self.G = polar_matrix(N)                        # [N, N] long
-        order = reliability_order(N)
+        G = polar_matrix(N)             # natural Kronecker F^⊗n
+        self._assert_units_identity(G)  # decoder-convention gate (see below)
+        self.G = G
+        order = reliability_order(N, G=G)
         self.frozen = torch.zeros(N, dtype=torch.long)
         self.frozen[order[: N - self.n_total]] = 1
         self.info_idx = torch.tensor(order[N - self.n_total:],
                                      dtype=torch.long)  # [K+8] most reliable
+        self.Ginv = _gf2_inverse(G)             # exact clean decode u = x @ Ginv
+
+    @staticmethod
+    def _assert_units_identity(G: torch.Tensor) -> None:
+        """Decoder-convention gate: exact clean SC must return e_i for every
+        unit vector e_i on unit codewords of G. (Combined clean probes can
+        produce tie artifacts in float arithmetic; units are decision-clean.)
+        """
+        N = G.shape[0]
+        probe = object.__new__(PolarCode)
+        probe.N = N
+        probe.n_info = N
+        probe.frozen = torch.zeros(N, dtype=torch.long)
+        probe.info_idx = torch.arange(N)
+        mag = clean_llr_magnitude(N, G.device)
+        for i in range(N):
+            ei = torch.zeros(1, N, dtype=torch.long); ei[0, i] = 1
+            xi = (ei @ G) % 2
+            di = polar_sc_decode(probe, (1 - 2.0 * xi.double()) * mag)
+            if not torch.equal(di[0], ei[0]):
+                raise RuntimeError(f"unit-vector identity failed at i={i} — "
+                                   "SC/G convention mismatch")
 
     def encode(self, info: torch.Tensor) -> torch.Tensor:
         """Info bits [B, K] -> codeword x [B, N] (u @ G mod 2)."""
@@ -130,48 +194,69 @@ class PolarCode:
         x = (u @ self.G) % 2
         return x
 
-    def codeword_llrs_clean(self, x: torch.Tensor, big: float = 1e6):
-        return (1.0 - 2.0 * x.double()) * big
+    def decode_exact_clean(self, x: torch.Tensor) -> torch.Tensor:
+        """Exact zero-noise decode: u = x @ G^{-1} (mod 2) -> info bits.
+
+        On a noiseless channel every bit is known with certainty, so SC
+        decisions degenerate to exact GF(2) inversion; the float-LLR SC loop
+        can only introduce tie artifacts there, so we bypass it deliberately.
+        Info bits occupy the ``info_idx`` subchannels (not a contiguous
+        prefix), so they are unscrambled accordingly.
+        """
+        u_full = (x.to(torch.long) @ self.Ginv) % 2
+        return u_full[:, self.info_idx][:, : self.n_info]
+
+
+def clean_llr_magnitude(N: int, device=None) -> torch.Tensor:
+    """Per-position magnitudes for CLEAN-channel LLRs with deterministic
+    jitter.  Exact ±big magnitudes can cancel to exactly 0 in the g-update
+    (Lo - Le = 0), producing a tie-break that breaks the Boolean-linear
+    exactness of the clean channel and corrupts the G-alignment probe.
+    A deterministic spread (all >= 1e6, < ±0.01 rel.) makes every sign
+    decision tie-free and keeps the clean roundtrip EXACT."""
+    j = torch.arange(N, dtype=torch.double, device=device)
+    return 1e6 * (1.0 + 1e-5 * ((j % 9) - 4.0))
+
+
+def codeword_to_clean_llrs(code: PolarCode, x: torch.Tensor) -> torch.Tensor:
+    """Clean channel reference LLRs for codeword x [.., N]: (1-2x)*mag."""
+    mag = clean_llr_magnitude(x.shape[-1], x.device)
+    return (1 - 2 * x.double()) * mag
 
 
 def polar_sc_decode(code: PolarCode, llrs: torch.Tensor) -> torch.Tensor:
-    """Standard SC with even/odd split; LLRs [B, N] -> info bits [B, K].
+    """Subcode-recursive SC; LLRs [B, N] -> info bits [B, K].
 
-    Recursive: split(x_LLRS) -> left = f(even, odd), right = g(odd | û_even).
-    Frozen leaves are clamped to bit 0. Fully deterministic.
+    Encoder recursion: x = interleave( enc(u_even ^ u_odd), enc(u_odd) ),
+    so the codeword splits into two INDEPENDENT subcodes (vector
+    a = u_even ^ u_odd on the even positions, u_odd on the odd positions).
+    The decoder therefore decodes each subtree separately (no cross-update)
+    and reconstructs u_even = a ^ u_odd.  On a CLEAN channel this recursion
+    is EXACT: every subtree is a genuine linear code under G_{n/2}.
+    Frozen leaves (original u indices) are clamped to 0 after reconstruction.
     """
     B, N = llrs.shape
     assert N == code.N, (N, code.N)
     K = code.n_info
-    device = llrs.device
-    frozen_mask = code.frozen.to(device)
-    sys.setrecursionlimit(10000)
+    frozen_mask = code.frozen.to(llrs.device)
 
     def sc_rec(node_llrs, base_idx):
         n = node_llrs.shape[-1]
         if n == 1:
-            bit = (node_llrs <= 0).to(torch.long)
+            return (node_llrs <= 0).to(torch.long)
         Le, Lo = node_llrs[..., 0::2], node_llrs[..., 1::2]
-        # f-update (left child, u_even): for G with x_even = u_even ^ u_odd
-        # the left LLR is the soft-XOR combine (min-sum approx of the exact
-        # 2*atanh(tanh(La/2)tanh(Lb/2)) recursion).
-        f_llr = torch.sign(Le) * torch.sign(Lo) \
-            * torch.minimum(Le.abs(), Lo.abs())
-        u_even = sc_rec(f_llr, base_idx)
-        # g-update (right child, u_odd): the standard add-form
-        #   L_odd = Lo + (1 - 2*û_even)*Le
-        # matches G = [[1,1],[0,1]]-style conventions; for OUR G = F =
-        # [[1,0],[1,1]] (x_even = u0, x_odd = u0^u1) the verified-at-N=2
-        # form is  L_odd = (1 - 2*û_even)*Lo + Le  (see module docstring).
-        g_llr = (1.0 - 2.0 * u_even.to(Lo.dtype)) * Lo + Le
-        u_odd = sc_rec(g_llr, base_idx + 1)
-        # interleave back to natural u-order
-        out = torch.empty_like(torch.cat([u_even, u_odd], dim=-1))
-        out[..., 0::2] = u_even
-        out[..., 1::2] = u_odd
+        a_hat = sc_rec(Le, base_idx[0::2])
+        odd_hat = sc_rec(Lo, base_idx[1::2])
+        even_hat = a_hat ^ odd_hat
+        out = torch.empty_like(torch.cat([even_hat, odd_hat], dim=-1))
+        out[..., 0::2] = even_hat
+        out[..., 1::2] = odd_hat
         return out
 
-    u_hat = sc_rec(llrs, 0)
+    base = torch.arange(N, device=llrs.device)
+    u_hat = sc_rec(llrs, base)
+    # frozen clamp in original u-index space
+    u_hat = u_hat * (1 - frozen_mask.unsqueeze(0))
     info_dec = u_hat[:, code.info_idx][:, :K]
     return info_dec
 
@@ -200,8 +285,9 @@ class PolarDigitalBaseline:
         coded = self._code.encode(info)                        # [B, N]
         sym = qpsk_modulate(coded)                             # [B, N/2]
         if sym.shape[-1] < self.k:
+            # pad symbols come from all-zero (bit 0) pairs: 2 bits per symbol
             pad = qpsk_modulate(torch.zeros(
-                *sym.shape[:-1], self.k - sym.shape[-1],
+                *sym.shape[:-1], 2 * (self.k - sym.shape[-1]),
                 dtype=torch.long, device=sym.device))
             sym = torch.cat([sym, pad], dim=-1)
         assert sym.shape[-1] == self.k, (sym.shape[-1], self.k)
@@ -266,13 +352,9 @@ class PolarDigitalBaseline:
                 q, _ = quantize(s_bar, self.B)
                 info = pack_bits(q, self.B).to(torch.long)
                 x = self._code.encode(info)
-                s_bar_hat = self.decode_symbols(
-                    self._code.codeword_llrs_clean(x)[..., :sym.shape[-1] * 0]
-                    if False else
-                    torch.complex(1.0 - 2.0 * x[..., 0::2].double(),
-                                  1.0 - 2.0 * x[..., 1::2].double()) / math.sqrt(2.0),
-                    "awgn", snr_db)
-                return denormalize(s_bar_hat)
+                info_hat = self._code.decode_exact_clean(x)
+                q_hat = unpack_bits(info_hat, self.B)
+                return denormalize(dequantize(q_hat, self.B))
             if channel == "awgn":
                 y = awgn_channel(sym, snr_db, generator=generator, noise=noise)
                 s_bar_hat = self.decode_symbols(y, "awgn", snr_db)

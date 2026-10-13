@@ -174,6 +174,17 @@ def _train_catalog(exp_dir: Path):
 
 _CSS = """
 :root { color-scheme: light; }
+.pill { display: inline-block; padding: 1px 8px; border-radius: 10px;
+        font-size: 12px; font-weight: 600; }
+.p-ok   { background: #d1e7dd; color: #15803d; }
+.p-bad  { background: #f8d7da; color: #b91c1c; }
+.p-run  { background: #cfe2ff; color: #1d4ed8; }
+.p-pend { background: #e5e7eb; color: #6b7280; }
+.logbox { background: #0f172a; color: #d1d5db; font-family: Consolas,
+          monospace; font-size: 12px; padding: 10px 12px; border-radius: 6px;
+          white-space: pre-wrap; max-height: 260px; overflow-y: auto;
+          line-height: 1.45; }
+.live-hdr { font-size: 15px; margin: 6px 0; }
 body { font-family: "Segoe UI", system-ui, sans-serif; margin: 24px;
        background: #f7f8fa; color: #1a1c20; }
 h1 { font-size: 22px; margin-bottom: 4px; }
@@ -286,6 +297,111 @@ def _catalog_table(rows):
     return "".join(out)
 
 
+# ---------------------------------------------------------------------------
+# live run_all orchestrator section (frontend for "abhi kya ho raha hai")
+# ---------------------------------------------------------------------------
+
+def _stage_order():
+    """Canonical 22-stage order from tools/run_all.py (never duplicated)."""
+    try:
+        from tools.run_all import stages as _st
+    except ImportError:
+        try:
+            from run_all import stages as _st
+        except ImportError:
+            return []
+    return [(s[0], s[2]) for s in _st(None)]       # (stage_id, hint_min)
+
+
+def _tail(p: Path, n: int = 15) -> str:
+    try:
+        return "\n".join(p.read_text(encoding="utf-8",
+                                     errors="replace").splitlines()[-n:])
+    except OSError:
+        return "(log not found)"
+
+
+def _run_all_section():
+    """Section 0: live queue status from results/RUN_ALL/* (read-only)."""
+    ra = ROOT / "RUN_ALL"
+    prog = _load_json(ra / "progress.json") if (ra / "progress.json").exists() else {}
+    cur = _load_json(ra / "current.json") if (ra / "current.json").exists() else {}
+    summ = (_load_json(ra / "run_all_summary.json")
+            if (ra / "run_all_summary.json").exists() else {})
+    if "_error" in prog:
+        prog = {}
+    if "_error" in cur:
+        cur = {}
+    if "_error" in summ:
+        summ = {}
+    order = _stage_order()
+    if not order:
+        return ("<h2>0 · Live run_all queue</h2><p class='dim'>"
+                "tools/run_all.py not importable — queue section disabled.</p>")
+
+    parts = ["<h2>0 · Live run_all queue</h2>"]
+    # header cards
+    n_ok = sum(1 for v in prog.values() if v.get("status") == "ok")
+    n_bad = sum(1 for v in prog.values() if v.get("status") == "failed")
+    parts.append(
+        f"<div class='card'>stages ok <b>{n_ok}</b>/{len(order)}</div>"
+        f"<div class='card'>failed <b class='{'bad' if n_bad else ''}'>{n_bad}</b></div>")
+    if cur.get("stage"):
+        started = cur.get("started_utc", "")
+        elapsed = ""
+        try:
+            t0 = time.mktime(time.strptime(started, "%Y-%m-%dT%H%M%SZ"))
+            elapsed = f"{max((time.time() - t0) / 60, 0):.0f} min ago"
+        except ValueError:
+            pass
+        parts.append(
+            f"<div class='card'><span class='pill p-run'>RUNNING</span> "
+            f"<b>{html.escape(str(cur['stage']))}</b> "
+            f"<span class='dim'>{elapsed}</span></div>")
+    else:
+        status_txt = (summ.get("status") or
+                      ("idle" if not prog else "between stages"))
+        parts.append(f"<div class='card'><span class='pill p-pend'>"
+                     f"{html.escape(str(status_txt))}</span></div>")
+    # stage table
+    parts.append("<table><tr><th>#</th><th class='left'>stage</th>"
+                 "<th>status</th><th>exit</th><th>finished</th>"
+                 "<th>~min</th></tr>")
+    for i, (sid, hint) in enumerate(order, 1):
+        v = prog.get(sid, {})
+        st = v.get("status", "pending")
+        if cur.get("stage") == sid:
+            pill, cls = "RUNNING", "p-run"
+        elif st == "ok":
+            pill, cls = "DONE", "p-ok"
+        elif st == "failed":
+            pill, cls = "FAILED", "p-bad"
+        else:
+            pill, cls = "pending", "p-pend"
+        parts.append(
+            f"<tr><td>{i}</td><td class='left'>{html.escape(sid)}</td>"
+            f"<td><span class='pill {cls}'>{pill}</span></td>"
+            f"<td>{v.get('exit', '–')}</td>"
+            f"<td class='dim'>{html.escape(str(v.get('finished_utc', '–')))}</td>"
+            f"<td>{hint}</td></tr>")
+    parts.append("</table>")
+    # live log tail of the currently running stage
+    if cur.get("stage"):
+        log_p = ra / f"run_all_{cur['stage']}.log"
+        parts.append(f"<p class='live-hdr'>tail · "
+                     f"<code>results/RUN_ALL/{html.escape(log_p.name)}</code>"
+                     f" (last 15 lines)</p>")
+        parts.append(f"<div class='logbox'>{html.escape(_tail(log_p))}</div>")
+    if summ:
+        parts.append("<p class='sub'>last run: "
+                     f"{html.escape(str(summ.get('status', '?')))} · "
+                     f"{summ.get('wall_min', '?')} h wall · "
+                     f"failed: "
+                     f"{html.escape(', '.join(summ.get('failed_stages', [])) or 'none')}"
+                     "</p>")
+    return "".join(parts)
+
+
 def build():
     m1_done, m1_failed, m1_running = _census(ROOT / "M1", "M1_")
     m2_done, m2_failed, m2_running = _census(ROOT / "M2", "M2_")
@@ -301,13 +417,19 @@ def build():
                + _train_catalog(ROOT / "WAVE_A"))
     catalog.sort(key=lambda r: r["mtime"], reverse=True)
 
+    wave_b_evals = len(list((ROOT / "WAVE_B" / "eval").glob("*/*.json"))) \
+        if (ROOT / "WAVE_B" / "eval").is_dir() else 0
     parts = [
         "<!doctype html><html><head><meta charset='utf-8'>",
+        "<meta http-equiv='refresh' content='30'>",
         f"<title>FYP Results Dashboard — {time.strftime('%Y-%m-%d %H:%M')}</title>",
         f"<style>{_CSS}</style></head><body>",
         "<h1>FYP Results Dashboard</h1>",
         f"<p class='sub'>generated {time.strftime('%Y-%m-%d %H:%M:%S')} · "
-        "read-only view of <code>results/</code> · no frozen values changed</p>",
+        "read-only view of <code>results/</code> · no frozen values changed · "
+        "auto-refreshes every 30 s</p>",
+
+        _run_all_section(),
 
         "<div class='note'>Frozen protocol (Step 9C) artifacts are labeled "
         "M1_/M2_. Wave-A runs are <b>non-frozen diagnostic amendments "
@@ -322,6 +444,7 @@ def build():
         f"<div class='card'>M2 eval <b>{m2_have}</b>/{m2_slots} slots</div>",
         f"<div class='card'>Wave-A runs <b>{len(w_done)}</b> done · "
         f"{len(w_failed)} failed</div>",
+        f"<div class='card'>Wave-B CSI evals <b>{wave_b_evals}</b>/375</div>",
 
         "<h2>2 · Frozen M2 pooled success rate (3 seeds pooled, E=5000)</h2>",
         "<p class='sub'>pooled over seeds 42/43/44; each cell = mean pooled SR "
@@ -340,7 +463,9 @@ def build():
             f"<tr><td class='left'><code>{html.escape(str(rel))}</code></td>"
             f"<td class='dim'>{_mtime(ROOT / rel)}</td></tr>"
             for rel in ("M2/step11_m2_summary.json", "M1/step10_m1_summary.json",
-                        "WAVE_A/step_wave_a_summary.json")
+                        "WAVE_A/step_wave_a_summary.json",
+                        "WAVE_B/step_wave_b_summary.json",
+                        "RUN_ALL/run_all_summary.json")
             if (ROOT / rel).exists() or True),
         "</table>",
         "</body></html>",

@@ -1,0 +1,86 @@
+{
+  "STEP": "WAVE_B",
+  "experiment": "WAVE_B",
+  "unit": "k12_rayleigh_seed42",
+  "k": 12,
+  "channel": "rayleigh",
+  "seed": 42,
+  "bits_per_component": 1,
+  "snr_db": 5.0,
+  "csi_error_sigma": 0.0,
+  "csi_eps_convention": "h_hat = h + eps, eps ~ CN(0, sigma^2); receiver equalizes and scales LLR noise with h_hat only",
+  "test_seed": 10042,
+  "episodes": 5000,
+  "t_max": 100,
+  "paired": true,
+  "csi_eps_paired_across_methods": true,
+  "amendment": "WAVE_B-non-frozen-CSI-ablation-2026-10-13",
+  "non_frozen": true,
+  "wall_s": 3.8,
+  "methods": [
+    "reconstruction",
+    "task",
+    "digital"
+  ],
+  "aggregate_reconstruction": {
+    "episodes": 5000,
+    "success_count": 1388,
+    "failure_count": 3612,
+    "success_rate": 0.2776,
+    "final_distance_mean": 3.6381053924560547,
+    "avg_distance_mean": 4.305202484130859,
+    "control_effort_mean": 669.779296875,
+    "min_distance_mean": 1.3919605016708374,
+    "mse_mean": 0.053329288959503174,
+    "ttg_success_mean": 30.96685791015625,
+    "ttg_success_median": 27.0
+  },
+  "aggregate_task": {
+    "episodes": 5000,
+    "success_count": 210,
+    "failure_count": 4790,
+    "success_rate": 0.042,
+    "final_distance_mean": 7.8566694259643555,
+    "avg_distance_mean": 7.994785785675049,
+    "control_effort_mean": 775.7643432617188,
+    "min_distance_mean": 5.601136684417725,
+    "mse_mean": 0.7378376126289368,
+    "ttg_success_mean": 60.28095245361328,
+    "ttg_success_median": 58.0
+  },
+  "aggregate_digital": {
+    "episodes": 5000,
+    "success_count": 314,
+    "failure_count": 4686,
+    "success_rate": 0.0628,
+    "final_distance_mean": 4.509231090545654,
+    "avg_distance_mean": 5.313352584838867,
+    "control_effort_mean": 794.7025146484375,
+    "min_distance_mean": 3.5424163341522217,
+    "mse_mean": 0.5419432520866394,
+    "ttg_success_mean": 36.79299545288086,
+    "ttg_success_median": 32.0
+  },
+  "wilson_reconstruction": {
+    "wilson_low": 0.26536175838896126,
+    "wilson_high": 0.29017971543620025,
+    "p_hat": 0.2776,
+    "success_count": 1388,
+    "total": 5000
+  },
+  "wilson_task": {
+    "wilson_low": 0.03678268629468601,
+    "wilson_high": 0.04792052868698633,
+    "p_hat": 0.042,
+    "success_count": 210,
+    "total": 5000
+  },
+  "wilson_digital": {
+    "wilson_low": 0.05640536126909044,
+    "wilson_high": 0.0698659173116675,
+    "p_hat": 0.0628,
+    "success_count": 314,
+    "total": 5000
+  },
+  "sigma0_gate": "PASS - bit-exact reproduction of frozen M2"
+}

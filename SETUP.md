@@ -33,6 +33,10 @@ pip install torch==2.4.1 --index-url https://download.pytorch.org/whl/cpu
 pip install numpy matplotlib==3.9.4
 ```
 
+(`requirements.txt` pins the same versions: torch 2.4.1, numpy 1.26.4,
+matplotlib 3.9.4 — install torch with the CPU index flag first, then
+`pip install -r requirements.txt`.)
+
 ## Verify the installation
 
 ```bat
@@ -74,6 +78,40 @@ All gates print `PASS` lines and a `SUMMARY: n/n checks passed` footer.
 Every run is identity-addressed: `results/<EXP>/<run_id>__<config_sha256>/`
 with `DONE/RUNNING/FAILED` marker JSONs. Completed runs SKIP on re-invocation;
 interrupted/failed runs retrain deterministically (frozen 9C policy).
+
+## Full retrain from scratch — one command, leave for days
+
+This is the main workflow for a fresh machine: it runs the whole frozen
+queue (M1 → M2 → M3/M4 → Wave-A → Wave-B, 22 stages, ~38 h on CPU),
+auto-restarts after any crash or power cut, and is safe to interrupt.
+Old results are never deleted — they move to `results/_archive/<timestamp>/`.
+
+```bat
+:: 1. scratch-execute EVERYTHING (archive old results first)
+tools\launch_all.bat fresh
+:: 2. ...or just resume/continue whatever is already done:
+tools\launch_all.bat
+:: 3. lane split on one machine (two windows, roughly half the wall time)
+tools\launch_all.bat awgn
+::   (second window)  tools\launch_all.bat rayleigh
+:: 4. live census of the queue: which stages done/failed, time remaining
+.venv\Scripts\python.exe tools\run_all.py status
+```
+
+### Frontend live monitoring
+
+Open `dashboard.html` (repo root) in a browser: it auto-refreshes every 30 s
+and shows the running stage pill, the 22-stage status table, and a live log
+tail of the active stage while `run_all` rebuilds it every 2 min.
+Windows update the moment each stage starts/ends
+(`results/RUN_ALL/current.json`, `results/RUN_ALL/progress.json`).
+
+Practical tips for a laptop left on charge for days:
+- Plug the charger in; disable sleep/hibernation (Power Options →
+  Sleep = Never), or run on a desktop/desk PC.
+- Close the lid only if the machine is configured to stay awake on battery.
+- Stop safely at any point with Ctrl+C; relaunch with `tools\launch_all.bat`
+  — per-stage inner runners SKIP completed cells and RETRAIN interrupted ones.
 
 ## Analysis & figures
 

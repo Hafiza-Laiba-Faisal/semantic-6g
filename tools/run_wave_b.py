@@ -75,6 +75,61 @@ METHODS = ("reconstruction", "task", "digital")
 B_BY_K = dict(config.DIGITAL_B_BY_K)      # frozen matched-budget B
 
 
+# ---------------------------------------------------------------------------
+# M2 cells that the FROZEN round itself has accepted as documented failures
+# ---------------------------------------------------------------------------
+# ``tools/run_step11_m2.py`` keeps the approved exception list
+# CONDITIONAL_ACCEPT (amendment 2026-10-19, "eval-only, not retrained").
+# Wave-B must NOT retrain those cells (frozen science) and must NOT evaluate
+# their diverged checkpoints either (garbage numbers).  The only honest
+# option is an explicit, reported EXCLUSION: one unit out of 30, declared in
+# verify/plan/finalize so the coverage gap is impossible to miss.
+
+def _conditional_accept_ids() -> frozenset:
+    """Read the frozen round's approved exception list (single source)."""
+    try:
+        from run_step11_m2 import CONDITIONAL_ACCEPT as _CA
+    except ImportError:                      # package-style invocation
+        try:
+            from tools.run_step11_m2 import CONDITIONAL_ACCEPT as _CA
+        except ImportError:
+            return frozenset()
+    return frozenset(_CA)
+
+
+def _excluded_units() -> dict:
+    """(k, seed) -> frozen run_id for approved-but-unusable M2 cells.
+
+    Only Rayleigh cells matter here: Wave-B is Rayleigh-only.  Any method
+    failing inside a unit excludes the WHOLE unit, because Wave-B pairs all
+    three methods on the same realizations - a 2-of-3 unit would be
+    asymmetric and silently incomparable.
+    """
+    out = {}
+    for rid in _conditional_accept_ids():
+        base = rid.split("__")[0]
+        parts = base.split("_")
+        if (len(parts) != 5 or parts[0] != "M2" or parts[2] != "rayleigh"
+                or not parts[3].startswith("k")
+                or not parts[4].startswith("seed")):
+            continue
+        try:
+            k, seed = int(parts[3][1:]), int(parts[4][4:])
+        except ValueError:
+            continue
+        out[(k, seed)] = base
+    return out
+
+
+CONDITIONAL_ACCEPT = _conditional_accept_ids()
+EXCLUDED_UNITS = _excluded_units()       # {(54, 43): "M2_task_rayleigh_k54_seed43"}
+UNITS_TOTAL = len(M2_K_VALUES) * len(SEEDS)
+UNITS_COVERED = UNITS_TOTAL - len(EXCLUDED_UNITS)
+CELLS_TOTAL = UNITS_TOTAL * len(M2_SNR_DB) * len(CSI_SIGMAS)
+EXPECTED_CELLS = UNITS_COVERED * len(M2_SNR_DB) * len(CSI_SIGMAS)
+EXPECTED_GATES = UNITS_COVERED * len(M2_SNR_DB)
+
+
 def _stable_hash(text: str) -> int:
     h = 2166136261
     for ch in text:
@@ -399,6 +454,8 @@ def cells():
     for k in M2_K_VALUES:
         for snr in M2_SNR_DB:
             for seed in SEEDS:
+                if (k, seed) in EXCLUDED_UNITS:
+                    continue          # approved M2 failure: reported, not run
                 for sigma in CSI_SIGMAS:
                     yield k, snr, seed, sigma
 
@@ -450,25 +507,36 @@ def _fmt_sr(agg):
 def cmd_verify():
     print("== Wave-B governance gate ==")
     bad = 0
+    # 0) coverage contract: approved M2 failures are EXCLUDED, never run
+    for (k, seed), rid in sorted(EXCLUDED_UNITS.items()):
+        print(f"INFO  [excluded:{rid}] approved documented failure "
+              f"(M2 conditional-accept) -> unit k{k}/seed{seed} NOT covered")
+    print(f"INFO  [coverage] {UNITS_COVERED}/{UNITS_TOTAL} units, "
+          f"{EXPECTED_CELLS}/{CELLS_TOTAL} eval cells")
     # 1) frozen M2 checkpoints unique + DONE-marked, rayleigh, all seeds
     for k in M2_K_VALUES:
         for seed in SEEDS:
+            if (k, seed) in EXCLUDED_UNITS:
+                continue
             for m in ("reconstruction", "task"):
                 ckpt, marker = find_m2_ckpt(m, k, seed)
                 ok = ckpt is not None
                 if not ok:
                     print(f"FAIL  [ckpt:{m}/k{k}/seed{seed}] not uniquely DONE")
                     bad += 1
+    n_ck = 2 * UNITS_COVERED
     check_done = bad == 0
     print(("PASS" if check_done else "FAIL") +
-          "  [m2_ckpts] all 30 frozen M2 rayleigh ckpts unique + DONE-marked")
+          f"  [m2_ckpts] {n_ck} usable frozen M2 rayleigh ckpts unique + "
+          f"DONE-marked ({len(EXCLUDED_UNITS)} unit(s) excluded)")
     bad += 0 if check_done else 1
-    # 2) frozen M2 eval JSONs (sigma=0 gate references)
+    # 2) frozen M2 eval JSONs (sigma=0 gate references) for COVERED units
     missing = [(k, s, snr) for k in M2_K_VALUES for s in SEEDS
+               if (k, s) not in EXCLUDED_UNITS
                for snr in M2_SNR_DB if load_m2_frozen_eval(k, s, snr) is None]
     ok2 = not missing
-    print(f"{'PASS' if ok2 else 'FAIL'}  [m2_eval_json] 75 frozen M2 evals "
-          f"({len(missing)} missing)")
+    print(f"{'PASS' if ok2 else 'FAIL'}  [m2_eval_json] {EXPECTED_GATES} frozen "
+          f"M2 evals needed ({len(missing)} missing)")
     if not ok2:
         for x in missing[:5]:
             print("      missing:", x)
@@ -487,7 +555,11 @@ def cmd_plan():
     est_s = n * 12
     print(f"== Wave-B plan: {n} eval cells x 3 methods ==\n"
           f"grid: k {M2_K_VALUES} x snr {M2_SNR_DB} x seeds {SEEDS} x "
-          f"sigma {CSI_SIGMAS}\nprotocol: E=5000 (frozen), test_seed "
+          f"sigma {CSI_SIGMAS}\n"
+          f"coverage: {UNITS_COVERED}/{UNITS_TOTAL} units "
+          f"({EXPECTED_CELLS}/{CELLS_TOTAL} cells); excluded "
+          f"{sorted(EXCLUDED_UNITS.items())}\n"
+          f"protocol: E=5000 (frozen), test_seed "
           f"{config.TEST_SEED}, amendment {AMENDMENT}\n"
           f"runtime estimate ~{est_s/60:.0f}-{est_s/45:.0f} min (sequential, CPU)")
     return 0
@@ -576,14 +648,28 @@ def cmd_finalize():
     out = WAVE_B_ROOT / "step_wave_b_summary.json"
     out.write_text(json.dumps({
         "experiment": "WAVE_B",
-        "status": ("complete" if len(rows) == len(list(cells())) and
-                   gate_ok == 75 else "incomplete"),
+        "status": ("complete" if len(rows) == EXPECTED_CELLS and
+                   gate_ok == EXPECTED_GATES else "incomplete"),
         "amendment": AMENDMENT,
+        "coverage": {
+            "units_total": UNITS_TOTAL,
+            "units_covered": UNITS_COVERED,
+            "cells_total_if_full": CELLS_TOTAL,
+            "cells_expected": EXPECTED_CELLS,
+            "excluded_units": [
+                {"k": k, "seed": s, "run_id": rid,
+                 "reason": ("frozen M2 conditional-accept (documented failure)"
+                            "; not retrained and not evaluated")}
+                for (k, s), rid in sorted(EXCLUDED_UNITS.items())],
+        },
         "protocol_note": ("Wave-B: frozen M2 models + frozen digital, "
                           "E=5000, non-frozen CSI-error amendment; "
-                          "sigma=0 rows are the exact frozen path"),
+                          "sigma=0 rows are the exact frozen path; "
+                          f"coverage {UNITS_COVERED}/{UNITS_TOTAL} units "
+                          "(excluded unit is an approved M2 failure)"),
         "eval_cells": len(rows),
-        "sigma0_gate": {"cells": len(gates), "passed": gate_ok},
+        "sigma0_gate": {"cells": len(gates), "passed": gate_ok,
+                        "expected": EXPECTED_GATES},
         "summary_rows": summary_rows,
         "success_rate_by_k_snr": {f"k{k}|snr{snr:g}": v
                                   for (k, snr), v in sorted(

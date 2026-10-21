@@ -1,0 +1,33 @@
+{
+  "finished_utc": "2026-10-21T061101Z",
+  "ok_stages": [
+    "m1_evaluate",
+    "m1_finalize",
+    "m1_train",
+    "m1_validate",
+    "m1_verify",
+    "m2_evaluate",
+    "m2_finalize",
+    "m2_train",
+    "m2_validate",
+    "m2_verify",
+    "m3_run",
+    "m3m4_finalize",
+    "m3m4_validate",
+    "m3m4_verify",
+    "m4_run",
+    "wave_a_evaluate",
+    "wave_a_finalize",
+    "wave_a_verify",
+    "wave_b_finalize",
+    "wave_b_run",
+    "wave_b_verify"
+  ],
+  "accepted_stages": [
+    "wave_a_train"
+  ],
+  "failed_stages": [],
+  "wall_min": 0.3,
+  "lane": null,
+  "status": "complete"
+}

@@ -90,6 +90,44 @@ def _eval_census(eval_dir: Path):
     return units, slots, have
 
 
+def _wall_min_label(wall_min):
+    """Render a run_all summary wall time without mislabelling units."""
+    if not isinstance(wall_min, (int, float)):
+        return "?"
+    return f"{wall_min:.1f} min ({wall_min / 60:.1f} h)"
+
+
+def _wave_census_readonly():
+    """Exact Wave-A census from the declared cell universe (read-only).
+
+    Unlike ``WaveCell.state()`` this never calls ``dir()`` (which would
+    create missing run directories); it only stats marker files.  Marker
+    precedence is DONE > FAILED > RUNNING, so a retained historical
+    RUNNING marker can never be double-counted.  Returns None if the
+    runner module cannot be imported (caller falls back to _census).
+    """
+    try:
+        try:
+            from tools.run_wave_a import wave_cells
+        except ImportError:
+            from run_wave_a import wave_cells
+        cells = wave_cells()
+    except Exception:                        # noqa: BLE001 (read-only view)
+        return None
+    counts = {"done": 0, "failed": 0, "running": 0, "missing": 0}
+    for c in cells:
+        d = ROOT / "WAVE_A" / c.run_dirname()
+        if (d / "DONE.json").exists():
+            counts["done"] += 1
+        elif (d / "FAILED.json").exists():
+            counts["failed"] += 1
+        elif (d / "RUNNING.json").exists():
+            counts["running"] += 1
+        else:
+            counts["missing"] += 1
+    return counts
+
+
 def _pooled_frozen(exp: str, snr_grid, methods=("reconstruction", "task",
                                                 "digital")):
     """Pooled (over seeds) SR per (method, k, snr) from frozen eval JSONs."""
@@ -252,7 +290,7 @@ def _wave_table(wpooled):
         return ("<p class='dim'>No Wave-A eval artifacts yet — run "
                 "<code>python tools/run_wave_a.py train</code> then "
                 "<code>evaluate</code>.</p>")
-    tags = sorted({t for (t, _) in wpooled})
+    tags = sorted({key[0] for key in wpooled})
     snrs = sorted({s for (_, _, _, s) in wpooled}, key=lambda v: (v is None, v))
     cols = []
     for tag in tags:
@@ -366,7 +404,8 @@ def _run_all_section():
     # stage table
     parts.append("<table><tr><th>#</th><th class='left'>stage</th>"
                  "<th>status</th><th>exit</th><th>finished</th>"
-                 "<th>~min</th></tr>")
+                 "<th title='static plan hint, not elapsed wall time'>"
+                 "~min (plan)</th></tr>")
     for i, (sid, hint) in enumerate(order, 1):
         v = prog.get(sid, {})
         st = v.get("status", "pending")
@@ -393,21 +432,62 @@ def _run_all_section():
                      f" (last 15 lines)</p>")
         parts.append(f"<div class='logbox'>{html.escape(_tail(log_p))}</div>")
     if summ:
-        parts.append("<p class='sub'>last run: "
-                     f"{html.escape(str(summ.get('status', '?')))} · "
-                     f"{summ.get('wall_min', '?')} h wall · "
-                     f"failed: "
-                     f"{html.escape(', '.join(summ.get('failed_stages', [])) or 'none')}"
-                     "</p>")
+        parts.append(
+            "<p class='sub'>last completed run_all invocation: "
+            f"{html.escape(str(summ.get('status', '?')))} · "
+            f"{html.escape(_wall_min_label(summ.get('wall_min')))} wall · "
+            f"finished {html.escape(str(summ.get('finished_utc', '?')))} · "
+            f"failed: "
+            f"{html.escape(', '.join(summ.get('failed_stages', [])) or 'none')}"
+            " <span class='dim'>(historical summary; live stage state is "
+            "shown above)</span></p>")
     return "".join(parts)
+
+
+def _m2_conditional_accept(done_names):
+    """Approved frozen-M2 documented failures (single source: run_step11_m2).
+
+    These cells are formally accepted as failures (amendment 2026-10-19,
+    eval-only, not retrained).  The dashboard must show them as ACCOUNTED,
+    not as silently missing work.
+    """
+    try:
+        from run_step11_m2 import CONDITIONAL_ACCEPT
+    except ImportError:
+        try:
+            from tools.run_step11_m2 import CONDITIONAL_ACCEPT
+        except ImportError:
+            return []
+    return sorted(r for r in CONDITIONAL_ACCEPT if r not in done_names)
+
+
+def _wave_b_scope():
+    """Coverage contract: approved M2 Rayleigh failures are excluded."""
+    units = set()
+    for rid in _m2_conditional_accept(set()):
+        parts = rid.split("__")[0].split("_")
+        if len(parts) == 5 and parts[0] == "M2" and parts[2] == "rayleigh":
+            try:
+                units.add((int(parts[3][1:]), int(parts[4][4:])))
+            except ValueError:
+                pass
+    total_units = 5 * 3                     # k grid x seeds (Rayleigh)
+    per_unit = 5 * 5                        # SNR grid x sigma grid
+    return {"excluded": len(units), "total_units": total_units,
+            "covered_units": total_units - len(units),
+            "expected_cells": (total_units - len(units)) * per_unit,
+            "total_cells": total_units * per_unit}
 
 
 def build():
     m1_done, m1_failed, m1_running = _census(ROOT / "M1", "M1_")
     m2_done, m2_failed, m2_running = _census(ROOT / "M2", "M2_")
     wave = ROOT / "WAVE_A"
-    w_done = sorted(wave.glob("WAVE_A_*__*/DONE.json")) if wave.is_dir() else []
-    w_failed = sorted(wave.glob("WAVE_A_*__*/FAILED.json")) if wave.is_dir() else []
+    w_counts = _wave_census_readonly()
+    if w_counts is None:                     # runner not importable: fallback
+        w_done, w_failed, w_running = _census(wave, "WAVE_A_")
+        w_counts = {"done": len(w_done), "failed": len(w_failed),
+                    "running": len(w_running), "missing": "?"}
     m1_units, m1_slots, m1_have = _eval_census(ROOT / "M1" / "eval")
     m2_units, m2_slots, m2_have = _eval_census(ROOT / "M2" / "eval")
     pooled_m2 = _pooled_frozen("M2", None)
@@ -419,6 +499,9 @@ def build():
 
     wave_b_evals = len(list((ROOT / "WAVE_B" / "eval").glob("*/*.json"))) \
         if (ROOT / "WAVE_B" / "eval").is_dir() else 0
+    m2_cond = _m2_conditional_accept({p.name for p in m2_done})
+    wb = _wave_b_scope()
+    wa_units, wa_slots, wa_have = _eval_census(ROOT / "WAVE_A" / "eval")
     parts = [
         "<!doctype html><html><head><meta charset='utf-8'>",
         "<meta http-equiv='refresh' content='30'>",
@@ -440,11 +523,18 @@ def build():
         f"<span class='dim'>(failed {len(m1_failed)})</span></div>",
         f"<div class='card'>M1 eval <b>{m1_have}</b>/{m1_slots} slots</div>",
         f"<div class='card'>M2 training <b>{len(m2_done)}</b>/60 "
-        f"<span class='dim'>(failed {len(m2_failed)})</span></div>",
+        f"<span class='dim'>(failed {len(m2_failed)} · conditional-accept "
+        f"{len(m2_cond)})</span></div>",
         f"<div class='card'>M2 eval <b>{m2_have}</b>/{m2_slots} slots</div>",
-        f"<div class='card'>Wave-A runs <b>{len(w_done)}</b> done · "
-        f"{len(w_failed)} failed</div>",
-        f"<div class='card'>Wave-B CSI evals <b>{wave_b_evals}</b>/375</div>",
+        f"<div class='card'>Wave-A runs <b>{w_counts['done']}</b> done · "
+        f"{w_counts['failed']} failed · {w_counts['running']} running · "
+        f"{w_counts['missing']} missing</div>",
+        f"<div class='card'>Wave-A eval <b>{wa_have}</b>/90 slots "
+        f"<span class='dim'>({wa_units}/18 units)</span></div>",
+        f"<div class='card'>Wave-B CSI evals <b>{wave_b_evals}</b>/"
+        f"{wb['expected_cells']} <span class='dim'>({wb['covered_units']}/"
+        f"{wb['total_units']} units · {wb['excluded']} excluded: approved M2 "
+        f"failure)</span></div>",
 
         "<h2>2 · Frozen M2 pooled success rate (3 seeds pooled, E=5000)</h2>",
         "<p class='sub'>pooled over seeds 42/43/44; each cell = mean pooled SR "
@@ -452,6 +542,9 @@ def build():
         _m2_table(pooled_m2),
 
         "<h2>3 · Wave-A diagnostic success rate by arm (E=1000, non-frozen)</h2>",
+        f"<p class='sub'>eval coverage {wa_have}/90 slots over {wa_units}/18 "
+        "units. Two documented training failures leave one unit unreachable "
+        "(max 85/90); an arm missing from a unit is never imputed.</p>",
         _wave_table(wave_pool),
 
         "<h2>4 · Training catalog (newest first)</h2>",
@@ -479,8 +572,9 @@ def build():
         "column-block per k across the SNR grid).")
     OUT.write_text(html_text, encoding="utf-8")
     print(f"wrote {OUT} ({OUT.stat().st_size/1024:.0f} KB) — "
-          f"M1 {len(m1_done)}/36 · M2 {len(m2_done)}/60 · Wave-A {len(w_done)} "
-          f"done · eval M1 {m1_have}/{m1_slots} M2 {m2_have}/{m2_slots}")
+          f"M1 {len(m1_done)}/36 · M2 {len(m2_done)}/60 · "
+          f"Wave-A {w_counts['done']} done · eval M1 {m1_have}/{m1_slots} "
+          f"M2 {m2_have}/{m2_slots} Wave-A {wa_have}/{wa_slots}")
 
 
 if __name__ == "__main__":

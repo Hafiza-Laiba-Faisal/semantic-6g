@@ -7,7 +7,7 @@ Design goals (user request 2026-10-13):
   failed stages never abort the remaining queue; final summary + exit
   code report what failed.
 * CRASH-SAFE / RESUMABLE: every inner runner is already idempotent
-  (DONE-marked cells SKIP; failed/interrupted cells RETRAIN), and this
+  (DONE/FAILED cells SKIP; RUNNING/missing cells RETRAIN), and this
   orchestrator additionally records stage outcomes in
   results/RUN_ALL/progress.json - relaunching after a power cut simply
   continues from the first non-ok stage.
@@ -23,6 +23,13 @@ Usage (repository root, inside the venv):
     python tools/run_all.py run --lane awgn   # lane-split (see note below)
     python tools/run_all.py reset         # clear progress markers only
 
+Exit codes: 0 = complete, 1 = some stage failed (see run_all_summary.json),
+3 = stalled / no progress (see HALT.json), 4 = never returned by this
+orchestrator itself - it is the INNER "completed with only documented,
+user-approved cell failures" code (currently Wave-A training), which this
+orchestrator records as stage status "accepted" instead of "failed" and
+does not retry.
+
 Lane note: M1/M2/Wave-A accept a channel lane ("awgn"|"rayleigh") so TWO
 processes can split the wall clock; run ``--lane awgn`` and ``--lane
 rayleigh`` side by side.  Wave-B and M3/M4 ignore the lane (eval-only,
@@ -35,6 +42,7 @@ relaunches this script in a loop after any crash/power loss.
 from __future__ import annotations
 
 import json
+import os
 import subprocess
 import sys
 import threading
@@ -45,8 +53,15 @@ ROOT = Path(__file__).resolve().parents[1]
 RUN_ALL = ROOT / "results" / "RUN_ALL"
 PROGRESS = RUN_ALL / "progress.json"
 CURRENT = RUN_ALL / "current.json"        # live "what is running now" marker
+HALT = RUN_ALL / "HALT.json"              # written when an invocation made no progress
+FP_FILE = RUN_ALL / "last_progress_fingerprint.txt"
 DASH_EVERY_S = 120                        # dashboard rebuild cadence
 PY = sys.executable
+
+NO_PROGRESS_EXIT = 3                      # "stalled" exit code for the launcher
+ACCEPTED_EXIT = 4                         # "completed with only DOCUMENTED
+                                          #  failures" (never retried, never
+                                          #  counted as a stage failure)
 
 ARCHIVE_DIRS = ("M1", "M2", "M3", "M4", "WAVE_A", "WAVE_B")
 
@@ -117,6 +132,21 @@ def save_progress(prog: dict) -> None:
     PROGRESS.write_text(json.dumps(prog, indent=2))
 
 
+def _progress_fingerprint(prog: dict) -> str:
+    """Stage outcome + first-line-of-error fingerprint.
+
+    Two consecutive invocations with the SAME fingerprint mean the queue made
+    no progress at all (same stages, same exit codes).  Retrying forever would
+    just rewrite the same logs, so the launcher must stop instead.
+    """
+    import hashlib
+
+    smooth = {sid: {"status": v.get("status"), "exit": v.get("exit")}
+              for sid, v in sorted(prog.items())}
+    return hashlib.sha256(
+        json.dumps(smooth, sort_keys=True).encode()).hexdigest()
+
+
 def _utc() -> str:
     return time.strftime("%Y-%m-%dT%H%M%SZ", time.gmtime())
 
@@ -154,12 +184,17 @@ def cmd_status(lane=None) -> int:
     print("== run_all stage queue ==")
     for sid, argv, hint in [(s[0], s[1], s[2]) for s in stages(lane)]:
         st = prog.get(sid, {}).get("status", "pending")
-        mark = {"ok": "DONE ", "failed": "FAILED"}.get(st, "....")
+        mark = {"ok": "DONE  ", "accepted": "ACCEPT",
+                "failed": "FAILED"}.get(st, "....")
         print(f"  [{mark}] {sid:18s} ~{hint:>4}min  {' '.join(argv[1:])}")
-        if st != "ok":
+        if st not in ("ok", "accepted"):
             tot_min += hint
     done = sum(1 for v in prog.values() if v.get("status") == "ok")
-    print(f"-- {done} stages ok; remaining estimate ~{tot_min/60:.1f} h"
+    accepted = sum(1 for v in prog.values()
+                   if v.get("status") == "accepted")
+    print(f"-- {done} stages ok"
+          + (f", {accepted} accepted (documented failures)" if accepted else "")
+          + f"; remaining estimate ~{tot_min/60:.1f} h"
           + (f" [lane: {lane}]" if lane else ""))
     return 0
 
@@ -197,13 +232,33 @@ def run_stage(sid: str, argv: list, log_name: str, attempt: int) -> int:
     log_path = RUN_ALL / f"{log_name}.log"
     RUN_ALL.mkdir(parents=True, exist_ok=True)
     t0 = time.perf_counter()
+    # Unbuffered child stdout: redirected files are block-buffered by default,
+    # which made a multi-hour training log look empty.  This changes only
+    # logging latency, never training behaviour/verbosity.
+    env = dict(os.environ)
+    env["PYTHONUNBUFFERED"] = "1"
     with log_path.open("a") as log:
         log.write(f"\n===== {_utc()} attempt={attempt} "
                   f"cmd={' '.join(argv)} =====\n")
         log.flush()
         proc = subprocess.run(argv, cwd=ROOT, stdout=log,
-                              stderr=subprocess.STDOUT)
+                              stderr=subprocess.STDOUT, env=env)
     return proc.returncode
+
+
+def _stage_status(code: int) -> str:
+    """Map a stage exit code to a progress status.
+
+    0                  -> "ok"
+    ACCEPTED_EXIT (4)  -> "accepted"  (completed; only DOCUMENTED cell
+                          failures inside; never retried, never a stage failure)
+    anything else      -> "failed"
+    """
+    if code == 0:
+        return "ok"
+    if code == ACCEPTED_EXIT:
+        return "accepted"
+    return "failed"
 
 
 def cmd_run(lane=None, fresh=False) -> int:
@@ -225,8 +280,9 @@ def cmd_run(lane=None, fresh=False) -> int:
     failures = []
     for i, (sid, argv, _hint) in enumerate(queue, 1):
         log_name = f"run_all_{sid}"
-        if prog.get(sid, {}).get("status") == "ok":
-            print(f"[{i:2d}/{len(queue)}] SKIP {sid} (already ok)")
+        if prog.get(sid, {}).get("status") in ("ok", "accepted"):
+            print(f"[{i:2d}/{len(queue)}] SKIP {sid} "
+                  f"(already {prog[sid]['status']})")
             continue
         print(f"[{i:2d}/{len(queue)}] RUN   {sid}  ({' '.join(argv[1:])})",
               flush=True)
@@ -234,19 +290,27 @@ def cmd_run(lane=None, fresh=False) -> int:
             {"stage": sid, "argv": argv[1:], "started_utc": _utc(),
              "progress": f"{i}/{len(queue)}"}))
         code = run_stage(sid, argv, log_name, attempt=1)
-        if code != 0:
+        if code == ACCEPTED_EXIT:
+            # Completed, with only declared/documented cell failures inside.
+            # Retrying cannot change a frozen deterministic outcome, so we do
+            # not burn a second full run (that is exactly the "retrain until
+            # the numbers look good" trap this project must avoid).
+            print(f"          documented failures only -> ACCEPTED", flush=True)
+        elif code != 0:
             print(f"          retry once (exit={code})...", flush=True)
             code = run_stage(sid, argv, log_name, attempt=2)
         if CURRENT.exists():
             CURRENT.unlink()
-        ok = code == 0
+        status = _stage_status(code)
         wall = round(time.perf_counter() - t_start, 1)
-        prog[sid] = {"status": "ok" if ok else "failed", "exit": code,
+        prog[sid] = {"status": status, "exit": code,
                      "finished_utc": _utc(), "wall_cum_s": wall}
         save_progress(prog)
-        print(f"          -> {'OK' if ok else f'FAILED (exit={code})'} "
+        label = {"ok": "OK", "accepted": "ACCEPTED",
+                 "failed": f"FAILED (exit={code})"}[status]
+        print(f"          -> {label} "
               f"| {sid} | log: results/RUN_ALL/{log_name}.log", flush=True)
-        if not ok:
+        if status == "failed":
             # hard gates STOP the queue (a broken frozen assumption makes
             # everything after it meaningless); soft stages continue.
             if sid.endswith("_verify"):
@@ -259,20 +323,56 @@ def cmd_run(lane=None, fresh=False) -> int:
     refresher.join(timeout=5)
     failed = [s for s, v in prog.items() if v.get("status") == "failed"]
     done = [s for s, v in prog.items() if v.get("status") == "ok"]
+    accepted = [s for s, v in prog.items() if v.get("status") == "accepted"]
     mins = (time.perf_counter() - t_start) / 60
     summary = {
         "finished_utc": _utc(), "ok_stages": sorted(done),
+        "accepted_stages": sorted(accepted),
         "failed_stages": sorted(failed), "wall_min": round(mins, 1),
         "lane": lane,
         "status": "complete" if not failed else "incomplete",
     }
     save_progress(prog)
+    stalled = False
+    if failed:
+        fp = _progress_fingerprint(prog)
+        prev = FP_FILE.read_text().strip() if FP_FILE.exists() else None
+        stalled = prev == fp                # identical outcomes => no progress
+        FP_FILE.write_text(fp)
+        if stalled:
+            summary["status"] = "stalled"
+            summary["halt"] = "no-progress"
+            HALT.write_text(json.dumps({
+                "halted_utc": _utc(),
+                "reason": ("two consecutive invocations produced IDENTICAL "
+                           "stage outcomes; retrying cannot change anything"),
+                "failed_stages": sorted(failed),
+                "exit_code": NO_PROGRESS_EXIT,
+                "how_to_resume": ("fix the cause, delete "
+                                  "results/RUN_ALL/HALT.json, then rerun "
+                                  "python tools/run_all.py run"),
+            }, indent=2))
+    else:
+        summary["status"] = "complete"
+        for p in (HALT, FP_FILE):
+            if p.exists():
+                p.unlink()                  # clean run clears stale halt state
     (RUN_ALL / "run_all_summary.json").write_text(json.dumps(summary, indent=2))
     rebuild_dashboard()                       # final state on the page
     print(f"\n== run_all {'COMPLETE' if not failed else 'INCOMPLETE'}: "
-          f"{len(done)} ok, {len(failed)} failed, wall {mins/60:.1f} h ==")
+          f"{len(done)} ok"
+          + (f", {len(accepted)} accepted" if accepted else "")
+          + f", {len(failed)} failed, wall {mins/60:.1f} h ==")
+    if accepted:
+        print("accepted stages (documented cell failures, not retried):",
+              ", ".join(sorted(accepted)))
     if failed:
         print("failed stages:", ", ".join(sorted(failed)))
+        if stalled:
+            print("!! NO PROGRESS since the previous invocation - halting "
+                  "instead of looping forever.")
+            print("   see results/RUN_ALL/HALT.json (fix, delete it, rerun)")
+            return NO_PROGRESS_EXIT
         print("relaunch the SAME command to retry only the missing parts.")
         return 1
     return 0

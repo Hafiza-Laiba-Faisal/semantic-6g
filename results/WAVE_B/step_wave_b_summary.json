@@ -2,11 +2,26 @@
   "experiment": "WAVE_B",
   "status": "complete",
   "amendment": "WAVE_B-non-frozen-CSI-ablation-2026-10-13",
-  "protocol_note": "Wave-B: frozen M2 models + frozen digital, E=5000, non-frozen CSI-error amendment; sigma=0 rows are the exact frozen path",
-  "eval_cells": 375,
+  "coverage": {
+    "units_total": 15,
+    "units_covered": 14,
+    "cells_total_if_full": 375,
+    "cells_expected": 350,
+    "excluded_units": [
+      {
+        "k": 54,
+        "seed": 43,
+        "run_id": "M2_task_rayleigh_k54_seed43",
+        "reason": "frozen M2 conditional-accept (documented failure); not retrained and not evaluated"
+      }
+    ]
+  },
+  "protocol_note": "Wave-B: frozen M2 models + frozen digital, E=5000, non-frozen CSI-error amendment; sigma=0 rows are the exact frozen path; coverage 14/15 units (excluded unit is an approved M2 failure)",
+  "eval_cells": 350,
   "sigma0_gate": {
-    "cells": 75,
-    "passed": 75
+    "cells": 70,
+    "passed": 70,
+    "expected": 70
   },
   "summary_rows": [
     {
@@ -234,9 +249,9 @@
       "k": 54,
       "snr_db": 0.0,
       "csi_error_sigma": 0.0,
-      "n_seeds": 3,
-      "success_count_pooled": 10767,
-      "episodes_pooled": 15000,
+      "n_seeds": 2,
+      "success_count_pooled": 7178,
+      "episodes_pooled": 10000,
       "success_rate_pooled": 0.7178,
       "delta_vs_sigma0_pp": 0.0
     },
@@ -245,9 +260,9 @@
       "k": 54,
       "snr_db": 5.0,
       "csi_error_sigma": 0.0,
-      "n_seeds": 3,
-      "success_count_pooled": 14862,
-      "episodes_pooled": 15000,
+      "n_seeds": 2,
+      "success_count_pooled": 9908,
+      "episodes_pooled": 10000,
       "success_rate_pooled": 0.9908,
       "delta_vs_sigma0_pp": 0.0
     },
@@ -256,9 +271,9 @@
       "k": 54,
       "snr_db": 10.0,
       "csi_error_sigma": 0.0,
-      "n_seeds": 3,
-      "success_count_pooled": 14976,
-      "episodes_pooled": 15000,
+      "n_seeds": 2,
+      "success_count_pooled": 9984,
+      "episodes_pooled": 10000,
       "success_rate_pooled": 0.9984,
       "delta_vs_sigma0_pp": 0.0
     },
@@ -267,9 +282,9 @@
       "k": 54,
       "snr_db": 15.0,
       "csi_error_sigma": 0.0,
-      "n_seeds": 3,
-      "success_count_pooled": 14997,
-      "episodes_pooled": 15000,
+      "n_seeds": 2,
+      "success_count_pooled": 9998,
+      "episodes_pooled": 10000,
       "success_rate_pooled": 0.9998,
       "delta_vs_sigma0_pp": 0.0
     },
@@ -278,9 +293,9 @@
       "k": 54,
       "snr_db": 20.0,
       "csi_error_sigma": 0.0,
-      "n_seeds": 3,
-      "success_count_pooled": 15000,
-      "episodes_pooled": 15000,
+      "n_seeds": 2,
+      "success_count_pooled": 10000,
+      "episodes_pooled": 10000,
       "success_rate_pooled": 1.0,
       "delta_vs_sigma0_pp": 0.0
     },
@@ -290,9 +305,9 @@
       "snr_db": 0.0,
       "csi_error_sigma": 0.0,
       "n_seeds": 3,
-      "success_count_pooled": 4240,
+      "success_count_pooled": 4264,
       "episodes_pooled": 15000,
-      "success_rate_pooled": 0.2827,
+      "success_rate_pooled": 0.2843,
       "delta_vs_sigma0_pp": 0.0
     },
     {
@@ -301,9 +316,9 @@
       "snr_db": 5.0,
       "csi_error_sigma": 0.0,
       "n_seeds": 3,
-      "success_count_pooled": 3968,
+      "success_count_pooled": 3918,
       "episodes_pooled": 15000,
-      "success_rate_pooled": 0.2645,
+      "success_rate_pooled": 0.2612,
       "delta_vs_sigma0_pp": 0.0
     },
     {
@@ -312,9 +327,9 @@
       "snr_db": 10.0,
       "csi_error_sigma": 0.0,
       "n_seeds": 3,
-      "success_count_pooled": 3657,
+      "success_count_pooled": 3673,
       "episodes_pooled": 15000,
-      "success_rate_pooled": 0.2438,
+      "success_rate_pooled": 0.2449,
       "delta_vs_sigma0_pp": 0.0
     },
     {
@@ -323,9 +338,9 @@
       "snr_db": 15.0,
       "csi_error_sigma": 0.0,
       "n_seeds": 3,
-      "success_count_pooled": 3491,
+      "success_count_pooled": 3559,
       "episodes_pooled": 15000,
-      "success_rate_pooled": 0.2327,
+      "success_rate_pooled": 0.2373,
       "delta_vs_sigma0_pp": 0.0
     },
     {
@@ -334,9 +349,9 @@
       "snr_db": 20.0,
       "csi_error_sigma": 0.0,
       "n_seeds": 3,
-      "success_count_pooled": 3469,
+      "success_count_pooled": 3527,
       "episodes_pooled": 15000,
-      "success_rate_pooled": 0.2313,
+      "success_rate_pooled": 0.2351,
       "delta_vs_sigma0_pp": 0.0
     },
     {
@@ -345,9 +360,9 @@
       "snr_db": 0.0,
       "csi_error_sigma": 0.0,
       "n_seeds": 3,
-      "success_count_pooled": 4075,
+      "success_count_pooled": 4023,
       "episodes_pooled": 15000,
-      "success_rate_pooled": 0.2717,
+      "success_rate_pooled": 0.2682,
       "delta_vs_sigma0_pp": 0.0
     },
     {
@@ -356,9 +371,9 @@
       "snr_db": 5.0,
       "csi_error_sigma": 0.0,
       "n_seeds": 3,
-      "success_count_pooled": 3672,
+      "success_count_pooled": 3627,
       "episodes_pooled": 15000,
-      "success_rate_pooled": 0.2448,
+      "success_rate_pooled": 0.2418,
       "delta_vs_sigma0_pp": 0.0
     },
     {
@@ -367,9 +382,9 @@
       "snr_db": 10.0,
       "csi_error_sigma": 0.0,
       "n_seeds": 3,
-      "success_count_pooled": 3457,
+      "success_count_pooled": 3411,
       "episodes_pooled": 15000,
-      "success_rate_pooled": 0.2305,
+      "success_rate_pooled": 0.2274,
       "delta_vs_sigma0_pp": 0.0
     },
     {
@@ -378,9 +393,9 @@
       "snr_db": 15.0,
       "csi_error_sigma": 0.0,
       "n_seeds": 3,
-      "success_count_pooled": 3374,
+      "success_count_pooled": 3330,
       "episodes_pooled": 15000,
-      "success_rate_pooled": 0.2249,
+      "success_rate_pooled": 0.222,
       "delta_vs_sigma0_pp": 0.0
     },
     {
@@ -389,9 +404,9 @@
       "snr_db": 20.0,
       "csi_error_sigma": 0.0,
       "n_seeds": 3,
-      "success_count_pooled": 3379,
+      "success_count_pooled": 3337,
       "episodes_pooled": 15000,
-      "success_rate_pooled": 0.2253,
+      "success_rate_pooled": 0.2225,
       "delta_vs_sigma0_pp": 0.0
     },
     {
@@ -400,9 +415,9 @@
       "snr_db": 0.0,
       "csi_error_sigma": 0.0,
       "n_seeds": 3,
-      "success_count_pooled": 3910,
+      "success_count_pooled": 3917,
       "episodes_pooled": 15000,
-      "success_rate_pooled": 0.2607,
+      "success_rate_pooled": 0.2611,
       "delta_vs_sigma0_pp": 0.0
     },
     {
@@ -411,9 +426,9 @@
       "snr_db": 5.0,
       "csi_error_sigma": 0.0,
       "n_seeds": 3,
-      "success_count_pooled": 3611,
+      "success_count_pooled": 3580,
       "episodes_pooled": 15000,
-      "success_rate_pooled": 0.2407,
+      "success_rate_pooled": 0.2387,
       "delta_vs_sigma0_pp": 0.0
     },
     {
@@ -422,9 +437,9 @@
       "snr_db": 10.0,
       "csi_error_sigma": 0.0,
       "n_seeds": 3,
-      "success_count_pooled": 3406,
+      "success_count_pooled": 3368,
       "episodes_pooled": 15000,
-      "success_rate_pooled": 0.2271,
+      "success_rate_pooled": 0.2245,
       "delta_vs_sigma0_pp": 0.0
     },
     {
@@ -433,9 +448,9 @@
       "snr_db": 15.0,
       "csi_error_sigma": 0.0,
       "n_seeds": 3,
-      "success_count_pooled": 3305,
+      "success_count_pooled": 3318,
       "episodes_pooled": 15000,
-      "success_rate_pooled": 0.2203,
+      "success_rate_pooled": 0.2212,
       "delta_vs_sigma0_pp": 0.0
     },
     {
@@ -444,9 +459,9 @@
       "snr_db": 20.0,
       "csi_error_sigma": 0.0,
       "n_seeds": 3,
-      "success_count_pooled": 3252,
+      "success_count_pooled": 3311,
       "episodes_pooled": 15000,
-      "success_rate_pooled": 0.2168,
+      "success_rate_pooled": 0.2207,
       "delta_vs_sigma0_pp": 0.0
     },
     {
@@ -455,9 +470,9 @@
       "snr_db": 0.0,
       "csi_error_sigma": 0.0,
       "n_seeds": 3,
-      "success_count_pooled": 4083,
+      "success_count_pooled": 4032,
       "episodes_pooled": 15000,
-      "success_rate_pooled": 0.2722,
+      "success_rate_pooled": 0.2688,
       "delta_vs_sigma0_pp": 0.0
     },
     {
@@ -466,97 +481,97 @@
       "snr_db": 5.0,
       "csi_error_sigma": 0.0,
       "n_seeds": 3,
-      "success_count_pooled": 3914,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.2609,
-      "delta_vs_sigma0_pp": 0.0
-    },
-    {
-      "method": "reconstruction",
-      "k": 30,
-      "snr_db": 10.0,
-      "csi_error_sigma": 0.0,
-      "n_seeds": 3,
-      "success_count_pooled": 3920,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.2613,
-      "delta_vs_sigma0_pp": 0.0
-    },
-    {
-      "method": "reconstruction",
-      "k": 30,
-      "snr_db": 15.0,
-      "csi_error_sigma": 0.0,
-      "n_seeds": 3,
-      "success_count_pooled": 3961,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.2641,
-      "delta_vs_sigma0_pp": 0.0
-    },
-    {
-      "method": "reconstruction",
-      "k": 30,
-      "snr_db": 20.0,
-      "csi_error_sigma": 0.0,
-      "n_seeds": 3,
-      "success_count_pooled": 3928,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.2619,
-      "delta_vs_sigma0_pp": 0.0
-    },
-    {
-      "method": "reconstruction",
-      "k": 54,
-      "snr_db": 0.0,
-      "csi_error_sigma": 0.0,
-      "n_seeds": 3,
-      "success_count_pooled": 3991,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.2661,
-      "delta_vs_sigma0_pp": 0.0
-    },
-    {
-      "method": "reconstruction",
-      "k": 54,
-      "snr_db": 5.0,
-      "csi_error_sigma": 0.0,
-      "n_seeds": 3,
-      "success_count_pooled": 3914,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.2609,
-      "delta_vs_sigma0_pp": 0.0
-    },
-    {
-      "method": "reconstruction",
-      "k": 54,
-      "snr_db": 10.0,
-      "csi_error_sigma": 0.0,
-      "n_seeds": 3,
-      "success_count_pooled": 3944,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.2629,
-      "delta_vs_sigma0_pp": 0.0
-    },
-    {
-      "method": "reconstruction",
-      "k": 54,
-      "snr_db": 15.0,
-      "csi_error_sigma": 0.0,
-      "n_seeds": 3,
-      "success_count_pooled": 3901,
+      "success_count_pooled": 3902,
       "episodes_pooled": 15000,
       "success_rate_pooled": 0.2601,
       "delta_vs_sigma0_pp": 0.0
     },
     {
       "method": "reconstruction",
-      "k": 54,
+      "k": 30,
+      "snr_db": 10.0,
+      "csi_error_sigma": 0.0,
+      "n_seeds": 3,
+      "success_count_pooled": 3960,
+      "episodes_pooled": 15000,
+      "success_rate_pooled": 0.264,
+      "delta_vs_sigma0_pp": 0.0
+    },
+    {
+      "method": "reconstruction",
+      "k": 30,
+      "snr_db": 15.0,
+      "csi_error_sigma": 0.0,
+      "n_seeds": 3,
+      "success_count_pooled": 3958,
+      "episodes_pooled": 15000,
+      "success_rate_pooled": 0.2639,
+      "delta_vs_sigma0_pp": 0.0
+    },
+    {
+      "method": "reconstruction",
+      "k": 30,
       "snr_db": 20.0,
       "csi_error_sigma": 0.0,
       "n_seeds": 3,
-      "success_count_pooled": 3870,
+      "success_count_pooled": 3932,
       "episodes_pooled": 15000,
-      "success_rate_pooled": 0.258,
+      "success_rate_pooled": 0.2621,
+      "delta_vs_sigma0_pp": 0.0
+    },
+    {
+      "method": "reconstruction",
+      "k": 54,
+      "snr_db": 0.0,
+      "csi_error_sigma": 0.0,
+      "n_seeds": 2,
+      "success_count_pooled": 2576,
+      "episodes_pooled": 10000,
+      "success_rate_pooled": 0.2576,
+      "delta_vs_sigma0_pp": 0.0
+    },
+    {
+      "method": "reconstruction",
+      "k": 54,
+      "snr_db": 5.0,
+      "csi_error_sigma": 0.0,
+      "n_seeds": 2,
+      "success_count_pooled": 2507,
+      "episodes_pooled": 10000,
+      "success_rate_pooled": 0.2507,
+      "delta_vs_sigma0_pp": 0.0
+    },
+    {
+      "method": "reconstruction",
+      "k": 54,
+      "snr_db": 10.0,
+      "csi_error_sigma": 0.0,
+      "n_seeds": 2,
+      "success_count_pooled": 2461,
+      "episodes_pooled": 10000,
+      "success_rate_pooled": 0.2461,
+      "delta_vs_sigma0_pp": 0.0
+    },
+    {
+      "method": "reconstruction",
+      "k": 54,
+      "snr_db": 15.0,
+      "csi_error_sigma": 0.0,
+      "n_seeds": 2,
+      "success_count_pooled": 2469,
+      "episodes_pooled": 10000,
+      "success_rate_pooled": 0.2469,
+      "delta_vs_sigma0_pp": 0.0
+    },
+    {
+      "method": "reconstruction",
+      "k": 54,
+      "snr_db": 20.0,
+      "csi_error_sigma": 0.0,
+      "n_seeds": 2,
+      "success_count_pooled": 2436,
+      "episodes_pooled": 10000,
+      "success_rate_pooled": 0.2436,
       "delta_vs_sigma0_pp": 0.0
     },
     {
@@ -565,9 +580,9 @@
       "snr_db": 0.0,
       "csi_error_sigma": 0.0,
       "n_seeds": 3,
-      "success_count_pooled": 500,
+      "success_count_pooled": 844,
       "episodes_pooled": 15000,
-      "success_rate_pooled": 0.0333,
+      "success_rate_pooled": 0.0563,
       "delta_vs_sigma0_pp": 0.0
     },
     {
@@ -576,9 +591,9 @@
       "snr_db": 5.0,
       "csi_error_sigma": 0.0,
       "n_seeds": 3,
-      "success_count_pooled": 546,
+      "success_count_pooled": 807,
       "episodes_pooled": 15000,
-      "success_rate_pooled": 0.0364,
+      "success_rate_pooled": 0.0538,
       "delta_vs_sigma0_pp": 0.0
     },
     {
@@ -587,9 +602,9 @@
       "snr_db": 10.0,
       "csi_error_sigma": 0.0,
       "n_seeds": 3,
-      "success_count_pooled": 564,
+      "success_count_pooled": 783,
       "episodes_pooled": 15000,
-      "success_rate_pooled": 0.0376,
+      "success_rate_pooled": 0.0522,
       "delta_vs_sigma0_pp": 0.0
     },
     {
@@ -598,9 +613,9 @@
       "snr_db": 15.0,
       "csi_error_sigma": 0.0,
       "n_seeds": 3,
-      "success_count_pooled": 583,
+      "success_count_pooled": 774,
       "episodes_pooled": 15000,
-      "success_rate_pooled": 0.0389,
+      "success_rate_pooled": 0.0516,
       "delta_vs_sigma0_pp": 0.0
     },
     {
@@ -609,9 +624,9 @@
       "snr_db": 20.0,
       "csi_error_sigma": 0.0,
       "n_seeds": 3,
-      "success_count_pooled": 586,
+      "success_count_pooled": 775,
       "episodes_pooled": 15000,
-      "success_rate_pooled": 0.0391,
+      "success_rate_pooled": 0.0517,
       "delta_vs_sigma0_pp": 0.0
     },
     {
@@ -620,9 +635,9 @@
       "snr_db": 0.0,
       "csi_error_sigma": 0.0,
       "n_seeds": 3,
-      "success_count_pooled": 451,
+      "success_count_pooled": 357,
       "episodes_pooled": 15000,
-      "success_rate_pooled": 0.0301,
+      "success_rate_pooled": 0.0238,
       "delta_vs_sigma0_pp": 0.0
     },
     {
@@ -631,9 +646,9 @@
       "snr_db": 5.0,
       "csi_error_sigma": 0.0,
       "n_seeds": 3,
-      "success_count_pooled": 446,
+      "success_count_pooled": 372,
       "episodes_pooled": 15000,
-      "success_rate_pooled": 0.0297,
+      "success_rate_pooled": 0.0248,
       "delta_vs_sigma0_pp": 0.0
     },
     {
@@ -642,9 +657,9 @@
       "snr_db": 10.0,
       "csi_error_sigma": 0.0,
       "n_seeds": 3,
-      "success_count_pooled": 467,
+      "success_count_pooled": 366,
       "episodes_pooled": 15000,
-      "success_rate_pooled": 0.0311,
+      "success_rate_pooled": 0.0244,
       "delta_vs_sigma0_pp": 0.0
     },
     {
@@ -653,9 +668,9 @@
       "snr_db": 15.0,
       "csi_error_sigma": 0.0,
       "n_seeds": 3,
-      "success_count_pooled": 472,
+      "success_count_pooled": 377,
       "episodes_pooled": 15000,
-      "success_rate_pooled": 0.0315,
+      "success_rate_pooled": 0.0251,
       "delta_vs_sigma0_pp": 0.0
     },
     {
@@ -664,9 +679,9 @@
       "snr_db": 20.0,
       "csi_error_sigma": 0.0,
       "n_seeds": 3,
-      "success_count_pooled": 488,
+      "success_count_pooled": 381,
       "episodes_pooled": 15000,
-      "success_rate_pooled": 0.0325,
+      "success_rate_pooled": 0.0254,
       "delta_vs_sigma0_pp": 0.0
     },
     {
@@ -675,9 +690,9 @@
       "snr_db": 0.0,
       "csi_error_sigma": 0.0,
       "n_seeds": 3,
-      "success_count_pooled": 1157,
+      "success_count_pooled": 509,
       "episodes_pooled": 15000,
-      "success_rate_pooled": 0.0771,
+      "success_rate_pooled": 0.0339,
       "delta_vs_sigma0_pp": 0.0
     },
     {
@@ -686,9 +701,9 @@
       "snr_db": 5.0,
       "csi_error_sigma": 0.0,
       "n_seeds": 3,
-      "success_count_pooled": 1196,
+      "success_count_pooled": 542,
       "episodes_pooled": 15000,
-      "success_rate_pooled": 0.0797,
+      "success_rate_pooled": 0.0361,
       "delta_vs_sigma0_pp": 0.0
     },
     {
@@ -697,9 +712,9 @@
       "snr_db": 10.0,
       "csi_error_sigma": 0.0,
       "n_seeds": 3,
-      "success_count_pooled": 1177,
+      "success_count_pooled": 559,
       "episodes_pooled": 15000,
-      "success_rate_pooled": 0.0785,
+      "success_rate_pooled": 0.0373,
       "delta_vs_sigma0_pp": 0.0
     },
     {
@@ -708,9 +723,9 @@
       "snr_db": 15.0,
       "csi_error_sigma": 0.0,
       "n_seeds": 3,
-      "success_count_pooled": 1201,
+      "success_count_pooled": 556,
       "episodes_pooled": 15000,
-      "success_rate_pooled": 0.0801,
+      "success_rate_pooled": 0.0371,
       "delta_vs_sigma0_pp": 0.0
     },
     {
@@ -719,9 +734,9 @@
       "snr_db": 20.0,
       "csi_error_sigma": 0.0,
       "n_seeds": 3,
-      "success_count_pooled": 1215,
+      "success_count_pooled": 559,
       "episodes_pooled": 15000,
-      "success_rate_pooled": 0.081,
+      "success_rate_pooled": 0.0373,
       "delta_vs_sigma0_pp": 0.0
     },
     {
@@ -730,9 +745,9 @@
       "snr_db": 0.0,
       "csi_error_sigma": 0.0,
       "n_seeds": 3,
-      "success_count_pooled": 523,
+      "success_count_pooled": 303,
       "episodes_pooled": 15000,
-      "success_rate_pooled": 0.0349,
+      "success_rate_pooled": 0.0202,
       "delta_vs_sigma0_pp": 0.0
     },
     {
@@ -741,9 +756,9 @@
       "snr_db": 5.0,
       "csi_error_sigma": 0.0,
       "n_seeds": 3,
-      "success_count_pooled": 562,
+      "success_count_pooled": 311,
       "episodes_pooled": 15000,
-      "success_rate_pooled": 0.0375,
+      "success_rate_pooled": 0.0207,
       "delta_vs_sigma0_pp": 0.0
     },
     {
@@ -752,9 +767,9 @@
       "snr_db": 10.0,
       "csi_error_sigma": 0.0,
       "n_seeds": 3,
-      "success_count_pooled": 573,
+      "success_count_pooled": 314,
       "episodes_pooled": 15000,
-      "success_rate_pooled": 0.0382,
+      "success_rate_pooled": 0.0209,
       "delta_vs_sigma0_pp": 0.0
     },
     {
@@ -763,9 +778,9 @@
       "snr_db": 15.0,
       "csi_error_sigma": 0.0,
       "n_seeds": 3,
-      "success_count_pooled": 593,
+      "success_count_pooled": 318,
       "episodes_pooled": 15000,
-      "success_rate_pooled": 0.0395,
+      "success_rate_pooled": 0.0212,
       "delta_vs_sigma0_pp": 0.0
     },
     {
@@ -774,9 +789,9 @@
       "snr_db": 20.0,
       "csi_error_sigma": 0.0,
       "n_seeds": 3,
-      "success_count_pooled": 601,
+      "success_count_pooled": 316,
       "episodes_pooled": 15000,
-      "success_rate_pooled": 0.0401,
+      "success_rate_pooled": 0.0211,
       "delta_vs_sigma0_pp": 0.0
     },
     {
@@ -784,10 +799,10 @@
       "k": 54,
       "snr_db": 0.0,
       "csi_error_sigma": 0.0,
-      "n_seeds": 3,
-      "success_count_pooled": 433,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.0289,
+      "n_seeds": 2,
+      "success_count_pooled": 357,
+      "episodes_pooled": 10000,
+      "success_rate_pooled": 0.0357,
       "delta_vs_sigma0_pp": 0.0
     },
     {
@@ -795,10 +810,10 @@
       "k": 54,
       "snr_db": 5.0,
       "csi_error_sigma": 0.0,
-      "n_seeds": 3,
-      "success_count_pooled": 407,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.0271,
+      "n_seeds": 2,
+      "success_count_pooled": 355,
+      "episodes_pooled": 10000,
+      "success_rate_pooled": 0.0355,
       "delta_vs_sigma0_pp": 0.0
     },
     {
@@ -806,10 +821,10 @@
       "k": 54,
       "snr_db": 10.0,
       "csi_error_sigma": 0.0,
-      "n_seeds": 3,
-      "success_count_pooled": 410,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.0273,
+      "n_seeds": 2,
+      "success_count_pooled": 359,
+      "episodes_pooled": 10000,
+      "success_rate_pooled": 0.0359,
       "delta_vs_sigma0_pp": 0.0
     },
     {
@@ -817,10 +832,10 @@
       "k": 54,
       "snr_db": 15.0,
       "csi_error_sigma": 0.0,
-      "n_seeds": 3,
-      "success_count_pooled": 415,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.0277,
+      "n_seeds": 2,
+      "success_count_pooled": 368,
+      "episodes_pooled": 10000,
+      "success_rate_pooled": 0.0368,
       "delta_vs_sigma0_pp": 0.0
     },
     {
@@ -828,10 +843,10 @@
       "k": 54,
       "snr_db": 20.0,
       "csi_error_sigma": 0.0,
-      "n_seeds": 3,
-      "success_count_pooled": 417,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.0278,
+      "n_seeds": 2,
+      "success_count_pooled": 371,
+      "episodes_pooled": 10000,
+      "success_rate_pooled": 0.0371,
       "delta_vs_sigma0_pp": 0.0
     },
     {
@@ -1059,53 +1074,53 @@
       "k": 54,
       "snr_db": 0.0,
       "csi_error_sigma": 0.05,
-      "n_seeds": 3,
-      "success_count_pooled": 10642,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.7095,
-      "delta_vs_sigma0_pp": -0.83
+      "n_seeds": 2,
+      "success_count_pooled": 7104,
+      "episodes_pooled": 10000,
+      "success_rate_pooled": 0.7104,
+      "delta_vs_sigma0_pp": -0.74
     },
     {
       "method": "digital",
       "k": 54,
       "snr_db": 5.0,
       "csi_error_sigma": 0.05,
-      "n_seeds": 3,
-      "success_count_pooled": 14855,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.9903,
-      "delta_vs_sigma0_pp": -0.05
+      "n_seeds": 2,
+      "success_count_pooled": 9899,
+      "episodes_pooled": 10000,
+      "success_rate_pooled": 0.9899,
+      "delta_vs_sigma0_pp": -0.09
     },
     {
       "method": "digital",
       "k": 54,
       "snr_db": 10.0,
       "csi_error_sigma": 0.05,
-      "n_seeds": 3,
-      "success_count_pooled": 14975,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.9983,
-      "delta_vs_sigma0_pp": -0.01
+      "n_seeds": 2,
+      "success_count_pooled": 9982,
+      "episodes_pooled": 10000,
+      "success_rate_pooled": 0.9982,
+      "delta_vs_sigma0_pp": -0.02
     },
     {
       "method": "digital",
       "k": 54,
       "snr_db": 15.0,
       "csi_error_sigma": 0.05,
-      "n_seeds": 3,
-      "success_count_pooled": 14995,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.9997,
-      "delta_vs_sigma0_pp": -0.01
+      "n_seeds": 2,
+      "success_count_pooled": 9998,
+      "episodes_pooled": 10000,
+      "success_rate_pooled": 0.9998,
+      "delta_vs_sigma0_pp": 0.0
     },
     {
       "method": "digital",
       "k": 54,
       "snr_db": 20.0,
       "csi_error_sigma": 0.05,
-      "n_seeds": 3,
-      "success_count_pooled": 14997,
-      "episodes_pooled": 15000,
+      "n_seeds": 2,
+      "success_count_pooled": 9998,
+      "episodes_pooled": 10000,
       "success_rate_pooled": 0.9998,
       "delta_vs_sigma0_pp": -0.02
     },
@@ -1115,10 +1130,10 @@
       "snr_db": 0.0,
       "csi_error_sigma": 0.05,
       "n_seeds": 3,
-      "success_count_pooled": 4254,
+      "success_count_pooled": 4256,
       "episodes_pooled": 15000,
-      "success_rate_pooled": 0.2836,
-      "delta_vs_sigma0_pp": 0.09
+      "success_rate_pooled": 0.2837,
+      "delta_vs_sigma0_pp": -0.05
     },
     {
       "method": "reconstruction",
@@ -1126,109 +1141,109 @@
       "snr_db": 5.0,
       "csi_error_sigma": 0.05,
       "n_seeds": 3,
-      "success_count_pooled": 3972,
+      "success_count_pooled": 3950,
       "episodes_pooled": 15000,
-      "success_rate_pooled": 0.2648,
+      "success_rate_pooled": 0.2633,
+      "delta_vs_sigma0_pp": 0.21
+    },
+    {
+      "method": "reconstruction",
+      "k": 12,
+      "snr_db": 10.0,
+      "csi_error_sigma": 0.05,
+      "n_seeds": 3,
+      "success_count_pooled": 3677,
+      "episodes_pooled": 15000,
+      "success_rate_pooled": 0.2451,
       "delta_vs_sigma0_pp": 0.03
     },
     {
       "method": "reconstruction",
       "k": 12,
+      "snr_db": 15.0,
+      "csi_error_sigma": 0.05,
+      "n_seeds": 3,
+      "success_count_pooled": 3557,
+      "episodes_pooled": 15000,
+      "success_rate_pooled": 0.2371,
+      "delta_vs_sigma0_pp": -0.01
+    },
+    {
+      "method": "reconstruction",
+      "k": 12,
+      "snr_db": 20.0,
+      "csi_error_sigma": 0.05,
+      "n_seeds": 3,
+      "success_count_pooled": 3532,
+      "episodes_pooled": 15000,
+      "success_rate_pooled": 0.2355,
+      "delta_vs_sigma0_pp": 0.03
+    },
+    {
+      "method": "reconstruction",
+      "k": 18,
+      "snr_db": 0.0,
+      "csi_error_sigma": 0.05,
+      "n_seeds": 3,
+      "success_count_pooled": 3995,
+      "episodes_pooled": 15000,
+      "success_rate_pooled": 0.2663,
+      "delta_vs_sigma0_pp": -0.19
+    },
+    {
+      "method": "reconstruction",
+      "k": 18,
+      "snr_db": 5.0,
+      "csi_error_sigma": 0.05,
+      "n_seeds": 3,
+      "success_count_pooled": 3610,
+      "episodes_pooled": 15000,
+      "success_rate_pooled": 0.2407,
+      "delta_vs_sigma0_pp": -0.11
+    },
+    {
+      "method": "reconstruction",
+      "k": 18,
       "snr_db": 10.0,
       "csi_error_sigma": 0.05,
       "n_seeds": 3,
-      "success_count_pooled": 3671,
+      "success_count_pooled": 3403,
       "episodes_pooled": 15000,
-      "success_rate_pooled": 0.2447,
+      "success_rate_pooled": 0.2269,
+      "delta_vs_sigma0_pp": -0.05
+    },
+    {
+      "method": "reconstruction",
+      "k": 18,
+      "snr_db": 15.0,
+      "csi_error_sigma": 0.05,
+      "n_seeds": 3,
+      "success_count_pooled": 3346,
+      "episodes_pooled": 15000,
+      "success_rate_pooled": 0.2231,
+      "delta_vs_sigma0_pp": 0.11
+    },
+    {
+      "method": "reconstruction",
+      "k": 18,
+      "snr_db": 20.0,
+      "csi_error_sigma": 0.05,
+      "n_seeds": 3,
+      "success_count_pooled": 3351,
+      "episodes_pooled": 15000,
+      "success_rate_pooled": 0.2234,
       "delta_vs_sigma0_pp": 0.09
     },
     {
       "method": "reconstruction",
-      "k": 12,
-      "snr_db": 15.0,
-      "csi_error_sigma": 0.05,
-      "n_seeds": 3,
-      "success_count_pooled": 3539,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.2359,
-      "delta_vs_sigma0_pp": 0.32
-    },
-    {
-      "method": "reconstruction",
-      "k": 12,
-      "snr_db": 20.0,
-      "csi_error_sigma": 0.05,
-      "n_seeds": 3,
-      "success_count_pooled": 3490,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.2327,
-      "delta_vs_sigma0_pp": 0.14
-    },
-    {
-      "method": "reconstruction",
-      "k": 18,
-      "snr_db": 0.0,
-      "csi_error_sigma": 0.05,
-      "n_seeds": 3,
-      "success_count_pooled": 4064,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.2709,
-      "delta_vs_sigma0_pp": -0.07
-    },
-    {
-      "method": "reconstruction",
-      "k": 18,
-      "snr_db": 5.0,
-      "csi_error_sigma": 0.05,
-      "n_seeds": 3,
-      "success_count_pooled": 3678,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.2452,
-      "delta_vs_sigma0_pp": 0.04
-    },
-    {
-      "method": "reconstruction",
-      "k": 18,
-      "snr_db": 10.0,
-      "csi_error_sigma": 0.05,
-      "n_seeds": 3,
-      "success_count_pooled": 3459,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.2306,
-      "delta_vs_sigma0_pp": 0.01
-    },
-    {
-      "method": "reconstruction",
-      "k": 18,
-      "snr_db": 15.0,
-      "csi_error_sigma": 0.05,
-      "n_seeds": 3,
-      "success_count_pooled": 3376,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.2251,
-      "delta_vs_sigma0_pp": 0.01
-    },
-    {
-      "method": "reconstruction",
-      "k": 18,
-      "snr_db": 20.0,
-      "csi_error_sigma": 0.05,
-      "n_seeds": 3,
-      "success_count_pooled": 3376,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.2251,
-      "delta_vs_sigma0_pp": -0.02
-    },
-    {
-      "method": "reconstruction",
       "k": 24,
       "snr_db": 0.0,
       "csi_error_sigma": 0.05,
       "n_seeds": 3,
-      "success_count_pooled": 3912,
+      "success_count_pooled": 3946,
       "episodes_pooled": 15000,
-      "success_rate_pooled": 0.2608,
-      "delta_vs_sigma0_pp": 0.01
+      "success_rate_pooled": 0.2631,
+      "delta_vs_sigma0_pp": 0.19
     },
     {
       "method": "reconstruction",
@@ -1236,54 +1251,54 @@
       "snr_db": 5.0,
       "csi_error_sigma": 0.05,
       "n_seeds": 3,
-      "success_count_pooled": 3613,
+      "success_count_pooled": 3588,
       "episodes_pooled": 15000,
-      "success_rate_pooled": 0.2409,
-      "delta_vs_sigma0_pp": 0.01
-    },
-    {
-      "method": "reconstruction",
-      "k": 24,
-      "snr_db": 10.0,
-      "csi_error_sigma": 0.05,
-      "n_seeds": 3,
-      "success_count_pooled": 3427,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.2285,
-      "delta_vs_sigma0_pp": 0.14
-    },
-    {
-      "method": "reconstruction",
-      "k": 24,
-      "snr_db": 15.0,
-      "csi_error_sigma": 0.05,
-      "n_seeds": 3,
-      "success_count_pooled": 3326,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.2217,
-      "delta_vs_sigma0_pp": 0.14
-    },
-    {
-      "method": "reconstruction",
-      "k": 24,
-      "snr_db": 20.0,
-      "csi_error_sigma": 0.05,
-      "n_seeds": 3,
-      "success_count_pooled": 3259,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.2173,
+      "success_rate_pooled": 0.2392,
       "delta_vs_sigma0_pp": 0.05
     },
     {
       "method": "reconstruction",
+      "k": 24,
+      "snr_db": 10.0,
+      "csi_error_sigma": 0.05,
+      "n_seeds": 3,
+      "success_count_pooled": 3395,
+      "episodes_pooled": 15000,
+      "success_rate_pooled": 0.2263,
+      "delta_vs_sigma0_pp": 0.18
+    },
+    {
+      "method": "reconstruction",
+      "k": 24,
+      "snr_db": 15.0,
+      "csi_error_sigma": 0.05,
+      "n_seeds": 3,
+      "success_count_pooled": 3329,
+      "episodes_pooled": 15000,
+      "success_rate_pooled": 0.2219,
+      "delta_vs_sigma0_pp": 0.07
+    },
+    {
+      "method": "reconstruction",
+      "k": 24,
+      "snr_db": 20.0,
+      "csi_error_sigma": 0.05,
+      "n_seeds": 3,
+      "success_count_pooled": 3294,
+      "episodes_pooled": 15000,
+      "success_rate_pooled": 0.2196,
+      "delta_vs_sigma0_pp": -0.11
+    },
+    {
+      "method": "reconstruction",
       "k": 30,
       "snr_db": 0.0,
       "csi_error_sigma": 0.05,
       "n_seeds": 3,
-      "success_count_pooled": 4057,
+      "success_count_pooled": 4048,
       "episodes_pooled": 15000,
-      "success_rate_pooled": 0.2705,
-      "delta_vs_sigma0_pp": -0.17
+      "success_rate_pooled": 0.2699,
+      "delta_vs_sigma0_pp": 0.11
     },
     {
       "method": "reconstruction",
@@ -1291,10 +1306,10 @@
       "snr_db": 5.0,
       "csi_error_sigma": 0.05,
       "n_seeds": 3,
-      "success_count_pooled": 3915,
+      "success_count_pooled": 3892,
       "episodes_pooled": 15000,
-      "success_rate_pooled": 0.261,
-      "delta_vs_sigma0_pp": 0.01
+      "success_rate_pooled": 0.2595,
+      "delta_vs_sigma0_pp": -0.07
     },
     {
       "method": "reconstruction",
@@ -1302,10 +1317,10 @@
       "snr_db": 10.0,
       "csi_error_sigma": 0.05,
       "n_seeds": 3,
-      "success_count_pooled": 3923,
+      "success_count_pooled": 3946,
       "episodes_pooled": 15000,
-      "success_rate_pooled": 0.2615,
-      "delta_vs_sigma0_pp": 0.02
+      "success_rate_pooled": 0.2631,
+      "delta_vs_sigma0_pp": -0.09
     },
     {
       "method": "reconstruction",
@@ -1313,10 +1328,10 @@
       "snr_db": 15.0,
       "csi_error_sigma": 0.05,
       "n_seeds": 3,
-      "success_count_pooled": 3943,
+      "success_count_pooled": 3982,
       "episodes_pooled": 15000,
-      "success_rate_pooled": 0.2629,
-      "delta_vs_sigma0_pp": -0.12
+      "success_rate_pooled": 0.2655,
+      "delta_vs_sigma0_pp": 0.16
     },
     {
       "method": "reconstruction",
@@ -1324,65 +1339,65 @@
       "snr_db": 20.0,
       "csi_error_sigma": 0.05,
       "n_seeds": 3,
-      "success_count_pooled": 3910,
+      "success_count_pooled": 3948,
       "episodes_pooled": 15000,
-      "success_rate_pooled": 0.2607,
-      "delta_vs_sigma0_pp": -0.12
+      "success_rate_pooled": 0.2632,
+      "delta_vs_sigma0_pp": 0.11
     },
     {
       "method": "reconstruction",
       "k": 54,
       "snr_db": 0.0,
       "csi_error_sigma": 0.05,
-      "n_seeds": 3,
-      "success_count_pooled": 3983,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.2655,
+      "n_seeds": 2,
+      "success_count_pooled": 2596,
+      "episodes_pooled": 10000,
+      "success_rate_pooled": 0.2596,
+      "delta_vs_sigma0_pp": 0.2
+    },
+    {
+      "method": "reconstruction",
+      "k": 54,
+      "snr_db": 5.0,
+      "csi_error_sigma": 0.05,
+      "n_seeds": 2,
+      "success_count_pooled": 2517,
+      "episodes_pooled": 10000,
+      "success_rate_pooled": 0.2517,
+      "delta_vs_sigma0_pp": 0.1
+    },
+    {
+      "method": "reconstruction",
+      "k": 54,
+      "snr_db": 10.0,
+      "csi_error_sigma": 0.05,
+      "n_seeds": 2,
+      "success_count_pooled": 2456,
+      "episodes_pooled": 10000,
+      "success_rate_pooled": 0.2456,
       "delta_vs_sigma0_pp": -0.05
     },
     {
       "method": "reconstruction",
       "k": 54,
-      "snr_db": 5.0,
-      "csi_error_sigma": 0.05,
-      "n_seeds": 3,
-      "success_count_pooled": 3918,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.2612,
-      "delta_vs_sigma0_pp": 0.03
-    },
-    {
-      "method": "reconstruction",
-      "k": 54,
-      "snr_db": 10.0,
-      "csi_error_sigma": 0.05,
-      "n_seeds": 3,
-      "success_count_pooled": 3920,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.2613,
-      "delta_vs_sigma0_pp": -0.16
-    },
-    {
-      "method": "reconstruction",
-      "k": 54,
       "snr_db": 15.0,
       "csi_error_sigma": 0.05,
-      "n_seeds": 3,
-      "success_count_pooled": 3890,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.2593,
-      "delta_vs_sigma0_pp": -0.07
+      "n_seeds": 2,
+      "success_count_pooled": 2463,
+      "episodes_pooled": 10000,
+      "success_rate_pooled": 0.2463,
+      "delta_vs_sigma0_pp": -0.06
     },
     {
       "method": "reconstruction",
       "k": 54,
       "snr_db": 20.0,
       "csi_error_sigma": 0.05,
-      "n_seeds": 3,
-      "success_count_pooled": 3888,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.2592,
-      "delta_vs_sigma0_pp": 0.12
+      "n_seeds": 2,
+      "success_count_pooled": 2444,
+      "episodes_pooled": 10000,
+      "success_rate_pooled": 0.2444,
+      "delta_vs_sigma0_pp": 0.08
     },
     {
       "method": "task",
@@ -1390,10 +1405,10 @@
       "snr_db": 0.0,
       "csi_error_sigma": 0.05,
       "n_seeds": 3,
-      "success_count_pooled": 506,
+      "success_count_pooled": 877,
       "episodes_pooled": 15000,
-      "success_rate_pooled": 0.0337,
-      "delta_vs_sigma0_pp": 0.04
+      "success_rate_pooled": 0.0585,
+      "delta_vs_sigma0_pp": 0.22
     },
     {
       "method": "task",
@@ -1401,153 +1416,153 @@
       "snr_db": 5.0,
       "csi_error_sigma": 0.05,
       "n_seeds": 3,
-      "success_count_pooled": 563,
+      "success_count_pooled": 806,
       "episodes_pooled": 15000,
-      "success_rate_pooled": 0.0375,
-      "delta_vs_sigma0_pp": 0.11
-    },
-    {
-      "method": "task",
-      "k": 12,
-      "snr_db": 10.0,
-      "csi_error_sigma": 0.05,
-      "n_seeds": 3,
-      "success_count_pooled": 559,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.0373,
-      "delta_vs_sigma0_pp": -0.03
-    },
-    {
-      "method": "task",
-      "k": 12,
-      "snr_db": 15.0,
-      "csi_error_sigma": 0.05,
-      "n_seeds": 3,
-      "success_count_pooled": 583,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.0389,
-      "delta_vs_sigma0_pp": 0.0
-    },
-    {
-      "method": "task",
-      "k": 12,
-      "snr_db": 20.0,
-      "csi_error_sigma": 0.05,
-      "n_seeds": 3,
-      "success_count_pooled": 571,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.0381,
-      "delta_vs_sigma0_pp": -0.1
-    },
-    {
-      "method": "task",
-      "k": 18,
-      "snr_db": 0.0,
-      "csi_error_sigma": 0.05,
-      "n_seeds": 3,
-      "success_count_pooled": 447,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.0298,
-      "delta_vs_sigma0_pp": -0.03
-    },
-    {
-      "method": "task",
-      "k": 18,
-      "snr_db": 5.0,
-      "csi_error_sigma": 0.05,
-      "n_seeds": 3,
-      "success_count_pooled": 440,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.0293,
-      "delta_vs_sigma0_pp": -0.04
-    },
-    {
-      "method": "task",
-      "k": 18,
-      "snr_db": 10.0,
-      "csi_error_sigma": 0.05,
-      "n_seeds": 3,
-      "success_count_pooled": 464,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.0309,
-      "delta_vs_sigma0_pp": -0.02
-    },
-    {
-      "method": "task",
-      "k": 18,
-      "snr_db": 15.0,
-      "csi_error_sigma": 0.05,
-      "n_seeds": 3,
-      "success_count_pooled": 472,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.0315,
-      "delta_vs_sigma0_pp": 0.0
-    },
-    {
-      "method": "task",
-      "k": 18,
-      "snr_db": 20.0,
-      "csi_error_sigma": 0.05,
-      "n_seeds": 3,
-      "success_count_pooled": 493,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.0329,
-      "delta_vs_sigma0_pp": 0.03
-    },
-    {
-      "method": "task",
-      "k": 24,
-      "snr_db": 0.0,
-      "csi_error_sigma": 0.05,
-      "n_seeds": 3,
-      "success_count_pooled": 1155,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.077,
+      "success_rate_pooled": 0.0537,
       "delta_vs_sigma0_pp": -0.01
     },
     {
       "method": "task",
-      "k": 24,
-      "snr_db": 5.0,
-      "csi_error_sigma": 0.05,
-      "n_seeds": 3,
-      "success_count_pooled": 1190,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.0793,
-      "delta_vs_sigma0_pp": -0.04
-    },
-    {
-      "method": "task",
-      "k": 24,
+      "k": 12,
       "snr_db": 10.0,
       "csi_error_sigma": 0.05,
       "n_seeds": 3,
-      "success_count_pooled": 1186,
+      "success_count_pooled": 806,
       "episodes_pooled": 15000,
-      "success_rate_pooled": 0.0791,
-      "delta_vs_sigma0_pp": 0.06
+      "success_rate_pooled": 0.0537,
+      "delta_vs_sigma0_pp": 0.15
     },
     {
       "method": "task",
-      "k": 24,
+      "k": 12,
       "snr_db": 15.0,
       "csi_error_sigma": 0.05,
       "n_seeds": 3,
-      "success_count_pooled": 1184,
+      "success_count_pooled": 771,
       "episodes_pooled": 15000,
-      "success_rate_pooled": 0.0789,
+      "success_rate_pooled": 0.0514,
+      "delta_vs_sigma0_pp": -0.02
+    },
+    {
+      "method": "task",
+      "k": 12,
+      "snr_db": 20.0,
+      "csi_error_sigma": 0.05,
+      "n_seeds": 3,
+      "success_count_pooled": 758,
+      "episodes_pooled": 15000,
+      "success_rate_pooled": 0.0505,
       "delta_vs_sigma0_pp": -0.11
     },
     {
       "method": "task",
+      "k": 18,
+      "snr_db": 0.0,
+      "csi_error_sigma": 0.05,
+      "n_seeds": 3,
+      "success_count_pooled": 358,
+      "episodes_pooled": 15000,
+      "success_rate_pooled": 0.0239,
+      "delta_vs_sigma0_pp": 0.01
+    },
+    {
+      "method": "task",
+      "k": 18,
+      "snr_db": 5.0,
+      "csi_error_sigma": 0.05,
+      "n_seeds": 3,
+      "success_count_pooled": 373,
+      "episodes_pooled": 15000,
+      "success_rate_pooled": 0.0249,
+      "delta_vs_sigma0_pp": 0.01
+    },
+    {
+      "method": "task",
+      "k": 18,
+      "snr_db": 10.0,
+      "csi_error_sigma": 0.05,
+      "n_seeds": 3,
+      "success_count_pooled": 368,
+      "episodes_pooled": 15000,
+      "success_rate_pooled": 0.0245,
+      "delta_vs_sigma0_pp": 0.01
+    },
+    {
+      "method": "task",
+      "k": 18,
+      "snr_db": 15.0,
+      "csi_error_sigma": 0.05,
+      "n_seeds": 3,
+      "success_count_pooled": 377,
+      "episodes_pooled": 15000,
+      "success_rate_pooled": 0.0251,
+      "delta_vs_sigma0_pp": 0.0
+    },
+    {
+      "method": "task",
+      "k": 18,
+      "snr_db": 20.0,
+      "csi_error_sigma": 0.05,
+      "n_seeds": 3,
+      "success_count_pooled": 378,
+      "episodes_pooled": 15000,
+      "success_rate_pooled": 0.0252,
+      "delta_vs_sigma0_pp": -0.02
+    },
+    {
+      "method": "task",
+      "k": 24,
+      "snr_db": 0.0,
+      "csi_error_sigma": 0.05,
+      "n_seeds": 3,
+      "success_count_pooled": 505,
+      "episodes_pooled": 15000,
+      "success_rate_pooled": 0.0337,
+      "delta_vs_sigma0_pp": -0.03
+    },
+    {
+      "method": "task",
+      "k": 24,
+      "snr_db": 5.0,
+      "csi_error_sigma": 0.05,
+      "n_seeds": 3,
+      "success_count_pooled": 545,
+      "episodes_pooled": 15000,
+      "success_rate_pooled": 0.0363,
+      "delta_vs_sigma0_pp": 0.02
+    },
+    {
+      "method": "task",
+      "k": 24,
+      "snr_db": 10.0,
+      "csi_error_sigma": 0.05,
+      "n_seeds": 3,
+      "success_count_pooled": 550,
+      "episodes_pooled": 15000,
+      "success_rate_pooled": 0.0367,
+      "delta_vs_sigma0_pp": -0.06
+    },
+    {
+      "method": "task",
+      "k": 24,
+      "snr_db": 15.0,
+      "csi_error_sigma": 0.05,
+      "n_seeds": 3,
+      "success_count_pooled": 557,
+      "episodes_pooled": 15000,
+      "success_rate_pooled": 0.0371,
+      "delta_vs_sigma0_pp": 0.01
+    },
+    {
+      "method": "task",
       "k": 24,
       "snr_db": 20.0,
       "csi_error_sigma": 0.05,
       "n_seeds": 3,
-      "success_count_pooled": 1197,
+      "success_count_pooled": 573,
       "episodes_pooled": 15000,
-      "success_rate_pooled": 0.0798,
-      "delta_vs_sigma0_pp": -0.12
+      "success_rate_pooled": 0.0382,
+      "delta_vs_sigma0_pp": 0.09
     },
     {
       "method": "task",
@@ -1555,10 +1570,10 @@
       "snr_db": 0.0,
       "csi_error_sigma": 0.05,
       "n_seeds": 3,
-      "success_count_pooled": 509,
+      "success_count_pooled": 312,
       "episodes_pooled": 15000,
-      "success_rate_pooled": 0.0339,
-      "delta_vs_sigma0_pp": -0.09
+      "success_rate_pooled": 0.0208,
+      "delta_vs_sigma0_pp": 0.06
     },
     {
       "method": "task",
@@ -1566,98 +1581,98 @@
       "snr_db": 5.0,
       "csi_error_sigma": 0.05,
       "n_seeds": 3,
-      "success_count_pooled": 555,
+      "success_count_pooled": 305,
       "episodes_pooled": 15000,
-      "success_rate_pooled": 0.037,
-      "delta_vs_sigma0_pp": -0.05
-    },
-    {
-      "method": "task",
-      "k": 30,
-      "snr_db": 10.0,
-      "csi_error_sigma": 0.05,
-      "n_seeds": 3,
-      "success_count_pooled": 572,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.0381,
-      "delta_vs_sigma0_pp": -0.01
-    },
-    {
-      "method": "task",
-      "k": 30,
-      "snr_db": 15.0,
-      "csi_error_sigma": 0.05,
-      "n_seeds": 3,
-      "success_count_pooled": 587,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.0391,
+      "success_rate_pooled": 0.0203,
       "delta_vs_sigma0_pp": -0.04
     },
     {
       "method": "task",
       "k": 30,
+      "snr_db": 10.0,
+      "csi_error_sigma": 0.05,
+      "n_seeds": 3,
+      "success_count_pooled": 311,
+      "episodes_pooled": 15000,
+      "success_rate_pooled": 0.0207,
+      "delta_vs_sigma0_pp": -0.02
+    },
+    {
+      "method": "task",
+      "k": 30,
+      "snr_db": 15.0,
+      "csi_error_sigma": 0.05,
+      "n_seeds": 3,
+      "success_count_pooled": 317,
+      "episodes_pooled": 15000,
+      "success_rate_pooled": 0.0211,
+      "delta_vs_sigma0_pp": -0.01
+    },
+    {
+      "method": "task",
+      "k": 30,
       "snr_db": 20.0,
       "csi_error_sigma": 0.05,
       "n_seeds": 3,
-      "success_count_pooled": 590,
+      "success_count_pooled": 316,
       "episodes_pooled": 15000,
-      "success_rate_pooled": 0.0393,
-      "delta_vs_sigma0_pp": -0.07
+      "success_rate_pooled": 0.0211,
+      "delta_vs_sigma0_pp": 0.0
     },
     {
       "method": "task",
       "k": 54,
       "snr_db": 0.0,
       "csi_error_sigma": 0.05,
-      "n_seeds": 3,
-      "success_count_pooled": 440,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.0293,
-      "delta_vs_sigma0_pp": 0.05
+      "n_seeds": 2,
+      "success_count_pooled": 352,
+      "episodes_pooled": 10000,
+      "success_rate_pooled": 0.0352,
+      "delta_vs_sigma0_pp": -0.05
     },
     {
       "method": "task",
       "k": 54,
       "snr_db": 5.0,
       "csi_error_sigma": 0.05,
-      "n_seeds": 3,
-      "success_count_pooled": 417,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.0278,
-      "delta_vs_sigma0_pp": 0.07
+      "n_seeds": 2,
+      "success_count_pooled": 368,
+      "episodes_pooled": 10000,
+      "success_rate_pooled": 0.0368,
+      "delta_vs_sigma0_pp": 0.13
     },
     {
       "method": "task",
       "k": 54,
       "snr_db": 10.0,
       "csi_error_sigma": 0.05,
-      "n_seeds": 3,
-      "success_count_pooled": 421,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.0281,
-      "delta_vs_sigma0_pp": 0.07
+      "n_seeds": 2,
+      "success_count_pooled": 362,
+      "episodes_pooled": 10000,
+      "success_rate_pooled": 0.0362,
+      "delta_vs_sigma0_pp": 0.03
     },
     {
       "method": "task",
       "k": 54,
       "snr_db": 15.0,
       "csi_error_sigma": 0.05,
-      "n_seeds": 3,
-      "success_count_pooled": 407,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.0271,
-      "delta_vs_sigma0_pp": -0.05
+      "n_seeds": 2,
+      "success_count_pooled": 361,
+      "episodes_pooled": 10000,
+      "success_rate_pooled": 0.0361,
+      "delta_vs_sigma0_pp": -0.07
     },
     {
       "method": "task",
       "k": 54,
       "snr_db": 20.0,
       "csi_error_sigma": 0.05,
-      "n_seeds": 3,
-      "success_count_pooled": 406,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.0271,
-      "delta_vs_sigma0_pp": -0.07
+      "n_seeds": 2,
+      "success_count_pooled": 368,
+      "episodes_pooled": 10000,
+      "success_rate_pooled": 0.0368,
+      "delta_vs_sigma0_pp": -0.03
     },
     {
       "method": "digital",
@@ -1884,42 +1899,42 @@
       "k": 54,
       "snr_db": 0.0,
       "csi_error_sigma": 0.1,
-      "n_seeds": 3,
-      "success_count_pooled": 10595,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.7063,
-      "delta_vs_sigma0_pp": -1.15
+      "n_seeds": 2,
+      "success_count_pooled": 7074,
+      "episodes_pooled": 10000,
+      "success_rate_pooled": 0.7074,
+      "delta_vs_sigma0_pp": -1.04
     },
     {
       "method": "digital",
       "k": 54,
       "snr_db": 5.0,
       "csi_error_sigma": 0.1,
-      "n_seeds": 3,
-      "success_count_pooled": 14857,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.9905,
-      "delta_vs_sigma0_pp": -0.03
+      "n_seeds": 2,
+      "success_count_pooled": 9917,
+      "episodes_pooled": 10000,
+      "success_rate_pooled": 0.9917,
+      "delta_vs_sigma0_pp": 0.09
     },
     {
       "method": "digital",
       "k": 54,
       "snr_db": 10.0,
       "csi_error_sigma": 0.1,
-      "n_seeds": 3,
-      "success_count_pooled": 14985,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.999,
-      "delta_vs_sigma0_pp": 0.06
+      "n_seeds": 2,
+      "success_count_pooled": 9991,
+      "episodes_pooled": 10000,
+      "success_rate_pooled": 0.9991,
+      "delta_vs_sigma0_pp": 0.07
     },
     {
       "method": "digital",
       "k": 54,
       "snr_db": 15.0,
       "csi_error_sigma": 0.1,
-      "n_seeds": 3,
-      "success_count_pooled": 14996,
-      "episodes_pooled": 15000,
+      "n_seeds": 2,
+      "success_count_pooled": 9997,
+      "episodes_pooled": 10000,
       "success_rate_pooled": 0.9997,
       "delta_vs_sigma0_pp": -0.01
     },
@@ -1928,9 +1943,9 @@
       "k": 54,
       "snr_db": 20.0,
       "csi_error_sigma": 0.1,
-      "n_seeds": 3,
-      "success_count_pooled": 14996,
-      "episodes_pooled": 15000,
+      "n_seeds": 2,
+      "success_count_pooled": 9997,
+      "episodes_pooled": 10000,
       "success_rate_pooled": 0.9997,
       "delta_vs_sigma0_pp": -0.03
     },
@@ -1940,43 +1955,43 @@
       "snr_db": 0.0,
       "csi_error_sigma": 0.1,
       "n_seeds": 3,
-      "success_count_pooled": 4245,
+      "success_count_pooled": 4242,
       "episodes_pooled": 15000,
-      "success_rate_pooled": 0.283,
+      "success_rate_pooled": 0.2828,
+      "delta_vs_sigma0_pp": -0.15
+    },
+    {
+      "method": "reconstruction",
+      "k": 12,
+      "snr_db": 5.0,
+      "csi_error_sigma": 0.1,
+      "n_seeds": 3,
+      "success_count_pooled": 3910,
+      "episodes_pooled": 15000,
+      "success_rate_pooled": 0.2607,
+      "delta_vs_sigma0_pp": -0.05
+    },
+    {
+      "method": "reconstruction",
+      "k": 12,
+      "snr_db": 10.0,
+      "csi_error_sigma": 0.1,
+      "n_seeds": 3,
+      "success_count_pooled": 3678,
+      "episodes_pooled": 15000,
+      "success_rate_pooled": 0.2452,
       "delta_vs_sigma0_pp": 0.03
     },
     {
       "method": "reconstruction",
       "k": 12,
-      "snr_db": 5.0,
-      "csi_error_sigma": 0.1,
-      "n_seeds": 3,
-      "success_count_pooled": 3930,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.262,
-      "delta_vs_sigma0_pp": -0.25
-    },
-    {
-      "method": "reconstruction",
-      "k": 12,
-      "snr_db": 10.0,
-      "csi_error_sigma": 0.1,
-      "n_seeds": 3,
-      "success_count_pooled": 3683,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.2455,
-      "delta_vs_sigma0_pp": 0.17
-    },
-    {
-      "method": "reconstruction",
-      "k": 12,
       "snr_db": 15.0,
       "csi_error_sigma": 0.1,
       "n_seeds": 3,
-      "success_count_pooled": 3545,
+      "success_count_pooled": 3563,
       "episodes_pooled": 15000,
-      "success_rate_pooled": 0.2363,
-      "delta_vs_sigma0_pp": 0.36
+      "success_rate_pooled": 0.2375,
+      "delta_vs_sigma0_pp": 0.03
     },
     {
       "method": "reconstruction",
@@ -1984,10 +1999,10 @@
       "snr_db": 20.0,
       "csi_error_sigma": 0.1,
       "n_seeds": 3,
-      "success_count_pooled": 3495,
+      "success_count_pooled": 3548,
       "episodes_pooled": 15000,
-      "success_rate_pooled": 0.233,
-      "delta_vs_sigma0_pp": 0.17
+      "success_rate_pooled": 0.2365,
+      "delta_vs_sigma0_pp": 0.14
     },
     {
       "method": "reconstruction",
@@ -1995,10 +2010,10 @@
       "snr_db": 0.0,
       "csi_error_sigma": 0.1,
       "n_seeds": 3,
-      "success_count_pooled": 4130,
+      "success_count_pooled": 4029,
       "episodes_pooled": 15000,
-      "success_rate_pooled": 0.2753,
-      "delta_vs_sigma0_pp": 0.37
+      "success_rate_pooled": 0.2686,
+      "delta_vs_sigma0_pp": 0.04
     },
     {
       "method": "reconstruction",
@@ -2006,10 +2021,10 @@
       "snr_db": 5.0,
       "csi_error_sigma": 0.1,
       "n_seeds": 3,
-      "success_count_pooled": 3667,
+      "success_count_pooled": 3636,
       "episodes_pooled": 15000,
-      "success_rate_pooled": 0.2445,
-      "delta_vs_sigma0_pp": -0.03
+      "success_rate_pooled": 0.2424,
+      "delta_vs_sigma0_pp": 0.06
     },
     {
       "method": "reconstruction",
@@ -2017,10 +2032,10 @@
       "snr_db": 10.0,
       "csi_error_sigma": 0.1,
       "n_seeds": 3,
-      "success_count_pooled": 3455,
+      "success_count_pooled": 3412,
       "episodes_pooled": 15000,
-      "success_rate_pooled": 0.2303,
-      "delta_vs_sigma0_pp": -0.01
+      "success_rate_pooled": 0.2275,
+      "delta_vs_sigma0_pp": 0.01
     },
     {
       "method": "reconstruction",
@@ -2028,76 +2043,76 @@
       "snr_db": 15.0,
       "csi_error_sigma": 0.1,
       "n_seeds": 3,
-      "success_count_pooled": 3365,
+      "success_count_pooled": 3390,
       "episodes_pooled": 15000,
-      "success_rate_pooled": 0.2243,
-      "delta_vs_sigma0_pp": -0.06
+      "success_rate_pooled": 0.226,
+      "delta_vs_sigma0_pp": 0.4
     },
     {
       "method": "reconstruction",
       "k": 18,
       "snr_db": 20.0,
-      "csi_error_sigma": 0.1,
-      "n_seeds": 3,
-      "success_count_pooled": 3396,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.2264,
-      "delta_vs_sigma0_pp": 0.11
-    },
-    {
-      "method": "reconstruction",
-      "k": 24,
-      "snr_db": 0.0,
-      "csi_error_sigma": 0.1,
-      "n_seeds": 3,
-      "success_count_pooled": 3962,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.2641,
-      "delta_vs_sigma0_pp": 0.35
-    },
-    {
-      "method": "reconstruction",
-      "k": 24,
-      "snr_db": 5.0,
-      "csi_error_sigma": 0.1,
-      "n_seeds": 3,
-      "success_count_pooled": 3580,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.2387,
-      "delta_vs_sigma0_pp": -0.21
-    },
-    {
-      "method": "reconstruction",
-      "k": 24,
-      "snr_db": 10.0,
       "csi_error_sigma": 0.1,
       "n_seeds": 3,
       "success_count_pooled": 3351,
       "episodes_pooled": 15000,
       "success_rate_pooled": 0.2234,
-      "delta_vs_sigma0_pp": -0.37
-    },
-    {
-      "method": "reconstruction",
-      "k": 24,
-      "snr_db": 15.0,
-      "csi_error_sigma": 0.1,
-      "n_seeds": 3,
-      "success_count_pooled": 3319,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.2213,
       "delta_vs_sigma0_pp": 0.09
     },
     {
       "method": "reconstruction",
       "k": 24,
+      "snr_db": 0.0,
+      "csi_error_sigma": 0.1,
+      "n_seeds": 3,
+      "success_count_pooled": 3983,
+      "episodes_pooled": 15000,
+      "success_rate_pooled": 0.2655,
+      "delta_vs_sigma0_pp": 0.44
+    },
+    {
+      "method": "reconstruction",
+      "k": 24,
+      "snr_db": 5.0,
+      "csi_error_sigma": 0.1,
+      "n_seeds": 3,
+      "success_count_pooled": 3557,
+      "episodes_pooled": 15000,
+      "success_rate_pooled": 0.2371,
+      "delta_vs_sigma0_pp": -0.15
+    },
+    {
+      "method": "reconstruction",
+      "k": 24,
+      "snr_db": 10.0,
+      "csi_error_sigma": 0.1,
+      "n_seeds": 3,
+      "success_count_pooled": 3389,
+      "episodes_pooled": 15000,
+      "success_rate_pooled": 0.2259,
+      "delta_vs_sigma0_pp": 0.14
+    },
+    {
+      "method": "reconstruction",
+      "k": 24,
+      "snr_db": 15.0,
+      "csi_error_sigma": 0.1,
+      "n_seeds": 3,
+      "success_count_pooled": 3329,
+      "episodes_pooled": 15000,
+      "success_rate_pooled": 0.2219,
+      "delta_vs_sigma0_pp": 0.07
+    },
+    {
+      "method": "reconstruction",
+      "k": 24,
       "snr_db": 20.0,
       "csi_error_sigma": 0.1,
       "n_seeds": 3,
-      "success_count_pooled": 3311,
+      "success_count_pooled": 3291,
       "episodes_pooled": 15000,
-      "success_rate_pooled": 0.2207,
-      "delta_vs_sigma0_pp": 0.39
+      "success_rate_pooled": 0.2194,
+      "delta_vs_sigma0_pp": -0.13
     },
     {
       "method": "reconstruction",
@@ -2105,32 +2120,32 @@
       "snr_db": 0.0,
       "csi_error_sigma": 0.1,
       "n_seeds": 3,
-      "success_count_pooled": 4054,
+      "success_count_pooled": 4037,
       "episodes_pooled": 15000,
-      "success_rate_pooled": 0.2703,
-      "delta_vs_sigma0_pp": -0.19
+      "success_rate_pooled": 0.2691,
+      "delta_vs_sigma0_pp": 0.03
     },
     {
       "method": "reconstruction",
       "k": 30,
       "snr_db": 5.0,
-      "csi_error_sigma": 0.1,
-      "n_seeds": 3,
-      "success_count_pooled": 3858,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.2572,
-      "delta_vs_sigma0_pp": -0.37
-    },
-    {
-      "method": "reconstruction",
-      "k": 30,
-      "snr_db": 10.0,
       "csi_error_sigma": 0.1,
       "n_seeds": 3,
       "success_count_pooled": 3880,
       "episodes_pooled": 15000,
       "success_rate_pooled": 0.2587,
-      "delta_vs_sigma0_pp": -0.27
+      "delta_vs_sigma0_pp": -0.15
+    },
+    {
+      "method": "reconstruction",
+      "k": 30,
+      "snr_db": 10.0,
+      "csi_error_sigma": 0.1,
+      "n_seeds": 3,
+      "success_count_pooled": 3912,
+      "episodes_pooled": 15000,
+      "success_rate_pooled": 0.2608,
+      "delta_vs_sigma0_pp": -0.32
     },
     {
       "method": "reconstruction",
@@ -2138,10 +2153,10 @@
       "snr_db": 15.0,
       "csi_error_sigma": 0.1,
       "n_seeds": 3,
-      "success_count_pooled": 3944,
+      "success_count_pooled": 3958,
       "episodes_pooled": 15000,
-      "success_rate_pooled": 0.2629,
-      "delta_vs_sigma0_pp": -0.11
+      "success_rate_pooled": 0.2639,
+      "delta_vs_sigma0_pp": 0.0
     },
     {
       "method": "reconstruction",
@@ -2149,65 +2164,65 @@
       "snr_db": 20.0,
       "csi_error_sigma": 0.1,
       "n_seeds": 3,
-      "success_count_pooled": 3899,
+      "success_count_pooled": 3958,
       "episodes_pooled": 15000,
-      "success_rate_pooled": 0.2599,
-      "delta_vs_sigma0_pp": -0.19
+      "success_rate_pooled": 0.2639,
+      "delta_vs_sigma0_pp": 0.17
     },
     {
       "method": "reconstruction",
       "k": 54,
       "snr_db": 0.0,
       "csi_error_sigma": 0.1,
-      "n_seeds": 3,
-      "success_count_pooled": 3998,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.2665,
-      "delta_vs_sigma0_pp": 0.05
+      "n_seeds": 2,
+      "success_count_pooled": 2545,
+      "episodes_pooled": 10000,
+      "success_rate_pooled": 0.2545,
+      "delta_vs_sigma0_pp": -0.31
     },
     {
       "method": "reconstruction",
       "k": 54,
       "snr_db": 5.0,
       "csi_error_sigma": 0.1,
-      "n_seeds": 3,
-      "success_count_pooled": 3900,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.26,
-      "delta_vs_sigma0_pp": -0.09
+      "n_seeds": 2,
+      "success_count_pooled": 2533,
+      "episodes_pooled": 10000,
+      "success_rate_pooled": 0.2533,
+      "delta_vs_sigma0_pp": 0.26
     },
     {
       "method": "reconstruction",
       "k": 54,
       "snr_db": 10.0,
       "csi_error_sigma": 0.1,
-      "n_seeds": 3,
-      "success_count_pooled": 3923,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.2615,
-      "delta_vs_sigma0_pp": -0.14
+      "n_seeds": 2,
+      "success_count_pooled": 2492,
+      "episodes_pooled": 10000,
+      "success_rate_pooled": 0.2492,
+      "delta_vs_sigma0_pp": 0.31
     },
     {
       "method": "reconstruction",
       "k": 54,
       "snr_db": 15.0,
       "csi_error_sigma": 0.1,
-      "n_seeds": 3,
-      "success_count_pooled": 3877,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.2585,
-      "delta_vs_sigma0_pp": -0.16
+      "n_seeds": 2,
+      "success_count_pooled": 2487,
+      "episodes_pooled": 10000,
+      "success_rate_pooled": 0.2487,
+      "delta_vs_sigma0_pp": 0.18
     },
     {
       "method": "reconstruction",
       "k": 54,
       "snr_db": 20.0,
       "csi_error_sigma": 0.1,
-      "n_seeds": 3,
-      "success_count_pooled": 3903,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.2602,
-      "delta_vs_sigma0_pp": 0.22
+      "n_seeds": 2,
+      "success_count_pooled": 2450,
+      "episodes_pooled": 10000,
+      "success_rate_pooled": 0.245,
+      "delta_vs_sigma0_pp": 0.14
     },
     {
       "method": "task",
@@ -2215,10 +2230,10 @@
       "snr_db": 0.0,
       "csi_error_sigma": 0.1,
       "n_seeds": 3,
-      "success_count_pooled": 507,
+      "success_count_pooled": 879,
       "episodes_pooled": 15000,
-      "success_rate_pooled": 0.0338,
-      "delta_vs_sigma0_pp": 0.05
+      "success_rate_pooled": 0.0586,
+      "delta_vs_sigma0_pp": 0.23
     },
     {
       "method": "task",
@@ -2226,263 +2241,263 @@
       "snr_db": 5.0,
       "csi_error_sigma": 0.1,
       "n_seeds": 3,
-      "success_count_pooled": 565,
+      "success_count_pooled": 812,
       "episodes_pooled": 15000,
-      "success_rate_pooled": 0.0377,
-      "delta_vs_sigma0_pp": 0.13
-    },
-    {
-      "method": "task",
-      "k": 12,
-      "snr_db": 10.0,
-      "csi_error_sigma": 0.1,
-      "n_seeds": 3,
-      "success_count_pooled": 562,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.0375,
-      "delta_vs_sigma0_pp": -0.01
-    },
-    {
-      "method": "task",
-      "k": 12,
-      "snr_db": 15.0,
-      "csi_error_sigma": 0.1,
-      "n_seeds": 3,
-      "success_count_pooled": 595,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.0397,
-      "delta_vs_sigma0_pp": 0.08
-    },
-    {
-      "method": "task",
-      "k": 12,
-      "snr_db": 20.0,
-      "csi_error_sigma": 0.1,
-      "n_seeds": 3,
-      "success_count_pooled": 576,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.0384,
-      "delta_vs_sigma0_pp": -0.07
-    },
-    {
-      "method": "task",
-      "k": 18,
-      "snr_db": 0.0,
-      "csi_error_sigma": 0.1,
-      "n_seeds": 3,
-      "success_count_pooled": 439,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.0293,
-      "delta_vs_sigma0_pp": -0.08
-    },
-    {
-      "method": "task",
-      "k": 18,
-      "snr_db": 5.0,
-      "csi_error_sigma": 0.1,
-      "n_seeds": 3,
-      "success_count_pooled": 454,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.0303,
-      "delta_vs_sigma0_pp": 0.05
-    },
-    {
-      "method": "task",
-      "k": 18,
-      "snr_db": 10.0,
-      "csi_error_sigma": 0.1,
-      "n_seeds": 3,
-      "success_count_pooled": 468,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.0312,
-      "delta_vs_sigma0_pp": 0.01
-    },
-    {
-      "method": "task",
-      "k": 18,
-      "snr_db": 15.0,
-      "csi_error_sigma": 0.1,
-      "n_seeds": 3,
-      "success_count_pooled": 466,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.0311,
-      "delta_vs_sigma0_pp": -0.04
-    },
-    {
-      "method": "task",
-      "k": 18,
-      "snr_db": 20.0,
-      "csi_error_sigma": 0.1,
-      "n_seeds": 3,
-      "success_count_pooled": 473,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.0315,
-      "delta_vs_sigma0_pp": -0.1
-    },
-    {
-      "method": "task",
-      "k": 24,
-      "snr_db": 0.0,
-      "csi_error_sigma": 0.1,
-      "n_seeds": 3,
-      "success_count_pooled": 1145,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.0763,
-      "delta_vs_sigma0_pp": -0.08
-    },
-    {
-      "method": "task",
-      "k": 24,
-      "snr_db": 5.0,
-      "csi_error_sigma": 0.1,
-      "n_seeds": 3,
-      "success_count_pooled": 1144,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.0763,
-      "delta_vs_sigma0_pp": -0.35
-    },
-    {
-      "method": "task",
-      "k": 24,
-      "snr_db": 10.0,
-      "csi_error_sigma": 0.1,
-      "n_seeds": 3,
-      "success_count_pooled": 1171,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.0781,
-      "delta_vs_sigma0_pp": -0.04
-    },
-    {
-      "method": "task",
-      "k": 24,
-      "snr_db": 15.0,
-      "csi_error_sigma": 0.1,
-      "n_seeds": 3,
-      "success_count_pooled": 1189,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.0793,
-      "delta_vs_sigma0_pp": -0.08
-    },
-    {
-      "method": "task",
-      "k": 24,
-      "snr_db": 20.0,
-      "csi_error_sigma": 0.1,
-      "n_seeds": 3,
-      "success_count_pooled": 1208,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.0805,
-      "delta_vs_sigma0_pp": -0.05
-    },
-    {
-      "method": "task",
-      "k": 30,
-      "snr_db": 0.0,
-      "csi_error_sigma": 0.1,
-      "n_seeds": 3,
-      "success_count_pooled": 514,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.0343,
-      "delta_vs_sigma0_pp": -0.06
-    },
-    {
-      "method": "task",
-      "k": 30,
-      "snr_db": 5.0,
-      "csi_error_sigma": 0.1,
-      "n_seeds": 3,
-      "success_count_pooled": 552,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.0368,
-      "delta_vs_sigma0_pp": -0.07
-    },
-    {
-      "method": "task",
-      "k": 30,
-      "snr_db": 10.0,
-      "csi_error_sigma": 0.1,
-      "n_seeds": 3,
-      "success_count_pooled": 574,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.0383,
-      "delta_vs_sigma0_pp": 0.01
-    },
-    {
-      "method": "task",
-      "k": 30,
-      "snr_db": 15.0,
-      "csi_error_sigma": 0.1,
-      "n_seeds": 3,
-      "success_count_pooled": 585,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.039,
-      "delta_vs_sigma0_pp": -0.05
-    },
-    {
-      "method": "task",
-      "k": 30,
-      "snr_db": 20.0,
-      "csi_error_sigma": 0.1,
-      "n_seeds": 3,
-      "success_count_pooled": 598,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.0399,
-      "delta_vs_sigma0_pp": -0.02
-    },
-    {
-      "method": "task",
-      "k": 54,
-      "snr_db": 0.0,
-      "csi_error_sigma": 0.1,
-      "n_seeds": 3,
-      "success_count_pooled": 422,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.0281,
-      "delta_vs_sigma0_pp": -0.07
-    },
-    {
-      "method": "task",
-      "k": 54,
-      "snr_db": 5.0,
-      "csi_error_sigma": 0.1,
-      "n_seeds": 3,
-      "success_count_pooled": 411,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.0274,
+      "success_rate_pooled": 0.0541,
       "delta_vs_sigma0_pp": 0.03
     },
     {
       "method": "task",
-      "k": 54,
+      "k": 12,
       "snr_db": 10.0,
       "csi_error_sigma": 0.1,
       "n_seeds": 3,
-      "success_count_pooled": 427,
+      "success_count_pooled": 797,
       "episodes_pooled": 15000,
-      "success_rate_pooled": 0.0285,
-      "delta_vs_sigma0_pp": 0.11
+      "success_rate_pooled": 0.0531,
+      "delta_vs_sigma0_pp": 0.09
+    },
+    {
+      "method": "task",
+      "k": 12,
+      "snr_db": 15.0,
+      "csi_error_sigma": 0.1,
+      "n_seeds": 3,
+      "success_count_pooled": 787,
+      "episodes_pooled": 15000,
+      "success_rate_pooled": 0.0525,
+      "delta_vs_sigma0_pp": 0.09
+    },
+    {
+      "method": "task",
+      "k": 12,
+      "snr_db": 20.0,
+      "csi_error_sigma": 0.1,
+      "n_seeds": 3,
+      "success_count_pooled": 756,
+      "episodes_pooled": 15000,
+      "success_rate_pooled": 0.0504,
+      "delta_vs_sigma0_pp": -0.13
+    },
+    {
+      "method": "task",
+      "k": 18,
+      "snr_db": 0.0,
+      "csi_error_sigma": 0.1,
+      "n_seeds": 3,
+      "success_count_pooled": 350,
+      "episodes_pooled": 15000,
+      "success_rate_pooled": 0.0233,
+      "delta_vs_sigma0_pp": -0.05
+    },
+    {
+      "method": "task",
+      "k": 18,
+      "snr_db": 5.0,
+      "csi_error_sigma": 0.1,
+      "n_seeds": 3,
+      "success_count_pooled": 371,
+      "episodes_pooled": 15000,
+      "success_rate_pooled": 0.0247,
+      "delta_vs_sigma0_pp": -0.01
+    },
+    {
+      "method": "task",
+      "k": 18,
+      "snr_db": 10.0,
+      "csi_error_sigma": 0.1,
+      "n_seeds": 3,
+      "success_count_pooled": 369,
+      "episodes_pooled": 15000,
+      "success_rate_pooled": 0.0246,
+      "delta_vs_sigma0_pp": 0.02
+    },
+    {
+      "method": "task",
+      "k": 18,
+      "snr_db": 15.0,
+      "csi_error_sigma": 0.1,
+      "n_seeds": 3,
+      "success_count_pooled": 378,
+      "episodes_pooled": 15000,
+      "success_rate_pooled": 0.0252,
+      "delta_vs_sigma0_pp": 0.01
+    },
+    {
+      "method": "task",
+      "k": 18,
+      "snr_db": 20.0,
+      "csi_error_sigma": 0.1,
+      "n_seeds": 3,
+      "success_count_pooled": 381,
+      "episodes_pooled": 15000,
+      "success_rate_pooled": 0.0254,
+      "delta_vs_sigma0_pp": 0.0
+    },
+    {
+      "method": "task",
+      "k": 24,
+      "snr_db": 0.0,
+      "csi_error_sigma": 0.1,
+      "n_seeds": 3,
+      "success_count_pooled": 499,
+      "episodes_pooled": 15000,
+      "success_rate_pooled": 0.0333,
+      "delta_vs_sigma0_pp": -0.07
+    },
+    {
+      "method": "task",
+      "k": 24,
+      "snr_db": 5.0,
+      "csi_error_sigma": 0.1,
+      "n_seeds": 3,
+      "success_count_pooled": 537,
+      "episodes_pooled": 15000,
+      "success_rate_pooled": 0.0358,
+      "delta_vs_sigma0_pp": -0.03
+    },
+    {
+      "method": "task",
+      "k": 24,
+      "snr_db": 10.0,
+      "csi_error_sigma": 0.1,
+      "n_seeds": 3,
+      "success_count_pooled": 555,
+      "episodes_pooled": 15000,
+      "success_rate_pooled": 0.037,
+      "delta_vs_sigma0_pp": -0.03
+    },
+    {
+      "method": "task",
+      "k": 24,
+      "snr_db": 15.0,
+      "csi_error_sigma": 0.1,
+      "n_seeds": 3,
+      "success_count_pooled": 554,
+      "episodes_pooled": 15000,
+      "success_rate_pooled": 0.0369,
+      "delta_vs_sigma0_pp": -0.01
+    },
+    {
+      "method": "task",
+      "k": 24,
+      "snr_db": 20.0,
+      "csi_error_sigma": 0.1,
+      "n_seeds": 3,
+      "success_count_pooled": 560,
+      "episodes_pooled": 15000,
+      "success_rate_pooled": 0.0373,
+      "delta_vs_sigma0_pp": 0.01
+    },
+    {
+      "method": "task",
+      "k": 30,
+      "snr_db": 0.0,
+      "csi_error_sigma": 0.1,
+      "n_seeds": 3,
+      "success_count_pooled": 311,
+      "episodes_pooled": 15000,
+      "success_rate_pooled": 0.0207,
+      "delta_vs_sigma0_pp": 0.05
+    },
+    {
+      "method": "task",
+      "k": 30,
+      "snr_db": 5.0,
+      "csi_error_sigma": 0.1,
+      "n_seeds": 3,
+      "success_count_pooled": 313,
+      "episodes_pooled": 15000,
+      "success_rate_pooled": 0.0209,
+      "delta_vs_sigma0_pp": 0.01
+    },
+    {
+      "method": "task",
+      "k": 30,
+      "snr_db": 10.0,
+      "csi_error_sigma": 0.1,
+      "n_seeds": 3,
+      "success_count_pooled": 314,
+      "episodes_pooled": 15000,
+      "success_rate_pooled": 0.0209,
+      "delta_vs_sigma0_pp": 0.0
+    },
+    {
+      "method": "task",
+      "k": 30,
+      "snr_db": 15.0,
+      "csi_error_sigma": 0.1,
+      "n_seeds": 3,
+      "success_count_pooled": 308,
+      "episodes_pooled": 15000,
+      "success_rate_pooled": 0.0205,
+      "delta_vs_sigma0_pp": -0.07
+    },
+    {
+      "method": "task",
+      "k": 30,
+      "snr_db": 20.0,
+      "csi_error_sigma": 0.1,
+      "n_seeds": 3,
+      "success_count_pooled": 322,
+      "episodes_pooled": 15000,
+      "success_rate_pooled": 0.0215,
+      "delta_vs_sigma0_pp": 0.04
     },
     {
       "method": "task",
       "k": 54,
-      "snr_db": 15.0,
+      "snr_db": 0.0,
       "csi_error_sigma": 0.1,
-      "n_seeds": 3,
-      "success_count_pooled": 410,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.0273,
+      "n_seeds": 2,
+      "success_count_pooled": 354,
+      "episodes_pooled": 10000,
+      "success_rate_pooled": 0.0354,
       "delta_vs_sigma0_pp": -0.03
     },
     {
       "method": "task",
       "k": 54,
+      "snr_db": 5.0,
+      "csi_error_sigma": 0.1,
+      "n_seeds": 2,
+      "success_count_pooled": 353,
+      "episodes_pooled": 10000,
+      "success_rate_pooled": 0.0353,
+      "delta_vs_sigma0_pp": -0.02
+    },
+    {
+      "method": "task",
+      "k": 54,
+      "snr_db": 10.0,
+      "csi_error_sigma": 0.1,
+      "n_seeds": 2,
+      "success_count_pooled": 367,
+      "episodes_pooled": 10000,
+      "success_rate_pooled": 0.0367,
+      "delta_vs_sigma0_pp": 0.08
+    },
+    {
+      "method": "task",
+      "k": 54,
+      "snr_db": 15.0,
+      "csi_error_sigma": 0.1,
+      "n_seeds": 2,
+      "success_count_pooled": 361,
+      "episodes_pooled": 10000,
+      "success_rate_pooled": 0.0361,
+      "delta_vs_sigma0_pp": -0.07
+    },
+    {
+      "method": "task",
+      "k": 54,
       "snr_db": 20.0,
       "csi_error_sigma": 0.1,
-      "n_seeds": 3,
-      "success_count_pooled": 398,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.0265,
-      "delta_vs_sigma0_pp": -0.13
+      "n_seeds": 2,
+      "success_count_pooled": 368,
+      "episodes_pooled": 10000,
+      "success_rate_pooled": 0.0368,
+      "delta_vs_sigma0_pp": -0.03
     },
     {
       "method": "digital",
@@ -2709,42 +2724,42 @@
       "k": 54,
       "snr_db": 0.0,
       "csi_error_sigma": 0.2,
-      "n_seeds": 3,
-      "success_count_pooled": 10485,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.699,
-      "delta_vs_sigma0_pp": -1.88
+      "n_seeds": 2,
+      "success_count_pooled": 7011,
+      "episodes_pooled": 10000,
+      "success_rate_pooled": 0.7011,
+      "delta_vs_sigma0_pp": -1.67
     },
     {
       "method": "digital",
       "k": 54,
       "snr_db": 5.0,
       "csi_error_sigma": 0.2,
-      "n_seeds": 3,
-      "success_count_pooled": 14822,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.9881,
-      "delta_vs_sigma0_pp": -0.27
+      "n_seeds": 2,
+      "success_count_pooled": 9879,
+      "episodes_pooled": 10000,
+      "success_rate_pooled": 0.9879,
+      "delta_vs_sigma0_pp": -0.29
     },
     {
       "method": "digital",
       "k": 54,
       "snr_db": 10.0,
       "csi_error_sigma": 0.2,
-      "n_seeds": 3,
-      "success_count_pooled": 14972,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.9981,
-      "delta_vs_sigma0_pp": -0.03
+      "n_seeds": 2,
+      "success_count_pooled": 9985,
+      "episodes_pooled": 10000,
+      "success_rate_pooled": 0.9985,
+      "delta_vs_sigma0_pp": 0.01
     },
     {
       "method": "digital",
       "k": 54,
       "snr_db": 15.0,
       "csi_error_sigma": 0.2,
-      "n_seeds": 3,
-      "success_count_pooled": 14992,
-      "episodes_pooled": 15000,
+      "n_seeds": 2,
+      "success_count_pooled": 9995,
+      "episodes_pooled": 10000,
       "success_rate_pooled": 0.9995,
       "delta_vs_sigma0_pp": -0.03
     },
@@ -2753,9 +2768,9 @@
       "k": 54,
       "snr_db": 20.0,
       "csi_error_sigma": 0.2,
-      "n_seeds": 3,
-      "success_count_pooled": 14994,
-      "episodes_pooled": 15000,
+      "n_seeds": 2,
+      "success_count_pooled": 9996,
+      "episodes_pooled": 10000,
       "success_rate_pooled": 0.9996,
       "delta_vs_sigma0_pp": -0.04
     },
@@ -2765,10 +2780,10 @@
       "snr_db": 0.0,
       "csi_error_sigma": 0.2,
       "n_seeds": 3,
-      "success_count_pooled": 4120,
+      "success_count_pooled": 4158,
       "episodes_pooled": 15000,
-      "success_rate_pooled": 0.2747,
-      "delta_vs_sigma0_pp": -0.8
+      "success_rate_pooled": 0.2772,
+      "delta_vs_sigma0_pp": -0.71
     },
     {
       "method": "reconstruction",
@@ -2776,10 +2791,10 @@
       "snr_db": 5.0,
       "csi_error_sigma": 0.2,
       "n_seeds": 3,
-      "success_count_pooled": 3908,
+      "success_count_pooled": 3873,
       "episodes_pooled": 15000,
-      "success_rate_pooled": 0.2605,
-      "delta_vs_sigma0_pp": -0.4
+      "success_rate_pooled": 0.2582,
+      "delta_vs_sigma0_pp": -0.3
     },
     {
       "method": "reconstruction",
@@ -2787,10 +2802,10 @@
       "snr_db": 10.0,
       "csi_error_sigma": 0.2,
       "n_seeds": 3,
-      "success_count_pooled": 3687,
+      "success_count_pooled": 3692,
       "episodes_pooled": 15000,
-      "success_rate_pooled": 0.2458,
-      "delta_vs_sigma0_pp": 0.2
+      "success_rate_pooled": 0.2461,
+      "delta_vs_sigma0_pp": 0.13
     },
     {
       "method": "reconstruction",
@@ -2798,10 +2813,10 @@
       "snr_db": 15.0,
       "csi_error_sigma": 0.2,
       "n_seeds": 3,
-      "success_count_pooled": 3556,
+      "success_count_pooled": 3554,
       "episodes_pooled": 15000,
-      "success_rate_pooled": 0.2371,
-      "delta_vs_sigma0_pp": 0.43
+      "success_rate_pooled": 0.2369,
+      "delta_vs_sigma0_pp": -0.03
     },
     {
       "method": "reconstruction",
@@ -2809,10 +2824,10 @@
       "snr_db": 20.0,
       "csi_error_sigma": 0.2,
       "n_seeds": 3,
-      "success_count_pooled": 3491,
+      "success_count_pooled": 3515,
       "episodes_pooled": 15000,
-      "success_rate_pooled": 0.2327,
-      "delta_vs_sigma0_pp": 0.15
+      "success_rate_pooled": 0.2343,
+      "delta_vs_sigma0_pp": -0.08
     },
     {
       "method": "reconstruction",
@@ -2820,10 +2835,10 @@
       "snr_db": 0.0,
       "csi_error_sigma": 0.2,
       "n_seeds": 3,
-      "success_count_pooled": 4018,
+      "success_count_pooled": 4026,
       "episodes_pooled": 15000,
-      "success_rate_pooled": 0.2679,
-      "delta_vs_sigma0_pp": -0.38
+      "success_rate_pooled": 0.2684,
+      "delta_vs_sigma0_pp": 0.02
     },
     {
       "method": "reconstruction",
@@ -2831,10 +2846,10 @@
       "snr_db": 5.0,
       "csi_error_sigma": 0.2,
       "n_seeds": 3,
-      "success_count_pooled": 3630,
+      "success_count_pooled": 3672,
       "episodes_pooled": 15000,
-      "success_rate_pooled": 0.242,
-      "delta_vs_sigma0_pp": -0.28
+      "success_rate_pooled": 0.2448,
+      "delta_vs_sigma0_pp": 0.3
     },
     {
       "method": "reconstruction",
@@ -2842,32 +2857,32 @@
       "snr_db": 10.0,
       "csi_error_sigma": 0.2,
       "n_seeds": 3,
-      "success_count_pooled": 3493,
+      "success_count_pooled": 3455,
       "episodes_pooled": 15000,
-      "success_rate_pooled": 0.2329,
+      "success_rate_pooled": 0.2303,
+      "delta_vs_sigma0_pp": 0.29
+    },
+    {
+      "method": "reconstruction",
+      "k": 18,
+      "snr_db": 15.0,
+      "csi_error_sigma": 0.2,
+      "n_seeds": 3,
+      "success_count_pooled": 3366,
+      "episodes_pooled": 15000,
+      "success_rate_pooled": 0.2244,
       "delta_vs_sigma0_pp": 0.24
     },
     {
       "method": "reconstruction",
       "k": 18,
-      "snr_db": 15.0,
-      "csi_error_sigma": 0.2,
-      "n_seeds": 3,
-      "success_count_pooled": 3395,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.2263,
-      "delta_vs_sigma0_pp": 0.14
-    },
-    {
-      "method": "reconstruction",
-      "k": 18,
       "snr_db": 20.0,
       "csi_error_sigma": 0.2,
       "n_seeds": 3,
-      "success_count_pooled": 3387,
+      "success_count_pooled": 3363,
       "episodes_pooled": 15000,
-      "success_rate_pooled": 0.2258,
-      "delta_vs_sigma0_pp": 0.05
+      "success_rate_pooled": 0.2242,
+      "delta_vs_sigma0_pp": 0.17
     },
     {
       "method": "reconstruction",
@@ -2875,10 +2890,10 @@
       "snr_db": 0.0,
       "csi_error_sigma": 0.2,
       "n_seeds": 3,
-      "success_count_pooled": 3948,
+      "success_count_pooled": 3915,
       "episodes_pooled": 15000,
-      "success_rate_pooled": 0.2632,
-      "delta_vs_sigma0_pp": 0.25
+      "success_rate_pooled": 0.261,
+      "delta_vs_sigma0_pp": -0.01
     },
     {
       "method": "reconstruction",
@@ -2886,9 +2901,9 @@
       "snr_db": 5.0,
       "csi_error_sigma": 0.2,
       "n_seeds": 3,
-      "success_count_pooled": 3611,
+      "success_count_pooled": 3580,
       "episodes_pooled": 15000,
-      "success_rate_pooled": 0.2407,
+      "success_rate_pooled": 0.2387,
       "delta_vs_sigma0_pp": 0.0
     },
     {
@@ -2897,10 +2912,10 @@
       "snr_db": 10.0,
       "csi_error_sigma": 0.2,
       "n_seeds": 3,
-      "success_count_pooled": 3423,
+      "success_count_pooled": 3350,
       "episodes_pooled": 15000,
-      "success_rate_pooled": 0.2282,
-      "delta_vs_sigma0_pp": 0.11
+      "success_rate_pooled": 0.2233,
+      "delta_vs_sigma0_pp": -0.12
     },
     {
       "method": "reconstruction",
@@ -2908,10 +2923,10 @@
       "snr_db": 15.0,
       "csi_error_sigma": 0.2,
       "n_seeds": 3,
-      "success_count_pooled": 3356,
+      "success_count_pooled": 3358,
       "episodes_pooled": 15000,
-      "success_rate_pooled": 0.2237,
-      "delta_vs_sigma0_pp": 0.34
+      "success_rate_pooled": 0.2239,
+      "delta_vs_sigma0_pp": 0.27
     },
     {
       "method": "reconstruction",
@@ -2919,10 +2934,10 @@
       "snr_db": 20.0,
       "csi_error_sigma": 0.2,
       "n_seeds": 3,
-      "success_count_pooled": 3269,
+      "success_count_pooled": 3311,
       "episodes_pooled": 15000,
-      "success_rate_pooled": 0.2179,
-      "delta_vs_sigma0_pp": 0.11
+      "success_rate_pooled": 0.2207,
+      "delta_vs_sigma0_pp": 0.0
     },
     {
       "method": "reconstruction",
@@ -2930,10 +2945,10 @@
       "snr_db": 0.0,
       "csi_error_sigma": 0.2,
       "n_seeds": 3,
-      "success_count_pooled": 4075,
+      "success_count_pooled": 4038,
       "episodes_pooled": 15000,
-      "success_rate_pooled": 0.2717,
-      "delta_vs_sigma0_pp": -0.05
+      "success_rate_pooled": 0.2692,
+      "delta_vs_sigma0_pp": 0.04
     },
     {
       "method": "reconstruction",
@@ -2941,153 +2956,153 @@
       "snr_db": 5.0,
       "csi_error_sigma": 0.2,
       "n_seeds": 3,
-      "success_count_pooled": 3982,
+      "success_count_pooled": 3955,
       "episodes_pooled": 15000,
-      "success_rate_pooled": 0.2655,
-      "delta_vs_sigma0_pp": 0.45
+      "success_rate_pooled": 0.2637,
+      "delta_vs_sigma0_pp": 0.35
     },
     {
       "method": "reconstruction",
       "k": 30,
       "snr_db": 10.0,
+      "csi_error_sigma": 0.2,
+      "n_seeds": 3,
+      "success_count_pooled": 3934,
+      "episodes_pooled": 15000,
+      "success_rate_pooled": 0.2623,
+      "delta_vs_sigma0_pp": -0.17
+    },
+    {
+      "method": "reconstruction",
+      "k": 30,
+      "snr_db": 15.0,
       "csi_error_sigma": 0.2,
       "n_seeds": 3,
       "success_count_pooled": 3924,
       "episodes_pooled": 15000,
       "success_rate_pooled": 0.2616,
+      "delta_vs_sigma0_pp": -0.23
+    },
+    {
+      "method": "reconstruction",
+      "k": 30,
+      "snr_db": 20.0,
+      "csi_error_sigma": 0.2,
+      "n_seeds": 3,
+      "success_count_pooled": 3892,
+      "episodes_pooled": 15000,
+      "success_rate_pooled": 0.2595,
+      "delta_vs_sigma0_pp": -0.27
+    },
+    {
+      "method": "reconstruction",
+      "k": 54,
+      "snr_db": 0.0,
+      "csi_error_sigma": 0.2,
+      "n_seeds": 2,
+      "success_count_pooled": 2557,
+      "episodes_pooled": 10000,
+      "success_rate_pooled": 0.2557,
+      "delta_vs_sigma0_pp": -0.19
+    },
+    {
+      "method": "reconstruction",
+      "k": 54,
+      "snr_db": 5.0,
+      "csi_error_sigma": 0.2,
+      "n_seeds": 2,
+      "success_count_pooled": 2527,
+      "episodes_pooled": 10000,
+      "success_rate_pooled": 0.2527,
+      "delta_vs_sigma0_pp": 0.2
+    },
+    {
+      "method": "reconstruction",
+      "k": 54,
+      "snr_db": 10.0,
+      "csi_error_sigma": 0.2,
+      "n_seeds": 2,
+      "success_count_pooled": 2476,
+      "episodes_pooled": 10000,
+      "success_rate_pooled": 0.2476,
+      "delta_vs_sigma0_pp": 0.15
+    },
+    {
+      "method": "reconstruction",
+      "k": 54,
+      "snr_db": 15.0,
+      "csi_error_sigma": 0.2,
+      "n_seeds": 2,
+      "success_count_pooled": 2408,
+      "episodes_pooled": 10000,
+      "success_rate_pooled": 0.2408,
+      "delta_vs_sigma0_pp": -0.61
+    },
+    {
+      "method": "reconstruction",
+      "k": 54,
+      "snr_db": 20.0,
+      "csi_error_sigma": 0.2,
+      "n_seeds": 2,
+      "success_count_pooled": 2455,
+      "episodes_pooled": 10000,
+      "success_rate_pooled": 0.2455,
+      "delta_vs_sigma0_pp": 0.19
+    },
+    {
+      "method": "task",
+      "k": 12,
+      "snr_db": 0.0,
+      "csi_error_sigma": 0.2,
+      "n_seeds": 3,
+      "success_count_pooled": 872,
+      "episodes_pooled": 15000,
+      "success_rate_pooled": 0.0581,
+      "delta_vs_sigma0_pp": 0.19
+    },
+    {
+      "method": "task",
+      "k": 12,
+      "snr_db": 5.0,
+      "csi_error_sigma": 0.2,
+      "n_seeds": 3,
+      "success_count_pooled": 833,
+      "episodes_pooled": 15000,
+      "success_rate_pooled": 0.0555,
+      "delta_vs_sigma0_pp": 0.17
+    },
+    {
+      "method": "task",
+      "k": 12,
+      "snr_db": 10.0,
+      "csi_error_sigma": 0.2,
+      "n_seeds": 3,
+      "success_count_pooled": 803,
+      "episodes_pooled": 15000,
+      "success_rate_pooled": 0.0535,
+      "delta_vs_sigma0_pp": 0.13
+    },
+    {
+      "method": "task",
+      "k": 12,
+      "snr_db": 15.0,
+      "csi_error_sigma": 0.2,
+      "n_seeds": 3,
+      "success_count_pooled": 778,
+      "episodes_pooled": 15000,
+      "success_rate_pooled": 0.0519,
       "delta_vs_sigma0_pp": 0.03
     },
     {
-      "method": "reconstruction",
-      "k": 30,
-      "snr_db": 15.0,
-      "csi_error_sigma": 0.2,
-      "n_seeds": 3,
-      "success_count_pooled": 3919,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.2613,
-      "delta_vs_sigma0_pp": -0.28
-    },
-    {
-      "method": "reconstruction",
-      "k": 30,
-      "snr_db": 20.0,
-      "csi_error_sigma": 0.2,
-      "n_seeds": 3,
-      "success_count_pooled": 3833,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.2555,
-      "delta_vs_sigma0_pp": -0.63
-    },
-    {
-      "method": "reconstruction",
-      "k": 54,
-      "snr_db": 0.0,
-      "csi_error_sigma": 0.2,
-      "n_seeds": 3,
-      "success_count_pooled": 3979,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.2653,
-      "delta_vs_sigma0_pp": -0.08
-    },
-    {
-      "method": "reconstruction",
-      "k": 54,
-      "snr_db": 5.0,
-      "csi_error_sigma": 0.2,
-      "n_seeds": 3,
-      "success_count_pooled": 3908,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.2605,
-      "delta_vs_sigma0_pp": -0.04
-    },
-    {
-      "method": "reconstruction",
-      "k": 54,
-      "snr_db": 10.0,
-      "csi_error_sigma": 0.2,
-      "n_seeds": 3,
-      "success_count_pooled": 3851,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.2567,
-      "delta_vs_sigma0_pp": -0.62
-    },
-    {
-      "method": "reconstruction",
-      "k": 54,
-      "snr_db": 15.0,
-      "csi_error_sigma": 0.2,
-      "n_seeds": 3,
-      "success_count_pooled": 3854,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.2569,
-      "delta_vs_sigma0_pp": -0.31
-    },
-    {
-      "method": "reconstruction",
-      "k": 54,
-      "snr_db": 20.0,
-      "csi_error_sigma": 0.2,
-      "n_seeds": 3,
-      "success_count_pooled": 3843,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.2562,
-      "delta_vs_sigma0_pp": -0.18
-    },
-    {
-      "method": "task",
-      "k": 12,
-      "snr_db": 0.0,
-      "csi_error_sigma": 0.2,
-      "n_seeds": 3,
-      "success_count_pooled": 516,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.0344,
-      "delta_vs_sigma0_pp": 0.11
-    },
-    {
-      "method": "task",
-      "k": 12,
-      "snr_db": 5.0,
-      "csi_error_sigma": 0.2,
-      "n_seeds": 3,
-      "success_count_pooled": 563,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.0375,
-      "delta_vs_sigma0_pp": 0.11
-    },
-    {
-      "method": "task",
-      "k": 12,
-      "snr_db": 10.0,
-      "csi_error_sigma": 0.2,
-      "n_seeds": 3,
-      "success_count_pooled": 547,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.0365,
-      "delta_vs_sigma0_pp": -0.11
-    },
-    {
-      "method": "task",
-      "k": 12,
-      "snr_db": 15.0,
-      "csi_error_sigma": 0.2,
-      "n_seeds": 3,
-      "success_count_pooled": 586,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.0391,
-      "delta_vs_sigma0_pp": 0.02
-    },
-    {
       "method": "task",
       "k": 12,
       "snr_db": 20.0,
       "csi_error_sigma": 0.2,
       "n_seeds": 3,
-      "success_count_pooled": 592,
+      "success_count_pooled": 773,
       "episodes_pooled": 15000,
-      "success_rate_pooled": 0.0395,
-      "delta_vs_sigma0_pp": 0.04
+      "success_rate_pooled": 0.0515,
+      "delta_vs_sigma0_pp": -0.01
     },
     {
       "method": "task",
@@ -3095,10 +3110,10 @@
       "snr_db": 0.0,
       "csi_error_sigma": 0.2,
       "n_seeds": 3,
-      "success_count_pooled": 429,
+      "success_count_pooled": 366,
       "episodes_pooled": 15000,
-      "success_rate_pooled": 0.0286,
-      "delta_vs_sigma0_pp": -0.15
+      "success_rate_pooled": 0.0244,
+      "delta_vs_sigma0_pp": 0.06
     },
     {
       "method": "task",
@@ -3106,10 +3121,10 @@
       "snr_db": 5.0,
       "csi_error_sigma": 0.2,
       "n_seeds": 3,
-      "success_count_pooled": 458,
+      "success_count_pooled": 364,
       "episodes_pooled": 15000,
-      "success_rate_pooled": 0.0305,
-      "delta_vs_sigma0_pp": 0.08
+      "success_rate_pooled": 0.0243,
+      "delta_vs_sigma0_pp": -0.05
     },
     {
       "method": "task",
@@ -3117,9 +3132,9 @@
       "snr_db": 10.0,
       "csi_error_sigma": 0.2,
       "n_seeds": 3,
-      "success_count_pooled": 472,
+      "success_count_pooled": 370,
       "episodes_pooled": 15000,
-      "success_rate_pooled": 0.0315,
+      "success_rate_pooled": 0.0247,
       "delta_vs_sigma0_pp": 0.03
     },
     {
@@ -3128,10 +3143,10 @@
       "snr_db": 15.0,
       "csi_error_sigma": 0.2,
       "n_seeds": 3,
-      "success_count_pooled": 474,
+      "success_count_pooled": 372,
       "episodes_pooled": 15000,
-      "success_rate_pooled": 0.0316,
-      "delta_vs_sigma0_pp": 0.01
+      "success_rate_pooled": 0.0248,
+      "delta_vs_sigma0_pp": -0.03
     },
     {
       "method": "task",
@@ -3139,32 +3154,32 @@
       "snr_db": 20.0,
       "csi_error_sigma": 0.2,
       "n_seeds": 3,
-      "success_count_pooled": 485,
+      "success_count_pooled": 374,
       "episodes_pooled": 15000,
-      "success_rate_pooled": 0.0323,
-      "delta_vs_sigma0_pp": -0.02
-    },
-    {
-      "method": "task",
-      "k": 24,
-      "snr_db": 0.0,
-      "csi_error_sigma": 0.2,
-      "n_seeds": 3,
-      "success_count_pooled": 1149,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.0766,
+      "success_rate_pooled": 0.0249,
       "delta_vs_sigma0_pp": -0.05
     },
     {
       "method": "task",
       "k": 24,
+      "snr_db": 0.0,
+      "csi_error_sigma": 0.2,
+      "n_seeds": 3,
+      "success_count_pooled": 500,
+      "episodes_pooled": 15000,
+      "success_rate_pooled": 0.0333,
+      "delta_vs_sigma0_pp": -0.06
+    },
+    {
+      "method": "task",
+      "k": 24,
       "snr_db": 5.0,
       "csi_error_sigma": 0.2,
       "n_seeds": 3,
-      "success_count_pooled": 1158,
+      "success_count_pooled": 507,
       "episodes_pooled": 15000,
-      "success_rate_pooled": 0.0772,
-      "delta_vs_sigma0_pp": -0.25
+      "success_rate_pooled": 0.0338,
+      "delta_vs_sigma0_pp": -0.23
     },
     {
       "method": "task",
@@ -3172,10 +3187,10 @@
       "snr_db": 10.0,
       "csi_error_sigma": 0.2,
       "n_seeds": 3,
-      "success_count_pooled": 1137,
+      "success_count_pooled": 548,
       "episodes_pooled": 15000,
-      "success_rate_pooled": 0.0758,
-      "delta_vs_sigma0_pp": -0.27
+      "success_rate_pooled": 0.0365,
+      "delta_vs_sigma0_pp": -0.07
     },
     {
       "method": "task",
@@ -3183,10 +3198,10 @@
       "snr_db": 15.0,
       "csi_error_sigma": 0.2,
       "n_seeds": 3,
-      "success_count_pooled": 1183,
+      "success_count_pooled": 549,
       "episodes_pooled": 15000,
-      "success_rate_pooled": 0.0789,
-      "delta_vs_sigma0_pp": -0.12
+      "success_rate_pooled": 0.0366,
+      "delta_vs_sigma0_pp": -0.05
     },
     {
       "method": "task",
@@ -3194,10 +3209,10 @@
       "snr_db": 20.0,
       "csi_error_sigma": 0.2,
       "n_seeds": 3,
-      "success_count_pooled": 1170,
+      "success_count_pooled": 551,
       "episodes_pooled": 15000,
-      "success_rate_pooled": 0.078,
-      "delta_vs_sigma0_pp": -0.3
+      "success_rate_pooled": 0.0367,
+      "delta_vs_sigma0_pp": -0.05
     },
     {
       "method": "task",
@@ -3205,10 +3220,10 @@
       "snr_db": 0.0,
       "csi_error_sigma": 0.2,
       "n_seeds": 3,
-      "success_count_pooled": 522,
+      "success_count_pooled": 332,
       "episodes_pooled": 15000,
-      "success_rate_pooled": 0.0348,
-      "delta_vs_sigma0_pp": -0.01
+      "success_rate_pooled": 0.0221,
+      "delta_vs_sigma0_pp": 0.19
     },
     {
       "method": "task",
@@ -3216,10 +3231,10 @@
       "snr_db": 5.0,
       "csi_error_sigma": 0.2,
       "n_seeds": 3,
-      "success_count_pooled": 550,
+      "success_count_pooled": 316,
       "episodes_pooled": 15000,
-      "success_rate_pooled": 0.0367,
-      "delta_vs_sigma0_pp": -0.08
+      "success_rate_pooled": 0.0211,
+      "delta_vs_sigma0_pp": 0.03
     },
     {
       "method": "task",
@@ -3227,10 +3242,10 @@
       "snr_db": 10.0,
       "csi_error_sigma": 0.2,
       "n_seeds": 3,
-      "success_count_pooled": 573,
+      "success_count_pooled": 315,
       "episodes_pooled": 15000,
-      "success_rate_pooled": 0.0382,
-      "delta_vs_sigma0_pp": 0.0
+      "success_rate_pooled": 0.021,
+      "delta_vs_sigma0_pp": 0.01
     },
     {
       "method": "task",
@@ -3238,10 +3253,10 @@
       "snr_db": 15.0,
       "csi_error_sigma": 0.2,
       "n_seeds": 3,
-      "success_count_pooled": 595,
+      "success_count_pooled": 312,
       "episodes_pooled": 15000,
-      "success_rate_pooled": 0.0397,
-      "delta_vs_sigma0_pp": 0.01
+      "success_rate_pooled": 0.0208,
+      "delta_vs_sigma0_pp": -0.04
     },
     {
       "method": "task",
@@ -3249,20 +3264,20 @@
       "snr_db": 20.0,
       "csi_error_sigma": 0.2,
       "n_seeds": 3,
-      "success_count_pooled": 608,
+      "success_count_pooled": 316,
       "episodes_pooled": 15000,
-      "success_rate_pooled": 0.0405,
-      "delta_vs_sigma0_pp": 0.05
+      "success_rate_pooled": 0.0211,
+      "delta_vs_sigma0_pp": 0.0
     },
     {
       "method": "task",
       "k": 54,
       "snr_db": 0.0,
       "csi_error_sigma": 0.2,
-      "n_seeds": 3,
-      "success_count_pooled": 424,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.0283,
+      "n_seeds": 2,
+      "success_count_pooled": 351,
+      "episodes_pooled": 10000,
+      "success_rate_pooled": 0.0351,
       "delta_vs_sigma0_pp": -0.06
     },
     {
@@ -3270,44 +3285,44 @@
       "k": 54,
       "snr_db": 5.0,
       "csi_error_sigma": 0.2,
-      "n_seeds": 3,
-      "success_count_pooled": 409,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.0273,
-      "delta_vs_sigma0_pp": 0.01
+      "n_seeds": 2,
+      "success_count_pooled": 345,
+      "episodes_pooled": 10000,
+      "success_rate_pooled": 0.0345,
+      "delta_vs_sigma0_pp": -0.1
     },
     {
       "method": "task",
       "k": 54,
       "snr_db": 10.0,
       "csi_error_sigma": 0.2,
-      "n_seeds": 3,
-      "success_count_pooled": 395,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.0263,
-      "delta_vs_sigma0_pp": -0.1
+      "n_seeds": 2,
+      "success_count_pooled": 360,
+      "episodes_pooled": 10000,
+      "success_rate_pooled": 0.036,
+      "delta_vs_sigma0_pp": 0.01
     },
     {
       "method": "task",
       "k": 54,
       "snr_db": 15.0,
       "csi_error_sigma": 0.2,
-      "n_seeds": 3,
-      "success_count_pooled": 419,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.0279,
-      "delta_vs_sigma0_pp": 0.03
+      "n_seeds": 2,
+      "success_count_pooled": 354,
+      "episodes_pooled": 10000,
+      "success_rate_pooled": 0.0354,
+      "delta_vs_sigma0_pp": -0.14
     },
     {
       "method": "task",
       "k": 54,
       "snr_db": 20.0,
       "csi_error_sigma": 0.2,
-      "n_seeds": 3,
-      "success_count_pooled": 397,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.0265,
-      "delta_vs_sigma0_pp": -0.13
+      "n_seeds": 2,
+      "success_count_pooled": 374,
+      "episodes_pooled": 10000,
+      "success_rate_pooled": 0.0374,
+      "delta_vs_sigma0_pp": 0.03
     },
     {
       "method": "digital",
@@ -3534,42 +3549,42 @@
       "k": 54,
       "snr_db": 0.0,
       "csi_error_sigma": 0.4,
-      "n_seeds": 3,
-      "success_count_pooled": 9444,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.6296,
-      "delta_vs_sigma0_pp": -8.82
+      "n_seeds": 2,
+      "success_count_pooled": 6312,
+      "episodes_pooled": 10000,
+      "success_rate_pooled": 0.6312,
+      "delta_vs_sigma0_pp": -8.66
     },
     {
       "method": "digital",
       "k": 54,
       "snr_db": 5.0,
       "csi_error_sigma": 0.4,
-      "n_seeds": 3,
-      "success_count_pooled": 14611,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.9741,
-      "delta_vs_sigma0_pp": -1.67
+      "n_seeds": 2,
+      "success_count_pooled": 9732,
+      "episodes_pooled": 10000,
+      "success_rate_pooled": 0.9732,
+      "delta_vs_sigma0_pp": -1.76
     },
     {
       "method": "digital",
       "k": 54,
       "snr_db": 10.0,
       "csi_error_sigma": 0.4,
-      "n_seeds": 3,
-      "success_count_pooled": 14941,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.9961,
-      "delta_vs_sigma0_pp": -0.23
+      "n_seeds": 2,
+      "success_count_pooled": 9960,
+      "episodes_pooled": 10000,
+      "success_rate_pooled": 0.996,
+      "delta_vs_sigma0_pp": -0.24
     },
     {
       "method": "digital",
       "k": 54,
       "snr_db": 15.0,
       "csi_error_sigma": 0.4,
-      "n_seeds": 3,
-      "success_count_pooled": 14966,
-      "episodes_pooled": 15000,
+      "n_seeds": 2,
+      "success_count_pooled": 9977,
+      "episodes_pooled": 10000,
       "success_rate_pooled": 0.9977,
       "delta_vs_sigma0_pp": -0.21
     },
@@ -3578,11 +3593,11 @@
       "k": 54,
       "snr_db": 20.0,
       "csi_error_sigma": 0.4,
-      "n_seeds": 3,
-      "success_count_pooled": 14974,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.9983,
-      "delta_vs_sigma0_pp": -0.17
+      "n_seeds": 2,
+      "success_count_pooled": 9984,
+      "episodes_pooled": 10000,
+      "success_rate_pooled": 0.9984,
+      "delta_vs_sigma0_pp": -0.16
     },
     {
       "method": "reconstruction",
@@ -3590,10 +3605,10 @@
       "snr_db": 0.0,
       "csi_error_sigma": 0.4,
       "n_seeds": 3,
-      "success_count_pooled": 4172,
+      "success_count_pooled": 4225,
       "episodes_pooled": 15000,
-      "success_rate_pooled": 0.2781,
-      "delta_vs_sigma0_pp": -0.45
+      "success_rate_pooled": 0.2817,
+      "delta_vs_sigma0_pp": -0.26
     },
     {
       "method": "reconstruction",
@@ -3601,10 +3616,10 @@
       "snr_db": 5.0,
       "csi_error_sigma": 0.4,
       "n_seeds": 3,
-      "success_count_pooled": 3902,
+      "success_count_pooled": 3969,
       "episodes_pooled": 15000,
-      "success_rate_pooled": 0.2601,
-      "delta_vs_sigma0_pp": -0.44
+      "success_rate_pooled": 0.2646,
+      "delta_vs_sigma0_pp": 0.34
     },
     {
       "method": "reconstruction",
@@ -3612,131 +3627,131 @@
       "snr_db": 10.0,
       "csi_error_sigma": 0.4,
       "n_seeds": 3,
-      "success_count_pooled": 3727,
+      "success_count_pooled": 3693,
       "episodes_pooled": 15000,
-      "success_rate_pooled": 0.2485,
-      "delta_vs_sigma0_pp": 0.47
-    },
-    {
-      "method": "reconstruction",
-      "k": 12,
-      "snr_db": 15.0,
-      "csi_error_sigma": 0.4,
-      "n_seeds": 3,
-      "success_count_pooled": 3588,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.2392,
-      "delta_vs_sigma0_pp": 0.65
-    },
-    {
-      "method": "reconstruction",
-      "k": 12,
-      "snr_db": 20.0,
-      "csi_error_sigma": 0.4,
-      "n_seeds": 3,
-      "success_count_pooled": 3594,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.2396,
-      "delta_vs_sigma0_pp": 0.83
-    },
-    {
-      "method": "reconstruction",
-      "k": 18,
-      "snr_db": 0.0,
-      "csi_error_sigma": 0.4,
-      "n_seeds": 3,
-      "success_count_pooled": 3965,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.2643,
-      "delta_vs_sigma0_pp": -0.73
-    },
-    {
-      "method": "reconstruction",
-      "k": 18,
-      "snr_db": 5.0,
-      "csi_error_sigma": 0.4,
-      "n_seeds": 3,
-      "success_count_pooled": 3653,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.2435,
-      "delta_vs_sigma0_pp": -0.13
-    },
-    {
-      "method": "reconstruction",
-      "k": 18,
-      "snr_db": 10.0,
-      "csi_error_sigma": 0.4,
-      "n_seeds": 3,
-      "success_count_pooled": 3489,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.2326,
-      "delta_vs_sigma0_pp": 0.21
-    },
-    {
-      "method": "reconstruction",
-      "k": 18,
-      "snr_db": 15.0,
-      "csi_error_sigma": 0.4,
-      "n_seeds": 3,
-      "success_count_pooled": 3449,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.2299,
-      "delta_vs_sigma0_pp": 0.5
-    },
-    {
-      "method": "reconstruction",
-      "k": 18,
-      "snr_db": 20.0,
-      "csi_error_sigma": 0.4,
-      "n_seeds": 3,
-      "success_count_pooled": 3460,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.2307,
-      "delta_vs_sigma0_pp": 0.54
-    },
-    {
-      "method": "reconstruction",
-      "k": 24,
-      "snr_db": 0.0,
-      "csi_error_sigma": 0.4,
-      "n_seeds": 3,
-      "success_count_pooled": 3890,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.2593,
-      "delta_vs_sigma0_pp": -0.13
-    },
-    {
-      "method": "reconstruction",
-      "k": 24,
-      "snr_db": 5.0,
-      "csi_error_sigma": 0.4,
-      "n_seeds": 3,
-      "success_count_pooled": 3668,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.2445,
-      "delta_vs_sigma0_pp": 0.38
-    },
-    {
-      "method": "reconstruction",
-      "k": 24,
-      "snr_db": 10.0,
-      "csi_error_sigma": 0.4,
-      "n_seeds": 3,
-      "success_count_pooled": 3426,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.2284,
+      "success_rate_pooled": 0.2462,
       "delta_vs_sigma0_pp": 0.13
     },
     {
       "method": "reconstruction",
+      "k": 12,
+      "snr_db": 15.0,
+      "csi_error_sigma": 0.4,
+      "n_seeds": 3,
+      "success_count_pooled": 3638,
+      "episodes_pooled": 15000,
+      "success_rate_pooled": 0.2425,
+      "delta_vs_sigma0_pp": 0.53
+    },
+    {
+      "method": "reconstruction",
+      "k": 12,
+      "snr_db": 20.0,
+      "csi_error_sigma": 0.4,
+      "n_seeds": 3,
+      "success_count_pooled": 3615,
+      "episodes_pooled": 15000,
+      "success_rate_pooled": 0.241,
+      "delta_vs_sigma0_pp": 0.59
+    },
+    {
+      "method": "reconstruction",
+      "k": 18,
+      "snr_db": 0.0,
+      "csi_error_sigma": 0.4,
+      "n_seeds": 3,
+      "success_count_pooled": 3953,
+      "episodes_pooled": 15000,
+      "success_rate_pooled": 0.2635,
+      "delta_vs_sigma0_pp": -0.47
+    },
+    {
+      "method": "reconstruction",
+      "k": 18,
+      "snr_db": 5.0,
+      "csi_error_sigma": 0.4,
+      "n_seeds": 3,
+      "success_count_pooled": 3661,
+      "episodes_pooled": 15000,
+      "success_rate_pooled": 0.2441,
+      "delta_vs_sigma0_pp": 0.23
+    },
+    {
+      "method": "reconstruction",
+      "k": 18,
+      "snr_db": 10.0,
+      "csi_error_sigma": 0.4,
+      "n_seeds": 3,
+      "success_count_pooled": 3454,
+      "episodes_pooled": 15000,
+      "success_rate_pooled": 0.2303,
+      "delta_vs_sigma0_pp": 0.29
+    },
+    {
+      "method": "reconstruction",
+      "k": 18,
+      "snr_db": 15.0,
+      "csi_error_sigma": 0.4,
+      "n_seeds": 3,
+      "success_count_pooled": 3409,
+      "episodes_pooled": 15000,
+      "success_rate_pooled": 0.2273,
+      "delta_vs_sigma0_pp": 0.53
+    },
+    {
+      "method": "reconstruction",
+      "k": 18,
+      "snr_db": 20.0,
+      "csi_error_sigma": 0.4,
+      "n_seeds": 3,
+      "success_count_pooled": 3367,
+      "episodes_pooled": 15000,
+      "success_rate_pooled": 0.2245,
+      "delta_vs_sigma0_pp": 0.2
+    },
+    {
+      "method": "reconstruction",
+      "k": 24,
+      "snr_db": 0.0,
+      "csi_error_sigma": 0.4,
+      "n_seeds": 3,
+      "success_count_pooled": 3900,
+      "episodes_pooled": 15000,
+      "success_rate_pooled": 0.26,
+      "delta_vs_sigma0_pp": -0.11
+    },
+    {
+      "method": "reconstruction",
+      "k": 24,
+      "snr_db": 5.0,
+      "csi_error_sigma": 0.4,
+      "n_seeds": 3,
+      "success_count_pooled": 3713,
+      "episodes_pooled": 15000,
+      "success_rate_pooled": 0.2475,
+      "delta_vs_sigma0_pp": 0.89
+    },
+    {
+      "method": "reconstruction",
+      "k": 24,
+      "snr_db": 10.0,
+      "csi_error_sigma": 0.4,
+      "n_seeds": 3,
+      "success_count_pooled": 3429,
+      "episodes_pooled": 15000,
+      "success_rate_pooled": 0.2286,
+      "delta_vs_sigma0_pp": 0.41
+    },
+    {
+      "method": "reconstruction",
       "k": 24,
       "snr_db": 15.0,
       "csi_error_sigma": 0.4,
       "n_seeds": 3,
-      "success_count_pooled": 3406,
+      "success_count_pooled": 3414,
       "episodes_pooled": 15000,
-      "success_rate_pooled": 0.2271,
-      "delta_vs_sigma0_pp": 0.67
+      "success_rate_pooled": 0.2276,
+      "delta_vs_sigma0_pp": 0.64
     },
     {
       "method": "reconstruction",
@@ -3744,10 +3759,10 @@
       "snr_db": 20.0,
       "csi_error_sigma": 0.4,
       "n_seeds": 3,
-      "success_count_pooled": 3408,
+      "success_count_pooled": 3466,
       "episodes_pooled": 15000,
-      "success_rate_pooled": 0.2272,
-      "delta_vs_sigma0_pp": 1.04
+      "success_rate_pooled": 0.2311,
+      "delta_vs_sigma0_pp": 1.03
     },
     {
       "method": "reconstruction",
@@ -3755,10 +3770,10 @@
       "snr_db": 0.0,
       "csi_error_sigma": 0.4,
       "n_seeds": 3,
-      "success_count_pooled": 4002,
+      "success_count_pooled": 4007,
       "episodes_pooled": 15000,
-      "success_rate_pooled": 0.2668,
-      "delta_vs_sigma0_pp": -0.54
+      "success_rate_pooled": 0.2671,
+      "delta_vs_sigma0_pp": -0.17
     },
     {
       "method": "reconstruction",
@@ -3766,285 +3781,285 @@
       "snr_db": 5.0,
       "csi_error_sigma": 0.4,
       "n_seeds": 3,
-      "success_count_pooled": 3903,
+      "success_count_pooled": 3802,
       "episodes_pooled": 15000,
-      "success_rate_pooled": 0.2602,
-      "delta_vs_sigma0_pp": -0.07
-    },
-    {
-      "method": "reconstruction",
-      "k": 30,
-      "snr_db": 10.0,
-      "csi_error_sigma": 0.4,
-      "n_seeds": 3,
-      "success_count_pooled": 3818,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.2545,
-      "delta_vs_sigma0_pp": -0.68
-    },
-    {
-      "method": "reconstruction",
-      "k": 30,
-      "snr_db": 15.0,
-      "csi_error_sigma": 0.4,
-      "n_seeds": 3,
-      "success_count_pooled": 3861,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.2574,
+      "success_rate_pooled": 0.2535,
       "delta_vs_sigma0_pp": -0.67
     },
     {
       "method": "reconstruction",
       "k": 30,
+      "snr_db": 10.0,
+      "csi_error_sigma": 0.4,
+      "n_seeds": 3,
+      "success_count_pooled": 3773,
+      "episodes_pooled": 15000,
+      "success_rate_pooled": 0.2515,
+      "delta_vs_sigma0_pp": -1.25
+    },
+    {
+      "method": "reconstruction",
+      "k": 30,
+      "snr_db": 15.0,
+      "csi_error_sigma": 0.4,
+      "n_seeds": 3,
+      "success_count_pooled": 3881,
+      "episodes_pooled": 15000,
+      "success_rate_pooled": 0.2587,
+      "delta_vs_sigma0_pp": -0.51
+    },
+    {
+      "method": "reconstruction",
+      "k": 30,
       "snr_db": 20.0,
       "csi_error_sigma": 0.4,
       "n_seeds": 3,
-      "success_count_pooled": 3814,
+      "success_count_pooled": 3798,
       "episodes_pooled": 15000,
-      "success_rate_pooled": 0.2543,
-      "delta_vs_sigma0_pp": -0.76
+      "success_rate_pooled": 0.2532,
+      "delta_vs_sigma0_pp": -0.89
     },
     {
       "method": "reconstruction",
       "k": 54,
       "snr_db": 0.0,
       "csi_error_sigma": 0.4,
-      "n_seeds": 3,
-      "success_count_pooled": 3947,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.2631,
-      "delta_vs_sigma0_pp": -0.29
+      "n_seeds": 2,
+      "success_count_pooled": 2584,
+      "episodes_pooled": 10000,
+      "success_rate_pooled": 0.2584,
+      "delta_vs_sigma0_pp": 0.08
     },
     {
       "method": "reconstruction",
       "k": 54,
       "snr_db": 5.0,
       "csi_error_sigma": 0.4,
-      "n_seeds": 3,
-      "success_count_pooled": 3819,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.2546,
-      "delta_vs_sigma0_pp": -0.63
+      "n_seeds": 2,
+      "success_count_pooled": 2469,
+      "episodes_pooled": 10000,
+      "success_rate_pooled": 0.2469,
+      "delta_vs_sigma0_pp": -0.38
     },
     {
       "method": "reconstruction",
       "k": 54,
       "snr_db": 10.0,
       "csi_error_sigma": 0.4,
-      "n_seeds": 3,
-      "success_count_pooled": 3882,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.2588,
-      "delta_vs_sigma0_pp": -0.41
+      "n_seeds": 2,
+      "success_count_pooled": 2486,
+      "episodes_pooled": 10000,
+      "success_rate_pooled": 0.2486,
+      "delta_vs_sigma0_pp": 0.25
     },
     {
       "method": "reconstruction",
       "k": 54,
       "snr_db": 15.0,
       "csi_error_sigma": 0.4,
-      "n_seeds": 3,
-      "success_count_pooled": 3843,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.2562,
-      "delta_vs_sigma0_pp": -0.39
+      "n_seeds": 2,
+      "success_count_pooled": 2470,
+      "episodes_pooled": 10000,
+      "success_rate_pooled": 0.247,
+      "delta_vs_sigma0_pp": 0.01
     },
     {
       "method": "reconstruction",
       "k": 54,
       "snr_db": 20.0,
       "csi_error_sigma": 0.4,
-      "n_seeds": 3,
-      "success_count_pooled": 3823,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.2549,
-      "delta_vs_sigma0_pp": -0.31
-    },
-    {
-      "method": "task",
-      "k": 12,
-      "snr_db": 0.0,
-      "csi_error_sigma": 0.4,
-      "n_seeds": 3,
-      "success_count_pooled": 492,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.0328,
-      "delta_vs_sigma0_pp": -0.05
-    },
-    {
-      "method": "task",
-      "k": 12,
-      "snr_db": 5.0,
-      "csi_error_sigma": 0.4,
-      "n_seeds": 3,
-      "success_count_pooled": 545,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.0363,
-      "delta_vs_sigma0_pp": -0.01
-    },
-    {
-      "method": "task",
-      "k": 12,
-      "snr_db": 10.0,
-      "csi_error_sigma": 0.4,
-      "n_seeds": 3,
-      "success_count_pooled": 551,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.0367,
-      "delta_vs_sigma0_pp": -0.09
-    },
-    {
-      "method": "task",
-      "k": 12,
-      "snr_db": 15.0,
-      "csi_error_sigma": 0.4,
-      "n_seeds": 3,
-      "success_count_pooled": 573,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.0382,
-      "delta_vs_sigma0_pp": -0.07
-    },
-    {
-      "method": "task",
-      "k": 12,
-      "snr_db": 20.0,
-      "csi_error_sigma": 0.4,
-      "n_seeds": 3,
-      "success_count_pooled": 600,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.04,
-      "delta_vs_sigma0_pp": 0.09
-    },
-    {
-      "method": "task",
-      "k": 18,
-      "snr_db": 0.0,
-      "csi_error_sigma": 0.4,
-      "n_seeds": 3,
-      "success_count_pooled": 461,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.0307,
-      "delta_vs_sigma0_pp": 0.07
-    },
-    {
-      "method": "task",
-      "k": 18,
-      "snr_db": 5.0,
-      "csi_error_sigma": 0.4,
-      "n_seeds": 3,
-      "success_count_pooled": 456,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.0304,
-      "delta_vs_sigma0_pp": 0.07
-    },
-    {
-      "method": "task",
-      "k": 18,
-      "snr_db": 10.0,
-      "csi_error_sigma": 0.4,
-      "n_seeds": 3,
-      "success_count_pooled": 449,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.0299,
-      "delta_vs_sigma0_pp": -0.12
-    },
-    {
-      "method": "task",
-      "k": 18,
-      "snr_db": 15.0,
-      "csi_error_sigma": 0.4,
-      "n_seeds": 3,
-      "success_count_pooled": 492,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.0328,
+      "n_seeds": 2,
+      "success_count_pooled": 2449,
+      "episodes_pooled": 10000,
+      "success_rate_pooled": 0.2449,
       "delta_vs_sigma0_pp": 0.13
     },
     {
       "method": "task",
-      "k": 18,
-      "snr_db": 20.0,
-      "csi_error_sigma": 0.4,
-      "n_seeds": 3,
-      "success_count_pooled": 477,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.0318,
-      "delta_vs_sigma0_pp": -0.07
-    },
-    {
-      "method": "task",
-      "k": 24,
+      "k": 12,
       "snr_db": 0.0,
       "csi_error_sigma": 0.4,
       "n_seeds": 3,
-      "success_count_pooled": 1023,
+      "success_count_pooled": 847,
       "episodes_pooled": 15000,
-      "success_rate_pooled": 0.0682,
-      "delta_vs_sigma0_pp": -0.89
-    },
-    {
-      "method": "task",
-      "k": 24,
-      "snr_db": 5.0,
-      "csi_error_sigma": 0.4,
-      "n_seeds": 3,
-      "success_count_pooled": 1098,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.0732,
-      "delta_vs_sigma0_pp": -0.65
-    },
-    {
-      "method": "task",
-      "k": 24,
-      "snr_db": 10.0,
-      "csi_error_sigma": 0.4,
-      "n_seeds": 3,
-      "success_count_pooled": 1042,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.0695,
-      "delta_vs_sigma0_pp": -0.9
-    },
-    {
-      "method": "task",
-      "k": 24,
-      "snr_db": 15.0,
-      "csi_error_sigma": 0.4,
-      "n_seeds": 3,
-      "success_count_pooled": 1058,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.0705,
-      "delta_vs_sigma0_pp": -0.95
-    },
-    {
-      "method": "task",
-      "k": 24,
-      "snr_db": 20.0,
-      "csi_error_sigma": 0.4,
-      "n_seeds": 3,
-      "success_count_pooled": 1052,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.0701,
-      "delta_vs_sigma0_pp": -1.09
-    },
-    {
-      "method": "task",
-      "k": 30,
-      "snr_db": 0.0,
-      "csi_error_sigma": 0.4,
-      "n_seeds": 3,
-      "success_count_pooled": 526,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.0351,
+      "success_rate_pooled": 0.0565,
       "delta_vs_sigma0_pp": 0.02
     },
     {
       "method": "task",
+      "k": 12,
+      "snr_db": 5.0,
+      "csi_error_sigma": 0.4,
+      "n_seeds": 3,
+      "success_count_pooled": 812,
+      "episodes_pooled": 15000,
+      "success_rate_pooled": 0.0541,
+      "delta_vs_sigma0_pp": 0.03
+    },
+    {
+      "method": "task",
+      "k": 12,
+      "snr_db": 10.0,
+      "csi_error_sigma": 0.4,
+      "n_seeds": 3,
+      "success_count_pooled": 817,
+      "episodes_pooled": 15000,
+      "success_rate_pooled": 0.0545,
+      "delta_vs_sigma0_pp": 0.23
+    },
+    {
+      "method": "task",
+      "k": 12,
+      "snr_db": 15.0,
+      "csi_error_sigma": 0.4,
+      "n_seeds": 3,
+      "success_count_pooled": 799,
+      "episodes_pooled": 15000,
+      "success_rate_pooled": 0.0533,
+      "delta_vs_sigma0_pp": 0.17
+    },
+    {
+      "method": "task",
+      "k": 12,
+      "snr_db": 20.0,
+      "csi_error_sigma": 0.4,
+      "n_seeds": 3,
+      "success_count_pooled": 811,
+      "episodes_pooled": 15000,
+      "success_rate_pooled": 0.0541,
+      "delta_vs_sigma0_pp": 0.24
+    },
+    {
+      "method": "task",
+      "k": 18,
+      "snr_db": 0.0,
+      "csi_error_sigma": 0.4,
+      "n_seeds": 3,
+      "success_count_pooled": 373,
+      "episodes_pooled": 15000,
+      "success_rate_pooled": 0.0249,
+      "delta_vs_sigma0_pp": 0.11
+    },
+    {
+      "method": "task",
+      "k": 18,
+      "snr_db": 5.0,
+      "csi_error_sigma": 0.4,
+      "n_seeds": 3,
+      "success_count_pooled": 366,
+      "episodes_pooled": 15000,
+      "success_rate_pooled": 0.0244,
+      "delta_vs_sigma0_pp": -0.04
+    },
+    {
+      "method": "task",
+      "k": 18,
+      "snr_db": 10.0,
+      "csi_error_sigma": 0.4,
+      "n_seeds": 3,
+      "success_count_pooled": 369,
+      "episodes_pooled": 15000,
+      "success_rate_pooled": 0.0246,
+      "delta_vs_sigma0_pp": 0.02
+    },
+    {
+      "method": "task",
+      "k": 18,
+      "snr_db": 15.0,
+      "csi_error_sigma": 0.4,
+      "n_seeds": 3,
+      "success_count_pooled": 374,
+      "episodes_pooled": 15000,
+      "success_rate_pooled": 0.0249,
+      "delta_vs_sigma0_pp": -0.02
+    },
+    {
+      "method": "task",
+      "k": 18,
+      "snr_db": 20.0,
+      "csi_error_sigma": 0.4,
+      "n_seeds": 3,
+      "success_count_pooled": 366,
+      "episodes_pooled": 15000,
+      "success_rate_pooled": 0.0244,
+      "delta_vs_sigma0_pp": -0.1
+    },
+    {
+      "method": "task",
+      "k": 24,
+      "snr_db": 0.0,
+      "csi_error_sigma": 0.4,
+      "n_seeds": 3,
+      "success_count_pooled": 471,
+      "episodes_pooled": 15000,
+      "success_rate_pooled": 0.0314,
+      "delta_vs_sigma0_pp": -0.25
+    },
+    {
+      "method": "task",
+      "k": 24,
+      "snr_db": 5.0,
+      "csi_error_sigma": 0.4,
+      "n_seeds": 3,
+      "success_count_pooled": 523,
+      "episodes_pooled": 15000,
+      "success_rate_pooled": 0.0349,
+      "delta_vs_sigma0_pp": -0.13
+    },
+    {
+      "method": "task",
+      "k": 24,
+      "snr_db": 10.0,
+      "csi_error_sigma": 0.4,
+      "n_seeds": 3,
+      "success_count_pooled": 525,
+      "episodes_pooled": 15000,
+      "success_rate_pooled": 0.035,
+      "delta_vs_sigma0_pp": -0.23
+    },
+    {
+      "method": "task",
+      "k": 24,
+      "snr_db": 15.0,
+      "csi_error_sigma": 0.4,
+      "n_seeds": 3,
+      "success_count_pooled": 537,
+      "episodes_pooled": 15000,
+      "success_rate_pooled": 0.0358,
+      "delta_vs_sigma0_pp": -0.13
+    },
+    {
+      "method": "task",
+      "k": 24,
+      "snr_db": 20.0,
+      "csi_error_sigma": 0.4,
+      "n_seeds": 3,
+      "success_count_pooled": 521,
+      "episodes_pooled": 15000,
+      "success_rate_pooled": 0.0347,
+      "delta_vs_sigma0_pp": -0.25
+    },
+    {
+      "method": "task",
+      "k": 30,
+      "snr_db": 0.0,
+      "csi_error_sigma": 0.4,
+      "n_seeds": 3,
+      "success_count_pooled": 333,
+      "episodes_pooled": 15000,
+      "success_rate_pooled": 0.0222,
+      "delta_vs_sigma0_pp": 0.2
+    },
+    {
+      "method": "task",
       "k": 30,
       "snr_db": 5.0,
       "csi_error_sigma": 0.4,
       "n_seeds": 3,
-      "success_count_pooled": 534,
+      "success_count_pooled": 328,
       "episodes_pooled": 15000,
-      "success_rate_pooled": 0.0356,
-      "delta_vs_sigma0_pp": -0.19
+      "success_rate_pooled": 0.0219,
+      "delta_vs_sigma0_pp": 0.11
     },
     {
       "method": "task",
@@ -4052,10 +4067,10 @@
       "snr_db": 10.0,
       "csi_error_sigma": 0.4,
       "n_seeds": 3,
-      "success_count_pooled": 544,
+      "success_count_pooled": 320,
       "episodes_pooled": 15000,
-      "success_rate_pooled": 0.0363,
-      "delta_vs_sigma0_pp": -0.19
+      "success_rate_pooled": 0.0213,
+      "delta_vs_sigma0_pp": 0.04
     },
     {
       "method": "task",
@@ -4063,10 +4078,10 @@
       "snr_db": 15.0,
       "csi_error_sigma": 0.4,
       "n_seeds": 3,
-      "success_count_pooled": 567,
+      "success_count_pooled": 314,
       "episodes_pooled": 15000,
-      "success_rate_pooled": 0.0378,
-      "delta_vs_sigma0_pp": -0.17
+      "success_rate_pooled": 0.0209,
+      "delta_vs_sigma0_pp": -0.03
     },
     {
       "method": "task",
@@ -4074,65 +4089,65 @@
       "snr_db": 20.0,
       "csi_error_sigma": 0.4,
       "n_seeds": 3,
-      "success_count_pooled": 577,
+      "success_count_pooled": 319,
       "episodes_pooled": 15000,
-      "success_rate_pooled": 0.0385,
-      "delta_vs_sigma0_pp": -0.16
+      "success_rate_pooled": 0.0213,
+      "delta_vs_sigma0_pp": 0.02
     },
     {
       "method": "task",
       "k": 54,
       "snr_db": 0.0,
       "csi_error_sigma": 0.4,
-      "n_seeds": 3,
-      "success_count_pooled": 420,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.028,
-      "delta_vs_sigma0_pp": -0.09
+      "n_seeds": 2,
+      "success_count_pooled": 350,
+      "episodes_pooled": 10000,
+      "success_rate_pooled": 0.035,
+      "delta_vs_sigma0_pp": -0.07
     },
     {
       "method": "task",
       "k": 54,
       "snr_db": 5.0,
       "csi_error_sigma": 0.4,
-      "n_seeds": 3,
-      "success_count_pooled": 428,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.0285,
-      "delta_vs_sigma0_pp": 0.14
+      "n_seeds": 2,
+      "success_count_pooled": 333,
+      "episodes_pooled": 10000,
+      "success_rate_pooled": 0.0333,
+      "delta_vs_sigma0_pp": -0.22
     },
     {
       "method": "task",
       "k": 54,
       "snr_db": 10.0,
       "csi_error_sigma": 0.4,
-      "n_seeds": 3,
-      "success_count_pooled": 403,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.0269,
+      "n_seeds": 2,
+      "success_count_pooled": 344,
+      "episodes_pooled": 10000,
+      "success_rate_pooled": 0.0344,
+      "delta_vs_sigma0_pp": -0.15
+    },
+    {
+      "method": "task",
+      "k": 54,
+      "snr_db": 15.0,
+      "csi_error_sigma": 0.4,
+      "n_seeds": 2,
+      "success_count_pooled": 363,
+      "episodes_pooled": 10000,
+      "success_rate_pooled": 0.0363,
       "delta_vs_sigma0_pp": -0.05
     },
     {
       "method": "task",
       "k": 54,
-      "snr_db": 15.0,
-      "csi_error_sigma": 0.4,
-      "n_seeds": 3,
-      "success_count_pooled": 420,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.028,
-      "delta_vs_sigma0_pp": 0.03
-    },
-    {
-      "method": "task",
-      "k": 54,
       "snr_db": 20.0,
       "csi_error_sigma": 0.4,
-      "n_seeds": 3,
-      "success_count_pooled": 411,
-      "episodes_pooled": 15000,
-      "success_rate_pooled": 0.0274,
-      "delta_vs_sigma0_pp": -0.04
+      "n_seeds": 2,
+      "success_count_pooled": 360,
+      "episodes_pooled": 10000,
+      "success_rate_pooled": 0.036,
+      "delta_vs_sigma0_pp": -0.11
     }
   ],
   "success_rate_by_k_snr": {
@@ -4145,18 +4160,18 @@
         "0.4": 0.0671
       },
       "reconstruction": {
-        "0": 0.2827,
-        "0.05": 0.2836,
-        "0.1": 0.283,
-        "0.2": 0.2747,
-        "0.4": 0.2781
+        "0": 0.2843,
+        "0.05": 0.2837,
+        "0.1": 0.2828,
+        "0.2": 0.2772,
+        "0.4": 0.2817
       },
       "task": {
-        "0": 0.0333,
-        "0.05": 0.0337,
-        "0.1": 0.0338,
-        "0.2": 0.0344,
-        "0.4": 0.0328
+        "0": 0.0563,
+        "0.05": 0.0585,
+        "0.1": 0.0586,
+        "0.2": 0.0581,
+        "0.4": 0.0565
       }
     },
     "k12|snr5": {
@@ -4168,18 +4183,18 @@
         "0.4": 0.0651
       },
       "reconstruction": {
-        "0": 0.2645,
-        "0.05": 0.2648,
-        "0.1": 0.262,
-        "0.2": 0.2605,
-        "0.4": 0.2601
+        "0": 0.2612,
+        "0.05": 0.2633,
+        "0.1": 0.2607,
+        "0.2": 0.2582,
+        "0.4": 0.2646
       },
       "task": {
-        "0": 0.0364,
-        "0.05": 0.0375,
-        "0.1": 0.0377,
-        "0.2": 0.0375,
-        "0.4": 0.0363
+        "0": 0.0538,
+        "0.05": 0.0537,
+        "0.1": 0.0541,
+        "0.2": 0.0555,
+        "0.4": 0.0541
       }
     },
     "k12|snr10": {
@@ -4191,18 +4206,18 @@
         "0.4": 0.0643
       },
       "reconstruction": {
-        "0": 0.2438,
-        "0.05": 0.2447,
-        "0.1": 0.2455,
-        "0.2": 0.2458,
-        "0.4": 0.2485
+        "0": 0.2449,
+        "0.05": 0.2451,
+        "0.1": 0.2452,
+        "0.2": 0.2461,
+        "0.4": 0.2462
       },
       "task": {
-        "0": 0.0376,
-        "0.05": 0.0373,
-        "0.1": 0.0375,
-        "0.2": 0.0365,
-        "0.4": 0.0367
+        "0": 0.0522,
+        "0.05": 0.0537,
+        "0.1": 0.0531,
+        "0.2": 0.0535,
+        "0.4": 0.0545
       }
     },
     "k12|snr15": {
@@ -4214,18 +4229,18 @@
         "0.4": 0.0639
       },
       "reconstruction": {
-        "0": 0.2327,
-        "0.05": 0.2359,
-        "0.1": 0.2363,
-        "0.2": 0.2371,
-        "0.4": 0.2392
+        "0": 0.2373,
+        "0.05": 0.2371,
+        "0.1": 0.2375,
+        "0.2": 0.2369,
+        "0.4": 0.2425
       },
       "task": {
-        "0": 0.0389,
-        "0.05": 0.0389,
-        "0.1": 0.0397,
-        "0.2": 0.0391,
-        "0.4": 0.0382
+        "0": 0.0516,
+        "0.05": 0.0514,
+        "0.1": 0.0525,
+        "0.2": 0.0519,
+        "0.4": 0.0533
       }
     },
     "k12|snr20": {
@@ -4237,18 +4252,18 @@
         "0.4": 0.0635
       },
       "reconstruction": {
-        "0": 0.2313,
-        "0.05": 0.2327,
-        "0.1": 0.233,
-        "0.2": 0.2327,
-        "0.4": 0.2396
+        "0": 0.2351,
+        "0.05": 0.2355,
+        "0.1": 0.2365,
+        "0.2": 0.2343,
+        "0.4": 0.241
       },
       "task": {
-        "0": 0.0391,
-        "0.05": 0.0381,
-        "0.1": 0.0384,
-        "0.2": 0.0395,
-        "0.4": 0.04
+        "0": 0.0517,
+        "0.05": 0.0505,
+        "0.1": 0.0504,
+        "0.2": 0.0515,
+        "0.4": 0.0541
       }
     },
     "k18|snr0": {
@@ -4260,18 +4275,18 @@
         "0.4": 0.1715
       },
       "reconstruction": {
-        "0": 0.2717,
-        "0.05": 0.2709,
-        "0.1": 0.2753,
-        "0.2": 0.2679,
-        "0.4": 0.2643
+        "0": 0.2682,
+        "0.05": 0.2663,
+        "0.1": 0.2686,
+        "0.2": 0.2684,
+        "0.4": 0.2635
       },
       "task": {
-        "0": 0.0301,
-        "0.05": 0.0298,
-        "0.1": 0.0293,
-        "0.2": 0.0286,
-        "0.4": 0.0307
+        "0": 0.0238,
+        "0.05": 0.0239,
+        "0.1": 0.0233,
+        "0.2": 0.0244,
+        "0.4": 0.0249
       }
     },
     "k18|snr5": {
@@ -4283,18 +4298,18 @@
         "0.4": 0.1677
       },
       "reconstruction": {
-        "0": 0.2448,
-        "0.05": 0.2452,
-        "0.1": 0.2445,
-        "0.2": 0.242,
-        "0.4": 0.2435
+        "0": 0.2418,
+        "0.05": 0.2407,
+        "0.1": 0.2424,
+        "0.2": 0.2448,
+        "0.4": 0.2441
       },
       "task": {
-        "0": 0.0297,
-        "0.05": 0.0293,
-        "0.1": 0.0303,
-        "0.2": 0.0305,
-        "0.4": 0.0304
+        "0": 0.0248,
+        "0.05": 0.0249,
+        "0.1": 0.0247,
+        "0.2": 0.0243,
+        "0.4": 0.0244
       }
     },
     "k18|snr10": {
@@ -4306,18 +4321,18 @@
         "0.4": 0.1656
       },
       "reconstruction": {
-        "0": 0.2305,
-        "0.05": 0.2306,
-        "0.1": 0.2303,
-        "0.2": 0.2329,
-        "0.4": 0.2326
+        "0": 0.2274,
+        "0.05": 0.2269,
+        "0.1": 0.2275,
+        "0.2": 0.2303,
+        "0.4": 0.2303
       },
       "task": {
-        "0": 0.0311,
-        "0.05": 0.0309,
-        "0.1": 0.0312,
-        "0.2": 0.0315,
-        "0.4": 0.0299
+        "0": 0.0244,
+        "0.05": 0.0245,
+        "0.1": 0.0246,
+        "0.2": 0.0247,
+        "0.4": 0.0246
       }
     },
     "k18|snr15": {
@@ -4329,18 +4344,18 @@
         "0.4": 0.1636
       },
       "reconstruction": {
-        "0": 0.2249,
-        "0.05": 0.2251,
-        "0.1": 0.2243,
-        "0.2": 0.2263,
-        "0.4": 0.2299
+        "0": 0.222,
+        "0.05": 0.2231,
+        "0.1": 0.226,
+        "0.2": 0.2244,
+        "0.4": 0.2273
       },
       "task": {
-        "0": 0.0315,
-        "0.05": 0.0315,
-        "0.1": 0.0311,
-        "0.2": 0.0316,
-        "0.4": 0.0328
+        "0": 0.0251,
+        "0.05": 0.0251,
+        "0.1": 0.0252,
+        "0.2": 0.0248,
+        "0.4": 0.0249
       }
     },
     "k18|snr20": {
@@ -4352,18 +4367,18 @@
         "0.4": 0.1623
       },
       "reconstruction": {
-        "0": 0.2253,
-        "0.05": 0.2251,
-        "0.1": 0.2264,
-        "0.2": 0.2258,
-        "0.4": 0.2307
+        "0": 0.2225,
+        "0.05": 0.2234,
+        "0.1": 0.2234,
+        "0.2": 0.2242,
+        "0.4": 0.2245
       },
       "task": {
-        "0": 0.0325,
-        "0.05": 0.0329,
-        "0.1": 0.0315,
-        "0.2": 0.0323,
-        "0.4": 0.0318
+        "0": 0.0254,
+        "0.05": 0.0252,
+        "0.1": 0.0254,
+        "0.2": 0.0249,
+        "0.4": 0.0244
       }
     },
     "k24|snr0": {
@@ -4375,18 +4390,18 @@
         "0.4": 0.3807
       },
       "reconstruction": {
-        "0": 0.2607,
-        "0.05": 0.2608,
-        "0.1": 0.2641,
-        "0.2": 0.2632,
-        "0.4": 0.2593
+        "0": 0.2611,
+        "0.05": 0.2631,
+        "0.1": 0.2655,
+        "0.2": 0.261,
+        "0.4": 0.26
       },
       "task": {
-        "0": 0.0771,
-        "0.05": 0.077,
-        "0.1": 0.0763,
-        "0.2": 0.0766,
-        "0.4": 0.0682
+        "0": 0.0339,
+        "0.05": 0.0337,
+        "0.1": 0.0333,
+        "0.2": 0.0333,
+        "0.4": 0.0314
       }
     },
     "k24|snr5": {
@@ -4398,18 +4413,18 @@
         "0.4": 0.343
       },
       "reconstruction": {
-        "0": 0.2407,
-        "0.05": 0.2409,
-        "0.1": 0.2387,
-        "0.2": 0.2407,
-        "0.4": 0.2445
+        "0": 0.2387,
+        "0.05": 0.2392,
+        "0.1": 0.2371,
+        "0.2": 0.2387,
+        "0.4": 0.2475
       },
       "task": {
-        "0": 0.0797,
-        "0.05": 0.0793,
-        "0.1": 0.0763,
-        "0.2": 0.0772,
-        "0.4": 0.0732
+        "0": 0.0361,
+        "0.05": 0.0363,
+        "0.1": 0.0358,
+        "0.2": 0.0338,
+        "0.4": 0.0349
       }
     },
     "k24|snr10": {
@@ -4421,18 +4436,18 @@
         "0.4": 0.3183
       },
       "reconstruction": {
-        "0": 0.2271,
-        "0.05": 0.2285,
-        "0.1": 0.2234,
-        "0.2": 0.2282,
-        "0.4": 0.2284
+        "0": 0.2245,
+        "0.05": 0.2263,
+        "0.1": 0.2259,
+        "0.2": 0.2233,
+        "0.4": 0.2286
       },
       "task": {
-        "0": 0.0785,
-        "0.05": 0.0791,
-        "0.1": 0.0781,
-        "0.2": 0.0758,
-        "0.4": 0.0695
+        "0": 0.0373,
+        "0.05": 0.0367,
+        "0.1": 0.037,
+        "0.2": 0.0365,
+        "0.4": 0.035
       }
     },
     "k24|snr15": {
@@ -4444,18 +4459,18 @@
         "0.4": 0.3147
       },
       "reconstruction": {
-        "0": 0.2203,
-        "0.05": 0.2217,
-        "0.1": 0.2213,
-        "0.2": 0.2237,
-        "0.4": 0.2271
+        "0": 0.2212,
+        "0.05": 0.2219,
+        "0.1": 0.2219,
+        "0.2": 0.2239,
+        "0.4": 0.2276
       },
       "task": {
-        "0": 0.0801,
-        "0.05": 0.0789,
-        "0.1": 0.0793,
-        "0.2": 0.0789,
-        "0.4": 0.0705
+        "0": 0.0371,
+        "0.05": 0.0371,
+        "0.1": 0.0369,
+        "0.2": 0.0366,
+        "0.4": 0.0358
       }
     },
     "k24|snr20": {
@@ -4467,18 +4482,18 @@
         "0.4": 0.3103
       },
       "reconstruction": {
-        "0": 0.2168,
-        "0.05": 0.2173,
-        "0.1": 0.2207,
-        "0.2": 0.2179,
-        "0.4": 0.2272
+        "0": 0.2207,
+        "0.05": 0.2196,
+        "0.1": 0.2194,
+        "0.2": 0.2207,
+        "0.4": 0.2311
       },
       "task": {
-        "0": 0.081,
-        "0.05": 0.0798,
-        "0.1": 0.0805,
-        "0.2": 0.078,
-        "0.4": 0.0701
+        "0": 0.0373,
+        "0.05": 0.0382,
+        "0.1": 0.0373,
+        "0.2": 0.0367,
+        "0.4": 0.0347
       }
     },
     "k30|snr0": {
@@ -4490,18 +4505,18 @@
         "0.4": 0.6541
       },
       "reconstruction": {
-        "0": 0.2722,
-        "0.05": 0.2705,
-        "0.1": 0.2703,
-        "0.2": 0.2717,
-        "0.4": 0.2668
+        "0": 0.2688,
+        "0.05": 0.2699,
+        "0.1": 0.2691,
+        "0.2": 0.2692,
+        "0.4": 0.2671
       },
       "task": {
-        "0": 0.0349,
-        "0.05": 0.0339,
-        "0.1": 0.0343,
-        "0.2": 0.0348,
-        "0.4": 0.0351
+        "0": 0.0202,
+        "0.05": 0.0208,
+        "0.1": 0.0207,
+        "0.2": 0.0221,
+        "0.4": 0.0222
       }
     },
     "k30|snr5": {
@@ -4513,18 +4528,18 @@
         "0.4": 0.7155
       },
       "reconstruction": {
-        "0": 0.2609,
-        "0.05": 0.261,
-        "0.1": 0.2572,
-        "0.2": 0.2655,
-        "0.4": 0.2602
+        "0": 0.2601,
+        "0.05": 0.2595,
+        "0.1": 0.2587,
+        "0.2": 0.2637,
+        "0.4": 0.2535
       },
       "task": {
-        "0": 0.0375,
-        "0.05": 0.037,
-        "0.1": 0.0368,
-        "0.2": 0.0367,
-        "0.4": 0.0356
+        "0": 0.0207,
+        "0.05": 0.0203,
+        "0.1": 0.0209,
+        "0.2": 0.0211,
+        "0.4": 0.0219
       }
     },
     "k30|snr10": {
@@ -4536,18 +4551,18 @@
         "0.4": 0.6721
       },
       "reconstruction": {
-        "0": 0.2613,
-        "0.05": 0.2615,
-        "0.1": 0.2587,
-        "0.2": 0.2616,
-        "0.4": 0.2545
+        "0": 0.264,
+        "0.05": 0.2631,
+        "0.1": 0.2608,
+        "0.2": 0.2623,
+        "0.4": 0.2515
       },
       "task": {
-        "0": 0.0382,
-        "0.05": 0.0381,
-        "0.1": 0.0383,
-        "0.2": 0.0382,
-        "0.4": 0.0363
+        "0": 0.0209,
+        "0.05": 0.0207,
+        "0.1": 0.0209,
+        "0.2": 0.021,
+        "0.4": 0.0213
       }
     },
     "k30|snr15": {
@@ -4559,18 +4574,18 @@
         "0.4": 0.6438
       },
       "reconstruction": {
-        "0": 0.2641,
-        "0.05": 0.2629,
-        "0.1": 0.2629,
-        "0.2": 0.2613,
-        "0.4": 0.2574
+        "0": 0.2639,
+        "0.05": 0.2655,
+        "0.1": 0.2639,
+        "0.2": 0.2616,
+        "0.4": 0.2587
       },
       "task": {
-        "0": 0.0395,
-        "0.05": 0.0391,
-        "0.1": 0.039,
-        "0.2": 0.0397,
-        "0.4": 0.0378
+        "0": 0.0212,
+        "0.05": 0.0211,
+        "0.1": 0.0205,
+        "0.2": 0.0208,
+        "0.4": 0.0209
       }
     },
     "k30|snr20": {
@@ -4582,110 +4597,110 @@
         "0.4": 0.6353
       },
       "reconstruction": {
-        "0": 0.2619,
-        "0.05": 0.2607,
-        "0.1": 0.2599,
-        "0.2": 0.2555,
-        "0.4": 0.2543
+        "0": 0.2621,
+        "0.05": 0.2632,
+        "0.1": 0.2639,
+        "0.2": 0.2595,
+        "0.4": 0.2532
       },
       "task": {
-        "0": 0.0401,
-        "0.05": 0.0393,
-        "0.1": 0.0399,
-        "0.2": 0.0405,
-        "0.4": 0.0385
+        "0": 0.0211,
+        "0.05": 0.0211,
+        "0.1": 0.0215,
+        "0.2": 0.0211,
+        "0.4": 0.0213
       }
     },
     "k54|snr0": {
       "digital": {
         "0": 0.7178,
-        "0.05": 0.7095,
-        "0.1": 0.7063,
-        "0.2": 0.699,
-        "0.4": 0.6296
+        "0.05": 0.7104,
+        "0.1": 0.7074,
+        "0.2": 0.7011,
+        "0.4": 0.6312
       },
       "reconstruction": {
-        "0": 0.2661,
-        "0.05": 0.2655,
-        "0.1": 0.2665,
-        "0.2": 0.2653,
-        "0.4": 0.2631
+        "0": 0.2576,
+        "0.05": 0.2596,
+        "0.1": 0.2545,
+        "0.2": 0.2557,
+        "0.4": 0.2584
       },
       "task": {
-        "0": 0.0289,
-        "0.05": 0.0293,
-        "0.1": 0.0281,
-        "0.2": 0.0283,
-        "0.4": 0.028
+        "0": 0.0357,
+        "0.05": 0.0352,
+        "0.1": 0.0354,
+        "0.2": 0.0351,
+        "0.4": 0.035
       }
     },
     "k54|snr5": {
       "digital": {
         "0": 0.9908,
-        "0.05": 0.9903,
-        "0.1": 0.9905,
-        "0.2": 0.9881,
-        "0.4": 0.9741
+        "0.05": 0.9899,
+        "0.1": 0.9917,
+        "0.2": 0.9879,
+        "0.4": 0.9732
       },
       "reconstruction": {
-        "0": 0.2609,
-        "0.05": 0.2612,
-        "0.1": 0.26,
-        "0.2": 0.2605,
-        "0.4": 0.2546
+        "0": 0.2507,
+        "0.05": 0.2517,
+        "0.1": 0.2533,
+        "0.2": 0.2527,
+        "0.4": 0.2469
       },
       "task": {
-        "0": 0.0271,
-        "0.05": 0.0278,
-        "0.1": 0.0274,
-        "0.2": 0.0273,
-        "0.4": 0.0285
+        "0": 0.0355,
+        "0.05": 0.0368,
+        "0.1": 0.0353,
+        "0.2": 0.0345,
+        "0.4": 0.0333
       }
     },
     "k54|snr10": {
       "digital": {
         "0": 0.9984,
-        "0.05": 0.9983,
-        "0.1": 0.999,
-        "0.2": 0.9981,
-        "0.4": 0.9961
+        "0.05": 0.9982,
+        "0.1": 0.9991,
+        "0.2": 0.9985,
+        "0.4": 0.996
       },
       "reconstruction": {
-        "0": 0.2629,
-        "0.05": 0.2613,
-        "0.1": 0.2615,
-        "0.2": 0.2567,
-        "0.4": 0.2588
+        "0": 0.2461,
+        "0.05": 0.2456,
+        "0.1": 0.2492,
+        "0.2": 0.2476,
+        "0.4": 0.2486
       },
       "task": {
-        "0": 0.0273,
-        "0.05": 0.0281,
-        "0.1": 0.0285,
-        "0.2": 0.0263,
-        "0.4": 0.0269
+        "0": 0.0359,
+        "0.05": 0.0362,
+        "0.1": 0.0367,
+        "0.2": 0.036,
+        "0.4": 0.0344
       }
     },
     "k54|snr15": {
       "digital": {
         "0": 0.9998,
-        "0.05": 0.9997,
+        "0.05": 0.9998,
         "0.1": 0.9997,
         "0.2": 0.9995,
         "0.4": 0.9977
       },
       "reconstruction": {
-        "0": 0.2601,
-        "0.05": 0.2593,
-        "0.1": 0.2585,
-        "0.2": 0.2569,
-        "0.4": 0.2562
+        "0": 0.2469,
+        "0.05": 0.2463,
+        "0.1": 0.2487,
+        "0.2": 0.2408,
+        "0.4": 0.247
       },
       "task": {
-        "0": 0.0277,
-        "0.05": 0.0271,
-        "0.1": 0.0273,
-        "0.2": 0.0279,
-        "0.4": 0.028
+        "0": 0.0368,
+        "0.05": 0.0361,
+        "0.1": 0.0361,
+        "0.2": 0.0354,
+        "0.4": 0.0363
       }
     },
     "k54|snr20": {
@@ -4694,21 +4709,21 @@
         "0.05": 0.9998,
         "0.1": 0.9997,
         "0.2": 0.9996,
-        "0.4": 0.9983
+        "0.4": 0.9984
       },
       "reconstruction": {
-        "0": 0.258,
-        "0.05": 0.2592,
-        "0.1": 0.2602,
-        "0.2": 0.2562,
-        "0.4": 0.2549
+        "0": 0.2436,
+        "0.05": 0.2444,
+        "0.1": 0.245,
+        "0.2": 0.2455,
+        "0.4": 0.2449
       },
       "task": {
-        "0": 0.0278,
-        "0.05": 0.0271,
-        "0.1": 0.0265,
-        "0.2": 0.0265,
-        "0.4": 0.0274
+        "0": 0.0371,
+        "0.05": 0.0368,
+        "0.1": 0.0368,
+        "0.2": 0.0374,
+        "0.4": 0.036
       }
     }
   }

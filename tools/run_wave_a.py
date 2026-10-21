@@ -71,6 +71,25 @@ FAILS = []
 _OK = {"n": 0}
 _BAD = {"n": 0}
 
+# --- documented-failure contract -------------------------------------------
+# Two Wave-A training cells are frozen, documented FAILURES (both task cells
+# exhausted the numerical headroom of the frozen config: "incomplete
+# numerical state").  They were NOT retrained (retraining a failure because
+# the result was bad would be survivorship bias) and their directories are
+# evidence-frozen under C:\wa_evidence\WAVE_A_2026-10-20T1645Z\.
+#
+# Rule: a queue that ends with ONLY these declared cells failing is a
+# COMPLETED stage, not a broken one.  It exits with DOCUMENTED_FAILURE_EXIT
+# (4) so tools/run_all.py can mark the stage "accepted" instead of "failed"
+# and does not burn a retry re-running a 12-hour deterministic retrain that
+# cannot change the outcome.  ANY undeclared failure still exits 1.
+DOCUMENTED_FAILURES = {
+    # base wave_id (directory = <wave_id>__<hash>)
+    "WAVE_A_long_12k_task_awgn_k12_seed42",
+    "WAVE_A_seedvar_frozen_task_awgn_k12_seed45",
+}
+DOCUMENTED_FAILURE_EXIT = 4
+
 
 def check(name, ok, detail=""):
     print(f"{'PASS' if ok else 'FAIL'}  [{name}]" + (f"  ({detail})" if detail else ""))
@@ -155,6 +174,11 @@ class WaveCell:
         return self.dir() / f"{kind}.json"
 
     def mark_running(self):
+        # RUNNING.json is a HISTORICAL START MARKER: it is written at the
+        # start of every attempt and intentionally retained after completion
+        # so the start time survives for provenance.  It is NOT a liveness
+        # signal; state() resolves DONE > FAILED > RUNNING, and tooling must
+        # never count a bare RUNNING marker as "active".
         self._mpath("RUNNING").write_text(json.dumps(
             {"wave_id": self.wave_id, "spec": self.spec(),
              "started_utc": _utc()}))
@@ -163,8 +187,16 @@ class WaveCell:
         self._mpath("DONE").write_text(json.dumps(
             {"wave_id": self.wave_id, "finished_utc": _utc(),
              "summary": summary}))
+        # Defensive: a DONE cell must never also carry a FAILED marker.
+        stale = self._mpath("FAILED")
+        if stale.exists():
+            stale.unlink()
 
     def mark_failed(self, reason):
+        # DONE is terminal: never overwrite a completed run with a failure
+        # marker (the training queue skips DONE cells, so this is defensive).
+        if self._mpath("DONE").exists():
+            return
         self._mpath("FAILED").write_text(json.dumps(
             {"wave_id": self.wave_id, "reason": str(reason)[:400]}))
 
@@ -237,17 +269,22 @@ def wave_cells():
 def eval_units():
     """Per (k, channel, seed): paired set of Wave-A trained models.
 
-    Each unit is referenced by wave_id; the evaluator collects which arms
-    are complete for that unit and evaluates each against the shared test
-    realizations (paired within unit).
+    Derived from the ACTUAL declared cell universe (``wave_cells``) instead
+    of a hand-written cross-product.  A1/A2 cover seeds 42-44 at both
+    k in {1,12}; A3 covers extra seeds 45-47 at k=12 only.  The derived
+    universe is therefore 18 units / 90 SNR slots (not 24 / 120), which
+    keeps the evaluator and the finalize completeness denominator in
+    lock-step with the declared experiment.  Failed cells stay in the
+    universe; they simply produce no evaluation artifacts.
     """
-    units = []
-    for k in MATCH_K:
-        for ch in CHANNELS:
-            for seed in FROZEN_SEEDS + EXTRA_SEEDS:
-                units.append({"unit": f"k{k}_{ch}_seed{seed}",
-                              "k": k, "channel": ch, "seed": seed})
-    return units
+    seen = {}
+    for c in wave_cells():
+        key = (c.k, c.channel, c.seed)
+        if key in seen:
+            continue
+        seen[key] = {"unit": f"k{c.k}_{c.channel}_seed{c.seed}",
+                     "k": c.k, "channel": c.channel, "seed": c.seed}
+    return [seen[key] for key in sorted(seen)]
 
 
 def _eval_path(unit, snr):
@@ -273,9 +310,20 @@ def cmd_verify():
     check("frozen_M1_artifacts_present",
           len(list(Path("results/M1").glob("*__*/DONE.json"))) == 36,
           "36 training runs")
+    try:
+        from run_step11_m2 import CONDITIONAL_ACCEPT as _M2_CONDITIONAL_ACCEPT
+    except ImportError:                      # standalone invocation fallback
+        _M2_CONDITIONAL_ACCEPT = frozenset()
+    _m2_done = {p.parent.name
+                for p in list(Path("results/M2").glob("*__*/DONE.json"))}
+    # run dirs may exist under multiple hash stamps; match prefix.
+    _m2_cond = sum(1 for cid in _M2_CONDITIONAL_ACCEPT
+                   if cid not in _m2_done
+                   and (Path("results/M2") / cid).exists())
     check("frozen_M2_artifacts_present",
-          len(list(Path("results/M2").glob("*__*/DONE.json"))) >= 58,
-          ">=58 of 60 training runs (2 conditional-accept)")
+          len(_m2_done) + _m2_cond >= 58,
+          f"{len(_m2_done)} done + {_m2_cond} conditional-accept "
+          f">=58 of 60 training runs")
     # trainer amendment surface exists (additive, default-identity)
     import inspect
     sig_task = inspect.signature(train_task_oriented)
@@ -407,6 +455,43 @@ def _train_one(c: WaveCell):
     return model, rep, grads_finite, summary
 
 
+def _should_skip(state, smoke_tag=None):
+    """Documented idempotency contract for scientific cells.
+
+    DONE (complete) and FAILED (documented failure) are terminal and are
+    skipped.  A failed cell is retried ONLY after the operator explicitly
+    removes its FAILED.json marker.  Smoke runs live under an isolated root
+    and are never skipped.
+    """
+    return smoke_tag is None and state in ("done", "failed")
+
+
+def _provenance_fields(rep, method):
+    """Additive diagnostics persisted in train_report.json (schema v2).
+
+    Historical reports written before this schema do NOT contain these
+    keys; consumers must report them as "unavailable" rather than
+    fabricating or back-filling values.
+    """
+    out = {"report_schema_version": 2}
+    if "history" in rep:
+        out["history"] = rep["history"]
+    if method == "task":
+        for key in ("grad_enc_first", "grad_enc_final",
+                    "grad_dec_first", "grad_dec_final"):
+            if key in rep:
+                out[key] = rep[key]
+    else:
+        for key in ("grad_encoder_history", "grad_decoder_history"):
+            if key in rep:
+                out[key] = rep[key]
+        if "grad_norm_encoder_final" in rep:
+            out["grad_enc_final"] = rep["grad_norm_encoder_final"]
+        if "grad_norm_decoder_final" in rep:
+            out["grad_dec_final"] = rep["grad_norm_decoder_final"]
+    return out
+
+
 def cmd_train(lane=None):
     """Training queue; optional lane filter ("awgn" | "rayleigh").
 
@@ -437,16 +522,23 @@ def cmd_train(lane=None):
         cells = [c for c in wave_cells()
                  if lane is None or c.channel == lane]
     total = len(cells)
-    n_new = n_skip = 0
+    n_new = n_skip = n_skip_failed = 0
     total_wall = 0.0
     for i, c in enumerate(cells, 1):
         st = c.state()
-        if st == "done" and smoke_tag is None:
-            print(f"[{i:2d}/{total}] SKIP {c.wave_id} (already complete)")
+        if _should_skip(st, smoke_tag):
+            if st == "failed":
+                print(f"[{i:2d}/{total}] SKIP {c.wave_id} "
+                      f"(documented failure; delete FAILED.json to retry)",
+                      flush=True)
+                n_skip_failed += 1
+            else:
+                print(f"[{i:2d}/{total}] SKIP {c.wave_id} (already complete)",
+                      flush=True)
             n_skip += 1
             continue
         print(f"[{i:2d}/{total}] TRAIN {c.wave_id} hash={c.wave_hash()} "
-              f"steps={c.steps} arm={c.arm}")
+              f"steps={c.steps} arm={c.arm}", flush=True)
         d = c.dir()
         c.mark_running()
         t0 = time.perf_counter()
@@ -459,7 +551,7 @@ def cmd_train(lane=None):
                  "exit_status": "failed",
                  "error": f"{type(e).__name__}: {e}"}, indent=2))
             print(f"[{i:2d}/{total}] FAILED {c.wave_id}: "
-                  f"{type(e).__name__}: {e}")
+                  f"{type(e).__name__}: {e}", flush=True)
             FAILS.append(c.wave_id)
             continue
         wall = time.perf_counter() - t0
@@ -479,6 +571,7 @@ def cmd_train(lane=None):
                                "(documented Step-8 limitation); wave "
                                "recovery = deterministic RETRAIN by spec"),
             **summary,
+            **_provenance_fields(rep, c.method),
         }
         save_checkpoint(
             d / "final_ckpt.pt", model, optimizer=None,
@@ -499,21 +592,39 @@ def cmd_train(lane=None):
             c.mark_done(summary={"wall_s": rec["wall_s"],
                                  loss_key: summary[loss_key]})
             print(f"[{i:2d}/{total}] DONE  {c.wave_id}  {rec['wall_s']}s  "
-                  f"{loss_key}={summary[loss_key]:.4f}")
+                  f"{loss_key}={summary[loss_key]:.4f}", flush=True)
             n_new += 1
         else:
             c.mark_failed("incomplete numerical state")
             print(f"[{i:2d}/{total}] INCOMPLETE {c.wave_id} "
-                  f"(nan={rep['nan_batches']}, grads={grads_finite})")
+                  f"(nan={rep['nan_batches']}, grads={grads_finite})",
+                  flush=True)
             FAILS.append(c.wave_id)
     if smoke_tag is not None:
         import shutil
         shutil.rmtree(WAVE_A_ROOT, ignore_errors=True)
         print("-- smoke-only run; isolated smoke root deleted; no scientific use")
         return 0
+    failed_documented = sum(1 for c in cells if c.state() == "failed")
     print(f"-- wave training finished: new={n_new} skipped={n_skip} "
-          f"failed={len(FAILS)} wall={total_wall:.1f}s")
-    return 1 if FAILS else 0
+          f"(failed skipped={n_skip_failed}) failed_this_run={len(FAILS)} "
+          f"documented_failed={failed_documented} wall={total_wall:.1f}s",
+          flush=True)
+    # Failed cells remain failures in the stage exit code even when they are
+    # intentionally skipped, so an automatic orchestrator retry cannot turn a
+    # documented failure into a silent success.  A queue whose failures are
+    # ALL declared/documented is a completed stage (exit 4 = "accepted");
+    # anything undeclared keeps the hard-failure exit code 1.
+    failed_ids = set(FAILS) | {c.wave_id for c in cells if c.state() == "failed"}
+    undeclared = sorted(failed_ids - DOCUMENTED_FAILURES)
+    if undeclared:
+        print(f"-- UNDECLARED failure(s) -> exit 1: {undeclared}", flush=True)
+        return 1
+    if failed_ids:
+        print(f"-- {len(failed_ids)} documented failure(s) only -> exit "
+              f"{DOCUMENTED_FAILURE_EXIT} (accepted; not retried)", flush=True)
+        return DOCUMENTED_FAILURE_EXIT
+    return 0
 
 
 # ---------------------------------------------------------------------------
@@ -522,7 +633,7 @@ def cmd_train(lane=None):
 
 def cmd_evaluate(lane=None):
     print("== Wave-A paired diagnostic evaluation (E=1000, NON-FROZEN) =="
-          + (f"  [lane: {lane}]" if lane else ""))
+          + (f"  [lane: {lane}]" if lane else ""), flush=True)
     if lane not in (None, "awgn", "rayleigh"):
         print(f"unknown lane {lane!r}")
         return 1
@@ -531,7 +642,8 @@ def cmd_evaluate(lane=None):
     cells_by_unit = {}
     for c in cells:
         if c.state() != "done":
-            print(f"NOTE: {c.wave_id} not complete; skipped from eval")
+            print(f"NOTE: {c.wave_id} not complete; skipped from eval",
+                  flush=True)
             continue
         key = (c.k, c.channel, c.seed)
         cells_by_unit.setdefault(key, []).append(c)
@@ -540,9 +652,12 @@ def cmd_evaluate(lane=None):
     for (k, ch, seed), arm_cells in sorted(cells_by_unit.items()):
         unit = {"unit": f"k{k}_{ch}_seed{seed}", "k": k, "channel": ch,
                 "seed": seed}
-        models = [(c_tag, c_method, c_tag_cell, c.load_ckpt())
-                  for (c_tag, c_method, c_tag_cell)
-                  in [(m.tag, m.method, m) for m in arm_cells]]
+        # NOTE: each arm must load ITS OWN checkpoint.  The previous form
+        # used the stale outer loop variable ``c`` (the last cell of
+        # ``wave_cells()``), so every unit silently evaluated the k=12
+        # checkpoint of the final cell and crashed on the k=1 units with
+        # "noise shape/kind mismatch: (1000, 1) ... vs z (1000, 12)".
+        models = [(m.tag, m.method, m, m.load_ckpt()) for m in arm_cells]
         models = [x for x in models if x[3] is not None]
         if not models:
             continue
@@ -591,9 +706,9 @@ def cmd_evaluate(lane=None):
             srs = {t: a["success_rate"] for t, a in aggregates.items()}
             print(f"  EVAL {unit['unit']} snr={snr:5.1f} "
                   + " ".join(f"{t}={v:.3f}" for t, v in srs.items())
-                  + f" ({wall:.1f}s)")
+                  + f" ({wall:.1f}s)", flush=True)
     print(f"-- wave eval finished: {n_new} new unit-SNR slots, "
-          f"wall={total_wall:.1f}s")
+          f"wall={total_wall:.1f}s", flush=True)
     return 0
 
 
@@ -624,25 +739,33 @@ def cmd_finalize():
                            "task_loss_final": rec.get("task_loss_final"),
                            "loss_final": rec.get("loss_final"),
                            "eval_after_success_rate":
-                               rec.get("eval_after_success_rate")})
-    n_units = 0
+                               rec.get("eval_after_success_rate"),
+                           "history_available": "history" in rec,
+                           "grad_health_available": (
+                               "grad_enc_final" in rec
+                               and "grad_dec_final" in rec)})
+    n_slots = 0
+    complete_units = 0
     pooled = {}
-    for k in MATCH_K:
-        for ch in CHANNELS:
-            for seed in FROZEN_SEEDS + EXTRA_SEEDS:
-                unit = {"unit": f"k{k}_{ch}_seed{seed}"}
-                for snr in MATCH_SNR_DB:
-                    p = _eval_path(unit, snr)
-                    if not p.exists():
-                        continue
-                    n_units += 1
-                    R = json.loads(p.read_text())
-                    for key, agg in R.items():
-                        if key.startswith("aggregate_"):
-                            tag = key[len("aggregate_"):]
-                            pooled.setdefault(
-                                (tag, k, ch, snr), []).append(
-                                {"seed": seed, **agg})
+    units = eval_units()
+    for unit in units:
+        k, ch, seed = unit["k"], unit["channel"], unit["seed"]
+        unit_slots = 0
+        for snr in MATCH_SNR_DB:
+            p = _eval_path(unit, snr)
+            if not p.exists():
+                continue
+            n_slots += 1
+            unit_slots += 1
+            R = json.loads(p.read_text())
+            for key, agg in R.items():
+                if key.startswith("aggregate_"):
+                    tag = key[len("aggregate_"):]
+                    pooled.setdefault(
+                        (tag, k, ch, snr), []).append(
+                        {"seed": seed, **agg})
+        if unit_slots == len(MATCH_SNR_DB):
+            complete_units += 1
     pooled_rows = []
     for (tag, k, ch, snr), rows in sorted(pooled.items(),
                                           key=lambda x: (x[0][2], x[0][3],
@@ -654,22 +777,44 @@ def cmd_finalize():
             "n_seeds": len(rows), "success_count_pooled": sc,
             "episodes_pooled": tot,
             "success_rate_pooled": sc / tot if tot else float("nan")})
+    expected_slots = len(units) * len(MATCH_SNR_DB)
+    train_done = sum(1 for r in train_rows if r["exit_status"] == "complete")
+    train_failed = sum(1 for r in train_rows
+                       if r["exit_status"] not in ("complete", "missing"))
+    train_missing = sum(1 for r in train_rows
+                        if r["exit_status"] == "missing")
     out = WAVE_A_ROOT / "step_wave_a_summary.json"
     out.write_text(json.dumps({
         "experiment": "WAVE_A",
         "status": ("complete"
-                   if all(r["exit_status"] == "complete" for r in train_rows)
-                   and n_units == len(eval_units()) * len(MATCH_SNR_DB)
+                   if train_done == len(train_rows)
+                   and n_slots == expected_slots
                    else "incomplete"),
         "amendment": "WAVE_A-non-frozen-2026-10-12",
         "protocol_note": (f"Wave-A diagnostic: E={EVAL_EPISODES} per unit; "
                           "NOT 1:1 comparable to frozen M1/M2 (E=5000)"),
         "train_rows": train_rows,
         "pooled_rows": pooled_rows,
-        "eval_units_complete": n_units,
+        "train_done": train_done,
+        "train_failed": train_failed,
+        "train_missing": train_missing,
+        "eval_units_expected": len(units),
+        "eval_slots_expected": expected_slots,
+        "eval_slots_complete": n_slots,
+        "eval_units_complete": complete_units,
+        "eval_units_unreachable": (f"{len(units) - complete_units} unit(s) not "
+                                   "fully evaluated (documented failures)"),
+        "provenance_note": ("train_report.json schema v2 persists loss "
+                            "history and gradient-health diagnostics; older "
+                            "reports lack those keys and are marked "
+                            "history_available=false / "
+                            "grad_health_available=false."),
     }, indent=2, default=str))
     print(f"wrote {out} ({len(train_rows)} train rows, "
-          f"{len(pooled_rows)} pooled tag-rows, {n_units} eval slots)")
+          f"{len(pooled_rows)} pooled tag-rows, {n_slots}/{expected_slots} "
+          f"eval slots, {complete_units}/{len(units)} complete units, train "
+          f"done/failed/missing="
+          f"{train_done}/{train_failed}/{train_missing})", flush=True)
     return 0
 
 

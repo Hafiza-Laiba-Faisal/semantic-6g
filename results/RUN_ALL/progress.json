@@ -1,0 +1,134 @@
+{
+  "m1_verify": {
+    "status": "ok",
+    "exit": 0,
+    "finished_utc": "2026-10-16T232459Z",
+    "wall_cum_s": 5.4
+  },
+  "m1_train": {
+    "status": "ok",
+    "exit": 0,
+    "finished_utc": "2026-10-17T124229Z",
+    "wall_cum_s": 47854.5
+  },
+  "m1_evaluate": {
+    "status": "ok",
+    "exit": 0,
+    "finished_utc": "2026-10-17T124835Z",
+    "wall_cum_s": 48221.5
+  },
+  "m1_validate": {
+    "status": "ok",
+    "exit": 0,
+    "finished_utc": "2026-10-17T124839Z",
+    "wall_cum_s": 48224.8
+  },
+  "m1_finalize": {
+    "status": "ok",
+    "exit": 0,
+    "finished_utc": "2026-10-17T124842Z",
+    "wall_cum_s": 48228.0
+  },
+  "m2_verify": {
+    "status": "ok",
+    "exit": 0,
+    "finished_utc": "2026-10-17T124845Z",
+    "wall_cum_s": 48230.6
+  },
+  "m2_train": {
+    "status": "ok",
+    "exit": 0,
+    "finished_utc": "2026-10-19T054844Z",
+    "wall_cum_s": 10.7
+  },
+  "m2_evaluate": {
+    "status": "ok",
+    "exit": 0,
+    "finished_utc": "2026-10-19T063815Z",
+    "wall_cum_s": 2981.8
+  },
+  "m2_validate": {
+    "status": "ok",
+    "exit": 0,
+    "finished_utc": "2026-10-19T063822Z",
+    "wall_cum_s": 2988.8
+  },
+  "m2_finalize": {
+    "status": "ok",
+    "exit": 0,
+    "finished_utc": "2026-10-19T063830Z",
+    "wall_cum_s": 2996.6
+  },
+  "m3m4_verify": {
+    "status": "ok",
+    "exit": 0,
+    "finished_utc": "2026-10-18T173555Z",
+    "wall_cum_s": 151860.6
+  },
+  "m3_run": {
+    "status": "ok",
+    "exit": 0,
+    "finished_utc": "2026-10-18T173601Z",
+    "wall_cum_s": 151867.2
+  },
+  "m4_run": {
+    "status": "ok",
+    "exit": 0,
+    "finished_utc": "2026-10-18T174156Z",
+    "wall_cum_s": 152221.9
+  },
+  "m3m4_validate": {
+    "status": "ok",
+    "exit": 0,
+    "finished_utc": "2026-10-18T174202Z",
+    "wall_cum_s": 152228.3
+  },
+  "m3m4_finalize": {
+    "status": "ok",
+    "exit": 0,
+    "finished_utc": "2026-10-18T174208Z",
+    "wall_cum_s": 152234.1
+  },
+  "wave_a_verify": {
+    "status": "ok",
+    "exit": 0,
+    "finished_utc": "2026-10-19T063834Z",
+    "wall_cum_s": 3000.4
+  },
+  "wave_a_train": {
+    "status": "accepted",
+    "exit": 4,
+    "finished_utc": "2026-10-21T061101Z",
+    "wall_cum_s": 17.2
+  },
+  "wave_a_evaluate": {
+    "status": "ok",
+    "exit": 0,
+    "finished_utc": "2026-10-21T060821Z",
+    "wall_cum_s": 36.5
+  },
+  "wave_a_finalize": {
+    "status": "ok",
+    "exit": 0,
+    "finished_utc": "2026-10-20T130246Z",
+    "wall_cum_s": 112451.3
+  },
+  "wave_b_verify": {
+    "status": "ok",
+    "exit": 0,
+    "finished_utc": "2026-10-21T060830Z",
+    "wall_cum_s": 44.9
+  },
+  "wave_b_run": {
+    "status": "ok",
+    "exit": 0,
+    "finished_utc": "2026-10-21T060840Z",
+    "wall_cum_s": 55.2
+  },
+  "wave_b_finalize": {
+    "status": "ok",
+    "exit": 0,
+    "finished_utc": "2026-10-21T060849Z",
+    "wall_cum_s": 64.0
+  }
+}

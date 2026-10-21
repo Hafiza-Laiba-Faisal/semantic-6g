@@ -210,6 +210,50 @@ identical (`18803AC9E32C7797…`, `165E67AA8FC01B73…`).
 
 ---
 
+## A-8 — Wave-C: lambda-shaping across bandwidth (2026-10-21, user-approved)
+
+**Question it answers.** Wave-A's λ-shaped arms reached 0.99 task success at
+k = 12, but that number sits on the task ceiling and was only trained at one
+bandwidth. Wave-C asks whether the effect survives at k = 18/24/30/54, where
+the frozen task arm sits at 0.02–0.05 and the digital baseline rises from
+0.06 to 0.94.
+
+**Design (pre-registered before the first cell, recorded here first).**
+
+| field | value |
+|---|---|
+| arms | `lam_ctl_light` (λ_u,λ_v ×10), `lam_ctl_heavy` (×100) |
+| k | 18, 24, 30, 54 |
+| channels | awgn, rayleigh |
+| seeds | 42, 43 |
+| steps | `config.TASK_TRAIN_STEPS` = 3000 (same as Wave-A k=12 arms) |
+| cells / units / slots | **32 / 16 / 80** |
+| eval | E = 1000 per unit-SNR, 5-SNR grid |
+| root | `results/WAVE_C/` only |
+| runner | `tools/run_wave_c.py` (smoke, verify, train, evaluate, finalize, status) |
+
+**Cost, measured not guessed.** A 100-step smoke gave ≈1.3 s/step at both
+k = 18 and k = 54; Wave-A's own train reports give a 0.667 s/step median and a
+37 min median per 3000-step cell. Full grid ≈ **25 h**. A cut-down 8-cell
+version (~7 h) was offered; the **full 32-cell grid was approved** by the user
+on 2026-10-21, so the cheaper design was not used.
+
+**Isolation guarantees.** The runner reuses Wave-A's training/evaluation
+machinery through a patched cell universe and root, but it cannot write outside
+`results/WAVE_C/`. Wave-A's declared universe stays at 46 cells / 18 units /
+90 slots, and `run_wave_a.py verify` still passes. Seeds, step budget,
+architecture, channel model, SNR grid and statistics are unchanged; only the
+loss weighting and k are new.
+
+**Known limitation, stated up front.** Success rate is expected to saturate at
+k ≥ 24 (the task is easier when more symbols are available), so the informative
+comparison at high k is against the **digital baseline** (0.94 at k = 54), not
+against the frozen task arm. Secondary metrics (`control_effort_mean`,
+`ttg_success_mean`, `final_distance_mean`) are recorded per cell and must be
+reported alongside success rate.
+
+---
+
 ## 1. What a reviewer can check independently
 
 ```powershell

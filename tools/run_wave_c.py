@@ -5,7 +5,7 @@ closed-loop success from 0.02-0.05 (frozen lambdas) to 0.99.  That result is
 saturated at the task ceiling and was only trained at k=12.  Wave-C asks the
 open question: does it hold at k = 18, 24, 30, 54?
 
-DESIGN (frozen before any run; see fyp_md_files/PROTOCOL_AMENDMENTS.md):
+DESIGN (frozen before any run; see fyp_md_files/PROTOCOL_AMENDMENTS.md A-8):
 
   arms      : lam_ctl_light (lu,lv x10), lam_ctl_heavy (lu,lv x100)
   k         : 18, 24, 30, 54
@@ -14,6 +14,13 @@ DESIGN (frozen before any run; see fyp_md_files/PROTOCOL_AMENDMENTS.md):
   steps     : config.TASK_TRAIN_STEPS (same budget as Wave-A k=12 arms)
   cells     : 2 x 4 x 2 x 2 = 32 training runs
   eval      : E=1000 per (unit, SNR), 5-SNR grid -> 16 units / 80 slots
+
+COST, measured not guessed: a 100-step smoke gave ~1.3 s/step on this machine
+(k=18 and k=54), i.e. ~25 h for the full grid (Wave-A's own train reports give
+a 0.667 s/step median / 37 min median per 3000-step cell).  The full grid was
+explicitly approved by the user on 2026-10-21 after that measurement.  The
+runner is idempotent, so an interrupted run can simply be restarted and only
+missing cells are trained.
 
 ISOLATION: writes ONLY under results/WAVE_C/.  Results/WAVE_A, results/M1-M4
 and all frozen artifacts stay read-only.  The runner REUSES the Wave-A

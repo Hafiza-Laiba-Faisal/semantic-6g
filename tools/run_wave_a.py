@@ -56,6 +56,7 @@ from project.training.common import save_checkpoint
 from project.training.train_reconstruction import train_reconstruction
 from project.training.train_task_oriented import train_task_oriented
 
+WAVE_LABEL = "Wave-A"          # overridden by tools/run_wave_c.py (isolated run)
 WAVE_A_ROOT = Path("results/WAVE_A")
 CHANNELS = ("awgn", "rayleigh")
 MATCH_K = (1, 12)             # one low-k (M1 regime) + one matched-budget (M2 regime)
@@ -386,7 +387,7 @@ def cmd_plan():
 
 
 def cmd_status():
-    print("== Wave-A status ==")
+    print(f"== {WAVE_LABEL} status ==")
     counts = {"done": 0, "failed": 0, "running": 0, "missing": 0}
     for c in wave_cells():
         st = c.state()
@@ -516,7 +517,7 @@ def cmd_train(lane=None):
     global WAVE_A_ROOT
     if smoke_tag is not None:
         WAVE_A_ROOT = Path("results/WAVE_A_SMOKE")   # isolated smoke root
-    print("== Wave-A training queue (non-frozen amendment) =="
+    print(f"== {WAVE_LABEL} training queue (non-frozen amendment) =="
           + (f"  [lane: {lane or smoke_tag if smoke_tag else lane}]" if (lane or smoke_tag) else ""))
     if lane not in (None, "awgn", "rayleigh"):
         print(f"unknown lane {lane!r} (use awgn|rayleigh|smoke:TAG or none)")
@@ -643,7 +644,7 @@ def cmd_train(lane=None):
 # ---------------------------------------------------------------------------
 
 def cmd_evaluate(lane=None):
-    print("== Wave-A paired diagnostic evaluation (E=1000, NON-FROZEN) =="
+    print(f"== {WAVE_LABEL} paired diagnostic evaluation (E=1000, NON-FROZEN) =="
           + (f"  [lane: {lane}]" if lane else ""), flush=True)
     if lane not in (None, "awgn", "rayleigh"):
         print(f"unknown lane {lane!r}")

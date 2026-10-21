@@ -60,6 +60,7 @@ SNR_GRID = rw.MATCH_SNR_DB
 
 # redirect every path helper in the reused machinery
 rw.WAVE_A_ROOT = WAVE_C_ROOT
+rw.WAVE_LABEL = "Wave-C"      # log headers must not claim to be Wave-A
 
 
 class WaveC(rw.WaveCell):
@@ -217,14 +218,14 @@ def _train_rows():
 
 
 def cmd_status():
-    rows = _train_rows()
-    counts = {}
-    for r in rows:
-        counts[r["exit_status"]] = counts.get(r["exit_status"], 0) + 1
+    states = {}
+    for c in cells():
+        st = c.state()
+        states[st] = states.get(st, 0) + 1
     n_slots = sum(1 for u in units() for s in SNR_GRID
                   if rw._eval_path(u, s).exists())
     print(f"== Wave-C status ({WAVE_C_ROOT.relative_to(ROOT)}) ==")
-    print(f"-- train: {counts} of {EXPECTED_CELLS}")
+    print(f"-- train: {states} of {EXPECTED_CELLS}")
     print(f"-- eval: {n_slots}/{EXPECTED_SLOTS} unit-SNR slots")
     return 0
 

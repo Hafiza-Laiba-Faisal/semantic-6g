@@ -382,6 +382,28 @@ def test_documented_failure_contract():
 # H. dashboard census + units
 # ---------------------------------------------------------------------------
 
+def test_invalid_arm_claim():
+    """caps_h256 is declared invalid; prove it from the checkpoint weights."""
+    import torch
+
+    import tools.run_wave_a as rw
+
+    root = Path(__file__).resolve().parents[1]
+    dirs = sorted((root / "results" / "WAVE_A").glob(
+        "WAVE_A_caps_h256_*_awgn_k12_seed42__*"))
+    if not dirs:
+        check("caps_h256 checkpoint present", False, "no artifact")
+        return
+    ck = torch.load(dirs[0] / "final_ckpt.pt", map_location="cpu",
+                    weights_only=False)
+    sd = ck.get("model_state") or ck
+    width = max(max(v.shape) for v in sd.values() if hasattr(v, "shape"))
+    meta_hidden = (ck.get("metadata") or {}).get("hidden")
+    check("caps_h256 checkpoint is 128-wide, not 256 (declared invalid)",
+          width == 128 and meta_hidden == 256 and "caps_h256" in rw.INVALID_ARMS,
+          f"weights={width} metadata={meta_hidden}")
+
+
 def test_dashboard_census_and_units():
     import tools.build_dashboard as bd
     from tools.run_wave_a import wave_cells
@@ -438,6 +460,7 @@ if __name__ == "__main__":
     test_m2_gap_accounting()
     test_run_all_stall_detector()
     test_documented_failure_contract()
+    test_invalid_arm_claim()
     test_dashboard_census_and_units()
     n_pass, n_all = sum(SUMMARY), len(SUMMARY)
     print("\n" + "=" * 72)

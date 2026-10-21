@@ -1547,6 +1547,13 @@
       "success_rate_pooled": 0.22466666666666665
     }
   ],
+  "invalid_arms": {
+    "caps_h256": "trained artifact is 128-wide (metadata says 256); not a capacity ablation - A-6"
+  },
+  "documented_failures": [
+    "WAVE_A_long_12k_task_awgn_k12_seed42",
+    "WAVE_A_seedvar_frozen_task_awgn_k12_seed45"
+  ],
   "train_done": 44,
   "train_failed": 2,
   "train_missing": 0,

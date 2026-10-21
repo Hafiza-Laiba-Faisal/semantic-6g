@@ -285,16 +285,28 @@ def _m2_table(pooled):
     return "".join(out) + "".join(body) + "</table>"
 
 
+def _wave_invalid_arms():
+    """Arms whose label does not match the trained artifact (declared in the
+    Wave-A summary by run_wave_a.finalize)."""
+    rec = _load_json(ROOT / "WAVE_A" / "step_wave_a_summary.json")
+    inv = rec.get("invalid_arms") or {}
+    return {str(k): str(v) for k, v in inv.items()} if isinstance(inv, dict) else {}
+
+
 def _wave_table(wpooled):
     if not wpooled:
         return ("<p class='dim'>No Wave-A eval artifacts yet — run "
                 "<code>python tools/run_wave_a.py train</code> then "
                 "<code>evaluate</code>.</p>")
+    invalid = _wave_invalid_arms()
     tags = sorted({key[0] for key in wpooled})
     snrs = sorted({s for (_, _, _, s) in wpooled}, key=lambda v: (v is None, v))
     cols = []
     for tag in tags:
-        arm = [f"<tr><td class='left'><b>{html.escape(tag)}</b></td>"]
+        label = html.escape(tag)
+        if tag in invalid:
+            label = f"<span title='{html.escape(invalid[tag])}'>{label} ⚠</span>"
+        arm = [f"<tr><td class='left'><b>{label}</b></td>"]
         tot_n = 0
         for s in snrs:
             per_ks = [wpooled.get((tag, k, ch, s))
@@ -312,7 +324,13 @@ def _wave_table(wpooled):
     head = ["<table><tr><th class='left'>arm tag \\ SNR</th>"]
     head += [f"<th>{s:g} dB</th>" for s in snrs]
     head.append("<th>cells</th></tr>")
-    return "".join(head) + "".join(cols) + "</table>"
+    note = ""
+    if invalid:
+        items = "; ".join(f"<b>{html.escape(k)}</b>: {html.escape(v)}"
+                          for k, v in sorted(invalid.items()))
+        note = (f"<p class='dim'>⚠ invalid arm — not a valid ablation: "
+                f"{items} (see PROTOCOL_AMENDMENTS.md)</p>")
+    return "".join(head) + "".join(cols) + "</table>" + note
 
 
 def _catalog_table(rows):

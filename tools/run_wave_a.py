@@ -71,6 +71,17 @@ FAILS = []
 _OK = {"n": 0}
 _BAD = {"n": 0}
 
+INVALID_ARMS = {
+    # Verified from the checkpoint state_dict on 2026-10-21: metadata claims
+    # hidden=256 but every layer is 128-wide (encoder.backbone.0.weight is
+    # (128, 6), max width 128 - identical to the 128-wide control arm), because
+    # the encoder default width is bound at import time and the later patch has
+    # no effect.  The arm is NOT a capacity ablation and must not be cited as
+    # one.  See fyp_md_files/PROTOCOL_AMENDMENTS.md A-6.
+    "caps_h256": ("trained artifact is 128-wide (metadata says 256); "
+                  "not a capacity ablation - A-6"),
+}
+
 # --- documented-failure contract -------------------------------------------
 # Two Wave-A training cells are frozen, documented FAILURES (both task cells
 # exhausted the numerical headroom of the frozen config: "incomplete
@@ -795,6 +806,8 @@ def cmd_finalize():
                           "NOT 1:1 comparable to frozen M1/M2 (E=5000)"),
         "train_rows": train_rows,
         "pooled_rows": pooled_rows,
+        "invalid_arms": INVALID_ARMS,
+        "documented_failures": sorted(DOCUMENTED_FAILURES),
         "train_done": train_done,
         "train_failed": train_failed,
         "train_missing": train_missing,

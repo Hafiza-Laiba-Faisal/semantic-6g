@@ -36,7 +36,7 @@ Pooled over seeds, mean of the 5-SNR grid. `n` = seeds contributing.
 | 12 | awgn | seedvar_frozen | 0.020 | 0.027 | 0.029 | 0.025 | 2 |
 | 12 | rayleigh | seedvar_frozen | 0.033 | 0.031 | 0.031 | 0.032 | 3 |
 | 12 | awgn | fixsnr_10db | 0.048 | 0.049 | 0.052 | 0.050 | 1 |
-| 12 | awgn | caps_h256 | 0.026 | 0.027 | 0.028 | 0.027 | 1 |
+| 12 | awgn | caps_h256 † | 0.026 | 0.027 | 0.028 | 0.027 | 1 |
 | 12 | rayleigh | long_12k | 0.039 | 0.038 | 0.031 | 0.035 | 1 |
 | 1 | awgn | wrecon_pos | 0.141 | 0.184 | 0.170 | 0.168 | 3 |
 | 1 | rayleigh | wrecon_pos | 0.132 | 0.145 | 0.138 | 0.141 | 3 |
@@ -46,6 +46,10 @@ Pooled over seeds, mean of the 5-SNR grid. `n` = seeds contributing.
 | 1 | rayleigh | lam_ctl_light | 0.020 | 0.021 | 0.020 | 0.020 | 3 |
 
 Figure: `fig_wave_a_arms.png`.
+
+† `caps_h256` is **invalid**: its checkpoint is 128-wide while its metadata
+claims 256 (proved from `model_state` shapes; Amendment A-6). Read its row as
+a second 128-wide control, never as a capacity result.
 
 ### 1.1 The headline signal
 

@@ -168,10 +168,26 @@ patch that sets `hidden=256` is applied **after** the encoder's default width
 is bound at import time, so the trained arm is effectively **128-wide** and is
 not a valid capacity ablation.
 
+**Measured evidence (2026-10-21, from the shipped checkpoint, not memory):**
+
+```
+results/WAVE_A/WAVE_A_caps_h256_task_awgn_k12_seed42__5c1f2f0e22e5ba5e/final_ckpt.pt
+  metadata.hidden                      = 256        <- the label
+  encoder.backbone.0.weight            = (128, 6)   <- the actual width
+  max tensor width in model_state      = 128        <- identical to the control
+```
+
 **Status:** documented, **not fixed**, no retrain performed (fixing it now
-would add a 4th scientific change after seeing results). Any claim about
-capacity must ignore this arm until it is re-run under a new, dated
-amendment.
+would add a 4th scientific change after seeing results). Enforced in code:
+
+- `run_wave_a.INVALID_ARMS` is written into
+  `step_wave_a_summary.json["invalid_arms"]`;
+- the dashboard renders the arm as `caps_h256 ⚠` with a footnote;
+- `tests/test_wave_a_tooling.py::test_invalid_arm_claim` re-reads the
+  checkpoint weights and fails if the declared invalidity stops being true.
+
+Any claim about capacity must ignore this arm until it is re-run under a new,
+dated amendment.
 
 ---
 

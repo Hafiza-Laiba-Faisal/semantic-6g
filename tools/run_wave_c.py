@@ -257,7 +257,10 @@ def _state_no_mkdir(c):
     return "missing", None
 
 
-STALE_RUNNING_MIN = 60     # RUNNING.json is a START marker, not a liveness probe
+# RUNNING.json is a START marker, not a liveness probe: it is written once, so a
+# sharded cell running on 1-2 threads can legitimately sit for 2+ hours without
+# touching the file. 180 min keeps the alarm useful without crying wolf.
+STALE_RUNNING_MIN = 180
 
 
 def cmd_status():

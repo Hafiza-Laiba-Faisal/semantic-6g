@@ -1,0 +1,47 @@
+{
+  "STEP": "11",
+  "experiment": "M2",
+  "run_id": "M2_task_awgn_k24_seed44",
+  "config_hash": "dee4a3e84d046d08",
+  "method": "task",
+  "channel": "awgn",
+  "k": 24,
+  "seed": 44,
+  "protocol": {
+    "train_steps": 3000,
+    "batch_states": 4096,
+    "batch_episodes": 256,
+    "t_max": 100,
+    "lr": 0.001,
+    "optimizer": "Adam",
+    "grad_clip": 1.0,
+    "train_snr_policy": {
+      "distribution": "uniform",
+      "range_db": [
+        0.0,
+        20.0
+      ],
+      "granularity": "per_batch"
+    },
+    "early_stopping": false
+  },
+  "wall_s": 1666.2,
+  "s_per_step": 0.5554,
+  "nan_batches": 0,
+  "grads_finite": true,
+  "exit_status": "complete",
+  "checkpoint": "results\\M2\\M2_task_awgn_k24_seed44__dee4a3e84d046d08\\final_ckpt.pt",
+  "optimizer_state_saved": false,
+  "optimizer_note": "trainer-internal optimizer not exposed (documented Step-8 limitation); recovery is deterministic RETRAIN by seed+config (9C)",
+  "task_loss_initial": 3440.24169921875,
+  "task_loss_final": 2600.8193359375,
+  "recon_mse_diag_initial": 0.2243480533361435,
+  "recon_mse_diag_final": 80.1712875366211,
+  "eval_after_success_rate": 0.0546875,
+  "lambdas": {
+    "ld": 1.0,
+    "lu": 0.0,
+    "lv": 0.0,
+    "lT": 2.0
+  }
+}

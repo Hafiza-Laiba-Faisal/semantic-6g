@@ -1,0 +1,268 @@
+
+===== 2026-10-17T124845Z attempt=1 cmd=C:\Users\LENOVO\venvs\sem6g\Scripts\python.exe tools/run_step11_m2.py train =====
+== M2 training queue (frozen 9C budgets) ==
+[ 1/60] TRAIN M2_reconstruction_awgn_k12_seed42 hash=da48d65257e144d7 steps=5000 batch=4096
+[ 1/60] DONE  M2_reconstruction_awgn_k12_seed42  148.6s  loss_final=0.0042
+[ 2/60] TRAIN M2_reconstruction_awgn_k12_seed43 hash=6bd27b240cf9ee0f steps=5000 batch=4096
+[ 2/60] DONE  M2_reconstruction_awgn_k12_seed43  145.3s  loss_final=0.0070
+[ 3/60] TRAIN M2_reconstruction_awgn_k12_seed44 hash=e5bc5d8768342164 steps=5000 batch=4096
+[ 3/60] DONE  M2_reconstruction_awgn_k12_seed44  146.4s  loss_final=0.0049
+[ 4/60] TRAIN M2_task_awgn_k12_seed42 hash=66b3d7e90e7c0799 steps=3000 batch=256xT100
+[ 4/60] DONE  M2_task_awgn_k12_seed42  1682.5s  task_loss_final=1136.6384
+[ 5/60] TRAIN M2_task_awgn_k12_seed43 hash=f0f9701cbc18a55c steps=3000 batch=256xT100
+[ 5/60] DONE  M2_task_awgn_k12_seed43  1705.8s  task_loss_final=2015.3579
+[ 6/60] TRAIN M2_task_awgn_k12_seed44 hash=f355430c45242b95 steps=3000 batch=256xT100
+[ 6/60] DONE  M2_task_awgn_k12_seed44  2875.8s  task_loss_final=257.1082
+[ 7/60] TRAIN M2_reconstruction_rayleigh_k12_seed42 hash=b7ac5dae2e5252f9 steps=5000 batch=4096
+[ 7/60] DONE  M2_reconstruction_rayleigh_k12_seed42  272.6s  loss_final=0.0218
+[ 8/60] TRAIN M2_reconstruction_rayleigh_k12_seed43 hash=47d8dfc5f36f69c9 steps=5000 batch=4096
+[ 8/60] DONE  M2_reconstruction_rayleigh_k12_seed43  271.9s  loss_final=0.0330
+[ 9/60] TRAIN M2_reconstruction_rayleigh_k12_seed44 hash=50f55b26d27d1daa steps=5000 batch=4096
+[ 9/60] DONE  M2_reconstruction_rayleigh_k12_seed44  273.2s  loss_final=0.0263
+[10/60] TRAIN M2_task_rayleigh_k12_seed42 hash=5f51792cbfbd6770 steps=3000 batch=256xT100
+[10/60] DONE  M2_task_rayleigh_k12_seed42  3757.1s  task_loss_final=195.9760
+[11/60] TRAIN M2_task_rayleigh_k12_seed43 hash=d762d7cd968318a8 steps=3000 batch=256xT100
+[11/60] DONE  M2_task_rayleigh_k12_seed43  3941.3s  task_loss_final=116.7082
+[12/60] TRAIN M2_task_rayleigh_k12_seed44 hash=aa342e7584618ff4 steps=3000 batch=256xT100
+[12/60] DONE  M2_task_rayleigh_k12_seed44  3214.3s  task_loss_final=5148.7490
+[13/60] TRAIN M2_reconstruction_awgn_k18_seed42 hash=d30534b06082cab4 steps=5000 batch=4096
+[13/60] DONE  M2_reconstruction_awgn_k18_seed42  153.2s  loss_final=0.0027
+[14/60] TRAIN M2_reconstruction_awgn_k18_seed43 hash=762a86d595e4ee1b steps=5000 batch=4096
+[14/60] DONE  M2_reconstruction_awgn_k18_seed43  153.6s  loss_final=0.0045
+[15/60] TRAIN M2_reconstruction_awgn_k18_seed44 hash=12f152999392feaf steps=5000 batch=4096
+[15/60] DONE  M2_reconstruction_awgn_k18_seed44  153.4s  loss_final=0.0033
+[16/60] TRAIN M2_task_awgn_k18_seed42 hash=fe10bf4900fa3a85 steps=3000 batch=256xT100
+[16/60] DONE  M2_task_awgn_k18_seed42  2056.2s  task_loss_final=5193.4722
+[17/60] TRAIN M2_task_awgn_k18_seed43 hash=347dd85341970c91 steps=3000 batch=256xT100
+[17/60] NUMERICAL ALERT M2_task_awgn_k18_seed43: nan_batches=0 grads_finite=False loss_finite=True
+[17/60] INCOMPLETE M2_task_awgn_k18_seed43 (nan_batches=0, grads_finite=False)
+[18/60] TRAIN M2_task_awgn_k18_seed44 hash=c533b5324f220cf9 steps=3000 batch=256xT100
+[18/60] NUMERICAL ALERT M2_task_awgn_k18_seed44: nan_batches=0 grads_finite=False loss_finite=True
+[18/60] INCOMPLETE M2_task_awgn_k18_seed44 (nan_batches=0, grads_finite=False)
+[19/60] TRAIN M2_reconstruction_rayleigh_k18_seed42 hash=7754ce83f2bfc262 steps=5000 batch=4096
+[19/60] DONE  M2_reconstruction_rayleigh_k18_seed42  166.4s  loss_final=0.0160
+[20/60] TRAIN M2_reconstruction_rayleigh_k18_seed43 hash=fa083bfe853d6d48 steps=5000 batch=4096
+[20/60] DONE  M2_reconstruction_rayleigh_k18_seed43  157.8s  loss_final=0.0255
+[21/60] TRAIN M2_reconstruction_rayleigh_k18_seed44 hash=f00c5310c163b590 steps=5000 batch=4096
+[21/60] DONE  M2_reconstruction_rayleigh_k18_seed44  160.2s  loss_final=0.0175
+[22/60] TRAIN M2_task_rayleigh_k18_seed42 hash=755602880c8ccf96 steps=3000 batch=256xT100
+[22/60] DONE  M2_task_rayleigh_k18_seed42  1849.2s  task_loss_final=4447.0562
+[23/60] TRAIN M2_task_rayleigh_k18_seed43 hash=715dc7b35143ae95 steps=3000 batch=256xT100
+[23/60] DONE  M2_task_rayleigh_k18_seed43  1867.5s  task_loss_final=1520.9519
+[24/60] TRAIN M2_task_rayleigh_k18_seed44 hash=af522f9dc525fdf2 steps=3000 batch=256xT100
+[24/60] DONE  M2_task_rayleigh_k18_seed44  1851.7s  task_loss_final=409.6469
+[25/60] TRAIN M2_reconstruction_awgn_k24_seed42 hash=467961eae4ef2857 steps=5000 batch=4096
+[25/60] DONE  M2_reconstruction_awgn_k24_seed42  161.1s  loss_final=0.0019
+[26/60] TRAIN M2_reconstruction_awgn_k24_seed43 hash=88a2aad74e80f047 steps=5000 batch=4096
+[26/60] DONE  M2_reconstruction_awgn_k24_seed43  159.9s  loss_final=0.0033
+[27/60] TRAIN M2_reconstruction_awgn_k24_seed44 hash=521185489ced1c52 steps=5000 batch=4096
+[27/60] DONE  M2_reconstruction_awgn_k24_seed44  160.3s  loss_final=0.0024
+[28/60] TRAIN M2_task_awgn_k24_seed42 hash=11194fd4b5bf9fa3 steps=3000 batch=256xT100
+[28/60] DONE  M2_task_awgn_k24_seed42  1763.1s  task_loss_final=199.9029
+[29/60] TRAIN M2_task_awgn_k24_seed43 hash=28eb490e2e2bb540 steps=3000 batch=256xT100
+[29/60] DONE  M2_task_awgn_k24_seed43  1778.8s  task_loss_final=2648.3347
+[30/60] TRAIN M2_task_awgn_k24_seed44 hash=dee4a3e84d046d08 steps=3000 batch=256xT100
+[30/60] DONE  M2_task_awgn_k24_seed44  1756.9s  task_loss_final=2380.1917
+[31/60] TRAIN M2_reconstruction_rayleigh_k24_seed42 hash=307ece13a3426cce steps=5000 batch=4096
+[31/60] DONE  M2_reconstruction_rayleigh_k24_seed42  164.9s  loss_final=0.0134
+[32/60] TRAIN M2_reconstruction_rayleigh_k24_seed43 hash=66db5884ab958699 steps=5000 batch=4096
+[32/60] DONE  M2_reconstruction_rayleigh_k24_seed43  166.0s  loss_final=0.0191
+[33/60] TRAIN M2_reconstruction_rayleigh_k24_seed44 hash=6564e5bb95954c33 steps=5000 batch=4096
+[33/60] DONE  M2_reconstruction_rayleigh_k24_seed44  166.5s  loss_final=0.0157
+[34/60] TRAIN M2_task_rayleigh_k24_seed42 hash=f744e2c7fd36a449 steps=3000 batch=256xT100
+[34/60] DONE  M2_task_rayleigh_k24_seed42  3394.2s  task_loss_final=283.0285
+[35/60] TRAIN M2_task_rayleigh_k24_seed43 hash=11e25f88979afa8e steps=3000 batch=256xT100
+[35/60] DONE  M2_task_rayleigh_k24_seed43  4483.2s  task_loss_final=2956.4661
+[36/60] TRAIN M2_task_rayleigh_k24_seed44 hash=afd3e668283e27f4 steps=3000 batch=256xT100
+[36/60] DONE  M2_task_rayleigh_k24_seed44  3751.1s  task_loss_final=3872.4712
+[37/60] TRAIN M2_reconstruction_awgn_k30_seed42 hash=b08ee5e7e767de2e steps=5000 batch=4096
+[37/60] DONE  M2_reconstruction_awgn_k30_seed42  218.2s  loss_final=0.0016
+[38/60] TRAIN M2_reconstruction_awgn_k30_seed43 hash=640ad7b18d52a34c steps=5000 batch=4096
+[38/60] DONE  M2_reconstruction_awgn_k30_seed43  213.8s  loss_final=0.0026
+[39/60] TRAIN M2_reconstruction_awgn_k30_seed44 hash=21aa3b9a9009372d steps=5000 batch=4096
+[39/60] DONE  M2_reconstruction_awgn_k30_seed44  217.3s  loss_final=0.0019
+[40/60] TRAIN M2_task_awgn_k30_seed42 hash=204f14847f11f343 steps=3000 batch=256xT100
+[40/60] DONE  M2_task_awgn_k30_seed42  3146.4s  task_loss_final=3868.0557
+[41/60] TRAIN M2_task_awgn_k30_seed43 hash=d270bfa0b913b678 steps=3000 batch=256xT100
+[41/60] NUMERICAL ALERT M2_task_awgn_k30_seed43: nan_batches=0 grads_finite=False loss_finite=True
+[41/60] INCOMPLETE M2_task_awgn_k30_seed43 (nan_batches=0, grads_finite=False)
+[42/60] TRAIN M2_task_awgn_k30_seed44 hash=98336cd9ee7c47db steps=3000 batch=256xT100
+[42/60] DONE  M2_task_awgn_k30_seed44  2822.2s  task_loss_final=265.1288
+[43/60] TRAIN M2_reconstruction_rayleigh_k30_seed42 hash=97c0ab4d0dfc1c30 steps=5000 batch=4096
+[43/60] DONE  M2_reconstruction_rayleigh_k30_seed42  315.7s  loss_final=0.0117
+[44/60] TRAIN M2_reconstruction_rayleigh_k30_seed43 hash=b40e213677ccf310 steps=5000 batch=4096
+[44/60] DONE  M2_reconstruction_rayleigh_k30_seed43  337.7s  loss_final=0.0170
+[45/60] TRAIN M2_reconstruction_rayleigh_k30_seed44 hash=60764638df2437e0 steps=5000 batch=4096
+[45/60] DONE  M2_reconstruction_rayleigh_k30_seed44  321.5s  loss_final=0.0139
+[46/60] TRAIN M2_task_rayleigh_k30_seed42 hash=33681d79aa34aa90 steps=3000 batch=256xT100
+[46/60] DONE  M2_task_rayleigh_k30_seed42  4266.6s  task_loss_final=313.6929
+[47/60] TRAIN M2_task_rayleigh_k30_seed43 hash=aa5897de2953b917 steps=3000 batch=256xT100
+[47/60] DONE  M2_task_rayleigh_k30_seed43  2684.2s  task_loss_final=3899.1404
+[48/60] TRAIN M2_task_rayleigh_k30_seed44 hash=03886b2ee701048b steps=3000 batch=256xT100
+[48/60] DONE  M2_task_rayleigh_k30_seed44  2982.9s  task_loss_final=1684.5128
+[49/60] TRAIN M2_reconstruction_awgn_k54_seed42 hash=bb2ccf5684fd17d6 steps=5000 batch=4096
+[49/60] DONE  M2_reconstruction_awgn_k54_seed42  305.1s  loss_final=0.0009
+[50/60] TRAIN M2_reconstruction_awgn_k54_seed43 hash=3f4f43c7b7119182 steps=5000 batch=4096
+[50/60] DONE  M2_reconstruction_awgn_k54_seed43  334.4s  loss_final=0.0015
+[51/60] TRAIN M2_reconstruction_awgn_k54_seed44 hash=6ccfbac75bdd4c57 steps=5000 batch=4096
+[51/60] DONE  M2_reconstruction_awgn_k54_seed44  361.5s  loss_final=0.0011
+[52/60] TRAIN M2_task_awgn_k54_seed42 hash=59f19c2c451a8106 steps=3000 batch=256xT100
+[52/60] DONE  M2_task_awgn_k54_seed42  3537.5s  task_loss_final=3726.2017
+[53/60] TRAIN M2_task_awgn_k54_seed43 hash=42e31b28453364e8 steps=3000 batch=256xT100
+[53/60] DONE  M2_task_awgn_k54_seed43  2833.6s  task_loss_final=5544.7266
+[54/60] TRAIN M2_task_awgn_k54_seed44 hash=de236017363bbf15 steps=3000 batch=256xT100
+[54/60] DONE  M2_task_awgn_k54_seed44  4593.6s  task_loss_final=360.9839
+[55/60] TRAIN M2_reconstruction_rayleigh_k54_seed42 hash=75f50716761d27f0 steps=5000 batch=4096
+[55/60] DONE  M2_reconstruction_rayleigh_k54_seed42  402.3s  loss_final=0.0069
+[56/60] TRAIN M2_reconstruction_rayleigh_k54_seed43 hash=d35a48fcd051cc51 steps=5000 batch=4096
+[56/60] DONE  M2_reconstruction_rayleigh_k54_seed43  398.9s  loss_final=0.0113
+[57/60] TRAIN M2_reconstruction_rayleigh_k54_seed44 hash=84a1ab51a890f25d steps=5000 batch=4096
+[57/60] DONE  M2_reconstruction_rayleigh_k54_seed44  402.5s  loss_final=0.0081
+[58/60] TRAIN M2_task_rayleigh_k54_seed42 hash=70c96f68ebdd96fc steps=3000 batch=256xT100
+[58/60] DONE  M2_task_rayleigh_k54_seed42  3594.1s  task_loss_final=1051.5181
+[59/60] TRAIN M2_task_rayleigh_k54_seed43 hash=c69033a6561fc637 steps=3000 batch=256xT100
+[59/60] NUMERICAL ALERT M2_task_rayleigh_k54_seed43: nan_batches=0 grads_finite=False loss_finite=True
+[59/60] INCOMPLETE M2_task_rayleigh_k54_seed43 (nan_batches=0, grads_finite=False)
+[60/60] TRAIN M2_task_rayleigh_k54_seed44 hash=402d540439be3748 steps=3000 batch=256xT100
+[60/60] DONE  M2_task_rayleigh_k54_seed44  4328.1s  task_loss_final=248.7250
+-- training queue finished: trained=60 skipped=0 retrained=0 failed=4 train_wall=93958.8s
+
+===== 2026-10-18T145451Z attempt=2 cmd=C:\Users\LENOVO\venvs\sem6g\Scripts\python.exe tools/run_step11_m2.py train =====
+== M2 training queue (frozen 9C budgets) ==
+[ 1/60] SKIP M2_reconstruction_awgn_k12_seed42 (already complete)
+[ 2/60] SKIP M2_reconstruction_awgn_k12_seed43 (already complete)
+[ 3/60] SKIP M2_reconstruction_awgn_k12_seed44 (already complete)
+[ 4/60] SKIP M2_task_awgn_k12_seed42 (already complete)
+[ 5/60] SKIP M2_task_awgn_k12_seed43 (already complete)
+[ 6/60] SKIP M2_task_awgn_k12_seed44 (already complete)
+[ 7/60] SKIP M2_reconstruction_rayleigh_k12_seed42 (already complete)
+[ 8/60] SKIP M2_reconstruction_rayleigh_k12_seed43 (already complete)
+[ 9/60] SKIP M2_reconstruction_rayleigh_k12_seed44 (already complete)
+[10/60] SKIP M2_task_rayleigh_k12_seed42 (already complete)
+[11/60] SKIP M2_task_rayleigh_k12_seed43 (already complete)
+[12/60] SKIP M2_task_rayleigh_k12_seed44 (already complete)
+[13/60] SKIP M2_reconstruction_awgn_k18_seed42 (already complete)
+[14/60] SKIP M2_reconstruction_awgn_k18_seed43 (already complete)
+[15/60] SKIP M2_reconstruction_awgn_k18_seed44 (already complete)
+[16/60] SKIP M2_task_awgn_k18_seed42 (already complete)
+[17/60] RETRAIN-after-FAILURE M2_task_awgn_k18_seed43 (frozen 9C policy: deterministic by seed+config)
+[17/60] TRAIN M2_task_awgn_k18_seed43 hash=347dd85341970c91 steps=3000 batch=256xT100
+[17/60] NUMERICAL ALERT M2_task_awgn_k18_seed43: nan_batches=0 grads_finite=False loss_finite=True
+[17/60] INCOMPLETE M2_task_awgn_k18_seed43 (nan_batches=0, grads_finite=False)
+[18/60] RETRAIN-after-FAILURE M2_task_awgn_k18_seed44 (frozen 9C policy: deterministic by seed+config)
+[18/60] TRAIN M2_task_awgn_k18_seed44 hash=c533b5324f220cf9 steps=3000 batch=256xT100
+[18/60] NUMERICAL ALERT M2_task_awgn_k18_seed44: nan_batches=0 grads_finite=False loss_finite=True
+[18/60] INCOMPLETE M2_task_awgn_k18_seed44 (nan_batches=0, grads_finite=False)
+[19/60] SKIP M2_reconstruction_rayleigh_k18_seed42 (already complete)
+[20/60] SKIP M2_reconstruction_rayleigh_k18_seed43 (already complete)
+[21/60] SKIP M2_reconstruction_rayleigh_k18_seed44 (already complete)
+[22/60] SKIP M2_task_rayleigh_k18_seed42 (already complete)
+[23/60] SKIP M2_task_rayleigh_k18_seed43 (already complete)
+[24/60] SKIP M2_task_rayleigh_k18_seed44 (already complete)
+[25/60] SKIP M2_reconstruction_awgn_k24_seed42 (already complete)
+[26/60] SKIP M2_reconstruction_awgn_k24_seed43 (already complete)
+[27/60] SKIP M2_reconstruction_awgn_k24_seed44 (already complete)
+[28/60] SKIP M2_task_awgn_k24_seed42 (already complete)
+[29/60] SKIP M2_task_awgn_k24_seed43 (already complete)
+[30/60] SKIP M2_task_awgn_k24_seed44 (already complete)
+[31/60] SKIP M2_reconstruction_rayleigh_k24_seed42 (already complete)
+[32/60] SKIP M2_reconstruction_rayleigh_k24_seed43 (already complete)
+[33/60] SKIP M2_reconstruction_rayleigh_k24_seed44 (already complete)
+[34/60] SKIP M2_task_rayleigh_k24_seed42 (already complete)
+[35/60] SKIP M2_task_rayleigh_k24_seed43 (already complete)
+[36/60] SKIP M2_task_rayleigh_k24_seed44 (already complete)
+[37/60] SKIP M2_reconstruction_awgn_k30_seed42 (already complete)
+[38/60] SKIP M2_reconstruction_awgn_k30_seed43 (already complete)
+[39/60] SKIP M2_reconstruction_awgn_k30_seed44 (already complete)
+[40/60] SKIP M2_task_awgn_k30_seed42 (already complete)
+[41/60] RETRAIN-after-FAILURE M2_task_awgn_k30_seed43 (frozen 9C policy: deterministic by seed+config)
+[41/60] TRAIN M2_task_awgn_k30_seed43 hash=d270bfa0b913b678 steps=3000 batch=256xT100
+[41/60] NUMERICAL ALERT M2_task_awgn_k30_seed43: nan_batches=0 grads_finite=False loss_finite=True
+[41/60] INCOMPLETE M2_task_awgn_k30_seed43 (nan_batches=0, grads_finite=False)
+[42/60] SKIP M2_task_awgn_k30_seed44 (already complete)
+[43/60] SKIP M2_reconstruction_rayleigh_k30_seed42 (already complete)
+[44/60] SKIP M2_reconstruction_rayleigh_k30_seed43 (already complete)
+[45/60] SKIP M2_reconstruction_rayleigh_k30_seed44 (already complete)
+[46/60] SKIP M2_task_rayleigh_k30_seed42 (already complete)
+[47/60] SKIP M2_task_rayleigh_k30_seed43 (already complete)
+[48/60] SKIP M2_task_rayleigh_k30_seed44 (already complete)
+[49/60] SKIP M2_reconstruction_awgn_k54_seed42 (already complete)
+[50/60] SKIP M2_reconstruction_awgn_k54_seed43 (already complete)
+[51/60] SKIP M2_reconstruction_awgn_k54_seed44 (already complete)
+[52/60] SKIP M2_task_awgn_k54_seed42 (already complete)
+[53/60] SKIP M2_task_awgn_k54_seed43 (already complete)
+[54/60] SKIP M2_task_awgn_k54_seed44 (already complete)
+[55/60] SKIP M2_reconstruction_rayleigh_k54_seed42 (already complete)
+[56/60] SKIP M2_reconstruction_rayleigh_k54_seed43 (already complete)
+[57/60] SKIP M2_reconstruction_rayleigh_k54_seed44 (already complete)
+[58/60] SKIP M2_task_rayleigh_k54_seed42 (already complete)
+[59/60] RETRAIN-after-FAILURE M2_task_rayleigh_k54_seed43 (frozen 9C policy: deterministic by seed+config)
+[59/60] TRAIN M2_task_rayleigh_k54_seed43 hash=c69033a6561fc637 steps=3000 batch=256xT100
+[59/60] NUMERICAL ALERT M2_task_rayleigh_k54_seed43: nan_batches=0 grads_finite=False loss_finite=True
+[59/60] INCOMPLETE M2_task_rayleigh_k54_seed43 (nan_batches=0, grads_finite=False)
+[60/60] SKIP M2_task_rayleigh_k54_seed44 (already complete)
+-- training queue finished: trained=4 skipped=56 retrained=4 failed=4 train_wall=9606.1s
+
+===== 2026-10-19T054838Z attempt=1 cmd=C:\Users\LENOVO\.config\freebuff-desktop\no-folder\threads\f65d0493999624d4117ab3756824010b4a55de670bd3ad110bf23c6b6022da89\semantic-6g\.venv\Scripts\python.exe tools/run_step11_m2.py train =====
+== M2 training queue (frozen 9C budgets) ==
+[ 1/60] SKIP M2_reconstruction_awgn_k12_seed42 (already complete)
+[ 2/60] SKIP M2_reconstruction_awgn_k12_seed43 (already complete)
+[ 3/60] SKIP M2_reconstruction_awgn_k12_seed44 (already complete)
+[ 4/60] SKIP M2_task_awgn_k12_seed42 (already complete)
+[ 5/60] SKIP M2_task_awgn_k12_seed43 (already complete)
+[ 6/60] SKIP M2_task_awgn_k12_seed44 (already complete)
+[ 7/60] SKIP M2_reconstruction_rayleigh_k12_seed42 (already complete)
+[ 8/60] SKIP M2_reconstruction_rayleigh_k12_seed43 (already complete)
+[ 9/60] SKIP M2_reconstruction_rayleigh_k12_seed44 (already complete)
+[10/60] SKIP M2_task_rayleigh_k12_seed42 (already complete)
+[11/60] SKIP M2_task_rayleigh_k12_seed43 (already complete)
+[12/60] SKIP M2_task_rayleigh_k12_seed44 (already complete)
+[13/60] SKIP M2_reconstruction_awgn_k18_seed42 (already complete)
+[14/60] SKIP M2_reconstruction_awgn_k18_seed43 (already complete)
+[15/60] SKIP M2_reconstruction_awgn_k18_seed44 (already complete)
+[16/60] SKIP M2_task_awgn_k18_seed42 (already complete)
+[17/60] SKIP M2_task_awgn_k18_seed43 (documented conditional-accept, approved 2026-10-19; eval-only, not retrained)
+[18/60] SKIP M2_task_awgn_k18_seed44 (documented conditional-accept, approved 2026-10-19; eval-only, not retrained)
+[19/60] SKIP M2_reconstruction_rayleigh_k18_seed42 (already complete)
+[20/60] SKIP M2_reconstruction_rayleigh_k18_seed43 (already complete)
+[21/60] SKIP M2_reconstruction_rayleigh_k18_seed44 (already complete)
+[22/60] SKIP M2_task_rayleigh_k18_seed42 (already complete)
+[23/60] SKIP M2_task_rayleigh_k18_seed43 (already complete)
+[24/60] SKIP M2_task_rayleigh_k18_seed44 (already complete)
+[25/60] SKIP M2_reconstruction_awgn_k24_seed42 (already complete)
+[26/60] SKIP M2_reconstruction_awgn_k24_seed43 (already complete)
+[27/60] SKIP M2_reconstruction_awgn_k24_seed44 (already complete)
+[28/60] SKIP M2_task_awgn_k24_seed42 (already complete)
+[29/60] SKIP M2_task_awgn_k24_seed43 (already complete)
+[30/60] SKIP M2_task_awgn_k24_seed44 (already complete)
+[31/60] SKIP M2_reconstruction_rayleigh_k24_seed42 (already complete)
+[32/60] SKIP M2_reconstruction_rayleigh_k24_seed43 (already complete)
+[33/60] SKIP M2_reconstruction_rayleigh_k24_seed44 (already complete)
+[34/60] SKIP M2_task_rayleigh_k24_seed42 (already complete)
+[35/60] SKIP M2_task_rayleigh_k24_seed43 (already complete)
+[36/60] SKIP M2_task_rayleigh_k24_seed44 (already complete)
+[37/60] SKIP M2_reconstruction_awgn_k30_seed42 (already complete)
+[38/60] SKIP M2_reconstruction_awgn_k30_seed43 (already complete)
+[39/60] SKIP M2_reconstruction_awgn_k30_seed44 (already complete)
+[40/60] SKIP M2_task_awgn_k30_seed42 (already complete)
+[41/60] SKIP M2_task_awgn_k30_seed43 (documented conditional-accept, approved 2026-10-19; eval-only, not retrained)
+[42/60] SKIP M2_task_awgn_k30_seed44 (already complete)
+[43/60] SKIP M2_reconstruction_rayleigh_k30_seed42 (already complete)
+[44/60] SKIP M2_reconstruction_rayleigh_k30_seed43 (already complete)
+[45/60] SKIP M2_reconstruction_rayleigh_k30_seed44 (already complete)
+[46/60] SKIP M2_task_rayleigh_k30_seed42 (already complete)
+[47/60] SKIP M2_task_rayleigh_k30_seed43 (already complete)
+[48/60] SKIP M2_task_rayleigh_k30_seed44 (already complete)
+[49/60] SKIP M2_reconstruction_awgn_k54_seed42 (already complete)
+[50/60] SKIP M2_reconstruction_awgn_k54_seed43 (already complete)
+[51/60] SKIP M2_reconstruction_awgn_k54_seed44 (already complete)
+[52/60] SKIP M2_task_awgn_k54_seed42 (already complete)
+[53/60] SKIP M2_task_awgn_k54_seed43 (already complete)
+[54/60] SKIP M2_task_awgn_k54_seed44 (already complete)
+[55/60] SKIP M2_reconstruction_rayleigh_k54_seed42 (already complete)
+[56/60] SKIP M2_reconstruction_rayleigh_k54_seed43 (already complete)
+[57/60] SKIP M2_reconstruction_rayleigh_k54_seed44 (already complete)
+[58/60] SKIP M2_task_rayleigh_k54_seed42 (already complete)
+[59/60] SKIP M2_task_rayleigh_k54_seed43 (documented conditional-accept, approved 2026-10-19; eval-only, not retrained)
+[60/60] SKIP M2_task_rayleigh_k54_seed44 (already complete)
+-- training queue finished: trained=0 skipped=60 retrained=0 failed=0 train_wall=0.0s

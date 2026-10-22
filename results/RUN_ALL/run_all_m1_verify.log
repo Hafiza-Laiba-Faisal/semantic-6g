@@ -1,0 +1,108 @@
+
+===== 2026-10-16T232046Z attempt=1 cmd=C:\Users\LENOVO\venvs\sem6g\Scripts\python.exe tools/run_step10_m1.py verify =====
+== frozen Step-9C protocol verification (Step-10 gate) ==
+PASS  [recon_steps==5000]
+PASS  [task_steps==3000]
+PASS  [task_training_T==100]
+PASS  [batch_states==4096]
+PASS  [batch_episodes==256]
+PASS  [lr==1e-3]
+PASS  [grad_clip==1.0]
+PASS  [training_snr==U(0,20)/batch]
+PASS  [seeds=={42,43,44}]
+PASS  [test_seed==10042]
+PASS  [early_stopping==disabled]
+PASS  [M5==deferred+disabled]
+PASS  [m1_eval_grid=={0,2,...,20}]
+PASS  [m1_k_values=={1,2,3}]
+PASS  [task_lambdas_frozen]
+PASS  [n_test_episodes==5000]
+PASS  [goal_radius==0.5]
+PASS  [horizon_T_max==100_dt==0.1]
+PASS  [tool_has_no_M2_M3_M4_M5_paths]  (this tool implements M1 only)
+config.validate() OK
+PASS  [workload==36_training_runs]
+PASS  [workload==198_paired_eval_units]  (396 per-method rows == 198 paired units x 2 methods)
+PASS  [pooled_eval_conditions==132]
+ALL PASS
+
+===== 2026-10-16T232215Z attempt=1 cmd=C:\Users\LENOVO\venvs\sem6g\Scripts\python.exe tools/run_step10_m1.py verify =====
+== frozen Step-9C protocol verification (Step-10 gate) ==
+PASS  [recon_steps==5000]
+PASS  [task_steps==3000]
+PASS  [task_training_T==100]
+PASS  [batch_states==4096]
+PASS  [batch_episodes==256]
+PASS  [lr==1e-3]
+PASS  [grad_clip==1.0]
+PASS  [training_snr==U(0,20)/batch]
+PASS  [seeds=={42,43,44}]
+PASS  [test_seed==10042]
+PASS  [early_stopping==disabled]
+PASS  [M5==deferred+disabled]
+PASS  [m1_eval_grid=={0,2,...,20}]
+PASS  [m1_k_values=={1,2,3}]
+PASS  [task_lambdas_frozen]
+PASS  [n_test_episodes==5000]
+PASS  [goal_radius==0.5]
+PASS  [horizon_T_max==100_dt==0.1]
+PASS  [tool_has_no_M2_M3_M4_M5_paths]  (this tool implements M1 only)
+config.validate() OK
+PASS  [workload==36_training_runs]
+PASS  [workload==198_paired_eval_units]  (396 per-method rows == 198 paired units x 2 methods)
+PASS  [pooled_eval_conditions==132]
+ALL PASS
+
+===== 2026-10-16T232420Z attempt=1 cmd=C:\Users\LENOVO\venvs\sem6g\Scripts\python.exe tools/run_step10_m1.py verify =====
+== frozen Step-9C protocol verification (Step-10 gate) ==
+PASS  [recon_steps==5000]
+PASS  [task_steps==3000]
+PASS  [task_training_T==100]
+PASS  [batch_states==4096]
+PASS  [batch_episodes==256]
+PASS  [lr==1e-3]
+PASS  [grad_clip==1.0]
+PASS  [training_snr==U(0,20)/batch]
+PASS  [seeds=={42,43,44}]
+PASS  [test_seed==10042]
+PASS  [early_stopping==disabled]
+PASS  [M5==deferred+disabled]
+PASS  [m1_eval_grid=={0,2,...,20}]
+PASS  [m1_k_values=={1,2,3}]
+PASS  [task_lambdas_frozen]
+PASS  [n_test_episodes==5000]
+PASS  [goal_radius==0.5]
+PASS  [horizon_T_max==100_dt==0.1]
+PASS  [tool_has_no_M2_M3_M4_M5_paths]  (this tool implements M1 only)
+config.validate() OK
+PASS  [workload==36_training_runs]
+PASS  [workload==198_paired_eval_units]  (396 per-method rows == 198 paired units x 2 methods)
+PASS  [pooled_eval_conditions==132]
+ALL PASS
+
+===== 2026-10-16T232454Z attempt=1 cmd=C:\Users\LENOVO\venvs\sem6g\Scripts\python.exe tools/run_step10_m1.py verify =====
+== frozen Step-9C protocol verification (Step-10 gate) ==
+PASS  [recon_steps==5000]
+PASS  [task_steps==3000]
+PASS  [task_training_T==100]
+PASS  [batch_states==4096]
+PASS  [batch_episodes==256]
+PASS  [lr==1e-3]
+PASS  [grad_clip==1.0]
+PASS  [training_snr==U(0,20)/batch]
+PASS  [seeds=={42,43,44}]
+PASS  [test_seed==10042]
+PASS  [early_stopping==disabled]
+PASS  [M5==deferred+disabled]
+PASS  [m1_eval_grid=={0,2,...,20}]
+PASS  [m1_k_values=={1,2,3}]
+PASS  [task_lambdas_frozen]
+PASS  [n_test_episodes==5000]
+PASS  [goal_radius==0.5]
+PASS  [horizon_T_max==100_dt==0.1]
+PASS  [tool_has_no_M2_M3_M4_M5_paths]  (this tool implements M1 only)
+config.validate() OK
+PASS  [workload==36_training_runs]
+PASS  [workload==198_paired_eval_units]  (396 per-method rows == 198 paired units x 2 methods)
+PASS  [pooled_eval_conditions==132]
+ALL PASS

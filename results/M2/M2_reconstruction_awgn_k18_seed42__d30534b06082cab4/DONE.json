@@ -1,1 +1,1 @@
-{"run_id": "M2_reconstruction_awgn_k18_seed42", "config_hash": "d30534b06082cab4", "finished_utc": "2026-10-06T06:52:41Z", "summary": {"wall_s": 180.0, "loss_final": 0.0026868281420320272}}
+{"run_id": "M2_reconstruction_awgn_k18_seed42", "config_hash": "d30534b06082cab4", "finished_utc": "2026-10-17T17:58:36Z", "summary": {"wall_s": 153.2, "loss_final": 0.002681056037545204}}

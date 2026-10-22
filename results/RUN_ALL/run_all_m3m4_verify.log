@@ -1,0 +1,13 @@
+
+===== 2026-10-18T173548Z attempt=1 cmd=C:\Users\LENOVO\venvs\sem6g\Scripts\python.exe tools/run_step12_m3_m4.py verify =====
+== frozen protocol verification (Step-12/13 gate) ==
+PASS  [m3_cells==k{1,2,3}_B1_dry_run]
+PASS  [m4_point==B8_k54_exact_fit]
+PASS  [m4_eval_grid==M2_grid]
+PASS  [m4_cells==2channels_x5snr_seed42]
+PASS  [n_test_episodes==5000]
+PASS  [test_seed==10042]
+PASS  [digital_K7_rate_half_gray_qpsk]
+PASS  [M5==deferred+disabled]
+config.validate() OK
+ALL PASS

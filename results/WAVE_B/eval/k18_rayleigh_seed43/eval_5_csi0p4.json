@@ -16,7 +16,7 @@
   "csi_eps_paired_across_methods": true,
   "amendment": "WAVE_B-non-frozen-CSI-ablation-2026-10-13",
   "non_frozen": true,
-  "wall_s": 4.0,
+  "wall_s": 11.7,
   "methods": [
     "reconstruction",
     "task",
@@ -24,29 +24,29 @@
   ],
   "aggregate_reconstruction": {
     "episodes": 5000,
-    "success_count": 1171,
-    "failure_count": 3829,
-    "success_rate": 0.2342,
-    "final_distance_mean": 3.7551684379577637,
-    "avg_distance_mean": 4.4120564460754395,
-    "control_effort_mean": 676.2137451171875,
-    "min_distance_mean": 1.5005561113357544,
-    "mse_mean": 0.06132035702466965,
-    "ttg_success_mean": 31.439794540405273,
+    "success_count": 1172,
+    "failure_count": 3828,
+    "success_rate": 0.2344,
+    "final_distance_mean": 3.7518258094787598,
+    "avg_distance_mean": 4.4083685874938965,
+    "control_effort_mean": 677.6707763671875,
+    "min_distance_mean": 1.5074306726455688,
+    "mse_mean": 0.061167724430561066,
+    "ttg_success_mean": 31.243173599243164,
     "ttg_success_median": 27.0
   },
   "aggregate_task": {
     "episodes": 5000,
-    "success_count": 122,
-    "failure_count": 4878,
-    "success_rate": 0.0244,
-    "final_distance_mean": 8.79169750213623,
-    "avg_distance_mean": 8.805587768554688,
-    "control_effort_mean": 759.386962890625,
-    "min_distance_mean": 6.626868724822998,
-    "mse_mean": 0.39140722155570984,
-    "ttg_success_mean": 36.057376861572266,
-    "ttg_success_median": 34.0
+    "success_count": 198,
+    "failure_count": 4802,
+    "success_rate": 0.0396,
+    "final_distance_mean": 10.269268989562988,
+    "avg_distance_mean": 8.79729175567627,
+    "control_effort_mean": 771.8070678710938,
+    "min_distance_mean": 6.409845352172852,
+    "mse_mean": 0.674721360206604,
+    "ttg_success_mean": 41.247474670410156,
+    "ttg_success_median": 32.0
   },
   "aggregate_digital": {
     "episodes": 5000,
@@ -62,17 +62,17 @@
     "ttg_success_median": 36.0
   },
   "wilson_reconstruction": {
-    "wilson_low": 0.2226682442235957,
-    "wilson_high": 0.24613986613039668,
-    "p_hat": 0.2342,
-    "success_count": 1171,
+    "wilson_low": 0.22286461769512134,
+    "wilson_high": 0.24634318557809304,
+    "p_hat": 0.2344,
+    "success_count": 1172,
     "total": 5000
   },
   "wilson_task": {
-    "wilson_low": 0.020474643506570342,
-    "wilson_high": 0.029055594583568004,
-    "p_hat": 0.0244,
-    "success_count": 122,
+    "wilson_low": 0.03453846664891083,
+    "wilson_high": 0.04536843330209778,
+    "p_hat": 0.0396,
+    "success_count": 198,
     "total": 5000
   },
   "wilson_digital": {

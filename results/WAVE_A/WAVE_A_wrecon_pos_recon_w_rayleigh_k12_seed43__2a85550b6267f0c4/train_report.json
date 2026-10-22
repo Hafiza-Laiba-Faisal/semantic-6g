@@ -1,0 +1,66 @@
+{
+  "wave_id": "WAVE_A_wrecon_pos_recon_w_rayleigh_k12_seed43",
+  "spec": {
+    "experiment": "WAVE_A",
+    "tag": "wrecon_pos",
+    "arm": "A2",
+    "method": "recon_w",
+    "channel": "rayleigh",
+    "k": 12,
+    "seed": 43,
+    "train_steps": 5000,
+    "batch_states": 4096,
+    "batch_episodes": 256,
+    "t_max": 100,
+    "lr": 0.001,
+    "grad_clip": 1.0,
+    "train_snr_policy": {
+      "distribution": "uniform",
+      "range_db": [
+        0.0,
+        20.0
+      ],
+      "granularity": "per_batch"
+    },
+    "lambdas": null,
+    "state_weights": [
+      2.0,
+      2.0,
+      1.0,
+      1.0,
+      2.0,
+      2.0
+    ],
+    "hidden": 128,
+    "eval_snr_grid_db": [
+      0.0,
+      5.0,
+      10.0,
+      15.0,
+      20.0
+    ],
+    "eval_episodes": 1000,
+    "test_seed": 10042,
+    "amendment": "WAVE_A-non-frozen-2026-10-12"
+  },
+  "wall_s": 291.5,
+  "s_per_step": 0.0583,
+  "nan_batches": 0,
+  "grads_finite": true,
+  "exit_status": "complete",
+  "checkpoint": "results\\WAVE_A\\WAVE_A_wrecon_pos_recon_w_rayleigh_k12_seed43__2a85550b6267f0c4\\final_ckpt.pt",
+  "optimizer_state_saved": false,
+  "optimizer_note": "trainer-internal optimizer not exposed (documented Step-8 limitation); wave recovery = deterministic RETRAIN by spec",
+  "loss_initial": 0.2934565544128418,
+  "loss_final": 0.0388418473303318,
+  "loss_reduction_pct": 86.76402119964642,
+  "state_weights": [
+    2.0,
+    2.0,
+    1.0,
+    1.0,
+    2.0,
+    2.0
+  ],
+  "state_weights_amendment": true
+}

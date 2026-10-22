@@ -1,0 +1,33 @@
+{
+  "STEP": "13",
+  "experiment": "M4",
+  "channel": "awgn",
+  "snr_db": 0.0,
+  "k": 54,
+  "bits_per_component": 8,
+  "test_seed": 10042,
+  "episodes": 5000,
+  "t_max": 100,
+  "secondary_reference": true,
+  "wall_s": 22.6,
+  "aggregate_digital": {
+    "episodes": 5000,
+    "success_count": 4868,
+    "failure_count": 132,
+    "success_rate": 0.9736,
+    "final_distance_mean": 0.3706873953342438,
+    "avg_distance_mean": 2.5911805629730225,
+    "control_effort_mean": 355.0855407714844,
+    "min_distance_mean": 0.16789571940898895,
+    "mse_mean": 0.08568482846021652,
+    "ttg_success_mean": 52.48870086669922,
+    "ttg_success_median": 51.0
+  },
+  "wilson_digital": {
+    "wilson_low": 0.9687794592279957,
+    "wilson_high": 0.9776933734896462,
+    "p_hat": 0.9736,
+    "success_count": 4868,
+    "total": 5000
+  }
+}

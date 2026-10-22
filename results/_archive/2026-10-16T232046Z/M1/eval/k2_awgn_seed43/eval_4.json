@@ -1,0 +1,82 @@
+{
+  "STEP": "10",
+  "experiment": "M1",
+  "unit": "k2_awgn_seed43",
+  "k": 2,
+  "channel": "awgn",
+  "seed": 43,
+  "snr_db": 4.0,
+  "test_seed": 10042,
+  "episodes": 5000,
+  "t_max": 100,
+  "paired": true,
+  "wall_s": 1.7,
+  "aggregate_reconstruction": {
+    "episodes": 5000,
+    "success_count": 1482,
+    "failure_count": 3518,
+    "success_rate": 0.2964,
+    "final_distance_mean": 3.502121925354004,
+    "avg_distance_mean": 4.243229389190674,
+    "control_effort_mean": 706.1682739257812,
+    "min_distance_mean": 1.174351692199707,
+    "mse_mean": 0.07019595801830292,
+    "ttg_success_mean": 33.288124084472656,
+    "ttg_success_median": 30.0
+  },
+  "aggregate_task": {
+    "episodes": 5000,
+    "success_count": 95,
+    "failure_count": 4905,
+    "success_rate": 0.019,
+    "final_distance_mean": 10.54749870300293,
+    "avg_distance_mean": 10.14433479309082,
+    "control_effort_mean": 774.5621337890625,
+    "min_distance_mean": 7.472011566162109,
+    "mse_mean": 0.45109662413597107,
+    "ttg_success_mean": 27.63157844543457,
+    "ttg_success_median": 24.0
+  },
+  "wilson_reconstruction": {
+    "wilson_low": 0.283902198093833,
+    "wilson_high": 0.3092104101381943,
+    "p_hat": 0.2964,
+    "success_count": 1482,
+    "total": 5000
+  },
+  "wilson_task": {
+    "wilson_low": 0.01556853405777507,
+    "wilson_high": 0.023169995213369883,
+    "p_hat": 0.019,
+    "success_count": 95,
+    "total": 5000
+  },
+  "mcnemar_task_vs_recon": {
+    "n01": 42,
+    "n10": 1429,
+    "n_pairs": 5000,
+    "chi2": 1305.9116247450713,
+    "p_value": 2.9343708904442534e-286
+  },
+  "paired_t_final_distance_task_vs_recon": {
+    "mean_diff": 7.045376292205602,
+    "t_stat": 100.01047547869702,
+    "dof": 4999,
+    "p_value": 0.0,
+    "n": 5000
+  },
+  "paired_t_avg_distance_task_vs_recon": {
+    "mean_diff": 5.901106773042679,
+    "t_stat": 109.66725374939232,
+    "dof": 4999,
+    "p_value": 0.0,
+    "n": 5000
+  },
+  "paired_t_control_effort_task_vs_recon": {
+    "mean_diff": 68.39394333801269,
+    "t_stat": 45.035623171603305,
+    "dof": 4999,
+    "p_value": 0.0,
+    "n": 5000
+  }
+}

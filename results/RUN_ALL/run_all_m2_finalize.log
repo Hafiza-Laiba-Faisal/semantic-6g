@@ -1,0 +1,12 @@
+
+===== 2026-10-18T173536Z attempt=1 cmd=C:\Users\LENOVO\venvs\sem6g\Scripts\python.exe tools/run_step11_m2.py finalize =====
+== finalize: results/M2/step11_m2_summary.json ==
+wrote results\M2\step11_m2_summary.json (60 train rows, 0 pooled rows, 0/150 units)
+
+===== 2026-10-18T173542Z attempt=2 cmd=C:\Users\LENOVO\venvs\sem6g\Scripts\python.exe tools/run_step11_m2.py finalize =====
+== finalize: results/M2/step11_m2_summary.json ==
+wrote results\M2\step11_m2_summary.json (60 train rows, 0 pooled rows, 0/150 units)
+
+===== 2026-10-19T063822Z attempt=1 cmd=C:\Users\LENOVO\.config\freebuff-desktop\no-folder\threads\f65d0493999624d4117ab3756824010b4a55de670bd3ad110bf23c6b6022da89\semantic-6g\.venv\Scripts\python.exe tools/run_step11_m2.py finalize =====
+== finalize: results/M2/step11_m2_summary.json ==
+wrote results\M2\step11_m2_summary.json (60 train rows, 150 pooled rows, 150/150 units)

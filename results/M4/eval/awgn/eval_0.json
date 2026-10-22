@@ -9,7 +9,7 @@
   "episodes": 5000,
   "t_max": 100,
   "secondary_reference": true,
-  "wall_s": 22.6,
+  "wall_s": 34.9,
   "aggregate_digital": {
     "episodes": 5000,
     "success_count": 4868,

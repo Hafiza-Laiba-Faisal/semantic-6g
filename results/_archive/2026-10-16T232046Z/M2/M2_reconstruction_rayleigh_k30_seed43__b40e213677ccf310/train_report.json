@@ -1,0 +1,39 @@
+{
+  "STEP": "11",
+  "experiment": "M2",
+  "run_id": "M2_reconstruction_rayleigh_k30_seed43",
+  "config_hash": "b40e213677ccf310",
+  "method": "reconstruction",
+  "channel": "rayleigh",
+  "k": 30,
+  "seed": 43,
+  "protocol": {
+    "train_steps": 5000,
+    "batch_states": 4096,
+    "batch_episodes": 256,
+    "t_max": 100,
+    "lr": 0.001,
+    "optimizer": "Adam",
+    "grad_clip": 1.0,
+    "train_snr_policy": {
+      "distribution": "uniform",
+      "range_db": [
+        0.0,
+        20.0
+      ],
+      "granularity": "per_batch"
+    },
+    "early_stopping": false
+  },
+  "wall_s": 166.7,
+  "s_per_step": 0.0333,
+  "nan_batches": 0,
+  "grads_finite": true,
+  "exit_status": "complete",
+  "checkpoint": "results\\M2\\M2_reconstruction_rayleigh_k30_seed43__b40e213677ccf310\\final_ckpt.pt",
+  "optimizer_state_saved": false,
+  "optimizer_note": "trainer-internal optimizer not exposed (documented Step-8 limitation); recovery is deterministic RETRAIN by seed+config (9C)",
+  "loss_initial": 0.24010320007801056,
+  "loss_final": 0.016759948804974556,
+  "loss_reduction_pct": 93.01968953369668
+}

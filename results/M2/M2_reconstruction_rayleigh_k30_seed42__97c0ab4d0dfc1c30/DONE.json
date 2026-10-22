@@ -1,1 +1,1 @@
-{"run_id": "M2_reconstruction_rayleigh_k30_seed42", "config_hash": "97c0ab4d0dfc1c30", "finished_utc": "2026-10-05T09:05:21Z", "summary": {"wall_s": 159.8, "loss_final": 0.011665289290249348}}
+{"run_id": "M2_reconstruction_rayleigh_k30_seed42", "config_hash": "97c0ab4d0dfc1c30", "finished_utc": "2026-10-18T05:21:45Z", "summary": {"wall_s": 315.7, "loss_final": 0.011652855202555656}}

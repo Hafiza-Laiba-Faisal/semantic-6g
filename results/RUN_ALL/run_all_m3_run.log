@@ -1,0 +1,9 @@
+
+===== 2026-10-18T173555Z attempt=1 cmd=C:\Users\LENOVO\venvs\sem6g\Scripts\python.exe tools/run_step12_m3_m4.py run-m3 =====
+== M3: digital infeasibility display cells (k in {1,2,3}) ==
+  PASS k=1: needs 12 uses, has 1 -> deficit 11 (infeasible-by-design)
+  PASS k=2: needs 12 uses, has 2 -> deficit 10 (infeasible-by-design)
+  PASS k=3: needs 12 uses, has 3 -> deficit 9 (infeasible-by-design)
+PASS  [all-three-m3-cells-infeasible]
+PASS  [all-m2-digital-points-feasible]
+wrote results\M3\m3_report.json (3 display cells)

@@ -1,0 +1,4 @@
+
+===== 2026-10-20T130239Z attempt=1 cmd=C:\Users\LENOVO\.config\freebuff-desktop\no-folder\threads\f65d0493999624d4117ab3756824010b4a55de670bd3ad110bf23c6b6022da89\semantic-6g\.venv\Scripts\python.exe tools/run_wave_a.py finalize =====
+== finalize: results/WAVE_A/step_wave_a_summary.json ==
+wrote results\WAVE_A\step_wave_a_summary.json (46 train rows, 0 pooled tag-rows, 0/90 eval slots, train done/failed/missing=44/2/0)

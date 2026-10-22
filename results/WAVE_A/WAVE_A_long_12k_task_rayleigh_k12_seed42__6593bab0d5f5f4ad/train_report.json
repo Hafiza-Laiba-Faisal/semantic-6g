@@ -1,0 +1,59 @@
+{
+  "wave_id": "WAVE_A_long_12k_task_rayleigh_k12_seed42",
+  "spec": {
+    "experiment": "WAVE_A",
+    "tag": "long_12k",
+    "arm": "A4",
+    "method": "task",
+    "channel": "rayleigh",
+    "k": 12,
+    "seed": 42,
+    "train_steps": 12000,
+    "batch_states": 4096,
+    "batch_episodes": 256,
+    "t_max": 100,
+    "lr": 0.001,
+    "grad_clip": 1.0,
+    "train_snr_policy": {
+      "distribution": "uniform",
+      "range_db": [
+        0.0,
+        20.0
+      ],
+      "granularity": "per_batch"
+    },
+    "lambdas": null,
+    "state_weights": null,
+    "hidden": 128,
+    "eval_snr_grid_db": [
+      0.0,
+      5.0,
+      10.0,
+      15.0,
+      20.0
+    ],
+    "eval_episodes": 1000,
+    "test_seed": 10042,
+    "amendment": "WAVE_A-non-frozen-2026-10-12"
+  },
+  "wall_s": 10747.1,
+  "s_per_step": 0.8956,
+  "nan_batches": 0,
+  "grads_finite": true,
+  "exit_status": "complete",
+  "checkpoint": "results\\WAVE_A\\WAVE_A_long_12k_task_rayleigh_k12_seed42__6593bab0d5f5f4ad\\final_ckpt.pt",
+  "optimizer_state_saved": false,
+  "optimizer_note": "trainer-internal optimizer not exposed (documented Step-8 limitation); wave recovery = deterministic RETRAIN by spec",
+  "task_loss_initial": 3891.83447265625,
+  "task_loss_final": 504.8598327636719,
+  "recon_mse_diag_initial": 0.2399325966835022,
+  "recon_mse_diag_final": 5085.25,
+  "eval_after_success_rate": 0.04296875,
+  "lambdas": {
+    "ld": 1.0,
+    "lu": 0.0,
+    "lv": 0.0,
+    "lT": 2.0
+  },
+  "lambdas_amendment": false
+}

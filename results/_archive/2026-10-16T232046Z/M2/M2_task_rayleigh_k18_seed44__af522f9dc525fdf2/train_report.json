@@ -1,0 +1,47 @@
+{
+  "STEP": "11",
+  "experiment": "M2",
+  "run_id": "M2_task_rayleigh_k18_seed44",
+  "config_hash": "af522f9dc525fdf2",
+  "method": "task",
+  "channel": "rayleigh",
+  "k": 18,
+  "seed": 44,
+  "protocol": {
+    "train_steps": 3000,
+    "batch_states": 4096,
+    "batch_episodes": 256,
+    "t_max": 100,
+    "lr": 0.001,
+    "optimizer": "Adam",
+    "grad_clip": 1.0,
+    "train_snr_policy": {
+      "distribution": "uniform",
+      "range_db": [
+        0.0,
+        20.0
+      ],
+      "granularity": "per_batch"
+    },
+    "early_stopping": false
+  },
+  "wall_s": 1739.4,
+  "s_per_step": 0.5798,
+  "nan_batches": 0,
+  "grads_finite": true,
+  "exit_status": "complete",
+  "checkpoint": "results\\M2\\M2_task_rayleigh_k18_seed44__af522f9dc525fdf2\\final_ckpt.pt",
+  "optimizer_state_saved": false,
+  "optimizer_note": "trainer-internal optimizer not exposed (documented Step-8 limitation); recovery is deterministic RETRAIN by seed+config (9C)",
+  "task_loss_initial": 5178.86669921875,
+  "task_loss_final": 180.06988525390625,
+  "recon_mse_diag_initial": 0.2392447590827942,
+  "recon_mse_diag_final": 70.58602142333984,
+  "eval_after_success_rate": 0.04296875,
+  "lambdas": {
+    "ld": 1.0,
+    "lu": 0.0,
+    "lv": 0.0,
+    "lT": 2.0
+  }
+}

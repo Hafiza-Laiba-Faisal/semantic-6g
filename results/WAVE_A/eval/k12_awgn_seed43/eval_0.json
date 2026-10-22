@@ -1,0 +1,76 @@
+{
+  "STEP": "WAVE_A",
+  "experiment": "WAVE_A",
+  "unit": "k12_awgn_seed43",
+  "k": 12,
+  "channel": "awgn",
+  "seed": 43,
+  "snr_db": 0.0,
+  "test_seed": 10042,
+  "episodes": 1000,
+  "t_max": 100,
+  "paired_reference": "frozen M1/M2 realizations not reused; wave evals are self-paired (same episodes within unit, across tags)",
+  "protocol_note": "Wave-A diagnostic protocol: E=1000, non-frozen amendment 2026-10-12; NOT comparable 1:1 to frozen M1/M2 (E=5000)",
+  "non_frozen": true,
+  "wall_s": 2.6,
+  "aggregate_lam_ctl_light": {
+    "episodes": 1000,
+    "success_count": 991,
+    "failure_count": 9,
+    "success_rate": 0.991,
+    "final_distance_mean": 0.10252805054187775,
+    "avg_distance_mean": 2.053596258163452,
+    "control_effort_mean": 366.9768371582031,
+    "min_distance_mean": 0.06341518461704254,
+    "mse_mean": 0.22905860841274261,
+    "ttg_success_mean": 33.04036331176758,
+    "ttg_success_median": 33.0
+  },
+  "aggregate_lam_ctl_heavy": {
+    "episodes": 1000,
+    "success_count": 997,
+    "failure_count": 3,
+    "success_rate": 0.997,
+    "final_distance_mean": 0.0663159191608429,
+    "avg_distance_mean": 2.0267140865325928,
+    "control_effort_mean": 263.73736572265625,
+    "min_distance_mean": 0.03484167903661728,
+    "mse_mean": 0.2232626974582672,
+    "ttg_success_mean": 33.524574279785156,
+    "ttg_success_median": 33.0
+  },
+  "aggregate_wrecon_pos": {
+    "episodes": 1000,
+    "success_count": 250,
+    "failure_count": 750,
+    "success_rate": 0.25,
+    "final_distance_mean": 3.672961473464966,
+    "avg_distance_mean": 4.321296215057373,
+    "control_effort_mean": 683.401611328125,
+    "min_distance_mean": 1.4294543266296387,
+    "mse_mean": 0.05563560128211975,
+    "ttg_success_mean": 30.695999145507812,
+    "ttg_success_median": 26.0
+  },
+  "wilson_lam_ctl_light": {
+    "wilson_low": 0.982984183834662,
+    "wilson_high": 0.9952579393325229,
+    "p_hat": 0.991,
+    "success_count": 991,
+    "total": 1000
+  },
+  "wilson_lam_ctl_heavy": {
+    "wilson_low": 0.9912169859464969,
+    "wilson_high": 0.9989792161188614,
+    "p_hat": 0.997,
+    "success_count": 997,
+    "total": 1000
+  },
+  "wilson_wrecon_pos": {
+    "wilson_low": 0.2241530989836914,
+    "wilson_high": 0.27776028025908617,
+    "p_hat": 0.25,
+    "success_count": 250,
+    "total": 1000
+  }
+}

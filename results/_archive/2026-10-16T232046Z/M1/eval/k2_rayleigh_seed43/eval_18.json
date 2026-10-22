@@ -1,0 +1,82 @@
+{
+  "STEP": "10",
+  "experiment": "M1",
+  "unit": "k2_rayleigh_seed43",
+  "k": 2,
+  "channel": "rayleigh",
+  "seed": 43,
+  "snr_db": 18.0,
+  "test_seed": 10042,
+  "episodes": 5000,
+  "t_max": 100,
+  "paired": true,
+  "wall_s": 1.6,
+  "aggregate_reconstruction": {
+    "episodes": 5000,
+    "success_count": 1138,
+    "failure_count": 3862,
+    "success_rate": 0.2276,
+    "final_distance_mean": 3.5837666988372803,
+    "avg_distance_mean": 4.300346851348877,
+    "control_effort_mean": 674.8792724609375,
+    "min_distance_mean": 1.5034494400024414,
+    "mse_mean": 0.05373270437121391,
+    "ttg_success_mean": 31.130931854248047,
+    "ttg_success_median": 26.0
+  },
+  "aggregate_task": {
+    "episodes": 5000,
+    "success_count": 85,
+    "failure_count": 4915,
+    "success_rate": 0.017,
+    "final_distance_mean": 11.281048774719238,
+    "avg_distance_mean": 10.254199981689453,
+    "control_effort_mean": 772.7777099609375,
+    "min_distance_mean": 7.688248634338379,
+    "mse_mean": 0.5301932692527771,
+    "ttg_success_mean": 32.37647247314453,
+    "ttg_success_median": 33.0
+  },
+  "wilson_reconstruction": {
+    "wilson_low": 0.21618998336703324,
+    "wilson_high": 0.23942826065263392,
+    "p_hat": 0.2276,
+    "success_count": 1138,
+    "total": 5000
+  },
+  "wilson_task": {
+    "wilson_low": 0.013769889061235687,
+    "wilson_high": 0.020971711017689503,
+    "p_hat": 0.017,
+    "success_count": 85,
+    "total": 5000
+  },
+  "mcnemar_task_vs_recon": {
+    "n01": 47,
+    "n10": 1100,
+    "n_pairs": 5000,
+    "chi2": 964.868352223191,
+    "p_value": 3.8880023698361e-212
+  },
+  "paired_t_final_distance_task_vs_recon": {
+    "mean_diff": 7.6972821700945495,
+    "t_stat": 107.00965710130318,
+    "dof": 4999,
+    "p_value": 0.0,
+    "n": 5000
+  },
+  "paired_t_avg_distance_task_vs_recon": {
+    "mean_diff": 5.953852422511577,
+    "t_stat": 111.94601586733936,
+    "dof": 4999,
+    "p_value": 0.0,
+    "n": 5000
+  },
+  "paired_t_control_effort_task_vs_recon": {
+    "mean_diff": 97.89842563781738,
+    "t_stat": 57.526900783561295,
+    "dof": 4999,
+    "p_value": 0.0,
+    "n": 5000
+  }
+}

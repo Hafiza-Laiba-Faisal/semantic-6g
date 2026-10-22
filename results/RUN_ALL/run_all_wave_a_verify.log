@@ -1,0 +1,36 @@
+
+===== 2026-10-18T174208Z attempt=1 cmd=C:\Users\LENOVO\venvs\sem6g\Scripts\python.exe tools/run_wave_a.py verify =====
+== Wave-A governance gate (frozen infra assumptions) ==
+PASS  [frozen_9C_intact]  (config.py defaults unchanged)
+PASS  [frozen_M1_artifacts_present]  (36 training runs)
+FAIL  [frozen_M2_artifacts_present]  (>=58 of 60 training runs (2 conditional-accept))
+PASS  [task_trainer_has_lambdas]
+PASS  [recon_trainer_has_state_weights]
+PASS  [M2_round_never_touched_by_wave_roots]  (results\WAVE_A)
+PASS  [wave_ids_cannot_collide_with_frozen]
+PASS  [frozen_identity_fn_untouched_fingerprint]
+1 FAILURES: ['frozen_M2_artifacts_present']
+
+===== 2026-10-18T174214Z attempt=2 cmd=C:\Users\LENOVO\venvs\sem6g\Scripts\python.exe tools/run_wave_a.py verify =====
+== Wave-A governance gate (frozen infra assumptions) ==
+PASS  [frozen_9C_intact]  (config.py defaults unchanged)
+PASS  [frozen_M1_artifacts_present]  (36 training runs)
+FAIL  [frozen_M2_artifacts_present]  (>=58 of 60 training runs (2 conditional-accept))
+PASS  [task_trainer_has_lambdas]
+PASS  [recon_trainer_has_state_weights]
+PASS  [M2_round_never_touched_by_wave_roots]  (results\WAVE_A)
+PASS  [wave_ids_cannot_collide_with_frozen]
+PASS  [frozen_identity_fn_untouched_fingerprint]
+1 FAILURES: ['frozen_M2_artifacts_present']
+
+===== 2026-10-19T063830Z attempt=1 cmd=C:\Users\LENOVO\.config\freebuff-desktop\no-folder\threads\f65d0493999624d4117ab3756824010b4a55de670bd3ad110bf23c6b6022da89\semantic-6g\.venv\Scripts\python.exe tools/run_wave_a.py verify =====
+== Wave-A governance gate (frozen infra assumptions) ==
+PASS  [frozen_9C_intact]  (config.py defaults unchanged)
+PASS  [frozen_M1_artifacts_present]  (36 training runs)
+PASS  [frozen_M2_artifacts_present]  (56 done + 4 conditional-accept >=58 of 60 training runs)
+PASS  [task_trainer_has_lambdas]
+PASS  [recon_trainer_has_state_weights]
+PASS  [M2_round_never_touched_by_wave_roots]  (results\WAVE_A)
+PASS  [wave_ids_cannot_collide_with_frozen]
+PASS  [frozen_identity_fn_untouched_fingerprint]
+ALL PASS

@@ -25,8 +25,8 @@
     },
     "early_stopping": false
   },
-  "wall_s": 212.1,
-  "s_per_step": 0.0424,
+  "wall_s": 218.2,
+  "s_per_step": 0.0436,
   "nan_batches": 0,
   "grads_finite": true,
   "exit_status": "complete",
@@ -34,6 +34,6 @@
   "optimizer_state_saved": false,
   "optimizer_note": "trainer-internal optimizer not exposed (documented Step-8 limitation); recovery is deterministic RETRAIN by seed+config (9C)",
   "loss_initial": 0.23693856596946716,
-  "loss_final": 0.0015741115203127265,
-  "loss_reduction_pct": 99.33564571311048
+  "loss_final": 0.0015788229648023844,
+  "loss_reduction_pct": 99.33365724640798
 }

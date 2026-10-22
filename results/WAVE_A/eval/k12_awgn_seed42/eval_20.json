@@ -1,0 +1,116 @@
+{
+  "STEP": "WAVE_A",
+  "experiment": "WAVE_A",
+  "unit": "k12_awgn_seed42",
+  "k": 12,
+  "channel": "awgn",
+  "seed": 42,
+  "snr_db": 20.0,
+  "test_seed": 10042,
+  "episodes": 1000,
+  "t_max": 100,
+  "paired_reference": "frozen M1/M2 realizations not reused; wave evals are self-paired (same episodes within unit, across tags)",
+  "protocol_note": "Wave-A diagnostic protocol: E=1000, non-frozen amendment 2026-10-12; NOT comparable 1:1 to frozen M1/M2 (E=5000)",
+  "non_frozen": true,
+  "wall_s": 4.4,
+  "aggregate_lam_ctl_light": {
+    "episodes": 1000,
+    "success_count": 996,
+    "failure_count": 4,
+    "success_rate": 0.996,
+    "final_distance_mean": 0.0882401093840599,
+    "avg_distance_mean": 2.026686191558838,
+    "control_effort_mean": 286.9504699707031,
+    "min_distance_mean": 0.05731700733304024,
+    "mse_mean": 0.22221703827381134,
+    "ttg_success_mean": 32.819278717041016,
+    "ttg_success_median": 33.0
+  },
+  "aggregate_lam_ctl_heavy": {
+    "episodes": 1000,
+    "success_count": 997,
+    "failure_count": 3,
+    "success_rate": 0.997,
+    "final_distance_mean": 0.06410301476716995,
+    "avg_distance_mean": 2.016829490661621,
+    "control_effort_mean": 232.50343322753906,
+    "min_distance_mean": 0.04119573161005974,
+    "mse_mean": 0.2195415496826172,
+    "ttg_success_mean": 33.57672882080078,
+    "ttg_success_median": 34.0
+  },
+  "aggregate_wrecon_pos": {
+    "episodes": 1000,
+    "success_count": 266,
+    "failure_count": 734,
+    "success_rate": 0.266,
+    "final_distance_mean": 3.49372935295105,
+    "avg_distance_mean": 4.287879943847656,
+    "control_effort_mean": 653.170654296875,
+    "min_distance_mean": 1.5383490324020386,
+    "mse_mean": 0.04391901567578316,
+    "ttg_success_mean": 35.135337829589844,
+    "ttg_success_median": 28.0
+  },
+  "aggregate_fixsnr_10db": {
+    "episodes": 1000,
+    "success_count": 52,
+    "failure_count": 948,
+    "success_rate": 0.052,
+    "final_distance_mean": 8.694218635559082,
+    "avg_distance_mean": 8.460869789123535,
+    "control_effort_mean": 770.8345947265625,
+    "min_distance_mean": 6.0954437255859375,
+    "mse_mean": 0.6157572865486145,
+    "ttg_success_mean": 32.57692337036133,
+    "ttg_success_median": 27.0
+  },
+  "aggregate_caps_h256": {
+    "episodes": 1000,
+    "success_count": 28,
+    "failure_count": 972,
+    "success_rate": 0.028,
+    "final_distance_mean": 8.79992961883545,
+    "avg_distance_mean": 8.639162063598633,
+    "control_effort_mean": 766.5057373046875,
+    "min_distance_mean": 7.014470100402832,
+    "mse_mean": 0.5705097913742065,
+    "ttg_success_mean": 29.678571701049805,
+    "ttg_success_median": 27.0
+  },
+  "wilson_lam_ctl_light": {
+    "wilson_low": 0.9897604437227377,
+    "wilson_high": 0.9984434118595916,
+    "p_hat": 0.996,
+    "success_count": 996,
+    "total": 1000
+  },
+  "wilson_lam_ctl_heavy": {
+    "wilson_low": 0.9912169859464969,
+    "wilson_high": 0.9989792161188614,
+    "p_hat": 0.997,
+    "success_count": 997,
+    "total": 1000
+  },
+  "wilson_wrecon_pos": {
+    "wilson_low": 0.23954672321443168,
+    "wilson_high": 0.29424419975680804,
+    "p_hat": 0.266,
+    "success_count": 266,
+    "total": 1000
+  },
+  "wilson_fixsnr_10db": {
+    "wilson_low": 0.03987303628377742,
+    "wilson_high": 0.06755573931927998,
+    "p_hat": 0.052,
+    "success_count": 52,
+    "total": 1000
+  },
+  "wilson_caps_h256": {
+    "wilson_low": 0.019442276812770925,
+    "wilson_high": 0.04017018319759311,
+    "p_hat": 0.028,
+    "success_count": 28,
+    "total": 1000
+  }
+}

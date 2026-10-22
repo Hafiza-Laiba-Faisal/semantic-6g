@@ -1,0 +1,63 @@
+
+===== 2026-10-18T173524Z attempt=1 cmd=C:\Users\LENOVO\venvs\sem6g\Scripts\python.exe tools/run_step11_m2.py validate =====
+== M2 completion validation ==
+PASS  [60-unique-identities]
+FAIL  [60-training-runs-complete]  (56/60)
+PASS  [methods==reconstruction,task]
+PASS  [k=={12,18,24,30,54}]
+PASS  [channels==awgn,rayleigh]
+PASS  [seeds=={42,43,44}]
+PASS  [no-m1-m3-m4-m5-cells]
+FAIL  [150-eval-units-complete]  (missing=['k12_awgn_seed42@0', 'k12_awgn_seed42@5', 'k12_awgn_seed42@10', 'k12_awgn_seed42@15', 'k12_awgn_seed42@20', 'k12_awgn_seed43@0']...)
+PASS  [episodes==5000-test-seed==10042-everywhere]
+PASS  [paired-true-everywhere]
+PASS  [three-methods-in-every-unit]
+FAIL  [150-pooled-eval-conditions]  (0)
+PASS  [3-seeds-per-pooled-cell]
+PASS  [matrix-expected-M2-counts]
+PASS  [frozen-matrix-proposal-valid]  (warnings=3)
+PASS  [all-methods-in-every-unit]
+PASS  [m1-intact-36-train-198-eval]  (train=36/36 eval=198/198 summary=complete)
+3 FAILURES: ['60-training-runs-complete', '150-eval-units-complete', '150-pooled-eval-conditions']
+
+===== 2026-10-18T173530Z attempt=2 cmd=C:\Users\LENOVO\venvs\sem6g\Scripts\python.exe tools/run_step11_m2.py validate =====
+== M2 completion validation ==
+PASS  [60-unique-identities]
+FAIL  [60-training-runs-complete]  (56/60)
+PASS  [methods==reconstruction,task]
+PASS  [k=={12,18,24,30,54}]
+PASS  [channels==awgn,rayleigh]
+PASS  [seeds=={42,43,44}]
+PASS  [no-m1-m3-m4-m5-cells]
+FAIL  [150-eval-units-complete]  (missing=['k12_awgn_seed42@0', 'k12_awgn_seed42@5', 'k12_awgn_seed42@10', 'k12_awgn_seed42@15', 'k12_awgn_seed42@20', 'k12_awgn_seed43@0']...)
+PASS  [episodes==5000-test-seed==10042-everywhere]
+PASS  [paired-true-everywhere]
+PASS  [three-methods-in-every-unit]
+FAIL  [150-pooled-eval-conditions]  (0)
+PASS  [3-seeds-per-pooled-cell]
+PASS  [matrix-expected-M2-counts]
+PASS  [frozen-matrix-proposal-valid]  (warnings=3)
+PASS  [all-methods-in-every-unit]
+PASS  [m1-intact-36-train-198-eval]  (train=36/36 eval=198/198 summary=complete)
+3 FAILURES: ['60-training-runs-complete', '150-eval-units-complete', '150-pooled-eval-conditions']
+
+===== 2026-10-19T063815Z attempt=1 cmd=C:\Users\LENOVO\.config\freebuff-desktop\no-folder\threads\f65d0493999624d4117ab3756824010b4a55de670bd3ad110bf23c6b6022da89\semantic-6g\.venv\Scripts\python.exe tools/run_step11_m2.py validate =====
+== M2 completion validation ==
+PASS  [60-unique-identities]
+PASS  [60-training-runs-complete]  (56 complete + 4 conditional-accept (documented 2026-10-19))
+PASS  [methods==reconstruction,task]
+PASS  [k=={12,18,24,30,54}]
+PASS  [channels==awgn,rayleigh]
+PASS  [seeds=={42,43,44}]
+PASS  [no-m1-m3-m4-m5-cells]
+PASS  [150-eval-units-complete]  (missing=[])
+PASS  [episodes==5000-test-seed==10042-everywhere]
+PASS  [paired-true-everywhere]
+PASS  [three-methods-in-every-unit]
+PASS  [150-pooled-eval-conditions]  (150)
+PASS  [3-seeds-per-pooled-cell]
+PASS  [matrix-expected-M2-counts]
+PASS  [frozen-matrix-proposal-valid]  (warnings=3)
+PASS  [all-methods-in-every-unit]
+PASS  [m1-intact-36-train-198-eval]  (train=36/36 eval=198/198 summary=complete)
+ALL PASS

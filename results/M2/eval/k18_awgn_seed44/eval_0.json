@@ -16,32 +16,32 @@
     "task",
     "digital"
   ],
-  "wall_s": 4.7,
+  "wall_s": 10.2,
   "aggregate_reconstruction": {
     "episodes": 5000,
-    "success_count": 1288,
-    "failure_count": 3712,
-    "success_rate": 0.2576,
-    "final_distance_mean": 3.6096019744873047,
-    "avg_distance_mean": 4.288018703460693,
-    "control_effort_mean": 673.9326782226562,
-    "min_distance_mean": 1.431428074836731,
-    "mse_mean": 0.05080777779221535,
-    "ttg_success_mean": 31.443323135375977,
+    "success_count": 1296,
+    "failure_count": 3704,
+    "success_rate": 0.2592,
+    "final_distance_mean": 3.606157064437866,
+    "avg_distance_mean": 4.2876362800598145,
+    "control_effort_mean": 673.75439453125,
+    "min_distance_mean": 1.429199457168579,
+    "mse_mean": 0.05086814984679222,
+    "ttg_success_mean": 31.54938316345215,
     "ttg_success_median": 26.0
   },
   "aggregate_task": {
     "episodes": 5000,
-    "success_count": 384,
-    "failure_count": 4616,
-    "success_rate": 0.0768,
-    "final_distance_mean": 8.681356430053711,
-    "avg_distance_mean": 7.5496087074279785,
-    "control_effort_mean": 778.44189453125,
-    "min_distance_mean": 5.296308517456055,
-    "mse_mean": 0.7877088189125061,
-    "ttg_success_mean": 56.02604293823242,
-    "ttg_success_median": 59.0
+    "success_count": 94,
+    "failure_count": 4906,
+    "success_rate": 0.0188,
+    "final_distance_mean": 10.643906593322754,
+    "avg_distance_mean": 10.268610954284668,
+    "control_effort_mean": 774.781005859375,
+    "min_distance_mean": 7.681432723999023,
+    "mse_mean": 0.40164145827293396,
+    "ttg_success_mean": 26.26595687866211,
+    "ttg_success_median": 25.0
   },
   "aggregate_digital": {
     "episodes": 5000,
@@ -57,17 +57,17 @@
     "ttg_success_median": 34.0
   },
   "wilson_reconstruction": {
-    "wilson_low": 0.24566785389045254,
-    "wilson_high": 0.2699043280125112,
-    "p_hat": 0.2576,
-    "success_count": 1288,
+    "wilson_low": 0.24724218007696414,
+    "wilson_high": 0.27152754517977545,
+    "p_hat": 0.2592,
+    "success_count": 1296,
     "total": 5000
   },
   "wilson_task": {
-    "wilson_low": 0.0697399761946566,
-    "wilson_high": 0.08450980673163974,
-    "p_hat": 0.0768,
-    "success_count": 384,
+    "wilson_low": 0.015388157833120277,
+    "wilson_high": 0.022950678518802708,
+    "p_hat": 0.0188,
+    "success_count": 94,
     "total": 5000
   },
   "wilson_digital": {
@@ -78,87 +78,87 @@
     "total": 5000
   },
   "mcnemar_task_vs_reconstruction": {
-    "n01": 196,
-    "n10": 1100,
+    "n01": 24,
+    "n10": 1226,
     "n_pairs": 5000,
-    "chi2": 629.1736111111111,
-    "p_value": 7.560552601752482e-139
+    "chi2": 1153.9208,
+    "p_value": 6.30606599735647e-253
   },
   "paired_t_final_distance_task_vs_reconstruction": {
-    "mean_diff": 5.071754825637489,
-    "t_stat": 67.44547274954442,
+    "mean_diff": 7.03774828430973,
+    "t_stat": 101.83854481382066,
     "dof": 4999,
     "p_value": 0.0,
     "n": 5000
   },
   "paired_t_avg_distance_task_vs_reconstruction": {
-    "mean_diff": 3.2615892714858057,
-    "t_stat": 64.6286470512943,
+    "mean_diff": 5.980974899184704,
+    "t_stat": 111.96886494577507,
     "dof": 4999,
     "p_value": 0.0,
     "n": 5000
   },
   "paired_t_control_effort_task_vs_reconstruction": {
-    "mean_diff": 104.50921315307617,
-    "t_stat": 66.87737442018344,
+    "mean_diff": 101.02668649902344,
+    "t_stat": 56.517471854538194,
     "dof": 4999,
     "p_value": 0.0,
     "n": 5000
   },
   "mcnemar_task_vs_digital": {
-    "n01": 305,
-    "n10": 741,
+    "n01": 68,
+    "n10": 794,
     "n_pairs": 5000,
-    "chi2": 180.90344168260037,
-    "p_value": 3.0772658329191635e-41
+    "chi2": 609.7737819025522,
+    "p_value": 1.2530027306018172e-134
   },
   "paired_t_final_distance_task_vs_digital": {
-    "mean_diff": 6.323102747773752,
-    "t_stat": 91.3437501897805,
+    "mean_diff": 8.285651159191504,
+    "t_stat": 132.02347532130887,
     "dof": 4999,
     "p_value": 0.0,
     "n": 5000
   },
   "paired_t_avg_distance_task_vs_digital": {
-    "mean_diff": 3.8566687418103216,
-    "t_stat": 80.60043818186136,
+    "mean_diff": 6.5756714117050175,
+    "t_stat": 130.0489027156256,
     "dof": 4999,
     "p_value": 0.0,
     "n": 5000
   },
   "paired_t_control_effort_task_vs_digital": {
-    "mean_diff": 36.84608587341309,
-    "t_stat": 23.760349440667827,
+    "mean_diff": 33.185228494262695,
+    "t_stat": 19.721528938847232,
     "dof": 4999,
-    "p_value": 2.5049651628801556e-118,
+    "p_value": 1.9482035501536998e-83,
     "n": 5000
   },
   "mcnemar_reconstruction_vs_digital": {
-    "n01": 995,
-    "n10": 527,
+    "n01": 1006,
+    "n10": 530,
     "n_pairs": 5000,
-    "chi2": 143.2910643889619,
-    "p_value": 5.076817023148401e-33
+    "chi2": 146.89127604166666,
+    "p_value": 8.28893784382513e-34
   },
   "paired_t_final_distance_reconstruction_vs_digital": {
-    "mean_diff": 1.251347922136262,
-    "t_stat": 42.35501101083439,
+    "mean_diff": 1.2479028748817742,
+    "t_stat": 42.46458300438483,
     "dof": 4999,
     "p_value": 0.0,
     "n": 5000
   },
   "paired_t_avg_distance_reconstruction_vs_digital": {
-    "mean_diff": 0.5950794703245162,
-    "t_stat": 31.787901239010655,
+    "mean_diff": 0.5946965125203133,
+    "t_stat": 31.9316260996363,
     "dof": 4999,
-    "p_value": 3.9488809599720526e-202,
+    "p_value": 8.746641637097823e-204,
     "n": 5000
   },
   "paired_t_control_effort_reconstruction_vs_digital": {
-    "mean_diff": -67.66312727966309,
-    "t_stat": -35.15486514384978,
+    "mean_diff": -67.84145800476074,
+    "t_stat": -35.24627456706289,
     "dof": 4999,
-    "p_value": 3.906714588895514e-242,
+    "p_value": 2.9584684534099185e-243,
     "n": 5000
   }
 }

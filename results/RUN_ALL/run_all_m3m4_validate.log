@@ -1,0 +1,9 @@
+
+===== 2026-10-18T174156Z attempt=1 cmd=C:\Users\LENOVO\venvs\sem6g\Scripts\python.exe tools/run_step12_m3_m4.py validate =====
+== M3/M4 completion validation ==
+PASS  [m3-report-exists]
+PASS  [m3-three-infeasible-cells]
+PASS  [m4-10-eval-units-complete]  (missing=[])
+PASS  [m4-episodes==5000-test-seed==10042-secondary]
+PASS  [m1-intact]
+ALL PASS

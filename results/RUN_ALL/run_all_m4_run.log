@@ -1,0 +1,14 @@
+
+===== 2026-10-18T173601Z attempt=1 cmd=C:\Users\LENOVO\venvs\sem6g\Scripts\python.exe tools/run_step12_m3_m4.py run-m4 =====
+== M4: secondary digital reference (B=8, k=54) — 10 conditions ==
+  EVAL awgn snr=  0.0 SR digital=0.9736 (34.9s)
+  EVAL awgn snr=  5.0 SR digital=1.0000 (35.4s)
+  EVAL awgn snr= 10.0 SR digital=1.0000 (35.4s)
+  EVAL awgn snr= 15.0 SR digital=1.0000 (34.6s)
+  EVAL awgn snr= 20.0 SR digital=1.0000 (35.3s)
+  EVAL rayleigh snr=  0.0 SR digital=0.7178 (32.4s)
+  EVAL rayleigh snr=  5.0 SR digital=0.9908 (35.1s)
+  EVAL rayleigh snr= 10.0 SR digital=0.9984 (34.4s)
+  EVAL rayleigh snr= 15.0 SR digital=0.9998 (35.0s)
+  EVAL rayleigh snr= 20.0 SR digital=1.0000 (35.8s)
+-- M4 eval finished: 10 new this session, 10/10 complete, eval_wall=348.2s

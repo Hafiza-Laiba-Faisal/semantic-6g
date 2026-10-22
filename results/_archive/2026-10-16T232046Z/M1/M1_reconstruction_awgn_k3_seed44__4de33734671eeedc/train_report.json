@@ -1,0 +1,39 @@
+{
+  "STEP": "10",
+  "experiment": "M1",
+  "run_id": "M1_reconstruction_awgn_k3_seed44",
+  "config_hash": "4de33734671eeedc",
+  "method": "reconstruction",
+  "channel": "awgn",
+  "k": 3,
+  "seed": 44,
+  "protocol": {
+    "train_steps": 5000,
+    "batch_states": 4096,
+    "batch_episodes": 256,
+    "t_max": 100,
+    "lr": 0.001,
+    "optimizer": "Adam",
+    "grad_clip": 1.0,
+    "train_snr_policy": {
+      "distribution": "uniform",
+      "range_db": [
+        0.0,
+        20.0
+      ],
+      "granularity": "per_batch"
+    },
+    "early_stopping": false
+  },
+  "wall_s": 69.5,
+  "s_per_step": 0.0139,
+  "nan_batches": 0,
+  "grads_finite": true,
+  "exit_status": "complete",
+  "checkpoint": "results/M1/M1_reconstruction_awgn_k3_seed44__4de33734671eeedc/final_ckpt.pt",
+  "optimizer_state_saved": false,
+  "optimizer_note": "trainer-internal optimizer not exposed (documented Step-8 limitation); recovery is deterministic RETRAIN by seed+config (9C)",
+  "loss_initial": 0.24118612706661224,
+  "loss_final": 0.031736839562654495,
+  "loss_reduction_pct": 86.84134948031682
+}

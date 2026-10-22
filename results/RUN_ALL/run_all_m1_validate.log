@@ -1,0 +1,20 @@
+
+===== 2026-10-17T124835Z attempt=1 cmd=C:\Users\LENOVO\venvs\sem6g\Scripts\python.exe tools/run_step10_m1.py validate =====
+== M1 completion validation ==
+PASS  [36-unique-identities]
+PASS  [36-training-runs-complete]  (36/36)
+PASS  [methods==reconstruction,task]
+PASS  [k=={1,2,3}]
+PASS  [channels==awgn,rayleigh]
+PASS  [seeds=={42,43,44}]
+PASS  [no-digital-cells]
+PASS  [no-m2-m3-m4-m5-cells]
+PASS  [198-eval-units-complete]  (missing=[])
+PASS  [episodes==5000-test-seed==10042-everywhere]
+PASS  [paired-true-everywhere]
+PASS  [132-pooled-eval-conditions]  (132)
+PASS  [3-seeds-per-pooled-cell]
+PASS  [matrix-expected-M1-counts]
+PASS  [frozen-matrix-proposal-valid]  (warnings=3)
+PASS  [both-methods-in-every-unit]
+ALL PASS

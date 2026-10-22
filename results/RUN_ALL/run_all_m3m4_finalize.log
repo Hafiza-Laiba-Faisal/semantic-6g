@@ -1,0 +1,4 @@
+
+===== 2026-10-18T174202Z attempt=1 cmd=C:\Users\LENOVO\venvs\sem6g\Scripts\python.exe tools/run_step12_m3_m4.py finalize =====
+== finalize: results/M4/step13_m4_summary.json ==
+wrote results\M4\step13_m4_summary.json (10 conditions)

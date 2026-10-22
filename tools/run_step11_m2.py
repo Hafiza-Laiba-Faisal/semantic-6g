@@ -328,6 +328,11 @@ def cmd_train(lane=None):
             print(f"[{i:2d}/{total}] SKIP {rid} (already complete)")
             n_skipped += 1
             continue
+        if f"{rid}__{ch}" in CONDITIONAL_ACCEPT:
+            print(f"[{i:2d}/{total}] SKIP {rid} (documented conditional-accept, "
+                  f"approved 2026-10-19; eval-only, not retrained)")
+            n_skipped += 1
+            continue
         if st == "failed":
             print(f"[{i:2d}/{total}] RETRAIN-after-FAILURE {rid} "
                   f"(frozen 9C policy: deterministic by seed+config)")
@@ -478,9 +483,24 @@ def _integrity_failures(cfg):
 # gradient steps executed. They are conditionally accepted for EVALUATION
 # only; their train_report.json exit_status remains "incomplete" (never
 # edited). Full decision trail: results/M2/PROTOCOL_EXCEPTIONS.md.
+#
+# AMENDMENT 2026-10-19, user-approved (this session): the fresh full-retrain
+# run reproduced exactly the same failure mode on 3 MORE task cells (same
+# final-step grads_finite probe; nan_batches=0; finite final losses 5166-5229
+# within the completed-cell range 118-5544; finite checkpoints saved; full
+# 3000 steps executed; deterministic retrain reproduces the identical
+# probe failure per frozen 9C). Cross-run comparison confirms the probe is
+# numerically marginal, not a data/config error: the archived run failed
+# k54_seed42 which PASSED in this run, and this run fails k18_seed43/44 +
+# rayleigh_k54_seed43 which PASSED in the archived run. These 3 are added to
+# the conditional-accept set under the same terms (evaluate-only; identity
+# verified by hash below; see results/M2/PROTOCOL_EXCEPTIONS.md Amendment).
 CONDITIONAL_ACCEPT = frozenset({
     "M2_task_awgn_k30_seed43__d270bfa0b913b678",
     "M2_task_awgn_k54_seed42__59f19c2c451a8106",
+    "M2_task_awgn_k18_seed43__347dd85341970c91",   # amendment 2026-10-19
+    "M2_task_awgn_k18_seed44__c533b5324f220cf9",   # amendment 2026-10-19
+    "M2_task_rayleigh_k54_seed43__c69033a6561fc637",  # amendment 2026-10-19
 })
 
 
@@ -604,7 +624,11 @@ def cmd_validate():
     check("60-unique-identities", len(set(ids)) == 60)
     done = sum(1 for c in cells
                if cell_state(c, results_root="results") == "done")
-    check("60-training-runs-complete", done == 60, f"{done}/60")
+    cond = sum(1 for c in cells
+               if cell_state(c, results_root="results") != "done"
+               and f"{run_id(c)}__{config_hash(c)}" in CONDITIONAL_ACCEPT)
+    check("60-training-runs-complete", done + cond == 60,
+          f"{done} complete + {cond} conditional-accept (documented 2026-10-19)")
     check("methods==reconstruction,task",
           sorted({c.method for c in cells}) == ["reconstruction", "task"])
     check("k=={12,18,24,30,54}", sorted({c.k for c in cells})

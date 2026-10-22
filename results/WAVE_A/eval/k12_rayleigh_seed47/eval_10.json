@@ -1,0 +1,36 @@
+{
+  "STEP": "WAVE_A",
+  "experiment": "WAVE_A",
+  "unit": "k12_rayleigh_seed47",
+  "k": 12,
+  "channel": "rayleigh",
+  "seed": 47,
+  "snr_db": 10.0,
+  "test_seed": 10042,
+  "episodes": 1000,
+  "t_max": 100,
+  "paired_reference": "frozen M1/M2 realizations not reused; wave evals are self-paired (same episodes within unit, across tags)",
+  "protocol_note": "Wave-A diagnostic protocol: E=1000, non-frozen amendment 2026-10-12; NOT comparable 1:1 to frozen M1/M2 (E=5000)",
+  "non_frozen": true,
+  "wall_s": 1.0,
+  "aggregate_seedvar_frozen": {
+    "episodes": 1000,
+    "success_count": 77,
+    "failure_count": 923,
+    "success_rate": 0.077,
+    "final_distance_mean": 8.247915267944336,
+    "avg_distance_mean": 8.338144302368164,
+    "control_effort_mean": 779.2113647460938,
+    "min_distance_mean": 5.677534580230713,
+    "mse_mean": 0.4237585663795471,
+    "ttg_success_mean": 35.79220962524414,
+    "ttg_success_median": 29.0
+  },
+  "wilson_seedvar_frozen": {
+    "wilson_low": 0.062047907060605895,
+    "wilson_high": 0.09518953061817373,
+    "p_hat": 0.077,
+    "success_count": 77,
+    "total": 1000
+  }
+}

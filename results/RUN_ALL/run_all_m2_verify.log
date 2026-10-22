@@ -1,0 +1,34 @@
+
+===== 2026-10-17T124842Z attempt=1 cmd=C:\Users\LENOVO\venvs\sem6g\Scripts\python.exe tools/run_step11_m2.py verify =====
+== frozen Step-9C protocol verification (Step-11/M2 gate) ==
+PASS  [recon_steps==5000]
+PASS  [task_steps==3000]
+PASS  [task_training_T==100]
+PASS  [batch_states==4096]
+PASS  [batch_episodes==256]
+PASS  [lr==1e-3]
+PASS  [grad_clip==1.0]
+PASS  [training_snr==U(0,20)/batch]
+PASS  [seeds=={42,43,44}]
+PASS  [test_seed==10042]
+PASS  [early_stopping==disabled]
+PASS  [M5==deferred+disabled]
+PASS  [n_test_episodes==5000]
+PASS  [goal_radius==0.5]
+PASS  [horizon_T_max==100_dt==0.1]
+PASS  [task_lambdas_frozen]
+PASS  [m2_k_values=={12,18,24,30,54}]
+PASS  [m2_snr_grid=={0,5,10,15,20}]
+PASS  [m2_b_by_k=={12:1,18:2,24:3,30:4,54:8}]
+PASS  [digital_K7_rate_half]
+PASS  [digital_generators_G1_first]
+PASS  [digital_gray_qpsk]
+PASS  [digital_tail_bits==6]
+PASS  [digital_feasible_all_m2_k]  (6B+6<=k holds for every frozen M2 k)
+config.validate() OK
+PASS  [workload==60_neural_training_runs]
+PASS  [workload==30_digital_eval_only]
+PASS  [workload==150_paired_eval_units]
+PASS  [workload==150_pooled_conditions]
+PASS  [tool_has_no_M1_M3_M4_M5_paths]  (this tool implements M2 only (M1 read-only intactness in validate))
+ALL PASS

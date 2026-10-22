@@ -1,0 +1,164 @@
+{
+  "STEP": "11",
+  "experiment": "M2",
+  "unit": "k18_rayleigh_seed44",
+  "k": 18,
+  "channel": "rayleigh",
+  "seed": 44,
+  "bits_per_component": 2,
+  "snr_db": 0.0,
+  "test_seed": 10042,
+  "episodes": 5000,
+  "t_max": 100,
+  "paired": true,
+  "methods": [
+    "reconstruction",
+    "task",
+    "digital"
+  ],
+  "wall_s": 4.3,
+  "aggregate_reconstruction": {
+    "episodes": 5000,
+    "success_count": 1306,
+    "failure_count": 3694,
+    "success_rate": 0.2612,
+    "final_distance_mean": 3.6867828369140625,
+    "avg_distance_mean": 4.352108478546143,
+    "control_effort_mean": 679.684326171875,
+    "min_distance_mean": 1.3892107009887695,
+    "mse_mean": 0.061001963913440704,
+    "ttg_success_mean": 31.23736572265625,
+    "ttg_success_median": 27.0
+  },
+  "aggregate_task": {
+    "episodes": 5000,
+    "success_count": 161,
+    "failure_count": 4839,
+    "success_rate": 0.0322,
+    "final_distance_mean": 6.702392101287842,
+    "avg_distance_mean": 7.309424877166748,
+    "control_effort_mean": 793.757080078125,
+    "min_distance_mean": 5.217247486114502,
+    "mse_mean": 1.0167620182037354,
+    "ttg_success_mean": 54.95030975341797,
+    "ttg_success_median": 60.0
+  },
+  "aggregate_digital": {
+    "episodes": 5000,
+    "success_count": 828,
+    "failure_count": 4172,
+    "success_rate": 0.1656,
+    "final_distance_mean": 2.6061408519744873,
+    "avg_distance_mean": 4.0886993408203125,
+    "control_effort_mean": 747.2194213867188,
+    "min_distance_mean": 1.8779855966567993,
+    "mse_mean": 0.1942022740840912,
+    "ttg_success_mean": 40.36111068725586,
+    "ttg_success_median": 39.0
+  },
+  "wilson_reconstruction": {
+    "wilson_low": 0.2492103837049451,
+    "wilson_high": 0.27355627074401423,
+    "p_hat": 0.2612,
+    "success_count": 1306,
+    "total": 5000
+  },
+  "wilson_task": {
+    "wilson_low": 0.027654745830079885,
+    "wilson_high": 0.037463516109715565,
+    "p_hat": 0.0322,
+    "success_count": 161,
+    "total": 5000
+  },
+  "wilson_digital": {
+    "wilson_low": 0.1555540800527612,
+    "wilson_high": 0.17615935900809307,
+    "p_hat": 0.1656,
+    "success_count": 828,
+    "total": 5000
+  },
+  "mcnemar_task_vs_reconstruction": {
+    "n01": 75,
+    "n10": 1220,
+    "n_pairs": 5000,
+    "chi2": 1010.6069498069498,
+    "p_value": 8.886063363867864e-222
+  },
+  "paired_t_final_distance_task_vs_reconstruction": {
+    "mean_diff": 3.0156097214635462,
+    "t_stat": 51.594553887954376,
+    "dof": 4999,
+    "p_value": 0.0,
+    "n": 5000
+  },
+  "paired_t_avg_distance_task_vs_reconstruction": {
+    "mean_diff": 2.957316450047493,
+    "t_stat": 75.25588595899954,
+    "dof": 4999,
+    "p_value": 0.0,
+    "n": 5000
+  },
+  "paired_t_control_effort_task_vs_reconstruction": {
+    "mean_diff": 114.07276464233398,
+    "t_stat": 90.0835259075881,
+    "dof": 4999,
+    "p_value": 0.0,
+    "n": 5000
+  },
+  "mcnemar_task_vs_digital": {
+    "n01": 134,
+    "n10": 801,
+    "n_pairs": 5000,
+    "chi2": 474.39144385026736,
+    "p_value": 3.549504839206798e-105
+  },
+  "paired_t_final_distance_task_vs_digital": {
+    "mean_diff": 4.096252016350813,
+    "t_stat": 80.19975960609104,
+    "dof": 4999,
+    "p_value": 0.0,
+    "n": 5000
+  },
+  "paired_t_avg_distance_task_vs_digital": {
+    "mean_diff": 3.220725936937332,
+    "t_stat": 88.94875527849563,
+    "dof": 4999,
+    "p_value": 0.0,
+    "n": 5000
+  },
+  "paired_t_control_effort_task_vs_digital": {
+    "mean_diff": 46.537723907470706,
+    "t_stat": 42.64941843398174,
+    "dof": 4999,
+    "p_value": 0.0,
+    "n": 5000
+  },
+  "mcnemar_reconstruction_vs_digital": {
+    "n01": 1048,
+    "n10": 570,
+    "n_pairs": 5000,
+    "chi2": 140.62360939431397,
+    "p_value": 1.944674287381219e-32
+  },
+  "paired_t_final_distance_reconstruction_vs_digital": {
+    "mean_diff": 1.0806422948872672,
+    "t_stat": 36.32264687633838,
+    "dof": 4999,
+    "p_value": 1.39446607504159e-256,
+    "n": 5000
+  },
+  "paired_t_avg_distance_reconstruction_vs_digital": {
+    "mean_diff": 0.2634094868898392,
+    "t_stat": 13.742663795160937,
+    "dof": 4999,
+    "p_value": 3.271426637351269e-42,
+    "n": 5000
+  },
+  "paired_t_control_effort_reconstruction_vs_digital": {
+    "mean_diff": -67.53504073486329,
+    "t_stat": -41.86869795873075,
+    "dof": 4999,
+    "p_value": 0.0,
+    "n": 5000
+  }
+}

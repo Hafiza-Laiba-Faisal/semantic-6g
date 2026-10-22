@@ -1,0 +1,85 @@
+{
+  "STEP": "WAVE_B",
+  "experiment": "WAVE_B",
+  "unit": "k12_rayleigh_seed42",
+  "k": 12,
+  "channel": "rayleigh",
+  "seed": 42,
+  "bits_per_component": 1,
+  "snr_db": 20.0,
+  "csi_error_sigma": 0.4,
+  "csi_eps_convention": "h_hat = h + eps, eps ~ CN(0, sigma^2); receiver equalizes and scales LLR noise with h_hat only",
+  "test_seed": 10042,
+  "episodes": 5000,
+  "t_max": 100,
+  "paired": true,
+  "csi_eps_paired_across_methods": true,
+  "amendment": "WAVE_B-non-frozen-CSI-ablation-2026-10-13",
+  "non_frozen": true,
+  "wall_s": 5.3,
+  "methods": [
+    "reconstruction",
+    "task",
+    "digital"
+  ],
+  "aggregate_reconstruction": {
+    "episodes": 5000,
+    "success_count": 1196,
+    "failure_count": 3804,
+    "success_rate": 0.2392,
+    "final_distance_mean": 3.7042012214660645,
+    "avg_distance_mean": 4.383850574493408,
+    "control_effort_mean": 657.123779296875,
+    "min_distance_mean": 1.5579665899276733,
+    "mse_mean": 0.054257865995168686,
+    "ttg_success_mean": 30.984949111938477,
+    "ttg_success_median": 26.0
+  },
+  "aggregate_task": {
+    "episodes": 5000,
+    "success_count": 256,
+    "failure_count": 4744,
+    "success_rate": 0.0512,
+    "final_distance_mean": 7.857463359832764,
+    "avg_distance_mean": 7.96213436126709,
+    "control_effort_mean": 774.4893188476562,
+    "min_distance_mean": 5.51664400100708,
+    "mse_mean": 0.7042253017425537,
+    "ttg_success_mean": 60.7421875,
+    "ttg_success_median": 63.0
+  },
+  "aggregate_digital": {
+    "episodes": 5000,
+    "success_count": 310,
+    "failure_count": 4690,
+    "success_rate": 0.062,
+    "final_distance_mean": 4.494502544403076,
+    "avg_distance_mean": 5.297730445861816,
+    "control_effort_mean": 795.1066284179688,
+    "min_distance_mean": 3.5392565727233887,
+    "mse_mean": 0.5462837815284729,
+    "ttg_success_mean": 36.30967712402344,
+    "ttg_success_median": 32.0
+  },
+  "wilson_reconstruction": {
+    "wilson_low": 0.2275786657472823,
+    "wilson_high": 0.25122176758725956,
+    "p_hat": 0.2392,
+    "success_count": 1196,
+    "total": 5000
+  },
+  "wilson_task": {
+    "wilson_low": 0.045427963397957266,
+    "wilson_high": 0.05766112586792603,
+    "p_hat": 0.0512,
+    "success_count": 256,
+    "total": 5000
+  },
+  "wilson_digital": {
+    "wilson_low": 0.05564599630435988,
+    "wilson_high": 0.06902651059951018,
+    "p_hat": 0.062,
+    "success_count": 310,
+    "total": 5000
+  }
+}

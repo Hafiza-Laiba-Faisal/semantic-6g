@@ -1,0 +1,4 @@
+
+===== 2026-10-17T124839Z attempt=1 cmd=C:\Users\LENOVO\venvs\sem6g\Scripts\python.exe tools/run_step10_m1.py finalize =====
+== finalize: results/M1/step10_m1_summary.json ==
+wrote results\M1\step10_m1_summary.json (36 train rows, 132 pooled rows, 198/198 units)

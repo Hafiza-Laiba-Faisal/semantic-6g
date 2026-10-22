@@ -254,6 +254,41 @@ reported alongside success rate.
 
 ---
 
+## A-8b — Wave-C screening subset (2026-10-22, pre-registered before any of its cells trained)
+
+**Why.** The full grid in A-8 needs ≈25 h of wall clock, which the user
+explicitly cannot wait for. The grid was therefore reduced **before any of the
+following four cells was trained** — this is pre-registration, not a post-hoc
+choice.
+
+| field | value |
+|---|---|
+| arm | `lam_ctl_heavy` only (the arm that was stable on both channels at k=12) |
+| k | 18 and 54 (the two decisive extremes) |
+| channels | awgn, rayleigh |
+| seed | 42 |
+| cells | **4** |
+| wall clock | 4 parallel shards × 2 threads each on 8 logical cores |
+| eval | E=1000 per unit-SNR, 5-SNR grid → 4 units / 20 slots |
+
+**What each extreme answers.** k=18: the frozen task arm is 0.02–0.05 and the
+digital baseline 0.06–0.17, so λ-shaping's effect is measurable without hitting
+the digital ceiling. k=54: the digital baseline is 0.92–0.94, so the question is
+whether a λ-shaped task-oriented model can *beat a saturated classical link*.
+
+**Already-existing cells that are NOT part of this design.** Two
+`lam_ctl_light` cells at k=18/awgn (seeds 42, 43) were trained under A-8 before
+the reduction. They are kept, never deleted or overwritten, and may only be
+reported as a labelled side observation — not as part of the screening
+comparison.
+
+**Limitations that must travel with any Wave-C claim.** One seed → no variance
+claim; one arm → no dose-response claim; two k values → no trend claim. The
+full 32-cell grid (A-8) stays declared and its cells remain idempotent, so the
+rest can be added later without touching what is reported now.
+
+---
+
 ## 1. What a reviewer can check independently
 
 ```powershell

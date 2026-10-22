@@ -187,14 +187,41 @@ def cmd_verify():
 # train / evaluate (delegate to the Wave-A machinery with our universe)
 # ---------------------------------------------------------------------------
 
-def cmd_train(lane=None):
-    rw.wave_cells = cells
+def _select(args):
+    """Cell subset for a shard: --tag= --k= --seed= --shard=i/N."""
+    out = cells()
+    tags = [a.split("=", 1)[1] for a in args if a.startswith("--tag=")]
+    ks = [int(a.split("=", 1)[1]) for a in args if a.startswith("--k=")]
+    seeds = [int(a.split("=", 1)[1]) for a in args if a.startswith("--seed=")]
+    shard = next((a.split("=", 1)[1] for a in args if a.startswith("--shard=")),
+                 None)
+    if tags:
+        out = [c for c in out if c.tag in tags]
+    if ks:
+        out = [c for c in out if c.k in ks]
+    if seeds:
+        out = [c for c in out if c.seed in seeds]
+    if shard:
+        i, n = (int(x) for x in shard.split("/"))
+        out = [c for j, c in enumerate(out) if j % n == i]
+    return out
+
+
+def cmd_train(lane=None, args=()):
+    sel = _select(args)
+    if len(sel) != len(cells()):
+        print(f"== Wave-C selection: {len(sel)} of {len(cells())} cells ==",
+              flush=True)
+        for c in sel:
+            print(f"   {c.wave_id}", flush=True)
+    rw.wave_cells = lambda: sel
     rw.DOCUMENTED_FAILURES = frozenset()      # no pre-accepted Wave-C failures
     return rw.cmd_train(lane)
 
 
-def cmd_evaluate(lane=None):
-    rw.wave_cells = cells
+def cmd_evaluate(lane=None, args=()):
+    sel = _select(args) if args else cells()
+    rw.wave_cells = lambda: sel
     return rw.cmd_evaluate(lane)
 
 
@@ -217,16 +244,47 @@ def _train_rows():
     return rows
 
 
+def _state_no_mkdir(c):
+    """Marker state without creating the run directory (status must not write)."""
+    d = WAVE_C_ROOT / c.run_dirname()
+    if not d.is_dir():
+        return "missing", None
+    for kind, name in (("done", "DONE.json"), ("failed", "FAILED.json"),
+                       ("running", "RUNNING.json")):
+        p = d / name
+        if p.exists():
+            return kind, p.stat().st_mtime
+    return "missing", None
+
+
+STALE_RUNNING_MIN = 60     # RUNNING.json is a START marker, not a liveness probe
+
+
 def cmd_status():
+    import time
     states = {}
+    stale = []
     for c in cells():
-        st = c.state()
+        st, mtime = _state_no_mkdir(c)
+        if st == "running" and mtime is not None:
+            age = (time.time() - mtime) / 60
+            if age > STALE_RUNNING_MIN:
+                st = "running(STALE)"
+                stale.append((c.wave_id, round(age)))
         states[st] = states.get(st, 0) + 1
     n_slots = sum(1 for u in units() for s in SNR_GRID
                   if rw._eval_path(u, s).exists())
+    done = states.get("done", 0)
     print(f"== Wave-C status ({WAVE_C_ROOT.relative_to(ROOT)}) ==")
-    print(f"-- train: {states} of {EXPECTED_CELLS}")
+    print(f"-- train: {states} of {EXPECTED_CELLS} "
+          f"({100 * done / EXPECTED_CELLS:.0f}% trained)")
     print(f"-- eval: {n_slots}/{EXPECTED_SLOTS} unit-SNR slots")
+    if stale:
+        print(f"!! {len(stale)} cell(s) have a RUNNING marker older than "
+              f"{STALE_RUNNING_MIN} min - the process is probably DEAD "
+              f"(restart: python tools/run_wave_c.py train)")
+        for wid, age in stale[:3]:
+            print(f"   {wid}  ({age} min)")
     return 0
 
 
@@ -302,8 +360,9 @@ def main(argv):
     if cmd == "smoke":
         return cmd_smoke(int(rest[0]) if rest else None)
     if cmd in ("train", "evaluate"):
+        lane = next((a for a in rest if not a.startswith("--")), None)
         return {"train": cmd_train, "evaluate": cmd_evaluate}[cmd](
-            rest[0] if rest else None)
+            lane, [a for a in rest if a.startswith("--")])
     if cmd in table:
         return table[cmd]()
     print(f"unknown command {cmd!r}")

@@ -1,0 +1,56 @@
+{
+  "STEP": "WAVE_C",
+  "experiment": "WAVE_C",
+  "unit": "k18_awgn_seed42",
+  "k": 18,
+  "channel": "awgn",
+  "seed": 42,
+  "snr_db": 0.0,
+  "test_seed": 10042,
+  "episodes": 1000,
+  "t_max": 100,
+  "paired_reference": "frozen M1/M2 realizations not reused; wave evals are self-paired (same episodes within unit, across tags)",
+  "protocol_note": "Wave-C diagnostic protocol: E=1000, non-frozen amendment WAVE_C-lambda-x-bandwidth-2026-10-21; NOT comparable 1:1 to frozen M1/M2 (E=5000)",
+  "non_frozen": true,
+  "wall_s": 1.0,
+  "aggregate_lam_ctl_light": {
+    "episodes": 1000,
+    "success_count": 991,
+    "failure_count": 9,
+    "success_rate": 0.991,
+    "final_distance_mean": 0.10273212939500809,
+    "avg_distance_mean": 2.05230975151062,
+    "control_effort_mean": 361.2595520019531,
+    "min_distance_mean": 0.058396462351083755,
+    "mse_mean": 0.2294393628835678,
+    "ttg_success_mean": 32.863773345947266,
+    "ttg_success_median": 33.0
+  },
+  "aggregate_lam_ctl_heavy": {
+    "episodes": 1000,
+    "success_count": 999,
+    "failure_count": 1,
+    "success_rate": 0.999,
+    "final_distance_mean": 0.055994123220443726,
+    "avg_distance_mean": 2.0176210403442383,
+    "control_effort_mean": 257.5059814453125,
+    "min_distance_mean": 0.023918338119983673,
+    "mse_mean": 0.22356653213500977,
+    "ttg_success_mean": 33.31431579589844,
+    "ttg_success_median": 33.0
+  },
+  "wilson_lam_ctl_light": {
+    "wilson_low": 0.982984183834662,
+    "wilson_high": 0.9952579393325229,
+    "p_hat": 0.991,
+    "success_count": 991,
+    "total": 1000
+  },
+  "wilson_lam_ctl_heavy": {
+    "wilson_low": 0.9943574414020421,
+    "wilson_high": 0.9998234536293739,
+    "p_hat": 0.999,
+    "success_count": 999,
+    "total": 1000
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "STEP": "WAVE_C",
+  "experiment": "WAVE_C",
+  "unit": "k18_rayleigh_seed42",
+  "k": 18,
+  "channel": "rayleigh",
+  "seed": 42,
+  "snr_db": 0.0,
+  "test_seed": 10042,
+  "episodes": 1000,
+  "t_max": 100,
+  "paired_reference": "frozen M1/M2 realizations not reused; wave evals are self-paired (same episodes within unit, across tags)",
+  "protocol_note": "Wave-C diagnostic protocol: E=1000, non-frozen amendment WAVE_C-lambda-x-bandwidth-2026-10-21; NOT comparable 1:1 to frozen M1/M2 (E=5000)",
+  "non_frozen": true,
+  "wall_s": 0.5,
+  "aggregate_lam_ctl_heavy": {
+    "episodes": 1000,
+    "success_count": 993,
+    "failure_count": 7,
+    "success_rate": 0.993,
+    "final_distance_mean": 0.12523068487644196,
+    "avg_distance_mean": 2.1102449893951416,
+    "control_effort_mean": 340.5924987792969,
+    "min_distance_mean": 0.06794383376836777,
+    "mse_mean": 0.27089226245880127,
+    "ttg_success_mean": 34.44914245605469,
+    "ttg_success_median": 34.0
+  },
+  "wilson_lam_ctl_heavy": {
+    "wilson_low": 0.9856216845342334,
+    "wilson_high": 0.9966051315990092,
+    "p_hat": 0.993,
+    "success_count": 993,
+    "total": 1000
+  }
+}

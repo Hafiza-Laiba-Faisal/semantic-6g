@@ -26,6 +26,7 @@ import numpy as np
 ROOT = Path(__file__).resolve().parents[1]
 WB = ROOT / "results" / "WAVE_B" / "eval"
 WA = ROOT / "results" / "WAVE_A" / "eval"
+WC = ROOT / "results" / "WAVE_C" / "eval"
 FIG = ROOT / "fyp_md_files" / "figures"
 FIG.mkdir(parents=True, exist_ok=True)
 
@@ -219,15 +220,100 @@ def fig_wave_a_arms(rows):
     return p
 
 
+# ---------------------------------------------------------------------------
+# Fig 5: Wave-C lambda-shaping across bandwidth (A-8b screening subset)
+# ---------------------------------------------------------------------------
+
+def _load_wave_c():
+    rows = []
+    for p in sorted(WC.glob("*/eval_*.json")):
+        r = json.loads(p.read_text())
+        if r.get("experiment") != "WAVE_C":
+            continue
+        for key, agg in r.items():
+            if key.startswith("aggregate_"):
+                rows.append({"tag": key[len("aggregate_"):], "k": r["k"],
+                             "channel": r["channel"], "snr_db": r["snr_db"],
+                             "agg": agg})
+    return rows
+
+
+def _load_frozen_comparators():
+    """(method, k, channel) -> {snr: success_rate} from the FROZEN-protocol runs.
+
+    M2 is E=5000 (frozen) and covers awgn + rayleigh; Wave-B adds rayleigh at
+    sigma=0.  Kept in one dict so the figure cannot silently mix protocols.
+    """
+    out = {}
+    m2 = ROOT / "results" / "M2" / "step11_m2_summary.json"
+    if m2.exists():
+        for r in json.loads(m2.read_text()).get("pooled_rows", []):
+            out.setdefault((r["method"], r["k"], r["channel"]),
+                           {})[r["snr_db"]] = r["success_rate_pooled"]
+    wb = ROOT / "results" / "WAVE_B" / "step_wave_b_summary.json"
+    if wb.exists():
+        for r in json.loads(wb.read_text()).get("summary_rows", []):
+            if r.get("csi_error_sigma", 0.0) != 0.0:
+                continue
+            out.setdefault((r["method"], r["k"], r.get("channel", "rayleigh")),
+                           {})[r["snr_db"]] = r["success_rate_pooled"]
+    return out
+
+
+def fig_wave_c_success(wc_rows, frozen):
+    fig, axes = plt.subplots(1, 2, figsize=(9.0, 3.6), sharey=True)
+    styles = {18: ("o", "-"), 54: ("s", "-")}
+    for ax, ch in zip(axes, ("awgn", "rayleigh")):
+        for k, (mk, ls) in styles.items():
+            pts = sorted((r["snr_db"], r["agg"]["success_rate"])
+                         for r in wc_rows
+                         if r["tag"] == "lam_ctl_heavy" and r["k"] == k
+                         and r["channel"] == ch)
+            if pts:
+                ax.plot([a for a, _ in pts], [b for _, b in pts], marker=mk,
+                        ls=ls, lw=1.8, ms=4.2,
+                        label=f"$\\lambda$-heavy k={k} (Wave-C)")
+            d = frozen.get(("digital", k, ch), {})
+            if d:
+                xs = sorted(d)
+                ax.plot(xs, [d[x] for x in xs], ls="--", lw=1.3,
+                        marker=mk, ms=3, alpha=0.8,
+                        label=f"digital k={k} (frozen, E=5000)")
+            t = frozen.get(("task", k, ch), {})
+            if t:
+                xs = sorted(t)
+                ax.plot(xs, [t[x] for x in xs], ls=":", lw=1.3, alpha=0.8,
+                        label=f"task k={k} (frozen, E=5000)")
+        ax.set_xlabel("SNR (dB)")
+        ax.set_title(ch.upper())
+        ax.set_ylim(0, 1.06)
+    handles, labels = axes[0].get_legend_handles_labels()
+    fig.legend(handles, labels, loc="lower center", ncol=3, fontsize=7,
+               frameon=False)
+    axes[0].set_ylabel("Success rate")
+    fig.suptitle("Wave-C: lambda-shaping vs bandwidth (A-8b screening: 1 seed, "
+                 "k=18/54, E=1000; baselines E=5000)", y=1.02)
+    fig.tight_layout(rect=(0, 0.11, 1, 1))
+    p = FIG / "fig_wave_c_success.png"
+    fig.savefig(p, bbox_inches="tight")
+    plt.close(fig)
+    return p
+
+
 def main():
     wb = _load_wave_b()
     wa = _load_wave_a()
-    print(f"read {len(wb)} Wave-B cells, {len(wa)} Wave-A arm-rows")
+    wc = _load_wave_c()
+    print(f"read {len(wb)} Wave-B cells, {len(wa)} Wave-A arm-rows, "
+          f"{len(wc)} Wave-C arm-rows")
     if wb:
         for f in (fig_sr_vs_k, fig_sr_vs_snr, fig_csi_sweep):
             print("wrote", f(wb).relative_to(ROOT))
     if wa:
         print("wrote", fig_wave_a_arms(wa).relative_to(ROOT))
+    if wc:
+        print("wrote", fig_wave_c_success(wc, _load_frozen_comparators()
+                                          ).relative_to(ROOT))
 
 
 if __name__ == "__main__":

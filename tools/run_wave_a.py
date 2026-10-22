@@ -57,6 +57,8 @@ from project.training.train_reconstruction import train_reconstruction
 from project.training.train_task_oriented import train_task_oriented
 
 WAVE_LABEL = "Wave-A"          # overridden by tools/run_wave_c.py (isolated run)
+WAVE_EXPERIMENT = "WAVE_A"     # stamped into eval artifacts (same override)
+WAVE_AMENDMENT = "WAVE_A-non-frozen-2026-10-12"
 WAVE_A_ROOT = Path("results/WAVE_A")
 CHANNELS = ("awgn", "rayleigh")
 MATCH_K = (1, 12)             # one low-k (M1 regime) + one matched-budget (M2 regime)
@@ -673,10 +675,28 @@ def cmd_evaluate(lane=None):
         models = [x for x in models if x[3] is not None]
         if not models:
             continue
+        expected_tags = {m[0] for m in models}
         for snr in MATCH_SNR_DB:
             out = _eval_path(unit, snr)
             if out.exists():
-                continue
+                # An eval artifact is per (unit, SNR) and carries every arm
+                # trained for that unit at the time it was written.  A slot is
+                # therefore reusable only if it already holds ALL of this
+                # unit's trained arms and was stamped by THIS experiment.  The
+                # old unconditional skip silently dropped a later-trained arm
+                # (and kept Wave-A labels in a Wave-C file).
+                try:
+                    have = json.loads(out.read_text())
+                except Exception:
+                    have = {}
+                have_tags = {k[len("aggregate_"):] for k in have
+                             if k.startswith("aggregate_")}
+                if (expected_tags <= have_tags
+                        and have.get("experiment") == WAVE_EXPERIMENT):
+                    continue
+                missing = sorted(expected_tags - have_tags)
+                print(f"  REFRESH {unit['unit']} snr={snr:5.1f} "
+                      f"(missing={missing or 'labels'})", flush=True)
             cond = Condition(k=k, channel=ch, snr_db=snr, t_max=config.T_MAX,
                              bits_per_component=None,
                              episodes=EVAL_EPISODES, seed=config.TEST_SEED)
@@ -693,17 +713,17 @@ def cmd_evaluate(lane=None):
             wall = time.perf_counter() - t0
             total_wall += wall
             rec = {
-                "STEP": "WAVE_A", "experiment": "WAVE_A",
+                "STEP": WAVE_EXPERIMENT, "experiment": WAVE_EXPERIMENT,
                 "unit": unit["unit"], "k": k, "channel": ch, "seed": seed,
                 "snr_db": snr, "test_seed": config.TEST_SEED,
                 "episodes": EVAL_EPISODES, "t_max": config.T_MAX,
                 "paired_reference": ("frozen M1/M2 realizations not reused; "
                                      "wave evals are self-paired (same "
                                      "episodes within unit, across tags)"),
-                "protocol_note": (f"Wave-A diagnostic protocol: E="
+                "protocol_note": (f"{WAVE_LABEL} diagnostic protocol: E="
                                   f"{EVAL_EPISODES}, non-frozen amendment "
-                                  f"2026-10-12; NOT comparable 1:1 to frozen "
-                                  f"M1/M2 (E=5000)"),
+                                  f"{WAVE_AMENDMENT}; NOT comparable 1:1 to "
+                                  f"frozen M1/M2 (E=5000)"),
                 "non_frozen": True,
                 "wall_s": round(wall, 1),
                 **{f"aggregate_{tag}": agg for tag, agg in aggregates.items()},

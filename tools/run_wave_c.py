@@ -61,6 +61,8 @@ SNR_GRID = rw.MATCH_SNR_DB
 # redirect every path helper in the reused machinery
 rw.WAVE_A_ROOT = WAVE_C_ROOT
 rw.WAVE_LABEL = "Wave-C"      # log headers must not claim to be Wave-A
+rw.WAVE_EXPERIMENT = "WAVE_C"
+rw.WAVE_AMENDMENT = AMENDMENT
 
 
 class WaveC(rw.WaveCell):
@@ -291,13 +293,47 @@ def cmd_status():
     return 0
 
 
-def cmd_finalize():
+def cmd_finalize(args=()):
+    """Finalize the declared universe (default) or a pre-registered subset.
+
+    A-8b declares a 4-cell screening subset of the 32-cell Wave-C grid.  When
+    --tag/--k/--seed selection is passed, the selection becomes the *declared
+    universe of this report*: completeness is measured against it (4 units /
+    20 slots), and the full grid is recorded as `scope.full_grid_*` so nobody
+    can mistake a screening pass for the whole design.
+    """
     WAVE_C_ROOT.mkdir(parents=True, exist_ok=True)
-    train_rows = _train_rows()
+    sel = _select(args) if args else cells()
+    scoped = len(sel) != EXPECTED_CELLS
+    scoped_units = []
+    seen = set()
+    for c in sel:
+        key = (c.k, c.channel, c.seed)
+        if key not in seen:
+            seen.add(key)
+            scoped_units.append({"unit": f"k{c.k}_{c.channel}_seed{c.seed}",
+                                 "k": c.k, "channel": c.channel, "seed": c.seed})
+    units_ = scoped_units if scoped else units()
+    cells_ = sel
+    train_rows = []
+    for c in cells_:
+        rep = c.dir() / "train_report.json"
+        rec = json.loads(rep.read_text()) if rep.exists() else {
+            "exit_status": "missing"}
+        train_rows.append({"wave_id": c.wave_id, "tag": c.tag, "k": c.k,
+                           "channel": c.channel, "seed": c.seed,
+                           "exit_status": rec.get("exit_status", "missing"),
+                           "task_loss_final": rec.get("task_loss_final"),
+                           "nan_batches": rec.get("nan_batches"),
+                           "grads_finite": rec.get("grads_finite"),
+                           "wall_seconds": rec.get("wall_seconds"),
+                           "eval_after_success_rate":
+                               rec.get("eval_after_success_rate")})
     n_slots = 0
     complete_units = 0
     pooled = {}
-    for unit in units():
+    metrics = {}
+    for unit in units_:
         got = 0
         for snr in SNR_GRID:
             p = rw._eval_path(unit, snr)
@@ -311,6 +347,13 @@ def cmd_finalize():
                     tag = key[len("aggregate_"):]
                     pooled.setdefault((tag, unit["k"], unit["channel"], snr),
                                       []).append({"seed": unit["seed"], **agg})
+                    for mk, mv in agg.items():
+                        if mk in ("success_count", "episodes"):
+                            continue
+                        if isinstance(mv, (int, float)):
+                            metrics.setdefault(
+                                (tag, unit["k"], unit["channel"], snr),
+                                {}).setdefault(mk, []).append(mv)
         if got == len(SNR_GRID):
             complete_units += 1
     pooled_rows = []
@@ -318,16 +361,47 @@ def cmd_finalize():
             pooled.items(), key=lambda kv: (kv[0][2], kv[0][3], kv[0][0], kv[0][1])):
         sc = sum(r["success_count"] for r in rs)
         tot = sum(r["episodes"] for r in rs)
-        pooled_rows.append({"tag": tag, "k": k, "channel": ch, "snr_db": snr,
-                            "n_seeds": len(rs), "success_count_pooled": sc,
-                            "episodes_pooled": tot,
-                            "success_rate_pooled": sc / tot if tot else None})
+        row = {"tag": tag, "k": k, "channel": ch, "snr_db": snr,
+               "n_seeds": len(rs), "success_count_pooled": sc,
+               "episodes_pooled": tot,
+               "success_rate_pooled": sc / tot if tot else None}
+        for mk, vals in metrics.get((tag, k, ch, snr), {}).items():
+            row[mk if mk.endswith(("_mean", "_median")) else f"{mk}_mean"] = (
+                sum(vals) / len(vals))
+        pooled_rows.append(row)
     done = sum(1 for r in train_rows if r["exit_status"] == "complete")
+    expected_slots = len(units_) * len(SNR_GRID)
+    side = []
+    if scoped:
+        chosen = {c.wave_id for c in cells_}
+        for c in cells():
+            if c.wave_id in chosen:
+                continue
+            rep = c.dir() / "train_report.json"
+            if not rep.exists():
+                continue
+            rec = json.loads(rep.read_text())
+            unit = {"unit": f"k{c.k}_{c.channel}_seed{c.seed}",
+                    "k": c.k, "channel": c.channel, "seed": c.seed}
+            ev = rw._eval_path(unit, 0.0)
+            evd = json.loads(ev.read_text()) if ev.exists() else {}
+            agg = evd.get(f"aggregate_{c.tag}", {})
+            side.append({
+                "wave_id": c.wave_id, "tag": c.tag, "k": c.k,
+                "channel": c.channel, "seed": c.seed,
+                "exit_status": rec.get("exit_status"),
+                "task_loss_final": rec.get("task_loss_final"),
+                "nan_batches": rec.get("nan_batches"),
+                "eval_snr0": ({
+                    "success_rate": agg.get("success_rate"),
+                    "final_distance_mean": agg.get("final_distance_mean"),
+                    "control_effort_mean": agg.get("control_effort_mean")}
+                    if agg else None)})
     out = WAVE_C_ROOT / "step_wave_c_summary.json"
     out.write_text(json.dumps({
         "experiment": "WAVE_C",
-        "status": ("complete" if done == EXPECTED_CELLS
-                   and n_slots == EXPECTED_SLOTS else "incomplete"),
+        "status": ("complete" if done == len(train_rows)
+                   and n_slots == expected_slots else "incomplete"),
         "amendment": AMENDMENT,
         "question": ("does Wave-A's lambda-shaping result (k=12: 0.02-0.05 -> "
                      "0.99) hold at k=18/24/30/54?"),
@@ -335,21 +409,45 @@ def cmd_finalize():
                           "NOT 1:1 comparable to frozen M1/M2 (E=5000). "
                           "Steps/seeds/architecture frozen; only the loss "
                           "weighting and k are new."),
-        "k_grid": list(KS), "channels": list(CHANNELS), "seeds": list(SEEDS),
+        "scope": {
+            "declared_cells": EXPECTED_CELLS,
+            "declared_units": EXPECTED_UNITS,
+            "declared_slots": EXPECTED_SLOTS,
+            "reported_cells": len(cells_),
+            "reported_units": len(units_),
+            "reported_slots_expected": expected_slots,
+            "screening_subset": scoped,
+            "criteria": ("A-8b: lam_ctl_heavy, k in {18,54}, both channels, "
+                         "seed 42 (4 cells)" if scoped else "A-8 full grid"),
+            "limitations": ("one seed, one arm, two k values: no variance, "
+                            "dose-response or trend claim",
+                            "success rate saturates near 1.0, so the "
+                            "informative contrasts are against the digital "
+                            "baseline and the frozen task arm, not against "
+                            "the task ceiling"),
+        },
+        "k_grid": sorted({c.k for c in cells_}),
+        "channels": sorted({c.channel for c in cells_}),
+        "seeds": sorted({c.seed for c in cells_}),
         "arms": {t: list(l) for t, l in ARMS.items()},
         "train_rows": train_rows,
         "pooled_rows": pooled_rows,
+        "side_observations": side,
+        "side_observations_note": (
+            "Trained outside the A-8b screening subset; kept, never deleted, "
+            "reported only as a labelled side observation (not part of the "
+            "screening comparison)."),
         "train_done": done,
         "train_missing": sum(1 for r in train_rows
                              if r["exit_status"] == "missing"),
-        "eval_units_expected": EXPECTED_UNITS,
-        "eval_slots_expected": EXPECTED_SLOTS,
+        "eval_units_expected": len(units_),
+        "eval_slots_expected": expected_slots,
         "eval_slots_complete": n_slots,
         "eval_units_complete": complete_units,
     }, indent=2, default=str))
-    print(f"wrote {out.relative_to(ROOT)} ({done}/{EXPECTED_CELLS} train, "
-          f"{n_slots}/{EXPECTED_SLOTS} eval slots, "
-          f"{complete_units}/{EXPECTED_UNITS} units)")
+    print(f"wrote {out.relative_to(ROOT)} ({done}/{len(train_rows)} train, "
+          f"{n_slots}/{expected_slots} eval slots, "
+          f"{complete_units}/{len(units_)} units)")
     return 0
 
 
@@ -358,8 +456,9 @@ def main(argv):
         print(__doc__)
         return 0
     cmd, rest = argv[0], argv[1:]
-    table = {"verify": cmd_verify, "status": cmd_status,
-             "finalize": cmd_finalize}
+    table = {"verify": cmd_verify, "status": cmd_status}
+    if cmd == "finalize":
+        return cmd_finalize([a for a in rest if a.startswith("--")])
     if cmd == "smoke":
         return cmd_smoke(int(rest[0]) if rest else None)
     if cmd in ("train", "evaluate"):

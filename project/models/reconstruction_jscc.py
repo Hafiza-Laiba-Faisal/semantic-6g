@@ -34,13 +34,13 @@ from project.models.deepjscc_encoder import DeepJSCCEncoder
 class ReconstructionDeepJSCC(torch.nn.Module):
     """s -> encode -> power norm -> channel -> equalize -> decode -> s_hat."""
 
-    def __init__(self, k: int = 3) -> None:
+    def __init__(self, k: int = 3, hidden_dims: Optional[tuple] = None) -> None:
         super().__init__()
         if k < 1:
             raise ValueError(f"k must be >= 1, got {k}")
         self.k = k
-        self.encoder = DeepJSCCEncoder(k=k)
-        self.decoder = DeepJSCCDecoder(k=k)
+        self.encoder = DeepJSCCEncoder(k=k, hidden_dims=hidden_dims)
+        self.decoder = DeepJSCCDecoder(k=k, hidden_dims=hidden_dims)
 
     # ------------------------------------------------------------------
     # building blocks (exposed for the verification tests)

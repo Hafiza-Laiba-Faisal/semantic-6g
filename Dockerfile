@@ -10,4 +10,9 @@ COPY tests/ tests/
 COPY main.py .
 COPY *.md .
 
-CMD ["python", "tools/build_dashboard.py", "--open"]
+# The image ships code only (no results/ tree), so the default command is
+# the dependency-free structural validation. Build the dashboard after
+# mounting or copying results/:
+#   docker run --rm -v "$PWD/results:/app/results" <image> \
+#       python tools/build_dashboard.py
+CMD ["python", "main.py", "validate-matrix"]

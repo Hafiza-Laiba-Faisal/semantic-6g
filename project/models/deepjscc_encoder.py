@@ -16,6 +16,8 @@ transmits k complex channel uses - never 2k.
 
 from __future__ import annotations
 
+from typing import Optional
+
 import torch
 from torch import nn
 
@@ -30,12 +32,16 @@ class DeepJSCCEncoder(nn.Module):
         self,
         state_dim: int = config.STATE_DIM,
         k: int = 3,
-        hidden_dims: tuple = config.HIDDEN_DIMS,
+        hidden_dims: Optional[tuple] = None,
     ) -> None:
         super().__init__()
         if k < 1:
             raise ValueError(f"k must be >= 1, got {k}")
-        h1, h2 = hidden_dims
+        # NOTE: the default used to be ``config.HIDDEN_DIMS`` evaluated at IMPORT
+        # time, so patching the config later (capacity ablations) silently kept
+        # the frozen 128 width while metadata claimed otherwise.  Resolve here.
+        h1, h2 = tuple(config.HIDDEN_DIMS if hidden_dims is None
+                       else hidden_dims)
         self.k = k
         self.backbone = nn.Sequential(
             nn.Linear(state_dim, h1),

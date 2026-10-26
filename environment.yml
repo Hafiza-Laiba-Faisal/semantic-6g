@@ -1,0 +1,16 @@
+# Conda equivalent of requirements.txt (CPU-only, pinned).
+#   conda env create -f environment.yml
+#   conda activate semantic-6g
+# Torch is installed from the CPU wheel index because the frozen environment
+# is CPU-only (no CUDA build is required or tested).
+name: semantic-6g
+channels:
+  - conda-forge
+dependencies:
+  - python=3.9
+  - pip
+  - pip:
+      - --extra-index-url https://download.pytorch.org/whl/cpu
+      - torch==2.4.1
+      - numpy==1.26.4
+      - matplotlib==3.9.4

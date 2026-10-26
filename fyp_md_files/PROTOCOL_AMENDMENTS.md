@@ -19,6 +19,10 @@ number in this log was typed by hand from memory.
 | M3 / M4 | — | all | — | complete |
 | Wave-A | 46 train / 90 eval slots (18 units) | 44 + 2 failed / **85** | A-3 | `incomplete` **by design** |
 | Wave-B | 375 cells, 15 units | **350** | A-5 | `complete` |
+| Wave-C | 32 cells declared, 4-cell screening | 4 / 20 eval slots (4 units) | A-8b | `complete` (screening scope only) |
+| ARCH_ABL | 2 train / 10 eval slots (2 units) | 2 / 10 | scope reduced in A-9 | A-9 |
+| AERIAL | evaluation only (no training universe) | 1 geometry, 2 models + 2 digital | - | A-10 |
+| POLAR | evaluation only (no training universe) | 50 conditions x 2 coders | - | A-11 |
 
 "Accounted" always means *evaluated or explicitly declared*. Nothing is
 imputed, nothing is dropped silently, and no failed cell is replaced.
@@ -189,6 +193,11 @@ would add a 4th scientific change after seeing results). Enforced in code:
 Any claim about capacity must ignore this arm until it is re-run under a new,
 dated amendment.
 
+**Update 2026-10-26 (A-9):** the *root cause* is now fixed in code (constructors
+resolve the width at build time instead of binding the config default at
+import). The arm itself is still **invalid and was not retrained**; this entry
+stays as the historical record, and the new capacity run lives in `ARCH_ABL`.
+
 ---
 
 ## A-7 — Tooling fixes applied 2026-10-21 (no protocol impact)
@@ -289,6 +298,154 @@ rest can be added later without touching what is reported now.
 
 ---
 
+## A-9 - Capacity ablation and the hidden-width constructor bug (2026-10-26)
+
+**Question.** The frozen task arm at k=18 sits at ~0.02 success with an
+oscillating loss. Is that a *capacity* artefact? The frozen MLP is
+6-128-128-2k, so "no" is not obvious without an experiment.
+
+**Root cause found while wiring the ablation.** Both constructors declared
+
+```python
+hidden_dims: tuple = config.HIDDEN_DIMS,
+```
+
+which Python evaluates **once, at import**. Patching `config.HIDDEN_DIMS`
+before building a model (what `WaveCell(hidden=256)` does) therefore had no
+effect: the layers stayed 128-wide while the metadata said 256. This is the
+exact mechanism behind the invalid Wave-A `caps_h256` arm (A-6).
+
+**Fix (code only, 2026-10-26).** `deepjscc_encoder.py`, `deepjscc_decoder.py`
+and `reconstruction_jscc.py` now take `hidden_dims: Optional[tuple] = None`
+and resolve `config.HIDDEN_DIMS` **inside** `__init__`. The frozen default is
+still `(128, 128)`, so every existing checkpoint loads and every existing
+model is byte-identical; the patch only makes an explicit width (or a runtime
+config patch) actually take effect. Guarded by
+`tests/test_arch_width.py` (14 checks).
+
+**Pre-registered ablation design (fixed before the first cell trained):**
+
+| field | value |
+|---|---|
+| root | `results/ARCH_ABL/` (nothing else written) |
+| arms | `frozen_task` (lambda_u = lambda_v = 0) |
+| width | 256 (both layers), verified from `encoder.backbone.0.weight` before training |
+| k | 18 (the failing, non-saturated condition) |
+| channels | awgn, rayleigh |
+| seeds | 42 |
+| steps | `config.TASK_TRAIN_STEPS` = 3000 (unchanged budget) |
+| cells | 2 |
+| eval | E=1000, 5-SNR grid, 2 units / 10 slots |
+
+**Scope reduction, recorded (12:25 UTC 2026-10-26).** The pre-registered design
+was 8 cells (2 arms x 2 channels x 2 seeds). A 256-wide cell costs about
+3-4x the wall clock of a frozen 128-wide cell on this 4-core machine, so the
+run was cut to the 2 cells that answer the headline question: frozen task
+arm, width 256, k=18, awgn + rayleigh, seed 42. No cell had completed and
+no metric existed when the decision was taken (the cancelled start markers
+are kept under `results/ARCH_ABL/_cancelled/`). The lambda arm at 256 and
+both seed-43 cells stay declared but unrun; the ablation is **not** a
+2x2x2 design and must not be described as one.
+
+**What it can and cannot say.** If 256-wide still fails at k=18, capacity is
+not the explanation. If it rescues the arm, the frozen failure is an
+architecture limitation, not a property of task-oriented JSCC. One width and
+one k: this is a point check, not a scaling law. Frozen M1/M2 and Wave-A/B/C
+artifacts are untouched.
+
+---
+
+## A-10 - 3GPP UMa-aerial link budget on the frozen system (2026-10-26)
+
+**Why.** The frozen benchmark is a no-pathloss, no-shadowing Rayleigh link.
+`project/channels/aerial.py` implements the 3GPP TR 36.777 / TR 38.901
+UMa-aerial large-scale layer but was never wired into any reported number.
+
+**Method (evaluation only; nothing is trained).** Under perfect-CSI ZF a
+deterministic transmit gain g multiplies the signal but not the noise, so
+
+```
+SNR_eff = SNR_tx - PL          (dB)
+```
+
+exactly, with the fading statistics unchanged. The trained checkpoints are
+therefore evaluated unchanged on an *effective-SNR* grid, and LoS/NLoS are
+combined on that one curve:
+
+```
+SR(SNR_tx) = P_LoS * SR(SNR_tx - PL_LoS)
+           + (1 - P_LoS) * SR(SNR_tx - PL_NLoS)
+```
+
+This is exact for i.i.d. episodes with an independent LoS draw - it is a
+mixture of two evaluations of the same curve, not a new channel simulation.
+The reported aerial penalty is `required_tx - required_eff`.
+
+**Scope, stated up front.** Large-scale path loss and LoS probability only.
+No Doppler, no altitude-dependent small-scale fading, no shadowing term, no
+per-episode gain dispersion. `reference_pl_db=0` means "absolute loss", i.e.
+the benchmark's SNR is defined at the receiver with unit path gain; any other
+anchor is a labelled sensitivity, never a silent default change.
+
+**Grid.** d2D = 500 m, h = 50 m, fc = 2 GHz (P_LoS = 0.8887, PL_mean =
+95.63 dB), E=1000, effective-SNR grid -40..+25 dB in 5 dB steps (measured in
+two passes over the same deterministic stream via `--reuse`), methods:
+Wave-C `lam_ctl_heavy` at k=18 and k=54, plus the frozen convolutional digital
+baseline at the same effective SNRs. Results: `results/AERIAL/`.
+
+**Tooling bug found during the first run (fixed before the reported numbers).**
+The transmitter-SNR mapping originally clipped interpolation beyond the
+measured grid to 1.0, which made any method with a low ceiling look as if it
+"reached" 0.90 at an arbitrary SNR. It now uses constant extrapolation, so a
+method whose ceiling is 0.17 reports `None` rather than a fake threshold. The
+contaminated first output was overwritten, not kept alongside the fixed one.
+
+A second runner bug was found in the same pass: the digital comparator was
+evaluated at B=2 for both bandwidths, but the frozen k=54 comparator is B=8
+(`M2_B_BY_K`). At k=54 that made the frozen baseline look far worse than it
+is (0.17 vs the published 0.72 at 0 dB). The runner now uses `M2_B_BY_K[k]`;
+the corrected numbers are the only ones shipped.
+
+---
+
+## A-11 - Polar-coded digital baseline on the frozen M2 grid (2026-10-26)
+
+**Question.** Every "digital" number in this project comes from one coding
+choice (K=7, rate-1/2 convolutional + QPSK). Does the conclusion survive a
+different modern code?
+
+**Baseline.** `project/baselines/digital_polar.py`: 5G NR-style CRC-8 polar
+code with SC decoding, behind the same quantize / pack / QPSK / channel
+interface (4/4 own gates pass). It is deterministic and untrained, so there is
+nothing to train and no seed variance to average.
+
+**Design (pre-registered before the run).**
+
+| field | value |
+|---|---|
+| k grid | 12, 18, 24, 30, 54 (M2) |
+| B per k | {12:1, 18:2, 24:3, 30:4, 54:8} (M2_B_BY_K, unchanged) |
+| SNR grid | 0, 5, 10, 15, 20 dB (M2) |
+| channels | awgn, rayleigh |
+| methods | polar (new) and conv (re-run on the **same** episodes, exact pairing) |
+| episodes | 1000 (default); 5000 available via `--episodes=5000` |
+| test stream | `config.TEST_SEED`, one stream |
+| output | `results/POLAR/` |
+
+**Why one stream and not three "seeds".** Both baselines are deterministic.
+Evaluating the same deterministic pipeline three times and calling it seed
+replication would be fake variance, so this run reports one stream with a
+binomial (Wilson) 95% CI.
+
+**Known limitation, stated with the numbers.** SC decoding without a CRC-aided
+list is weaker than a production 5G receiver, so the polar column is a
+*lower* bound on what polar can do, not a verdict on polar coding. Frozen
+M1/M2 and all Wave artifacts are untouched.
+
+---
+
+---
+
 ## 1. What a reviewer can check independently
 
 ```powershell
@@ -296,9 +453,13 @@ python tools/run_step10_m1.py verify     # frozen M1 gates
 python tools/run_step11_m2.py verify     # frozen M2 gates
 python tools/run_wave_a.py verify        # wave ids, frozen-identity fingerprint
 python tools/run_wave_b.py verify        # coverage contract + 70 σ=0 gates
+python tools/run_wave_c.py verify        # screening scope + eval-slot contract
+python tools/run_arch_ablation.py verify # capacity-ablation pre-flight (A-9)
 python tools/run_all.py status           # 21 ok, 1 accepted, 0 pending
 
 python -m tests.test_wave_a_tooling      # 60 checks
+python -m tests.test_aerial_link         # 26 checks (3GPP formulas + mapping)
+python -m tests.test_arch_width          # 14 checks (capacity plumbing)
 ```
 
 Hash check for the frozen evidence:

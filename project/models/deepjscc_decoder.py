@@ -13,6 +13,8 @@ module, never inside the decoder.
 
 from __future__ import annotations
 
+from typing import Optional
+
 import torch
 from torch import nn
 
@@ -27,12 +29,14 @@ class DeepJSCCDecoder(nn.Module):
         self,
         k: int = 3,
         state_dim: int = config.STATE_DIM,
-        hidden_dims: tuple = config.HIDDEN_DIMS,
+        hidden_dims: Optional[tuple] = None,
     ) -> None:
         super().__init__()
         if k < 1:
             raise ValueError(f"k must be >= 1, got {k}")
-        h1, h2 = hidden_dims
+        # resolved at construction time, not at import time (see encoder note)
+        h1, h2 = tuple(config.HIDDEN_DIMS if hidden_dims is None
+                       else hidden_dims)
         self.k = k
         self.backbone = nn.Sequential(
             nn.Linear(2 * k, h1),

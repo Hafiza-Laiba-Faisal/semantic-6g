@@ -1,0 +1,114 @@
+"""Figures for the A-10 (aerial) and A-11 (polar) blocks.
+
+Reads existing artifacts only (read-only):
+  results/AERIAL/step_aerial_summary.json
+  results/POLAR/step_polar_summary_E1000.json
+
+Writes:
+  fyp_md_files/figures/fig_aerial_required_snr.png
+  fyp_md_files/figures/fig_polar_vs_conv.png
+
+No training, no evaluation, no writes under results/.
+Run:  .venv\\Scripts\\python.exe tools/make_figures_extensions.py
+"""
+
+import json
+from pathlib import Path
+
+import matplotlib
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt
+import numpy as np
+
+ROOT = Path(__file__).resolve().parents[1]
+AER = ROOT / "results" / "AERIAL" / "step_aerial_summary.json"
+POL = ROOT / "results" / "POLAR" / "step_polar_summary_E1000.json"
+FIG = ROOT / "fyp_md_files" / "figures"
+FIG.mkdir(parents=True, exist_ok=True)
+
+plt.rcParams.update({
+    "figure.dpi": 200, "font.size": 9, "axes.grid": True,
+    "grid.alpha": 0.3, "axes.spines.top": False, "axes.spines.right": False,
+})
+
+NAME = {"lam_ctl_heavy_k18": "lambda-shaped, k=18",
+        "lam_ctl_heavy_k54": "lambda-shaped, k=54",
+        "digital_k18": "digital (conv), k=18",
+        "digital_k54": "digital (conv), k=54"}
+COLOR = {"lam_ctl_heavy_k18": "#d62728", "lam_ctl_heavy_k54": "#ff7f0e",
+         "digital_k18": "#2ca02c", "digital_k54": "#1f77b4"}
+
+
+def aerial():
+    d = json.loads(AER.read_text())
+    methods = d["methods"]
+    rows = [m for m in ("lam_ctl_heavy_k18", "lam_ctl_heavy_k54",
+                        "digital_k18", "digital_k54") if m in methods]
+    y = np.arange(len(rows))
+    h = 0.36
+    fig, ax = plt.subplots(figsize=(6.6, 3.0))
+    xmax = 130.0
+    for target, off, hatch, col in (("0.90", -h / 2, "", "#4c72b0"),
+                                    ("0.99", +h / 2, "///", "#dd8452")):
+        for yi, m in zip(y, rows):
+            v = methods[m]["required_tx_db"].get(target)
+            if v is None:
+                ax.text(43.0, yi + off, "not reachable at any SNR", va="center",
+                        fontsize=6.5, color="#777", style="italic")
+            else:
+                ax.barh(yi + off, v - 42.0, left=42.0, height=h, color=col,
+                        hatch=hatch, edgecolor="white", lw=0.6)
+                ax.text(v + 1.0, yi + off, f"{v:.0f} dB", va="center",
+                        fontsize=7, color="#333")
+        ax.barh(0, 0, color=col, hatch=hatch, edgecolor="white",
+                label=f"SR >= {target}")
+    ax.set_yticks(y)
+    ax.set_yticklabels([NAME[m] for m in rows])
+    ax.set_xlim(42, xmax)
+    ax.set_xlabel("required transmit SNR (dB, relative to a unit-gain benchmark)\n"
+                  f"dotted line = mean path loss {d['aerial']['pl_mean_db']:.1f} dB")
+    ax.axvline(d["aerial"]["pl_mean_db"], color="grey", ls=":", lw=1)
+    ax.set_title("3GPP UMa-aerial, d2D=500 m, h=50 m, 2 GHz (A-10), E=1000")
+    ax.legend(frameon=False, fontsize=7, loc="upper center",
+              bbox_to_anchor=(0.5, -0.32), ncol=2)
+    fig.tight_layout()
+    out = FIG / "fig_aerial_required_snr.png"
+    fig.savefig(out, bbox_inches="tight")
+    plt.close(fig)
+    print("wrote", out.relative_to(ROOT))
+
+
+def polar():
+    d = json.loads(POL.read_text())
+    rows = d["rows"]
+    snrs = [float(x) for x in d["design"]["snr_grid_db"]]
+    fig, axes = plt.subplots(1, 3, figsize=(9.2, 3.2), sharey=True)
+    for ax, k in zip(axes, (18, 30, 54)):
+        for ch, ls in (("awgn", "-"), ("rayleigh", ":")):
+            for m, col, mk in (("polar", "#c44e52", "s"),
+                               ("conv", "#1f77b4", "o")):
+                ys = [next(r[m]["success_rate"] for r in rows
+                           if r["k"] == k and r["channel"] == ch
+                           and r["snr_db"] == s) for s in snrs]
+                ax.plot(snrs, ys, ls, color=col, marker=mk, ms=3.2, lw=1.2,
+                        label=f"{m} ({ch})", alpha=0.95 if ch == "awgn" else 0.65)
+        ax.set_title(f"k = {k} (B = {d['design']['bits_by_k'][str(k)]})")
+        ax.set_xlabel("SNR (dB)")
+        ax.set_ylim(0, 1.06)
+        ax.set_xticks(snrs)
+    axes[0].set_ylabel("success rate")
+    handles, labels = axes[0].get_legend_handles_labels()
+    fig.legend(handles, labels, loc="lower center", ncol=4, frameon=False,
+               fontsize=6.5, bbox_to_anchor=(0.5, -0.02))
+    fig.suptitle("Polar (CRC-8, SC) vs convolutional baseline, E=1000 (A-11)",
+                 fontsize=9)
+    fig.tight_layout(rect=(0, 0.06, 1, 1))
+    out = FIG / "fig_polar_vs_conv.png"
+    fig.savefig(out, bbox_inches="tight")
+    plt.close(fig)
+    print("wrote", out.relative_to(ROOT))
+
+
+if __name__ == "__main__":
+    aerial()
+    polar()

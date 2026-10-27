@@ -15,7 +15,7 @@ A-12).
 | 3 | capacity ablation invalid / missing | **done** (2 cells) | A-9, `results/ARCH_ABL/` | width 256 still fails: 0.027 awgn / 0.041 rayleigh vs 0.018/0.024 at 128; the task loss falls while reconstruction MSE explodes to ~10³ |
 | 4 | k=24 multi-initialisation missing | **not run** (designed, costed) | section 4 | 6 cells, ~2.5-3 h at 2-way parallelism |
 | 5 | packaging / reproducibility | **partial** | `environment.yml`, Dockerfile | conda spec added; Docker CMD fixed; image not built (no docker on this machine); Zenodo needs the user |
-| 6 | novelty argument | **clarified** | section 6 | four defensible claims, three missing pieces |
+| 6 | novelty argument | **clarified** (mechanism now measured) | section 6, `RESULTS_MECHANISM_2026-10-27.md` | four defensible claims; mechanism measured at gradient level (λ bounds ‖g‖ by ~14 orders; capacity does not fix it; outage episodes are the trigger); still open: which λ term, Doppler, competitive polar receiver |
 
 ## 1. 3GPP aerial channel (A-10)
 
@@ -168,24 +168,33 @@ Limits: one seed, one width, one k, 3000 steps, E = 1000. Nothing here is a
 claim about residual or attention architectures. Details:
 `RESULTS_ARCH_2026-10-26.md`.
 
-## 4. k = 24 multi-initialisation (not run)
+## 4. k = 24 multi-initialisation (A-14, running)
 
-Why not: it needs 6 new training cells (heavy lambda, k = 24, awgn + rayleigh,
-seeds 45/46/47) at the frozen 3000-step budget. At the measured frozen-width
-cost (~40 min/cell single-process) that is ~2.5-3 h at 2-way parallelism, and
-the machine was already committed to the capacity run today.
+It needs 6 new training cells (heavy lambda, k = 24, awgn + rayleigh,
+seeds 45/46/47) at the frozen 3000-step budget. Measured cost from A-12/A-13 is
+76–81 min per cell under 2-way parallelism, i.e. ~4 h wall clock for 6 cells —
+the earlier "~40 min/cell" figure was an estimate made before those runs
+measured it.
 
-Exact design, ready to run under a new dated amendment before the first cell:
+Pre-registered in `PROTOCOL_AMENDMENTS.md` A-14 and committed
+(`0753c89`) **before the first cell**, with runner `tools/run_k24_seeds.py`
+(`verify` + a 20-step smoke that writes nothing came first):
 
 ```
 cells   : 6 = lam_ctl_heavy x k=24 x {awgn, rayleigh} x seeds {45, 46, 47}
 steps   : config.TASK_TRAIN_STEPS = 3000        (unchanged)
-eval    : E=1000, 5-SNR grid -> 2 units, 10 slots
-purpose : seed variance at the k where the crossover sits (12 seeds 45-47
-          already exist for the instability arm, but not for k=24 heavy)
+eval    : E=1000, 5-SNR grid -> 6 units, 30 slots
+output  : results/K24_SEEDS/   (own root; no published denominator changes)
+purpose : seed variance at the k where the crossover sits (seeds 45-47
+          already exist for the instability arm in Wave-A A3, but not for
+          k=24 heavy)
 ```
 
-Do not describe k = 24 as having a variance estimate until this runs.
+Statistics were declared up front: per-seed values plus mean and min–max range
+across the three seeds; the range is **not** a confidence interval (n = 3), and
+no seed may be dropped.
+
+Do not describe k = 24 as having a variance estimate until this finishes.
 
 ## 5. Packaging and reproducibility
 
@@ -223,8 +232,15 @@ Do not describe k = 24 as having a variance estimate until this runs.
 
 **What is still missing for a strong novelty claim.**
 
-- A mechanism result: *why* the lambda terms stabilise training (e.g. gradient
-  norm / loss-landscape measurement), not just that they do.
+- A mechanism result — **partially delivered**
+  (`RESULTS_MECHANISM_2026-10-27.md`): λ shaping bounds the encoder gradient
+  norm by ~14 orders of magnitude (p99 ~60 vs ~10¹⁸) and every λ cell under the
+  frozen protocol converges with zero non-finite gradient steps; capacity is
+  ruled out (the exploding cells are the *wider* ones, and A-9's 256-wide frozen
+  cell still fails); the trigger is rare outage episodes (A-12 explodes with
+  the same λ arm, A-13 returns to O(1) when 3.78 % of episodes are resampled).
+  Still open: **which** λ term does the work (needs λ_u-only / λ_v-only arms)
+  and a curvature-level (sharpness) measurement.
 - Seed variance at k = 24 (section 4) and the full 32-cell Wave-C grid.
 - Doppler and time-correlated shadowing (A-13 trains and evaluates a
   block-fading dispersion only); the 3GPP training channel now exists but the
@@ -241,9 +257,10 @@ dispersion sampler), `project/training/train_task_oriented.py` (channel
 whitelist + block gain), `project/config.py` (two additive RNG streams),
 new `tools/run_arch_ablation.py`, `tools/run_aerial_link.py`,
 `tools/run_polar_baseline.py`, `tools/run_aerial_training.py`
-(`--variant=a12|a13`), `tools/diag_aerial_checkpoints.py`,
-`tools/make_figures_extensions.py`, `environment.yml`, `Dockerfile`, three
-figures, five result docs, A-9/A-10/A-11/A-12/A-13, and
+(`--variant=a12|a13`), `tools/run_k24_seeds.py`, `tools/diag_aerial_checkpoints.py`,
+`tools/analyse_training_stability.py`, `tools/make_figures_extensions.py`,
+`environment.yml`, `Dockerfile`, four figures, six result docs,
+A-9/A-10/A-11/A-12/A-13/A-14, and
 `tests/test_aerial_link.py` (26 checks) + `tests/test_arch_width.py`
 (16 checks) + `tests/test_aerial_training.py` (34 checks).
 
@@ -276,4 +293,7 @@ python -m tests.test_aerial_training         # 34 checks
 python tools/run_aerial_link.py --d2d=500 --h=50 --fc=2.0 --episodes=1000
 python tools/run_polar_baseline.py run --episodes=1000
 python tools/run_aerial_training.py status --variant=a13   # A-13 progress
+python tools/run_k24_seeds.py verify         # A-14 pre-flight (6 cells, 30 slots)
+python tools/run_k24_seeds.py status         # A-14 progress
+python tools/analyse_training_stability.py   # mechanism table + JSON (read-only)
 ```

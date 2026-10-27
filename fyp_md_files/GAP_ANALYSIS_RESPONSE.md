@@ -262,7 +262,8 @@ new `tools/run_arch_ablation.py`, `tools/run_aerial_link.py`,
 `environment.yml`, `Dockerfile`, four figures, six result docs,
 A-9/A-10/A-11/A-12/A-13/A-14, and
 `tests/test_aerial_link.py` (26 checks) + `tests/test_arch_width.py`
-(16 checks) + `tests/test_aerial_training.py` (34 checks).
+(16 checks) + `tests/test_aerial_training.py` (34 checks) +
+`tests/test_k24_design.py` (23 checks).
 
 **Not changed:** every file under `results/M1`, `results/M2`, `results/WAVE_A`,
 `results/WAVE_B`, `results/WAVE_C`; all frozen config values, seeds, step
@@ -290,6 +291,7 @@ python tools/run_aerial_training.py verify --variant=a13   # A-13, tail cap +20 
 python -m tests.test_arch_width              # 16 checks
 python -m tests.test_aerial_link             # 26 checks
 python -m tests.test_aerial_training         # 34 checks
+python -m tests.test_k24_design              # 23 checks (A-14 design lock)
 python tools/run_aerial_link.py --d2d=500 --h=50 --fc=2.0 --episodes=1000
 python tools/run_polar_baseline.py run --episodes=1000
 python tools/run_aerial_training.py status --variant=a13   # A-13 progress

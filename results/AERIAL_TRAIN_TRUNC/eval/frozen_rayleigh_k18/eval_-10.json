@@ -1,0 +1,23 @@
+{
+  "experiment": "AERIAL_TRAIN_TRUNC",
+  "amendment": "AERIAL-TRAIN-TRUNC-2026-10-27",
+  "method": "frozen_rayleigh",
+  "k": 18,
+  "nominal_snr_db": -10.0,
+  "episodes": 1000,
+  "test_seed": 10042,
+  "success_rate": 0.812,
+  "final_distance_mean": 1.185200810432434,
+  "control_effort_mean": 575.75,
+  "success_rate_los": 0.8987485766410828,
+  "success_rate_nlos": 0.1818181872367859,
+  "wilson": {
+    "wilson_low": 0.7866068125887822,
+    "wilson_high": 0.8350052901162315,
+    "p_hat": 0.812,
+    "success_count": 812,
+    "total": 1000
+  },
+  "gain_mean_db": 0.18255560100078583,
+  "gain_std_db": 7.525412082672119
+}

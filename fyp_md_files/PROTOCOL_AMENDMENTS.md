@@ -24,7 +24,7 @@ number in this log was typed by hand from memory.
 | AERIAL | evaluation only (no training universe) | 1 geometry, 2 models + 2 digital | - | A-10 complete |
 | POLAR | evaluation only (no training universe) | 50 conditions x 2 coders | - | A-11 complete |
 | AERIAL_TRAIN | 2 train / 48 method-unit-SNR slots | 2 / 48 | A-12 | A-12 complete, **negative** (training diverged; no cell retrained) |
-| AERIAL_TRAIN_TRUNC | 2 train / 48 slots (+1 pre-flight, writes nothing) | pre-flight running | A-13 | pending |
+| AERIAL_TRAIN_TRUNC | 2 train / 48 slots (+1 pre-flight, writes nothing) | 2 / 48, pre-flight PASS at +20 dB | A-13 | A-13 complete (operating point unchanged) |
 
 "Accounted" always means *evaluated or explicitly declared*. Nothing is
 imputed, nothing is dropped silently, and no failed cell is replaced.
@@ -593,12 +593,29 @@ M1/M2/Wave-A/B/C artifacts stay read-only. A-12's failed cells remain in the
 record and are not retrained or replaced.
 
 **Known limits, stated up front.** "3GPP-trained" here means *trained on the
-3GPP large-scale dispersion with the ≥10 dB outage tail excluded, and
-evaluated on the full dispersion*; that qualifier must travel with every
-number. Doppler and time-correlated shadowing remain out of scope. One seed,
-two k values.
+3GPP large-scale dispersion with the > 20 dB outage tail excluded (3.78 % of
+episodes), and evaluated on the full dispersion*; that qualifier must travel
+with every number. Doppler and time-correlated shadowing remain out of scope.
+One seed, two k values.
 
----
+**Result (2026-10-27, run as registered).** Pre-flight passed on the primary
+cap (0 non-finite gradients; worst loss after step 50 = 71; last-20 mean
+17.65), so the +15 dB fallback was not used. Both cells converged to the
+frozen λ-arm profile (loss 16.2 / 16.1; final encoder gradient 0.92 / 1.45;
+3 outlier steps each; **0** non-finite gradients) - against A-12's
+4320 / 210 final loss and 311 / 203 non-finite gradients. Evaluation on the
+full dispersion, same paired gain vector: success 0.661/0.900/0.985/0.999 at
+-15/-5/+10/+20 dB (k = 18) and 0.800/0.930/0.995/0.999 (k = 54), against
+0.647/0.898/0.978/0.995 and 0.781/0.930/0.992/0.997 for the Rayleigh-trained
+comparator. Required transmit SNR at 0.90: **90.6 dB** (k = 18, digital not
+reachable) and **87.3 dB** (k = 54, digital 105.3 dB, i.e. **18.0 dB** better);
+at 0.99: 108.4 and 103.7 dB. Difference from the Rayleigh-trained arm:
+-0.27 / -2.22 dB (k = 18) and -0.50 / -1.09 dB (k = 54) at 0.90 / 0.99, all
+inside sampling error (E = 1000, Wilson intervals overlap). Conclusion: the
+operating point does **not** move materially, so A-10 stands; A-13 is not
+evidence of a gain and must not be quoted as one. Details:
+`fyp_md_files/RESULTS_AERIAL_TRAIN_TRUNC_2026-10-27.md`; figure
+`fig_aerial_training.png`.
 
 ---
 

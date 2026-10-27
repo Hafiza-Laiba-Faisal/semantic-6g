@@ -136,7 +136,14 @@ hyper-parameter sensitivity at 128 width.
   terminal loss (15.4 / 15.6 vs 16.1) *before* collapsing, so the channel is
   not what prevents learning.
 
-## Not run: what a fair test would need (A-13, requires approval)
+## A-13: what a fair test needed — approved and run on 2026-10-27
+
+The truncated-tail option below was approved and executed as **A-13** the next
+day. Result: both cells converged (loss 16.2 / 16.1, zero non-finite gradient
+steps) and the operating point moved by ≤ 2 dB against the Rayleigh-trained
+arm, inside sampling error. See
+`RESULTS_AERIAL_TRAIN_TRUNC_2026-10-27.md`. The text below is kept as the
+decision record.
 
 Any of these changes a pre-registered quantity, so none of them was done
 silently and none is included in the numbers above:

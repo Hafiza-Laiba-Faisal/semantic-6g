@@ -1,0 +1,23 @@
+{
+  "experiment": "AERIAL_TRAIN_TRUNC",
+  "amendment": "AERIAL-TRAIN-TRUNC-2026-10-27",
+  "method": "digital",
+  "k": 18,
+  "nominal_snr_db": -15.0,
+  "episodes": 1000,
+  "test_seed": 10042,
+  "success_rate": 0.054,
+  "final_distance_mean": 8.055871963500977,
+  "control_effort_mean": 751.8402709960938,
+  "success_rate_los": 0.05802047625184059,
+  "success_rate_nlos": 0.024793388321995735,
+  "wilson": {
+    "wilson_low": 0.04162131372306273,
+    "wilson_high": 0.06979215484605245,
+    "p_hat": 0.054,
+    "success_count": 54,
+    "total": 1000
+  },
+  "gain_mean_db": 0.18255560100078583,
+  "gain_std_db": 7.525412082672119
+}

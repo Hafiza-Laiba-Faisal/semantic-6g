@@ -10,7 +10,7 @@ A-12).
 
 | # | gap raised | status | artifact | headline |
 |---|---|---|---|---|
-| 1 | channel is only AWGN/Rayleigh, no 3GPP aerial model | **done** (evaluation); training ran, **negative** | A-10, `results/AERIAL/`; A-12, `results/AERIAL_TRAIN/` | lambda policy needs 91 dB (k=18) / 87 dB (k=54) tx SNR for 0.90; classical link needs 108 dB at k=54 and never reaches 0.90 at k=18. Training *under* the dispersion diverged at both k (frozen recipe, ~4 % outage episodes) - reported as-is, section 1 |
+| 1 | channel is only AWGN/Rayleigh, no 3GPP aerial model | **done** | A-10, `results/AERIAL/`; A-12 (negative); A-13, `results/AERIAL_TRAIN_TRUNC/` | lambda policy needs 90.6 dB (k=18) / 87.3 dB (k=54) tx SNR for 0.90 - digital needs 105.3 dB at k=54 and never reaches 0.90 at k=18. Training *under* the dispersion moves this by <=2 dB (inside sampling error), so the evaluation-only result stands; A-12 (full dispersion) diverged and is reported as-is |
 | 2 | digital baseline is one convolutional code | **done** | A-11, `results/POLAR/` | k=12/18/24 within 0.05 at the payload ceiling; polar better at k=30 (+0.06..+0.12 at >=10 dB), worse at k=54/B=8 below 10 dB |
 | 3 | capacity ablation invalid / missing | **done** (2 cells) | A-9, `results/ARCH_ABL/` | width 256 still fails: 0.027 awgn / 0.041 rayleigh vs 0.018/0.024 at 128; the task loss falls while reconstruction MSE explodes to ~10³ |
 | 4 | k=24 multi-initialisation missing | **not run** (designed, costed) | section 4 | 6 cells, ~2.5-3 h at 2-way parallelism |
@@ -80,6 +80,38 @@ recommended; alternatives: robust loss, SNR-curriculum shift) - **none was
 applied, no cell was retrained**, and the failed cells remain in the record.
 Details: `fyp_md_files/RESULTS_AERIAL_TRAIN_2026-10-26.md`, figure
 `fig_aerial_training.png`.
+
+### 1c. A-13: the same design with the outage tail resampled — the operating point does not move
+
+A-13 (dated amendment, approved 2026-10-27, code committed **before the first
+cell**) repeats A-12 with one change: training episodes whose 3GPP gain offset
+exceeds +20 dB (the outage tail, 3.78 % of episodes) are resampled. Evaluation
+is never truncated. A pre-registered 300-step pre-flight gate passed on the
+first attempt (0 non-finite gradients; worst loss after step 50 = 71 vs 1440
+in A-12; last-20 mean 17.7 vs 4256), so the declared +15 dB fallback was never
+used.
+
+Both cells converged to the frozen λ-arm profile (loss 16.2 / 16.1, final
+encoder gradient 0.92 / 1.45) with **zero** non-finite gradient steps. On the
+full dispersion, same paired gain vector:
+
+| method | 0.90 | 0.99 |
+|---|---|---|
+| trained on 3GPP (A-13), k = 18 | −5.00 dB / **90.6 dB** | 12.78 dB / 108.4 dB |
+| trained on Rayleigh, k = 18 | −4.73 dB / 90.9 dB | 15.00 dB / 110.6 dB |
+| trained on 3GPP (A-13), k = 54 | −8.33 dB / **87.3 dB** | 8.08 dB / 103.7 dB |
+| trained on Rayleigh, k = 54 | −7.83 dB / 87.8 dB | 9.17 dB / 104.8 dB |
+| digital conv, k = 54 | 9.69 dB / 105.3 dB | not reachable |
+
+So the penalty for having been trained on Rayleigh rather than on the 3GPP
+dispersion is **≤ 2.2 dB at 0.99 and ≤ 0.5 dB at 0.90**, with overlapping
+Wilson intervals at every grid point — no ranking is claimed, and A-13 is not
+evidence of a gain. What it does establish is that the A-10 numbers are not an
+artefact of the training channel, and that A-12's failure was the tail (one
+line changed: 311 → 0 non-finite gradient steps, dead network → 0.94–0.999).
+The qualifier that must travel with the number: *trained on 96.2 % of the
+dispersion (100 % LoS, 66 % NLoS episodes), evaluated on 100 %*. Details:
+`fyp_md_files/RESULTS_AERIAL_TRAIN_TRUNC_2026-10-27.md`.
 
 ## 2. Polar baseline (A-11)
 
@@ -184,19 +216,19 @@ Do not describe k = 24 as having a variance estimate until this runs.
 3. **Robustness:** the task metric degrades gracefully with CSI error while
    the reconstruction metric collapses (Wave-B, 350 cells, 70 sigma=0 gates).
 4. **Deployability:** on a 3GPP UMa-aerial link the same policy keeps a
-   15-21 dB transmit-power advantage over the classical link at k = 54 and is
-   the only method that works at k = 18 (evaluation only - the checkpoints are
-   Rayleigh-trained; see 1b for why retraining under the dispersion is still
-   open).
+   15–21 dB transmit-power advantage over the classical link at k = 54 and is
+   the only method that works at k = 18. This survives *training* on the
+   dispersion (A-13): the operating point moves by ≤ 2 dB, inside sampling
+   error, so the advantage is not an artefact of the training channel.
 
 **What is still missing for a strong novelty claim.**
 
 - A mechanism result: *why* the lambda terms stabilise training (e.g. gradient
   norm / loss-landscape measurement), not just that they do.
 - Seed variance at k = 24 (section 4) and the full 32-cell Wave-C grid.
-- A training recipe that survives the aerial dispersion (A-12 diverged with the
-  frozen recipe; the shadowing/LoS-NLoS layer itself now exists). Doppler is
-  still not modelled.
+- Doppler and time-correlated shadowing (A-13 trains and evaluates a
+  block-fading dispersion only); the 3GPP training channel now exists but the
+  outage tail had to be excluded, which must be stated with every number.
 - A competitive 5G polar receiver (rate matching + CA-SCL) if polar is to be
   used as a serious comparator.
 
@@ -208,11 +240,12 @@ Do not describe k = 24 as having a variance estimate until this runs.
 dispersion sampler), `project/training/train_task_oriented.py` (channel
 whitelist + block gain), `project/config.py` (two additive RNG streams),
 new `tools/run_arch_ablation.py`, `tools/run_aerial_link.py`,
-`tools/run_polar_baseline.py`, `tools/run_aerial_training.py`,
+`tools/run_polar_baseline.py`, `tools/run_aerial_training.py`
+(`--variant=a12|a13`), `tools/diag_aerial_checkpoints.py`,
 `tools/make_figures_extensions.py`, `environment.yml`, `Dockerfile`, three
-figures, four result docs, A-9/A-10/A-11/A-12, and `tests/test_aerial_link.py`
-(26 checks) + `tests/test_arch_width.py` (16 checks) +
-`tests/test_aerial_training.py` (25 checks).
+figures, five result docs, A-9/A-10/A-11/A-12/A-13, and
+`tests/test_aerial_link.py` (26 checks) + `tests/test_arch_width.py`
+(16 checks) + `tests/test_aerial_training.py` (34 checks).
 
 **Not changed:** every file under `results/M1`, `results/M2`, `results/WAVE_A`,
 `results/WAVE_B`, `results/WAVE_C`; all frozen config values, seeds, step
@@ -227,6 +260,7 @@ evaluations.
 | Wave-C | 32 cells | 4 (A-8b screening) | time; screening was pre-registered |
 | ARCH_ABL | 8 cells (2 arms x 2 ch x 2 seeds) | 2 (frozen arm x 2 ch x seed 42) | 256-wide wall clock |
 | AERIAL_TRAIN | 2 cells x 1 seed | 2 (lam_ctl_heavy, k=18/54, umaaerial) | run as registered in full; **negative** (training diverged), kept as the record, not retrained |
+| AERIAL_TRAIN_TRUNC | 2 cells x 1 seed (+1 pre-flight) | 2 (same design, outage tail > 20 dB resampled) | run as registered in full; pre-flight passed at the primary cap |
 | k=24 inits | 6 cells | 0 | section 4 |
 | polar at E=5000 | 50 conditions | 0 (E=1000 run) | protocol budget needs ~4x the wall clock |
 
@@ -235,10 +269,11 @@ evaluations.
 ```powershell
 python tools/run_arch_ablation.py verify     # A-9 pre-flight (2 cells, width 256 real)
 python tools/run_aerial_training.py verify   # A-12 pre-flight (3GPP training channel)
+python tools/run_aerial_training.py verify --variant=a13   # A-13, tail cap +20 dB
 python -m tests.test_arch_width              # 16 checks
 python -m tests.test_aerial_link             # 26 checks
-python -m tests.test_aerial_training         # 25 checks
+python -m tests.test_aerial_training         # 34 checks
 python tools/run_aerial_link.py --d2d=500 --h=50 --fc=2.0 --episodes=1000
 python tools/run_polar_baseline.py run --episodes=1000
-python tools/run_aerial_training.py status   # A-12 train/eval progress
+python tools/run_aerial_training.py status --variant=a13   # A-13 progress
 ```

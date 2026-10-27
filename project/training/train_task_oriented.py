@@ -45,12 +45,16 @@ def closed_loop_rollout(
     snr_db: float = 10.0,
     channel: str = "awgn",
     generator: Optional[torch.Generator] = None,
+    aerial_max_offset_db: Optional[float] = None,
 ) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
     """Differentiable T-step closed-loop rollout.
 
     Returns ``(positions [B, T+1, 2], controls [B, T, 2],
     velocities [B, T+1, 2])``. Every operation is differentiable w.r.t.
     the communication parameters; noise/fading are constants.
+
+    ``aerial_max_offset_db`` (A-13, opt-in) resamples training episodes whose
+    3GPP gain offset exceeds that cap; ``None`` is the A-12 behaviour.
     """
     if channel not in ("awgn", "rayleigh", "umaaerial"):
         raise ValueError(f"unknown channel {channel!r}")
@@ -59,7 +63,8 @@ def closed_loop_rollout(
     g = s0[:, 4:6]
 
     # A-12: one block gain per episode, held for the whole rollout
-    block_gain = (sample_aerial_gain(s0.shape[0], generator=generator)
+    block_gain = (sample_aerial_gain(s0.shape[0], generator=generator,
+                                     max_offset_db=aerial_max_offset_db)
                   if channel == "umaaerial" else None)
 
     positions = [p]
@@ -130,6 +135,7 @@ def train_task_oriented(
     eval_snr_db: float = 10.0,
     verbose_every: int = 0,
     lambdas: Optional[Tuple[float, float, float, float]] = None,
+    aerial_max_offset_db: Optional[float] = None,
 ) -> Tuple[ReconstructionDeepJSCC, dict]:
     """Smoke-scale task-oriented training; returns (model, report).
 
@@ -140,6 +146,12 @@ def train_task_oriented(
     Wave-A amendment (non-frozen, opt-in): ``lambdas`` overrides the
     frozen task-loss weights (ld, lu, lv, lT). None = frozen config
     values (bitwise-identical training path).
+
+    A-13 amendment (opt-in): ``aerial_max_offset_db`` resamples training
+    episodes whose 3GPP gain offset exceeds that cap.  None = A-12 behaviour
+    (full dispersion during training).  The in-training ``eval_after``
+    diagnostic intentionally keeps the FULL dispersion in both cases, so the
+    number stays comparable across A-12 and A-13.
     """
     if channel not in ("awgn", "rayleigh", "umaaerial"):
         raise ValueError(f"unknown channel {channel!r}")
@@ -178,7 +190,9 @@ def train_task_oriented(
 
         pos, ctl, vel = closed_loop_rollout(model, s0, t_max=t_max,
                                             snr_db=snr_db, channel=channel,
-                                            generator=gen_noise)
+                                            generator=gen_noise,
+                                            aerial_max_offset_db=
+                                            aerial_max_offset_db)
         if lambdas is None:
             out = task_loss(pos, ctl, vel, goal)
         else:
@@ -191,7 +205,9 @@ def train_task_oriented(
 
         # detached diagnostics only (never optimized)
         with torch.no_grad():
-            diag_gain = (sample_aerial_gain(s0.shape[0], generator=gen_diag)
+            diag_gain = (sample_aerial_gain(
+                             s0.shape[0], generator=gen_diag,
+                             max_offset_db=aerial_max_offset_db)
                          if channel == "umaaerial" else None)
             s_bar_hat_diag = model.forward_losses(s0, snr_db, channel=channel,
                                                   generator=gen_noise,
@@ -231,6 +247,7 @@ def train_task_oriented(
 
     report = {
         "channel": channel, "k": k, "seed": seed,
+        "aerial_max_offset_db": aerial_max_offset_db,
         "steps": steps, "batch_episodes": batch_episodes, "t_max": t_max,
         "lr": lr, "snr_range_db": snr_range,
         "eval_episodes": eval_episodes, "eval_snr_db": eval_snr_db,

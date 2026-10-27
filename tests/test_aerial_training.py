@@ -301,9 +301,73 @@ def test_eval_convention_matches_the_channel():
           f"max|diff|={diff:.2e}")
 
 
+def test_truncated_tail():
+    """A-13: opt-in resampling of the outage tail; everything else unchanged."""
+    import torch
+    from project.channels import aerial
+
+    cap = 20.0
+    big = 20000
+    # default path is untouched: identical stream to the A-12 sampler
+    a = aerial.sample_aerial_offsets_db(
+        big, generator=torch.Generator().manual_seed(31))
+    b = aerial.sample_aerial_offsets_db(
+        big, generator=torch.Generator().manual_seed(31), max_offset_db=None)
+    check("max_offset_db=None is bit-identical to A-12",
+          bool(torch.equal(a[0], b[0]) and torch.equal(a[1], b[1])))
+
+    g = torch.Generator().manual_seed(31)
+    capped, capped_los = aerial.sample_aerial_offsets_db(
+        big, generator=g, max_offset_db=cap)
+    check("truncated sampler never exceeds the cap",
+          float(capped.max()) <= cap, f"max={float(capped.max()):+.2f} dB")
+    check("truncated sampler keeps the training batch size",
+          tuple(capped.shape) == (big, 1) and tuple(capped_los.shape) == (big, 1),
+          str(tuple(capped.shape)))
+    frac = float((a[0] > cap).float().mean())
+    check("the resampled tail is the outage tail (3-5 % of episodes)",
+          0.03 < frac < 0.05, f"P(offset>{cap:g} dB)={frac:.4f}")
+    # and the cap must NOT delete the NLoS branch (that was the 10 dB mistake)
+    _, truncated_los = aerial.sample_aerial_offsets_db(
+        big, generator=torch.Generator().manual_seed(35), max_offset_db=cap)
+    nlos_kept = float((~truncated_los.squeeze(-1)).float().mean())
+    check("truncation keeps NLoS episodes in the training batch",
+          nlos_kept > 0.05, f"NLoS share of batch {100 * nlos_kept:.1f} %")
+    # the truncated sample must be a fair draw from the conditional law: its
+    # mean must sit below the unconditional mean
+    check("truncation lowers the mean loss offset",
+          float(capped.mean()) < float(a[0].mean()),
+          f"{float(capped.mean()):+.3f} vs {float(a[0].mean()):+.3f} dB")
+    # determinism of the rejection loop
+    c2, _ = aerial.sample_aerial_offsets_db(
+        big, generator=torch.Generator().manual_seed(31), max_offset_db=cap)
+    check("truncated sampling is deterministic", bool(torch.equal(capped, c2)))
+
+    # gain = 10^(-offset/20) must stay >= 10^(-cap/20) i.e. never deeper
+    gain = aerial.sample_aerial_gain(
+        4096, generator=torch.Generator().manual_seed(32), max_offset_db=cap)
+    check("truncated gain floor respected",
+          float(gain.min()) >= 10.0 ** (-(cap + 5.0) / 20.0),
+          f"min gain {float(gain.min()):.4f}")
+
+    # the rollout takes the flag and stays deterministic
+    from project.training.train_task_oriented import closed_loop_rollout
+    model = _model().eval()
+    s, _ = _paired_inputs(batch=8, k=6, seed=33)
+    outs = []
+    for _ in range(2):
+        with torch.no_grad():
+            outs.append(closed_loop_rollout(
+                model, s, t_max=3, snr_db=10.0, channel="umaaerial",
+                generator=torch.Generator().manual_seed(34),
+                aerial_max_offset_db=cap)[0])
+    check("rollout accepts the truncation flag and is deterministic",
+          bool(torch.equal(outs[0], outs[1])))
+
+
 if __name__ == "__main__":
     print("=" * 72)
-    print("3GPP UMa-AERIAL TRAINING-CHANNEL TESTS (A-12)")
+    print("3GPP UMa-AERIAL TRAINING-CHANNEL TESTS (A-12 / A-13)")
     print("=" * 72)
     test_determinism()
     test_statistics()
@@ -314,6 +378,7 @@ if __name__ == "__main__":
     test_forward_losses_passthrough()
     test_closed_loop_rollout()
     test_train_entry_rejects_unknown()
+    test_truncated_tail()
     n_pass, n_all = sum(SUMMARY), len(SUMMARY)
     print("\n" + "=" * 72)
     print(f"SUMMARY: {n_pass}/{n_all} checks passed")

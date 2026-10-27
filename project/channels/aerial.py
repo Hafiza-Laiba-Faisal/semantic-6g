@@ -126,6 +126,7 @@ def sample_aerial_offsets_db(
     h_m: Optional[float] = None,
     fc_ghz: Optional[float] = None,
     reference_pl_db: Optional[float] = None,
+    max_offset_db: Optional[float] = None,
     device: Optional[torch.device] = None,
     dtype: torch.dtype = torch.float32,
 ) -> Tuple[torch.Tensor, torch.Tensor]:
@@ -140,6 +141,13 @@ def sample_aerial_offsets_db(
     loss, so the trained model sees the 3GPP *dispersion* (LoS/NLoS split +
     shadowing) around the frozen link budget.  A numeric reference keeps
     the absolute loss (the A-10 evaluation convention).
+
+    ``max_offset_db`` (A-13, opt-in) rejects episodes whose extra loss is
+    worse than that cap by **resampling them** (rejection sampling; the rest
+    of the batch is untouched).  One-sided: the better-than-mean tail is kept,
+    because it is not an outlier for the error.  ``None`` reproduces the A-12
+    stream exactly.  The evaluation path never passes it, so evaluation always
+    sees the full dispersion.
 
     Block-fading assumption: the offset is constant over one episode
     (``T_MAX`` steps).  Doppler / time-correlated shadowing are out of
@@ -156,16 +164,35 @@ def sample_aerial_offsets_db(
     pl_nlos = nlos_path_loss_db(d3d, h_m, fc_ghz)
     if reference_pl_db is None:
         reference_pl_db = p_los * pl_los + (1.0 - p_los) * pl_nlos
+    ref = float(reference_pl_db)
 
-    u = torch.rand(batch, 1, generator=generator, device=device, dtype=dtype)
-    is_los = u < p_los
-    pl = torch.where(is_los, torch.full_like(u, pl_los),
-                     torch.full_like(u, pl_nlos))
-    sigma = torch.where(is_los, torch.full_like(u, SHADOW_SIGMA_DB["los"]),
-                        torch.full_like(u, SHADOW_SIGMA_DB["nlos"]))
-    shadow = torch.randn(batch, 1, generator=generator, device=device,
-                         dtype=dtype) * sigma
-    return pl + shadow - float(reference_pl_db), is_los
+    def _draw(n: int) -> Tuple[torch.Tensor, torch.Tensor]:
+        u = torch.rand(n, 1, generator=generator, device=device, dtype=dtype)
+        los = u < p_los
+        pl = torch.where(los, torch.full_like(u, pl_los),
+                         torch.full_like(u, pl_nlos))
+        sigma = torch.where(los, torch.full_like(u, SHADOW_SIGMA_DB["los"]),
+                            torch.full_like(u, SHADOW_SIGMA_DB["nlos"]))
+        shadow = torch.randn(n, 1, generator=generator, device=device,
+                             dtype=dtype) * sigma
+        return pl + shadow - ref, los
+
+    offsets_db, is_los = _draw(batch)
+    if max_offset_db is not None:
+        cap = float(max_offset_db)
+        bad = offsets_db > cap
+        for _ in range(10000):                  # terminates w.p. 1; guarded
+            if not bool(bad.any()):
+                break
+            idx = bad.nonzero(as_tuple=True)[0]
+            new_off, new_los = _draw(int(idx.numel()))
+            offsets_db[idx] = new_off
+            is_los[idx] = new_los
+            bad = offsets_db > cap
+        else:                                   # pragma: no cover
+            raise RuntimeError(
+                f"max_offset_db={cap} dB is unreachable for this geometry")
+    return offsets_db, is_los
 
 
 def sample_aerial_gain(

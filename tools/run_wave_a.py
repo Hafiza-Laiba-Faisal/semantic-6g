@@ -433,6 +433,7 @@ def _train_one(c: WaveCell):
                 t_max=config.TASK_TRAINING_T,
                 snr_range=snr_range_override,
                 lambdas=c.lambdas,                   # None = frozen weights
+                aerial_max_offset_db=getattr(c, "aerial_max_offset_db", None),
                 verbose_every=0)
             g0, g1 = rep["grad_enc_final"], rep["grad_dec_final"]
             grads_finite = (math.isfinite(g0) and math.isfinite(g1)

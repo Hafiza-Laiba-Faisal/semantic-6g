@@ -57,9 +57,19 @@ Usage:
     python tools/run_aerial_training.py evaluate
     python tools/run_aerial_training.py finalize
     python tools/run_aerial_training.py status
+
+A-13 variant (training episodes with gain offset > +10 dB resampled; the
+evaluation dispersion is never truncated; artifacts go to
+``results/AERIAL_TRAIN_TRUNC/``):
+
+    python tools/run_aerial_training.py preflight --variant=a13
+    python tools/run_aerial_training.py train --variant=a13 --shard=i/N
+    python tools/run_aerial_training.py evaluate --variant=a13
+    python tools/run_aerial_training.py finalize --variant=a13
 """
 
 import json
+import math
 import sys
 from pathlib import Path
 
@@ -76,8 +86,29 @@ from project.evaluation.evaluate import (Condition, aggregate,  # noqa: E402
 from project.evaluation.statistics import wilson_ci_95  # noqa: E402
 from project.experiments.config import M2_B_BY_K  # noqa: E402
 
+# A-12 = the pre-registered run (full dispersion during training).
+# A-13 = identical design; training episodes with gain offset > +10 dB are
+#        resampled (PROTOCOL_AMENDMENTS.md A-13, approved 2026-10-27).
+#        Evaluation is NEVER truncated in either variant.
+VARIANTS = {
+    "a12": {"root": "AERIAL_TRAIN", "label": "AerialTrain",
+            "experiment": "AERIAL_TRAIN",
+            "amendment": "AERIAL-TRAIN-3GPP-2026-10-26",
+            "max_offset_db": None, "suffix": ""},
+    "a13": {"root": "AERIAL_TRAIN_TRUNC", "label": "AerialTrainTrunc",
+            "experiment": "AERIAL_TRAIN_TRUNC",
+            "amendment": "AERIAL-TRAIN-TRUNC-2026-10-27",
+            "max_offset_db": 20.0, "suffix": "_trunc20",
+            # pre-registered ladder (PROTOCOL_AMENDMENTS.md A-13): primary 20,
+            # one retry at 15, then stop.  No other cap is allowed.
+            "allowed_caps": (20.0, 15.0)},
+}
+VARIANT = "a12"
 AERIAL_ROOT = ROOT / "results" / "AERIAL_TRAIN"
-AMENDMENT = "AERIAL-TRAIN-3GPP-2026-10-26"
+AMENDMENT = VARIANTS["a12"]["amendment"]
+EXPERIMENT = VARIANTS["a12"]["experiment"]
+TRUNCATE_DB = VARIANTS["a12"]["max_offset_db"]
+SUFFIX = VARIANTS["a12"]["suffix"]
 CHANNEL = "umaaerial"
 KS = (18, 54)
 SEEDS = (42,)
@@ -89,22 +120,59 @@ EVAL_EPISODES = rw.EVAL_EPISODES           # 1000, the wave protocol
 TARGETS = (0.90, 0.99)
 GEOMETRY = dict(aerial.TRAINING_GEOMETRY)
 
-rw.WAVE_A_ROOT = AERIAL_ROOT
-rw.WAVE_LABEL = "AerialTrain"
-rw.WAVE_EXPERIMENT = "AERIAL_TRAIN"
-rw.WAVE_AMENDMENT = AMENDMENT
+# A-12 identity (must never change: committed artifacts live in these dirs)
+A12_K18_DIRNAME = ("AERIAL_lam_ctl_heavy_task_umaaerial_k18_seed42"
+                   "__9c5d26c729af57a3")
+
+# A-13 pre-flight gate (pre-registered in the amendment, before the first cell)
+PREFLIGHT_STEPS = 300
+PREFLIGHT_MAX_LOSS_AFTER = (50, 1e3)       # (step index, loss ceiling)
+PREFLIGHT_LAST_MEAN_STEPS = 20
+PREFLIGHT_LAST_MEAN_MAX = 50.0
+
+
+def _configure(variant, cap=None):
+    global VARIANT, AERIAL_ROOT, AMENDMENT, EXPERIMENT, TRUNCATE_DB, SUFFIX
+    if variant not in VARIANTS:
+        raise SystemExit(f"unknown variant {variant!r}; "
+                         f"choose from {sorted(VARIANTS)}")
+    v = VARIANTS[variant]
+    VARIANT = variant
+    AERIAL_ROOT = ROOT / "results" / v["root"]
+    AMENDMENT = v["amendment"]
+    EXPERIMENT = v["experiment"]
+    TRUNCATE_DB = v["max_offset_db"]
+    SUFFIX = v["suffix"]
+    if cap is not None:
+        allowed = v.get("allowed_caps")
+        if allowed is None:
+            raise SystemExit(f"variant {variant!r} takes no --cap")
+        if float(cap) not in allowed:
+            raise SystemExit(
+                f"cap {cap} dB is not pre-registered for {variant} "
+                f"(allowed: {list(allowed)})")
+        TRUNCATE_DB = float(cap)
+        SUFFIX = f"_trunc{TRUNCATE_DB:g}"
+    rw.WAVE_A_ROOT = AERIAL_ROOT
+    rw.WAVE_LABEL = v["label"]
+    rw.WAVE_EXPERIMENT = v["experiment"]
+    rw.WAVE_AMENDMENT = AMENDMENT
+
+
+_configure("a12")
 
 
 class AerialCell(rw.WaveCell):
-    """Wave-A cell trained on the A-12 3GPP dispersion channel."""
+    """Wave-A cell trained on the A-12/A-13 3GPP dispersion channel."""
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, hidden=None, **kwargs)
-        self.wave_id = self.wave_id.replace("WAVE_A_", "AERIAL_")
+        self.wave_id = self.wave_id.replace("WAVE_A_", "AERIAL_") + SUFFIX
+        self.aerial_max_offset_db = TRUNCATE_DB
 
     def spec(self):
         spec = super().spec()
-        spec["experiment"] = "AERIAL_TRAIN"
+        spec["experiment"] = EXPERIMENT
         spec["amendment"] = AMENDMENT
         spec["aerial_channel"] = {
             "model": "3GPP TR 36.777 / TR 38.901 UMa-aerial (dispersion)",
@@ -113,6 +181,11 @@ class AerialCell(rw.WaveCell):
             "shadow_sigma_db": dict(aerial.SHADOW_SIGMA_DB),
             "time_correlation": "per-episode block gain (no Doppler)",
         }
+        if TRUNCATE_DB is not None:
+            spec["aerial_train_max_offset_db"] = TRUNCATE_DB
+            spec["aerial_train_tail"] = (
+                "training episodes with gain offset above the cap are "
+                "resampled; evaluation always keeps the full dispersion")
         spec["eval_snr_grid_db"] = list(GRID_NOMINAL)
         spec["eval_episodes"] = EVAL_EPISODES
         spec["eval_convention"] = ("nominal SNR (mean PL removed); the "
@@ -149,7 +222,9 @@ def _eval_path(method, k, snr):
 # ---------------------------------------------------------------------------
 
 def cmd_verify():
-    print("== 3GPP aerial-training pre-flight (A-12) ==")
+    print(f"== 3GPP aerial-training pre-flight ({VARIANT}"
+          + (f", cap {TRUNCATE_DB:g} dB" if TRUNCATE_DB is not None else "")
+          + ") ==")
     bad = 0
 
     def gate(name, ok, detail=""):
@@ -158,7 +233,8 @@ def cmd_verify():
         if not ok:
             bad += 1
 
-    gate("isolated root", AERIAL_ROOT.name == "AERIAL_TRAIN",
+    gate("isolated root",
+         AERIAL_ROOT == ROOT / "results" / VARIANTS[VARIANT]["root"],
          str(AERIAL_ROOT.relative_to(ROOT)))
     gate("design", (EXPECTED_CELLS, EXPECTED_UNITS, EXPECTED_SLOTS) == (2, 2, 16),
          f"{EXPECTED_CELLS} cells / {EXPECTED_UNITS} units / {EXPECTED_SLOTS} slots")
@@ -180,6 +256,33 @@ def cmd_verify():
         4096, generator=torch.Generator().manual_seed(1))
     gate("centred channel (dB)", abs(float(off.mean())) < 0.3,
          f"mean offset {float(off.mean()):+.3f} dB")
+
+    # A-12 identity must never move; A-13 must be a distinct cell
+    if VARIANT == "a12":
+        gate("A-12 identity unchanged",
+             cells()[0].run_dirname() == A12_K18_DIRNAME,
+             cells()[0].run_dirname())
+    else:
+        gate("A-13 identity distinct from A-12",
+             cells()[0].run_dirname() != A12_K18_DIRNAME,
+             cells()[0].run_dirname())
+
+    if TRUNCATE_DB is None:
+        gate("training tail policy", True, "full dispersion (A-12 design)")
+    else:
+        capped, _ = aerial.sample_aerial_offsets_db(
+            4096, generator=torch.Generator().manual_seed(3),
+            max_offset_db=TRUNCATE_DB)
+        raw, _ = aerial.sample_aerial_offsets_db(
+            4096, generator=torch.Generator().manual_seed(3))
+        eval_off, _ = _gain_vector()
+        gate("training tail capped", float(capped.max()) <= TRUNCATE_DB,
+             f"max {float(capped.max()):+.2f} dB <= {TRUNCATE_DB:+.1f} dB")
+        gate("sampler keeps its tail by default",
+             float(raw.max()) > TRUNCATE_DB, f"max {float(raw.max()):+.2f} dB")
+        gate("evaluation keeps the full dispersion",
+             float(eval_off.max()) > TRUNCATE_DB,
+             f"eval max offset {float(eval_off.max()):+.2f} dB")
 
     # the training path must actually accept the new channel string
     ok_channel = True
@@ -225,6 +328,47 @@ def _select(args):
         i, n = (int(x) for x in shard.split("/"))
         out = [c for j, c in enumerate(out) if j % n == i]
     return out
+
+
+def cmd_preflight():
+    """A-13 pre-registered gate: 300 steps, k=18, no markers written."""
+    c = cells()[0]
+    c.steps = PREFLIGHT_STEPS
+    import math as _math
+    import time
+    t0 = time.perf_counter()
+    _m, rep, _gf, summary = rw._train_one(c)
+    wall = time.perf_counter() - t0
+    hist = rep["history"]
+    tot = [h["total"] for h in hist]
+    nonfinite = sum(1 for h in hist
+                    if not (_math.isfinite(h["grad_enc"])
+                            and _math.isfinite(h["grad_dec"])))
+    after = tot[PREFLIGHT_MAX_LOSS_AFTER[0]:]
+    last_mean = sum(tot[-PREFLIGHT_LAST_MEAN_STEPS:]) / min(
+        PREFLIGHT_LAST_MEAN_STEPS, len(tot))
+    gates = {
+        "no non-finite gradients": nonfinite == 0,
+        f"no loss > {PREFLIGHT_MAX_LOSS_AFTER[1]:g} after step "
+        f"{PREFLIGHT_MAX_LOSS_AFTER[0]}": max(after) <= PREFLIGHT_MAX_LOSS_AFTER[1],
+        f"mean of last {PREFLIGHT_LAST_MEAN_STEPS} <= "
+        f"{PREFLIGHT_LAST_MEAN_MAX:g}": last_mean <= PREFLIGHT_LAST_MEAN_MAX,
+    }
+    print(f"== pre-flight ({VARIANT}): {c.wave_id} {PREFLIGHT_STEPS} steps "
+          f"in {wall:.0f}s ({wall / PREFLIGHT_STEPS:.2f} s/step) ==")
+    for name, ok in gates.items():
+        print(f"{'PASS' if ok else 'FAIL'} [{name}]")
+    print(f"   loss: min {min(tot):.2f} (step {tot.index(min(tot)) + 1}), "
+          f"max after step {PREFLIGHT_MAX_LOSS_AFTER[0]} {max(after):.1f}, "
+          f"last-{PREFLIGHT_LAST_MEAN_STEPS} mean {last_mean:.2f}, "
+          f"non-finite grad steps {nonfinite}, nan losses {rep['nan_batches']}")
+    print(f"   eval_after (full dispersion, diagnostic) "
+          f"{summary.get('eval_after_success_rate'):.4f}")
+    ok = all(gates.values())
+    print("== pre-flight PASS: full run may start ==" if ok else
+          "== pre-flight FAIL: do NOT spend the full run ==")
+    print("   pre-flight wrote NOTHING (no markers, no checkpoints)")
+    return 0 if ok else 1
 
 
 def cmd_train(args=()):
@@ -290,7 +434,7 @@ def _curve(method, k, gains):
             path = _eval_path(method, k, snr)
             if path.exists():
                 rec = json.loads(path.read_text())
-                if rec.get("experiment") == "AERIAL_TRAIN":
+                if rec.get("experiment") == EXPERIMENT:
                     rows.append(rec)
                     print(f"   {method:16s} k={k:2d} nominal={snr:+5.1f} dB "
                           f"SR={rec['success_rate']:.4f} (cached)", flush=True)
@@ -307,7 +451,7 @@ def _curve(method, k, gains):
             agg = aggregate(m)
             succ = m["success"].float()
             rec = {
-                "experiment": "AERIAL_TRAIN", "amendment": AMENDMENT,
+                "experiment": EXPERIMENT, "amendment": AMENDMENT,
                 "method": method, "k": k, "nominal_snr_db": float(snr),
                 "episodes": EVAL_EPISODES, "test_seed": config.TEST_SEED,
                 "success_rate": agg["success_rate"],
@@ -422,6 +566,35 @@ def cmd_status():
     return 0
 
 
+def _train_diagnostics(c, rec):
+    """Mechanical collapse check on a completed training history.
+
+    ``diverged`` is true if any step produced a non-finite gradient, or if the
+    final loss is more than 5x the best loss the run ever reached.  It is a
+    description of the saved report, not a judgement about the channel.
+    """
+    hist = rec.get("history") or []
+    if not hist:
+        return {"wave_id": c.wave_id, "history": 0, "diverged": None}
+    tot = [h["total"] for h in hist]
+    nonfinite = sum(
+        1 for h in hist
+        if not (math.isfinite(h.get("grad_enc", float("nan")))
+                and math.isfinite(h.get("grad_dec", float("nan")))))
+    lo = min(tot)
+    step = tot.index(lo) + 1
+    return {
+        "wave_id": c.wave_id,
+        "history": len(hist),
+        "loss_min": round(lo, 3),
+        "loss_min_step": step,
+        "loss_final": round(tot[-1], 3),
+        "frac_loss_gt_1e3": round(sum(1 for t in tot if t > 1e3) / len(tot), 4),
+        "nonfinite_grad_steps": nonfinite,
+        "diverged": bool(nonfinite) or tot[-1] > 5.0 * lo,
+    }
+
+
 def cmd_finalize():
     AERIAL_ROOT.mkdir(parents=True, exist_ok=True)
     p_los = aerial.los_probability(GEOMETRY["d2d_m"], GEOMETRY["h_m"])
@@ -429,6 +602,7 @@ def cmd_finalize():
                                            GEOMETRY["fc_ghz"])
 
     train_rows = []
+    diagnostics = []
     for c in cells():
         p = c.dir() / "train_report.json"
         rec = json.loads(p.read_text()) if p.exists() else {"exit_status": "missing"}
@@ -441,6 +615,8 @@ def cmd_finalize():
                            "wall_seconds": rec.get("wall_seconds"),
                            "eval_after_success_rate":
                                rec.get("eval_after_success_rate")})
+        diagnostics.append(_train_diagnostics(c, rec))
+    diverged = [d["wave_id"] for d in diagnostics if d.get("diverged")]
 
     curves = {}
     required = {}
@@ -481,19 +657,35 @@ def cmd_finalize():
     done = sum(1 for r in train_rows if r["exit_status"] == "complete")
     n_slots = sum(len(v) for v in curves.values())
     out = AERIAL_ROOT / "step_aerial_training_summary.json"
+    best_aerial = max((r["success_rate"] for name, rows in curves.items()
+                       if name.startswith("aerial_train") for r in rows),
+                      default=None)
+    best_frozen = max((r["success_rate"] for name, rows in curves.items()
+                       if name.startswith("frozen_rayleigh") for r in rows),
+                      default=None)
+    if done != EXPECTED_CELLS or n_slots != 3 * EXPECTED_SLOTS:
+        outcome = "incomplete - every declared slot must exist before reading"
+    elif diverged:
+        outcome = ("negative - training diverged in "
+                   + ", ".join(diverged)
+                   + " (see 'train_diagnostics'); no cell was retrained")
+    elif best_aerial is not None and best_frozen is not None \
+            and best_aerial < 0.5 * best_frozen:
+        outcome = ("negative - the trained arm stays far below the "
+                   "Rayleigh-trained comparator")
+    else:
+        outcome = ("informative - the trained arm is competitive with the "
+                   "Rayleigh-trained comparator on the paired dispersion")
     out.write_text(json.dumps({
-        "experiment": "AERIAL_TRAIN",
+        "experiment": EXPERIMENT,
+        "variant": VARIANT,
         "amendment": AMENDMENT,
         "status": ("complete" if done == EXPECTED_CELLS
                    and n_slots == 3 * EXPECTED_SLOTS else "incomplete"),
         "status_note": ("'complete' = every declared cell was trained and every "
                         "evaluation slot written; it is NOT a statement that "
                         "the run succeeded. See 'outcome'."),
-        "outcome": ("negative - both training cells diverged (loss reached the "
-                    "frozen terminal value and then collapsed; checkpoints are "
-                    "dead networks: flat ~0.02 on the aerial channel and on "
-                    "frozen awgn). No cell was retrained. See "
-                    "fyp_md_files/RESULTS_AERIAL_TRAIN_2026-10-26.md"),
+        "outcome": outcome,
         "question": ("does training UNDER the 3GPP UMa-aerial dispersion "
                      "change the lambda arm's operating point?"),
         "design": {"tag": TAG, "lambdas": list(rw.LAMBDA_TAGS[TAG]),
@@ -508,6 +700,10 @@ def cmd_finalize():
                     "shadow_sigma_db": dict(aerial.SHADOW_SIGMA_DB),
                     "formulas": aerial.CHANNEL_INFO["umaaerial"]},
         "train_rows": train_rows,
+        "train_diagnostics": diagnostics,
+        "train_diverged": diverged,
+        "best_success_rate": {"trained": best_aerial,
+                              "frozen_rayleigh": best_frozen},
         "curves": curves,
         "required_nominal_db": required,
         "required_tx_db": links,
@@ -528,6 +724,16 @@ def cmd_finalize():
 
 
 def main(argv):
+    # --variant=a12|a13 is global (selects root, amendment and tail policy);
+    # it is stripped before the command sees its own flags.
+    variant = next((a.split("=", 1)[1] for a in argv
+                    if a.startswith("--variant=")), None)
+    cap = next((a.split("=", 1)[1] for a in argv
+                if a.startswith("--cap=")), None)
+    if variant is not None or cap is not None:
+        _configure(variant or VARIANT, cap=cap)
+        argv = [a for a in argv
+                if not (a.startswith("--variant=") or a.startswith("--cap="))]
     if not argv or argv[0] in ("-h", "--help"):
         print(__doc__)
         return 0
@@ -536,6 +742,8 @@ def main(argv):
         return cmd_verify()
     if cmd == "smoke":
         return cmd_smoke()
+    if cmd == "preflight":
+        return cmd_preflight()
     if cmd == "train":
         return cmd_train([a for a in rest if a.startswith("--")])
     if cmd == "evaluate":

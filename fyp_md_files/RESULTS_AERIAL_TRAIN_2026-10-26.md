@@ -143,7 +143,7 @@ silently and none is included in the numbers above:
 
 | option | what changes | why it is defensible | cost |
 |---|---|---|---|
-| **truncated training tail** (recommended) | training episodes with gain offset > 10 dB are resampled (2.2 % of episodes); evaluation keeps the full dispersion | channel model, objective, eval grid and statistics all unchanged; the training set is simply restricted to non-outage episodes and this is stated | 2 cells ≈ 90 min |
+| **truncated training tail** (recommended) | training episodes with gain offset > 20 dB are resampled (3.8 % of episodes, the outage tail); evaluation keeps the full dispersion | channel model, objective, eval grid and statistics all unchanged; the training set is simply restricted to non-outage episodes and this is stated | 2 cells ≈ 90 min |
 | robust loss | per-episode loss clipped at the batch 99th percentile | keeps the exact channel; changes the objective, so it is a new arm, not the frozen one | 2 cells ≈ 90 min |
 | SNR curriculum shift | nominal SNR drawn per episode so the *effective* SNR is uniform 0–20 dB | keeps the objective; but removes the dispersion from training, i.e. it is not a 3GPP-trained arm any more | 2 cells ≈ 90 min |
 

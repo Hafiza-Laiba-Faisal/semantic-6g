@@ -24,6 +24,7 @@ number in this log was typed by hand from memory.
 | AERIAL | evaluation only (no training universe) | 1 geometry, 2 models + 2 digital | - | A-10 complete |
 | POLAR | evaluation only (no training universe) | 50 conditions x 2 coders | - | A-11 complete |
 | AERIAL_TRAIN | 2 train / 48 method-unit-SNR slots | 2 / 48 | A-12 | A-12 complete, **negative** (training diverged; no cell retrained) |
+| AERIAL_TRAIN_TRUNC | 2 train / 48 slots (+1 pre-flight, writes nothing) | pre-flight running | A-13 | pending |
 
 "Accounted" always means *evaluated or explicitly declared*. Nothing is
 imputed, nothing is dropped silently, and no failed cell is replaced.
@@ -516,6 +517,88 @@ evaluation-only result stands unchanged (its numbers reproduce on the same
 gain vector). A fair test requires a new amendment (truncated training tail,
 robust loss, or SNR-curriculum shift); none was applied. Details:
 `fyp_md_files/RESULTS_AERIAL_TRAIN_2026-10-26.md`.
+
+---
+
+## A-13 - 3GPP dispersion training with the outage tail excluded (2026-10-27)
+
+**Approved by:** the user, 2026-10-27, after reading the A-12 negative result
+and the measured tail statistics. Recorded **before the first A-13 cell**; no
+A-13 number existed when this text was written.
+
+**Why.** A-12 diverged because the frozen recipe has no protection against
+rare deep-fade episodes: the dispersion doubles the effective-SNR spread
+(9.37 vs 5.59 dB) and ~4.2 % of episodes land 20 dB or more below the 0-20 dB
+training curriculum, so nearly every 256-episode batch contains an episode
+whose squared error is ~10³× the typical one. A-13 changes **only which
+training episodes are used**, never the objective, the architecture, the
+budget or the evaluation.
+
+**One-line difference from A-12.** In the training path, an episode whose
+large-scale gain offset exceeds **+20 dB** (i.e. a loss 20 dB worse than the
+geometry mean, i.e. an outage episode; **3.78 %** of episodes) is
+**resampled**. Everything else is identical.
+
+**Correction, 2026-10-27, before the first A-13 cell (no A-13 metric in
+existence).** The first draft of this entry said "+10 dB (2.2 %)". That number
+came from a sign slip: 2.2 % is the *better-than-mean* tail. Measured on the
+pinned geometry, a +10 dB cap resamples **10.1 %** of episodes and keeps only
+**10.6 %** of the NLoS branch - it deletes essentially all NLoS training and
+would make "trained on the 3GPP dispersion" false. The cap is therefore
+**+20 dB**, which removes the genuine outage tail (3.78 %) while keeping
+100 % of LoS and 66 % of NLoS episodes (kept offset std 5.91 dB, versus
+9.37 dB untruncated and 5.59 dB for the Rayleigh channel).
+
+| cap | episodes resampled | NLoS episodes kept | kept offset std |
+|---|---|---|---|
+| +15 dB | 7.34 % | 34.3 % | 4.77 dB |
+| **+20 dB (primary)** | **3.78 %** | **66.1 %** | **5.91 dB** |
+| +25 dB | 1.21 % | 89.2 % | 6.90 dB |
+
+**Declared ladder and stopping rule (fixed in advance, to avoid
+cap-shopping).** Pre-flight at +20 dB. If it fails, **one** retry at +15 dB.
+If that also fails, A-13 stops as a negative result and **no** cell is
+trained: a +10 dB cap is not used, because it trains on the LoS branch only
+and no longer answers the question. At most two pre-flights (~8 min each).
+
+**Design.**
+
+| field | value |
+|---|---|
+| arm | `lam_ctl_heavy` (λ_d 1.0, λ_u 0.1, λ_v 0.1, λ_T 2.0) - unchanged |
+| k / seed / cells | 18, 54 / 42 / 2 - unchanged |
+| width, steps, lr, clip, batch | 128, 3000, 1e-3, 1.0, 256 episodes - unchanged |
+| channel | `umaaerial` exactly as A-12 (TR 36.777 P_LoS, TR 38.901 4/6 dB shadowing, block fading, gain centred on PL_mean) |
+| **training tail** | episodes with `offset_db > +20 dB` resampled (ladder: +15 dB fallback, then stop) |
+| evaluation | **full, untruncated dispersion**; E = 1000, seed 10042, nominal grid −15…+20 dB, one shared per-episode gain vector (identical to A-12's) |
+| comparators | unchanged: Wave-C `lam_ctl_heavy` Rayleigh checkpoints + digital with B = `M2_B_BY_K[k]` |
+| output | `results/AERIAL_TRAIN_TRUNC/` (A-12 artifacts stay untouched) |
+
+**Why this is the *fairer* comparison, not a weaker one.** The Rayleigh-trained
+comparator never trains on outage episodes either; both arms now train on
+non-outage episodes, and the aerial arm additionally sees the LoS/NLoS split
+and the shadowing. Excluding the tail makes the two training conditions
+comparable instead of giving the 3GPP arm a corrupted optimisation problem.
+
+**Pre-registered pre-flight gate (300 steps, k = 18, seed 42).** The full run
+is spent only if all three hold: (i) zero non-finite gradient steps,
+(ii) no step after step 50 with loss > 10³, (iii) mean loss of the last 20
+steps ≤ 50. If any fails, A-13 stops, the pre-flight is recorded as the
+result, and no cell is trained. The pre-flight writes nothing.
+
+**What is NOT changed.** Objective and loss weights, architecture, seeds, step
+budget, environment, controller, optimiser, evaluation episodes/seed/grid,
+statistics, the channel formula, and the evaluation dispersion. Frozen
+M1/M2/Wave-A/B/C artifacts stay read-only. A-12's failed cells remain in the
+record and are not retrained or replaced.
+
+**Known limits, stated up front.** "3GPP-trained" here means *trained on the
+3GPP large-scale dispersion with the ≥10 dB outage tail excluded, and
+evaluated on the full dispersion*; that qualifier must travel with every
+number. Doppler and time-correlated shadowing remain out of scope. One seed,
+two k values.
+
+---
 
 ---
 

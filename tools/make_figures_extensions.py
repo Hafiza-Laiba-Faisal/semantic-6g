@@ -122,11 +122,15 @@ def aerial_training():
     style = {
         "frozen_rayleigh": ("trained on Rayleigh (A-10 baseline)",
                             "#1f77b4", "o", "-"),
-        "aerial_train": ("trained on 3GPP UMa-aerial (A-12)",
+        "aerial_train": ("trained on 3GPP, full dispersion (A-12)",
                          "#d62728", "s", "-"),
         "digital": ("digital (conv), B = M2_B_BY_K", "#2ca02c", "^", ":"),
     }
-    fig, axes = plt.subplots(1, 2, figsize=(7.6, 3.2), sharey=True)
+    # A-13 (if it ran): same design, training tail above the cap resampled
+    src13 = (ROOT / "results" / "AERIAL_TRAIN_TRUNC"
+             / "step_aerial_training_summary.json")
+    d13 = json.loads(src13.read_text()) if src13.exists() else None
+    fig, axes = plt.subplots(1, 2, figsize=(7.6, 3.3), sharey=True)
     for ax, k in zip(axes, (18, 54)):
         for method, (label, col, mk, ls) in style.items():
             rows = d["curves"].get(f"{method}_k{k}")
@@ -135,6 +139,15 @@ def aerial_training():
             ax.plot([r["nominal_snr_db"] for r in rows],
                     [r["success_rate"] for r in rows],
                     ls, color=col, marker=mk, ms=3.2, lw=1.3, label=label)
+        if d13 is not None:
+            rows = d13["curves"].get(f"aerial_train_k{k}")
+            cap = d13.get("aerial_train_max_offset_db")
+            if rows and cap is not None:
+                ax.plot([r["nominal_snr_db"] for r in rows],
+                        [r["success_rate"] for r in rows],
+                        "-", color="#9467bd", marker="D", ms=3.2, lw=1.5,
+                        label=f"trained on 3GPP, outage tail "
+                              f">{cap:g} dB resampled (A-13)")
         for t in (0.9, 0.99):
             ax.axhline(t, color="grey", lw=0.6, ls=":")
         ax.set_title(f"k = {k}")
@@ -143,11 +156,13 @@ def aerial_training():
         ax.set_ylim(0, 1.05)
     axes[0].set_ylabel("success rate")
     handles, labels = axes[0].get_legend_handles_labels()
-    fig.legend(handles, labels, loc="lower center", ncol=3, frameon=False,
-               fontsize=7, bbox_to_anchor=(0.5, -0.03))
-    fig.suptitle("Training under the 3GPP UMa-aerial dispersion (A-12), "
-                 "E=1000, paired gains", fontsize=9)
-    fig.tight_layout(rect=(0, 0.07, 1, 1))
+    fig.legend(handles, labels, loc="lower center", ncol=2, frameon=False,
+               fontsize=6.8, bbox_to_anchor=(0.5, -0.06))
+    title = "Training under the 3GPP UMa-aerial dispersion"
+    if d13 is not None:
+        title += " (A-12 vs A-13)"
+    fig.suptitle(title + ", E=1000, paired gains", fontsize=9)
+    fig.tight_layout(rect=(0, 0.10, 1, 1))
     out = FIG / "fig_aerial_training.png"
     fig.savefig(out, bbox_inches="tight")
     plt.close(fig)

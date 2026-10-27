@@ -1,0 +1,1293 @@
+{
+  "experiment": "AERIAL_TRAIN",
+  "amendment": "AERIAL-TRAIN-3GPP-2026-10-26",
+  "status": "complete",
+  "question": "does training UNDER the 3GPP UMa-aerial dispersion change the lambda arm's operating point?",
+  "design": {
+    "tag": "lam_ctl_heavy",
+    "lambdas": [
+      1.0,
+      0.1,
+      0.1,
+      2.0
+    ],
+    "k": [
+      18,
+      54
+    ],
+    "seeds": [
+      42
+    ],
+    "channel": "umaaerial",
+    "hidden": 128,
+    "steps": 3000,
+    "eval_grid_nominal_db": [
+      -15.0,
+      -10.0,
+      -5.0,
+      0.0,
+      5.0,
+      10.0,
+      15.0,
+      20.0
+    ],
+    "eval_episodes": 1000,
+    "test_seed": 10042
+  },
+  "channel": {
+    "geometry": {
+      "d2d_m": 500.0,
+      "h_m": 50.0,
+      "fc_ghz": 2.0
+    },
+    "p_los": 0.8887485122408123,
+    "pl_mean_db": 95.63100265620122,
+    "shadow_sigma_db": {
+      "los": 4.0,
+      "nlos": 6.0
+    },
+    "formulas": {
+      "source": "3GPP TR 36.777 / TR 38.901 UMa-aerial (via arXiv:2105.13717)",
+      "los_prob": "d1/r + exp(-r/p1)(1-d1/r), p1=4300log10(h)-3800, d1=max(460log10(h)-700,18)",
+      "pl_los_db": "28.0 + 22*log10(d3D) + 20*log10(fc_GHz)",
+      "pl_nlos_db": "-17.5 + (46-7*log10(h))*log10(d3D) + 20*log10(40*pi*fc/3)",
+      "shadow_sigma_db": {
+        "los": 4.0,
+        "nlos": 6.0
+      },
+      "training_geometry": {
+        "d2d_m": 500.0,
+        "h_m": 50.0,
+        "fc_ghz": 2.0
+      },
+      "training_channel": "per-episode LoS/NLoS draw + log-normal shadowing, block-fading over the episode; no Doppler",
+      "csi_error_hook": "csi_error_sigma",
+      "default_disabled": true,
+      "additive_to_frozen": true
+    }
+  },
+  "train_rows": [
+    {
+      "wave_id": "AERIAL_lam_ctl_heavy_task_umaaerial_k18_seed42",
+      "tag": "lam_ctl_heavy",
+      "k": 18,
+      "channel": "umaaerial",
+      "seed": 42,
+      "exit_status": "complete",
+      "task_loss_final": 4320.12939453125,
+      "nan_batches": 0,
+      "grads_finite": true,
+      "wall_seconds": null,
+      "eval_after_success_rate": 0.02734375
+    },
+    {
+      "wave_id": "AERIAL_lam_ctl_heavy_task_umaaerial_k54_seed42",
+      "tag": "lam_ctl_heavy",
+      "k": 54,
+      "channel": "umaaerial",
+      "seed": 42,
+      "exit_status": "complete",
+      "task_loss_final": 210.3206787109375,
+      "nan_batches": 0,
+      "grads_finite": true,
+      "wall_seconds": null,
+      "eval_after_success_rate": 0.01171875
+    }
+  ],
+  "curves": {
+    "frozen_rayleigh_k18": [
+      {
+        "experiment": "AERIAL_TRAIN",
+        "amendment": "AERIAL-TRAIN-3GPP-2026-10-26",
+        "method": "frozen_rayleigh",
+        "k": 18,
+        "nominal_snr_db": -15.0,
+        "episodes": 1000,
+        "test_seed": 10042,
+        "success_rate": 0.647,
+        "final_distance_mean": 2.132046699523926,
+        "control_effort_mean": 670.779052734375,
+        "success_rate_los": 0.721274197101593,
+        "success_rate_nlos": 0.10743801295757294,
+        "wilson": {
+          "wilson_low": 0.6168686714441486,
+          "wilson_high": 0.6760062615610983,
+          "p_hat": 0.647,
+          "success_count": 647,
+          "total": 1000
+        },
+        "gain_mean_db": 0.18255560100078583,
+        "gain_std_db": 7.525412082672119
+      },
+      {
+        "experiment": "AERIAL_TRAIN",
+        "amendment": "AERIAL-TRAIN-3GPP-2026-10-26",
+        "method": "frozen_rayleigh",
+        "k": 18,
+        "nominal_snr_db": -10.0,
+        "episodes": 1000,
+        "test_seed": 10042,
+        "success_rate": 0.812,
+        "final_distance_mean": 1.185200810432434,
+        "control_effort_mean": 575.75,
+        "success_rate_los": 0.8987485766410828,
+        "success_rate_nlos": 0.1818181872367859,
+        "wilson": {
+          "wilson_low": 0.7866068125887822,
+          "wilson_high": 0.8350052901162315,
+          "p_hat": 0.812,
+          "success_count": 812,
+          "total": 1000
+        },
+        "gain_mean_db": 0.18255560100078583,
+        "gain_std_db": 7.525412082672119
+      },
+      {
+        "experiment": "AERIAL_TRAIN",
+        "amendment": "AERIAL-TRAIN-3GPP-2026-10-26",
+        "method": "frozen_rayleigh",
+        "k": 18,
+        "nominal_snr_db": -5.0,
+        "episodes": 1000,
+        "test_seed": 10042,
+        "success_rate": 0.898,
+        "final_distance_mean": 0.7522112131118774,
+        "control_effort_mean": 459.4989929199219,
+        "success_rate_los": 0.9726962447166443,
+        "success_rate_nlos": 0.35537189245224,
+        "wilson": {
+          "wilson_low": 0.8776930354303454,
+          "wilson_high": 0.9152608648151528,
+          "p_hat": 0.898,
+          "success_count": 898,
+          "total": 1000
+        },
+        "gain_mean_db": 0.18255560100078583,
+        "gain_std_db": 7.525412082672119
+      },
+      {
+        "experiment": "AERIAL_TRAIN",
+        "amendment": "AERIAL-TRAIN-3GPP-2026-10-26",
+        "method": "frozen_rayleigh",
+        "k": 18,
+        "nominal_snr_db": 0.0,
+        "episodes": 1000,
+        "test_seed": 10042,
+        "success_rate": 0.935,
+        "final_distance_mean": 0.47629591822624207,
+        "control_effort_mean": 364.09912109375,
+        "success_rate_los": 0.9920364022254944,
+        "success_rate_nlos": 0.5206611752510071,
+        "wilson": {
+          "wilson_low": 0.9179944906866292,
+          "wilson_high": 0.948676229430938,
+          "p_hat": 0.935,
+          "success_count": 935,
+          "total": 1000
+        },
+        "gain_mean_db": 0.18255560100078583,
+        "gain_std_db": 7.525412082672119
+      },
+      {
+        "experiment": "AERIAL_TRAIN",
+        "amendment": "AERIAL-TRAIN-3GPP-2026-10-26",
+        "method": "frozen_rayleigh",
+        "k": 18,
+        "nominal_snr_db": 5.0,
+        "episodes": 1000,
+        "test_seed": 10042,
+        "success_rate": 0.96,
+        "final_distance_mean": 0.28760242462158203,
+        "control_effort_mean": 304.6628112792969,
+        "success_rate_los": 0.9954493641853333,
+        "success_rate_nlos": 0.702479362487793,
+        "wilson": {
+          "wilson_low": 0.945990355878742,
+          "wilson_high": 0.9704890263145473,
+          "p_hat": 0.96,
+          "success_count": 960,
+          "total": 1000
+        },
+        "gain_mean_db": 0.18255560100078583,
+        "gain_std_db": 7.525412082672119
+      },
+      {
+        "experiment": "AERIAL_TRAIN",
+        "amendment": "AERIAL-TRAIN-3GPP-2026-10-26",
+        "method": "frozen_rayleigh",
+        "k": 18,
+        "nominal_snr_db": 10.0,
+        "episodes": 1000,
+        "test_seed": 10042,
+        "success_rate": 0.978,
+        "final_distance_mean": 0.17286358773708344,
+        "control_effort_mean": 268.2470703125,
+        "success_rate_los": 0.9965870380401611,
+        "success_rate_nlos": 0.8429751992225647,
+        "wilson": {
+          "wilson_low": 0.9669143266526004,
+          "wilson_high": 0.985427292235209,
+          "p_hat": 0.978,
+          "success_count": 978,
+          "total": 1000
+        },
+        "gain_mean_db": 0.18255560100078583,
+        "gain_std_db": 7.525412082672119
+      },
+      {
+        "experiment": "AERIAL_TRAIN",
+        "amendment": "AERIAL-TRAIN-3GPP-2026-10-26",
+        "method": "frozen_rayleigh",
+        "k": 18,
+        "nominal_snr_db": 15.0,
+        "episodes": 1000,
+        "test_seed": 10042,
+        "success_rate": 0.99,
+        "final_distance_mean": 0.1172049269080162,
+        "control_effort_mean": 245.933837890625,
+        "success_rate_los": 0.9965870380401611,
+        "success_rate_nlos": 0.942148745059967,
+        "wilson": {
+          "wilson_low": 0.9816905311296853,
+          "wilson_high": 0.9945592455544707,
+          "p_hat": 0.99,
+          "success_count": 990,
+          "total": 1000
+        },
+        "gain_mean_db": 0.18255560100078583,
+        "gain_std_db": 7.525412082672119
+      },
+      {
+        "experiment": "AERIAL_TRAIN",
+        "amendment": "AERIAL-TRAIN-3GPP-2026-10-26",
+        "method": "frozen_rayleigh",
+        "k": 18,
+        "nominal_snr_db": 20.0,
+        "episodes": 1000,
+        "test_seed": 10042,
+        "success_rate": 0.995,
+        "final_distance_mean": 0.08464104682207108,
+        "control_effort_mean": 230.3924102783203,
+        "success_rate_los": 0.9965870380401611,
+        "success_rate_nlos": 0.9834710955619812,
+        "wilson": {
+          "wilson_low": 0.9883490446266249,
+          "wilson_high": 0.9978624644726756,
+          "p_hat": 0.995,
+          "success_count": 995,
+          "total": 1000
+        },
+        "gain_mean_db": 0.18255560100078583,
+        "gain_std_db": 7.525412082672119
+      }
+    ],
+    "aerial_train_k18": [
+      {
+        "experiment": "AERIAL_TRAIN",
+        "amendment": "AERIAL-TRAIN-3GPP-2026-10-26",
+        "method": "aerial_train",
+        "k": 18,
+        "nominal_snr_db": -15.0,
+        "episodes": 1000,
+        "test_seed": 10042,
+        "success_rate": 0.023,
+        "final_distance_mean": 10.267480850219727,
+        "control_effort_mean": 777.06982421875,
+        "success_rate_los": 0.02389078587293625,
+        "success_rate_nlos": 0.01652892492711544,
+        "wilson": {
+          "wilson_low": 0.015374276932992918,
+          "wilson_high": 0.03427645066222667,
+          "p_hat": 0.023,
+          "success_count": 23,
+          "total": 1000
+        },
+        "gain_mean_db": 0.18255560100078583,
+        "gain_std_db": 7.525412082672119
+      },
+      {
+        "experiment": "AERIAL_TRAIN",
+        "amendment": "AERIAL-TRAIN-3GPP-2026-10-26",
+        "method": "aerial_train",
+        "k": 18,
+        "nominal_snr_db": -10.0,
+        "episodes": 1000,
+        "test_seed": 10042,
+        "success_rate": 0.027,
+        "final_distance_mean": 10.288822174072266,
+        "control_effort_mean": 775.30615234375,
+        "success_rate_los": 0.027303753420710564,
+        "success_rate_nlos": 0.024793388321995735,
+        "wilson": {
+          "wilson_low": 0.018621382774294995,
+          "wilson_high": 0.03899873075304015,
+          "p_hat": 0.027,
+          "success_count": 27,
+          "total": 1000
+        },
+        "gain_mean_db": 0.18255560100078583,
+        "gain_std_db": 7.525412082672119
+      },
+      {
+        "experiment": "AERIAL_TRAIN",
+        "amendment": "AERIAL-TRAIN-3GPP-2026-10-26",
+        "method": "aerial_train",
+        "k": 18,
+        "nominal_snr_db": -5.0,
+        "episodes": 1000,
+        "test_seed": 10042,
+        "success_rate": 0.028,
+        "final_distance_mean": 10.29695987701416,
+        "control_effort_mean": 779.6546630859375,
+        "success_rate_los": 0.02957906760275364,
+        "success_rate_nlos": 0.01652892492711544,
+        "wilson": {
+          "wilson_low": 0.019442276812770925,
+          "wilson_high": 0.04017018319759311,
+          "p_hat": 0.028,
+          "success_count": 28,
+          "total": 1000
+        },
+        "gain_mean_db": 0.18255560100078583,
+        "gain_std_db": 7.525412082672119
+      },
+      {
+        "experiment": "AERIAL_TRAIN",
+        "amendment": "AERIAL-TRAIN-3GPP-2026-10-26",
+        "method": "aerial_train",
+        "k": 18,
+        "nominal_snr_db": 0.0,
+        "episodes": 1000,
+        "test_seed": 10042,
+        "success_rate": 0.025,
+        "final_distance_mean": 10.340028762817383,
+        "control_effort_mean": 777.1226196289062,
+        "success_rate_los": 0.027303753420710564,
+        "success_rate_nlos": 0.00826446246355772,
+        "wilson": {
+          "wilson_low": 0.016990131293434067,
+          "wilson_high": 0.0366452892678433,
+          "p_hat": 0.025,
+          "success_count": 25,
+          "total": 1000
+        },
+        "gain_mean_db": 0.18255560100078583,
+        "gain_std_db": 7.525412082672119
+      },
+      {
+        "experiment": "AERIAL_TRAIN",
+        "amendment": "AERIAL-TRAIN-3GPP-2026-10-26",
+        "method": "aerial_train",
+        "k": 18,
+        "nominal_snr_db": 5.0,
+        "episodes": 1000,
+        "test_seed": 10042,
+        "success_rate": 0.027,
+        "final_distance_mean": 10.331974029541016,
+        "control_effort_mean": 778.6582641601562,
+        "success_rate_los": 0.0284414105117321,
+        "success_rate_nlos": 0.01652892492711544,
+        "wilson": {
+          "wilson_low": 0.018621382774294995,
+          "wilson_high": 0.03899873075304015,
+          "p_hat": 0.027,
+          "success_count": 27,
+          "total": 1000
+        },
+        "gain_mean_db": 0.18255560100078583,
+        "gain_std_db": 7.525412082672119
+      },
+      {
+        "experiment": "AERIAL_TRAIN",
+        "amendment": "AERIAL-TRAIN-3GPP-2026-10-26",
+        "method": "aerial_train",
+        "k": 18,
+        "nominal_snr_db": 10.0,
+        "episodes": 1000,
+        "test_seed": 10042,
+        "success_rate": 0.025,
+        "final_distance_mean": 10.318703651428223,
+        "control_effort_mean": 778.367919921875,
+        "success_rate_los": 0.026166098192334175,
+        "success_rate_nlos": 0.01652892492711544,
+        "wilson": {
+          "wilson_low": 0.016990131293434067,
+          "wilson_high": 0.0366452892678433,
+          "p_hat": 0.025,
+          "success_count": 25,
+          "total": 1000
+        },
+        "gain_mean_db": 0.18255560100078583,
+        "gain_std_db": 7.525412082672119
+      },
+      {
+        "experiment": "AERIAL_TRAIN",
+        "amendment": "AERIAL-TRAIN-3GPP-2026-10-26",
+        "method": "aerial_train",
+        "k": 18,
+        "nominal_snr_db": 15.0,
+        "episodes": 1000,
+        "test_seed": 10042,
+        "success_rate": 0.028,
+        "final_distance_mean": 10.318878173828125,
+        "control_effort_mean": 777.9802856445312,
+        "success_rate_los": 0.027303753420710564,
+        "success_rate_nlos": 0.03305784985423088,
+        "wilson": {
+          "wilson_low": 0.019442276812770925,
+          "wilson_high": 0.04017018319759311,
+          "p_hat": 0.028,
+          "success_count": 28,
+          "total": 1000
+        },
+        "gain_mean_db": 0.18255560100078583,
+        "gain_std_db": 7.525412082672119
+      },
+      {
+        "experiment": "AERIAL_TRAIN",
+        "amendment": "AERIAL-TRAIN-3GPP-2026-10-26",
+        "method": "aerial_train",
+        "k": 18,
+        "nominal_snr_db": 20.0,
+        "episodes": 1000,
+        "test_seed": 10042,
+        "success_rate": 0.029,
+        "final_distance_mean": 10.324585914611816,
+        "control_effort_mean": 778.5051879882812,
+        "success_rate_los": 0.027303753420710564,
+        "success_rate_nlos": 0.041322313249111176,
+        "wilson": {
+          "wilson_low": 0.02026644815669875,
+          "wilson_high": 0.04133835833669418,
+          "p_hat": 0.029,
+          "success_count": 29,
+          "total": 1000
+        },
+        "gain_mean_db": 0.18255560100078583,
+        "gain_std_db": 7.525412082672119
+      }
+    ],
+    "digital_k18": [
+      {
+        "experiment": "AERIAL_TRAIN",
+        "amendment": "AERIAL-TRAIN-3GPP-2026-10-26",
+        "method": "digital",
+        "k": 18,
+        "nominal_snr_db": -15.0,
+        "episodes": 1000,
+        "test_seed": 10042,
+        "success_rate": 0.054,
+        "final_distance_mean": 8.055871963500977,
+        "control_effort_mean": 751.8402709960938,
+        "success_rate_los": 0.05802047625184059,
+        "success_rate_nlos": 0.024793388321995735,
+        "wilson": {
+          "wilson_low": 0.04162131372306273,
+          "wilson_high": 0.06979215484605245,
+          "p_hat": 0.054,
+          "success_count": 54,
+          "total": 1000
+        },
+        "gain_mean_db": 0.18255560100078583,
+        "gain_std_db": 7.525412082672119
+      },
+      {
+        "experiment": "AERIAL_TRAIN",
+        "amendment": "AERIAL-TRAIN-3GPP-2026-10-26",
+        "method": "digital",
+        "k": 18,
+        "nominal_snr_db": -10.0,
+        "episodes": 1000,
+        "test_seed": 10042,
+        "success_rate": 0.088,
+        "final_distance_mean": 6.024474143981934,
+        "control_effort_mean": 750.4805297851562,
+        "success_rate_los": 0.09783845394849777,
+        "success_rate_nlos": 0.01652892492711544,
+        "wilson": {
+          "wilson_low": 0.07198099794232085,
+          "wilson_high": 0.10717225104977657,
+          "p_hat": 0.088,
+          "success_count": 88,
+          "total": 1000
+        },
+        "gain_mean_db": 0.18255560100078583,
+        "gain_std_db": 7.525412082672119
+      },
+      {
+        "experiment": "AERIAL_TRAIN",
+        "amendment": "AERIAL-TRAIN-3GPP-2026-10-26",
+        "method": "digital",
+        "k": 18,
+        "nominal_snr_db": -5.0,
+        "episodes": 1000,
+        "test_seed": 10042,
+        "success_rate": 0.14,
+        "final_distance_mean": 4.1271467208862305,
+        "control_effort_mean": 746.1613159179688,
+        "success_rate_los": 0.15585893392562866,
+        "success_rate_nlos": 0.024793388321995735,
+        "wilson": {
+          "wilson_low": 0.11986857462597704,
+          "wilson_high": 0.1628866914836227,
+          "p_hat": 0.14,
+          "success_count": 140,
+          "total": 1000
+        },
+        "gain_mean_db": 0.18255560100078583,
+        "gain_std_db": 7.525412082672119
+      },
+      {
+        "experiment": "AERIAL_TRAIN",
+        "amendment": "AERIAL-TRAIN-3GPP-2026-10-26",
+        "method": "digital",
+        "k": 18,
+        "nominal_snr_db": 0.0,
+        "episodes": 1000,
+        "test_seed": 10042,
+        "success_rate": 0.152,
+        "final_distance_mean": 3.375181198120117,
+        "control_effort_mean": 746.783447265625,
+        "success_rate_los": 0.16951081156730652,
+        "success_rate_nlos": 0.024793388321995735,
+        "wilson": {
+          "wilson_low": 0.13108250256297901,
+          "wilson_high": 0.17558092134296735,
+          "p_hat": 0.152,
+          "success_count": 152,
+          "total": 1000
+        },
+        "gain_mean_db": 0.18255560100078583,
+        "gain_std_db": 7.525412082672119
+      },
+      {
+        "experiment": "AERIAL_TRAIN",
+        "amendment": "AERIAL-TRAIN-3GPP-2026-10-26",
+        "method": "digital",
+        "k": 18,
+        "nominal_snr_db": 5.0,
+        "episodes": 1000,
+        "test_seed": 10042,
+        "success_rate": 0.154,
+        "final_distance_mean": 2.9753260612487793,
+        "control_effort_mean": 745.532470703125,
+        "success_rate_los": 0.16723549365997314,
+        "success_rate_nlos": 0.057851240038871765,
+        "wilson": {
+          "wilson_low": 0.13295625717450094,
+          "wilson_high": 0.17769185969750323,
+          "p_hat": 0.154,
+          "success_count": 154,
+          "total": 1000
+        },
+        "gain_mean_db": 0.18255560100078583,
+        "gain_std_db": 7.525412082672119
+      },
+      {
+        "experiment": "AERIAL_TRAIN",
+        "amendment": "AERIAL-TRAIN-3GPP-2026-10-26",
+        "method": "digital",
+        "k": 18,
+        "nominal_snr_db": 10.0,
+        "episodes": 1000,
+        "test_seed": 10042,
+        "success_rate": 0.151,
+        "final_distance_mean": 2.7009356021881104,
+        "control_effort_mean": 742.8508911132812,
+        "success_rate_los": 0.14903299510478973,
+        "success_rate_nlos": 0.1652892529964447,
+        "wilson": {
+          "wilson_low": 0.13014612063122316,
+          "wilson_high": 0.17452495679169433,
+          "p_hat": 0.151,
+          "success_count": 151,
+          "total": 1000
+        },
+        "gain_mean_db": 0.18255560100078583,
+        "gain_std_db": 7.525412082672119
+      },
+      {
+        "experiment": "AERIAL_TRAIN",
+        "amendment": "AERIAL-TRAIN-3GPP-2026-10-26",
+        "method": "digital",
+        "k": 18,
+        "nominal_snr_db": 15.0,
+        "episodes": 1000,
+        "test_seed": 10042,
+        "success_rate": 0.147,
+        "final_distance_mean": 2.4829318523406982,
+        "control_effort_mean": 741.795654296875,
+        "success_rate_los": 0.14789533615112305,
+        "success_rate_nlos": 0.14049586653709412,
+        "wilson": {
+          "wilson_low": 0.12640395855176664,
+          "wilson_high": 0.1702977329390353,
+          "p_hat": 0.147,
+          "success_count": 147,
+          "total": 1000
+        },
+        "gain_mean_db": 0.18255560100078583,
+        "gain_std_db": 7.525412082672119
+      },
+      {
+        "experiment": "AERIAL_TRAIN",
+        "amendment": "AERIAL-TRAIN-3GPP-2026-10-26",
+        "method": "digital",
+        "k": 18,
+        "nominal_snr_db": 20.0,
+        "episodes": 1000,
+        "test_seed": 10042,
+        "success_rate": 0.151,
+        "final_distance_mean": 2.377509117126465,
+        "control_effort_mean": 740.0999755859375,
+        "success_rate_los": 0.1535836160182953,
+        "success_rate_nlos": 0.13223139941692352,
+        "wilson": {
+          "wilson_low": 0.13014612063122316,
+          "wilson_high": 0.17452495679169433,
+          "p_hat": 0.151,
+          "success_count": 151,
+          "total": 1000
+        },
+        "gain_mean_db": 0.18255560100078583,
+        "gain_std_db": 7.525412082672119
+      }
+    ],
+    "frozen_rayleigh_k54": [
+      {
+        "experiment": "AERIAL_TRAIN",
+        "amendment": "AERIAL-TRAIN-3GPP-2026-10-26",
+        "method": "frozen_rayleigh",
+        "k": 54,
+        "nominal_snr_db": -15.0,
+        "episodes": 1000,
+        "test_seed": 10042,
+        "success_rate": 0.781,
+        "final_distance_mean": 1.3417397737503052,
+        "control_effort_mean": 584.236083984375,
+        "success_rate_los": 0.8680318593978882,
+        "success_rate_nlos": 0.1487603336572647,
+        "wilson": {
+          "wilson_low": 0.7543184071059555,
+          "wilson_high": 0.8055309546251624,
+          "p_hat": 0.781,
+          "success_count": 781,
+          "total": 1000
+        },
+        "gain_mean_db": 0.18255560100078583,
+        "gain_std_db": 7.525412082672119
+      },
+      {
+        "experiment": "AERIAL_TRAIN",
+        "amendment": "AERIAL-TRAIN-3GPP-2026-10-26",
+        "method": "frozen_rayleigh",
+        "k": 54,
+        "nominal_snr_db": -10.0,
+        "episodes": 1000,
+        "test_seed": 10042,
+        "success_rate": 0.877,
+        "final_distance_mean": 0.8097383975982666,
+        "control_effort_mean": 474.53240966796875,
+        "success_rate_los": 0.9567690491676331,
+        "success_rate_nlos": 0.2975206673145294,
+        "wilson": {
+          "wilson_low": 0.8551887673529645,
+          "wilson_high": 0.8959258567489271,
+          "p_hat": 0.877,
+          "success_count": 877,
+          "total": 1000
+        },
+        "gain_mean_db": 0.18255560100078583,
+        "gain_std_db": 7.525412082672119
+      },
+      {
+        "experiment": "AERIAL_TRAIN",
+        "amendment": "AERIAL-TRAIN-3GPP-2026-10-26",
+        "method": "frozen_rayleigh",
+        "k": 54,
+        "nominal_snr_db": -5.0,
+        "episodes": 1000,
+        "test_seed": 10042,
+        "success_rate": 0.93,
+        "final_distance_mean": 0.5074876546859741,
+        "control_effort_mean": 377.172607421875,
+        "success_rate_los": 0.9829351305961609,
+        "success_rate_nlos": 0.5454545617103577,
+        "wilson": {
+          "wilson_low": 0.9124853518487167,
+          "wilson_high": 0.9442236358537061,
+          "p_hat": 0.93,
+          "success_count": 930,
+          "total": 1000
+        },
+        "gain_mean_db": 0.18255560100078583,
+        "gain_std_db": 7.525412082672119
+      },
+      {
+        "experiment": "AERIAL_TRAIN",
+        "amendment": "AERIAL-TRAIN-3GPP-2026-10-26",
+        "method": "frozen_rayleigh",
+        "k": 54,
+        "nominal_snr_db": 0.0,
+        "episodes": 1000,
+        "test_seed": 10042,
+        "success_rate": 0.965,
+        "final_distance_mean": 0.29149070382118225,
+        "control_effort_mean": 314.09881591796875,
+        "success_rate_los": 0.9954493641853333,
+        "success_rate_nlos": 0.7438016533851624,
+        "wilson": {
+          "wilson_low": 0.9517133776255466,
+          "wilson_high": 0.9747277369828871,
+          "p_hat": 0.965,
+          "success_count": 965,
+          "total": 1000
+        },
+        "gain_mean_db": 0.18255560100078583,
+        "gain_std_db": 7.525412082672119
+      },
+      {
+        "experiment": "AERIAL_TRAIN",
+        "amendment": "AERIAL-TRAIN-3GPP-2026-10-26",
+        "method": "frozen_rayleigh",
+        "k": 54,
+        "nominal_snr_db": 5.0,
+        "episodes": 1000,
+        "test_seed": 10042,
+        "success_rate": 0.98,
+        "final_distance_mean": 0.16951285302639008,
+        "control_effort_mean": 277.2196350097656,
+        "success_rate_los": 0.997724711894989,
+        "success_rate_nlos": 0.8512396812438965,
+        "wilson": {
+          "wilson_low": 0.9693099947702822,
+          "wilson_high": 0.987016317083585,
+          "p_hat": 0.98,
+          "success_count": 980,
+          "total": 1000
+        },
+        "gain_mean_db": 0.18255560100078583,
+        "gain_std_db": 7.525412082672119
+      },
+      {
+        "experiment": "AERIAL_TRAIN",
+        "amendment": "AERIAL-TRAIN-3GPP-2026-10-26",
+        "method": "frozen_rayleigh",
+        "k": 54,
+        "nominal_snr_db": 10.0,
+        "episodes": 1000,
+        "test_seed": 10042,
+        "success_rate": 0.992,
+        "final_distance_mean": 0.1056518480181694,
+        "control_effort_mean": 253.8481903076172,
+        "success_rate_los": 0.997724711894989,
+        "success_rate_nlos": 0.9504132270812988,
+        "wilson": {
+          "wilson_low": 0.9842936654690199,
+          "wilson_high": 0.995940804181194,
+          "p_hat": 0.992,
+          "success_count": 992,
+          "total": 1000
+        },
+        "gain_mean_db": 0.18255560100078583,
+        "gain_std_db": 7.525412082672119
+      },
+      {
+        "experiment": "AERIAL_TRAIN",
+        "amendment": "AERIAL-TRAIN-3GPP-2026-10-26",
+        "method": "frozen_rayleigh",
+        "k": 54,
+        "nominal_snr_db": 15.0,
+        "episodes": 1000,
+        "test_seed": 10042,
+        "success_rate": 0.996,
+        "final_distance_mean": 0.08691992610692978,
+        "control_effort_mean": 239.15670776367188,
+        "success_rate_los": 0.997724711894989,
+        "success_rate_nlos": 0.9834710955619812,
+        "wilson": {
+          "wilson_low": 0.9897604437227377,
+          "wilson_high": 0.9984434118595916,
+          "p_hat": 0.996,
+          "success_count": 996,
+          "total": 1000
+        },
+        "gain_mean_db": 0.18255560100078583,
+        "gain_std_db": 7.525412082672119
+      },
+      {
+        "experiment": "AERIAL_TRAIN",
+        "amendment": "AERIAL-TRAIN-3GPP-2026-10-26",
+        "method": "frozen_rayleigh",
+        "k": 54,
+        "nominal_snr_db": 20.0,
+        "episodes": 1000,
+        "test_seed": 10042,
+        "success_rate": 0.997,
+        "final_distance_mean": 0.08190657943487167,
+        "control_effort_mean": 230.19337463378906,
+        "success_rate_los": 0.997724711894989,
+        "success_rate_nlos": 0.9917355179786682,
+        "wilson": {
+          "wilson_low": 0.9912169859464969,
+          "wilson_high": 0.9989792161188614,
+          "p_hat": 0.997,
+          "success_count": 997,
+          "total": 1000
+        },
+        "gain_mean_db": 0.18255560100078583,
+        "gain_std_db": 7.525412082672119
+      }
+    ],
+    "aerial_train_k54": [
+      {
+        "experiment": "AERIAL_TRAIN",
+        "amendment": "AERIAL-TRAIN-3GPP-2026-10-26",
+        "method": "aerial_train",
+        "k": 54,
+        "nominal_snr_db": -15.0,
+        "episodes": 1000,
+        "test_seed": 10042,
+        "success_rate": 0.025,
+        "final_distance_mean": 7.7975239753723145,
+        "control_effort_mean": 786.028076171875,
+        "success_rate_los": 0.025028441101312637,
+        "success_rate_nlos": 0.024793388321995735,
+        "wilson": {
+          "wilson_low": 0.016990131293434067,
+          "wilson_high": 0.0366452892678433,
+          "p_hat": 0.025,
+          "success_count": 25,
+          "total": 1000
+        },
+        "gain_mean_db": 0.18255560100078583,
+        "gain_std_db": 7.525412082672119
+      },
+      {
+        "experiment": "AERIAL_TRAIN",
+        "amendment": "AERIAL-TRAIN-3GPP-2026-10-26",
+        "method": "aerial_train",
+        "k": 54,
+        "nominal_snr_db": -10.0,
+        "episodes": 1000,
+        "test_seed": 10042,
+        "success_rate": 0.02,
+        "final_distance_mean": 7.682521343231201,
+        "control_effort_mean": 786.8934936523438,
+        "success_rate_los": 0.020477816462516785,
+        "success_rate_nlos": 0.01652892492711544,
+        "wilson": {
+          "wilson_low": 0.012983682916415136,
+          "wilson_high": 0.030690005229717786,
+          "p_hat": 0.02,
+          "success_count": 20,
+          "total": 1000
+        },
+        "gain_mean_db": 0.18255560100078583,
+        "gain_std_db": 7.525412082672119
+      },
+      {
+        "experiment": "AERIAL_TRAIN",
+        "amendment": "AERIAL-TRAIN-3GPP-2026-10-26",
+        "method": "aerial_train",
+        "k": 54,
+        "nominal_snr_db": -5.0,
+        "episodes": 1000,
+        "test_seed": 10042,
+        "success_rate": 0.015,
+        "final_distance_mean": 7.518028736114502,
+        "control_effort_mean": 787.1250610351562,
+        "success_rate_los": 0.01478953380137682,
+        "success_rate_nlos": 0.01652892492711544,
+        "wilson": {
+          "wilson_low": 0.009110978804081668,
+          "wilson_high": 0.024600976926906798,
+          "p_hat": 0.015,
+          "success_count": 15,
+          "total": 1000
+        },
+        "gain_mean_db": 0.18255560100078583,
+        "gain_std_db": 7.525412082672119
+      },
+      {
+        "experiment": "AERIAL_TRAIN",
+        "amendment": "AERIAL-TRAIN-3GPP-2026-10-26",
+        "method": "aerial_train",
+        "k": 54,
+        "nominal_snr_db": 0.0,
+        "episodes": 1000,
+        "test_seed": 10042,
+        "success_rate": 0.014,
+        "final_distance_mean": 7.463686466217041,
+        "control_effort_mean": 788.1185913085938,
+        "success_rate_los": 0.013651876710355282,
+        "success_rate_nlos": 0.01652892492711544,
+        "wilson": {
+          "wilson_low": 0.00835757513042392,
+          "wilson_high": 0.02336203411753566,
+          "p_hat": 0.014,
+          "success_count": 14,
+          "total": 1000
+        },
+        "gain_mean_db": 0.18255560100078583,
+        "gain_std_db": 7.525412082672119
+      },
+      {
+        "experiment": "AERIAL_TRAIN",
+        "amendment": "AERIAL-TRAIN-3GPP-2026-10-26",
+        "method": "aerial_train",
+        "k": 54,
+        "nominal_snr_db": 5.0,
+        "episodes": 1000,
+        "test_seed": 10042,
+        "success_rate": 0.016,
+        "final_distance_mean": 7.4708380699157715,
+        "control_effort_mean": 787.8992309570312,
+        "success_rate_los": 0.01706484705209732,
+        "success_rate_nlos": 0.00826446246355772,
+        "wilson": {
+          "wilson_low": 0.009872242002277388,
+          "wilson_high": 0.02583206021173997,
+          "p_hat": 0.016,
+          "success_count": 16,
+          "total": 1000
+        },
+        "gain_mean_db": 0.18255560100078583,
+        "gain_std_db": 7.525412082672119
+      },
+      {
+        "experiment": "AERIAL_TRAIN",
+        "amendment": "AERIAL-TRAIN-3GPP-2026-10-26",
+        "method": "aerial_train",
+        "k": 54,
+        "nominal_snr_db": 10.0,
+        "episodes": 1000,
+        "test_seed": 10042,
+        "success_rate": 0.017,
+        "final_distance_mean": 7.430784225463867,
+        "control_effort_mean": 787.5838012695312,
+        "success_rate_los": 0.019340159371495247,
+        "success_rate_nlos": 0.0,
+        "wilson": {
+          "wilson_low": 0.010640689856816328,
+          "wilson_high": 0.027055958840229925,
+          "p_hat": 0.017,
+          "success_count": 17,
+          "total": 1000
+        },
+        "gain_mean_db": 0.18255560100078583,
+        "gain_std_db": 7.525412082672119
+      },
+      {
+        "experiment": "AERIAL_TRAIN",
+        "amendment": "AERIAL-TRAIN-3GPP-2026-10-26",
+        "method": "aerial_train",
+        "k": 54,
+        "nominal_snr_db": 15.0,
+        "episodes": 1000,
+        "test_seed": 10042,
+        "success_rate": 0.013,
+        "final_distance_mean": 7.426862716674805,
+        "control_effort_mean": 787.1215209960938,
+        "success_rate_los": 0.01478953380137682,
+        "success_rate_nlos": 0.0,
+        "wilson": {
+          "wilson_low": 0.0076128203893510256,
+          "wilson_high": 0.022114442375579666,
+          "p_hat": 0.013,
+          "success_count": 13,
+          "total": 1000
+        },
+        "gain_mean_db": 0.18255560100078583,
+        "gain_std_db": 7.525412082672119
+      },
+      {
+        "experiment": "AERIAL_TRAIN",
+        "amendment": "AERIAL-TRAIN-3GPP-2026-10-26",
+        "method": "aerial_train",
+        "k": 54,
+        "nominal_snr_db": 20.0,
+        "episodes": 1000,
+        "test_seed": 10042,
+        "success_rate": 0.014,
+        "final_distance_mean": 7.4827752113342285,
+        "control_effort_mean": 786.6309204101562,
+        "success_rate_los": 0.01478953380137682,
+        "success_rate_nlos": 0.00826446246355772,
+        "wilson": {
+          "wilson_low": 0.00835757513042392,
+          "wilson_high": 0.02336203411753566,
+          "p_hat": 0.014,
+          "success_count": 14,
+          "total": 1000
+        },
+        "gain_mean_db": 0.18255560100078583,
+        "gain_std_db": 7.525412082672119
+      }
+    ],
+    "digital_k54": [
+      {
+        "experiment": "AERIAL_TRAIN",
+        "amendment": "AERIAL-TRAIN-3GPP-2026-10-26",
+        "method": "digital",
+        "k": 54,
+        "nominal_snr_db": -15.0,
+        "episodes": 1000,
+        "test_seed": 10042,
+        "success_rate": 0.03,
+        "final_distance_mean": 9.345620155334473,
+        "control_effort_mean": 716.2501220703125,
+        "success_rate_los": 0.032992035150527954,
+        "success_rate_nlos": 0.00826446246355772,
+        "wilson": {
+          "wilson_low": 0.0210937388288347,
+          "wilson_high": 0.042503414147587126,
+          "p_hat": 0.03,
+          "success_count": 30,
+          "total": 1000
+        },
+        "gain_mean_db": 0.18255560100078583,
+        "gain_std_db": 7.525412082672119
+      },
+      {
+        "experiment": "AERIAL_TRAIN",
+        "amendment": "AERIAL-TRAIN-3GPP-2026-10-26",
+        "method": "digital",
+        "k": 54,
+        "nominal_snr_db": -10.0,
+        "episodes": 1000,
+        "test_seed": 10042,
+        "success_rate": 0.082,
+        "final_distance_mean": 7.564676284790039,
+        "control_effort_mean": 700.236572265625,
+        "success_rate_los": 0.09215017408132553,
+        "success_rate_nlos": 0.00826446246355772,
+        "wilson": {
+          "wilson_low": 0.06655195342021952,
+          "wilson_high": 0.10064721667370458,
+          "p_hat": 0.082,
+          "success_count": 82,
+          "total": 1000
+        },
+        "gain_mean_db": 0.18255560100078583,
+        "gain_std_db": 7.525412082672119
+      },
+      {
+        "experiment": "AERIAL_TRAIN",
+        "amendment": "AERIAL-TRAIN-3GPP-2026-10-26",
+        "method": "digital",
+        "k": 54,
+        "nominal_snr_db": -5.0,
+        "episodes": 1000,
+        "test_seed": 10042,
+        "success_rate": 0.353,
+        "final_distance_mean": 4.627954006195068,
+        "control_effort_mean": 630.1589965820312,
+        "success_rate_los": 0.3993174135684967,
+        "success_rate_nlos": 0.01652892492711544,
+        "wilson": {
+          "wilson_low": 0.32399373843890167,
+          "wilson_high": 0.3831313285558515,
+          "p_hat": 0.353,
+          "success_count": 353,
+          "total": 1000
+        },
+        "gain_mean_db": 0.18255560100078583,
+        "gain_std_db": 7.525412082672119
+      },
+      {
+        "experiment": "AERIAL_TRAIN",
+        "amendment": "AERIAL-TRAIN-3GPP-2026-10-26",
+        "method": "digital",
+        "k": 54,
+        "nominal_snr_db": 0.0,
+        "episodes": 1000,
+        "test_seed": 10042,
+        "success_rate": 0.685,
+        "final_distance_mean": 2.125948905944824,
+        "control_effort_mean": 476.0115966796875,
+        "success_rate_los": 0.7770193219184875,
+        "success_rate_nlos": 0.01652892492711544,
+        "wilson": {
+          "wilson_low": 0.655548006716873,
+          "wilson_high": 0.7130360926434717,
+          "p_hat": 0.685,
+          "success_count": 685,
+          "total": 1000
+        },
+        "gain_mean_db": 0.18255560100078583,
+        "gain_std_db": 7.525412082672119
+      },
+      {
+        "experiment": "AERIAL_TRAIN",
+        "amendment": "AERIAL-TRAIN-3GPP-2026-10-26",
+        "method": "digital",
+        "k": 54,
+        "nominal_snr_db": 5.0,
+        "episodes": 1000,
+        "test_seed": 10042,
+        "success_rate": 0.854,
+        "final_distance_mean": 1.3274587392807007,
+        "control_effort_mean": 319.8831787109375,
+        "success_rate_los": 0.9624573588371277,
+        "success_rate_nlos": 0.06611569970846176,
+        "wilson": {
+          "wilson_low": 0.8307599284226275,
+          "wilson_high": 0.8745307265695994,
+          "p_hat": 0.854,
+          "success_count": 854,
+          "total": 1000
+        },
+        "gain_mean_db": 0.18255560100078583,
+        "gain_std_db": 7.525412082672119
+      },
+      {
+        "experiment": "AERIAL_TRAIN",
+        "amendment": "AERIAL-TRAIN-3GPP-2026-10-26",
+        "method": "digital",
+        "k": 54,
+        "nominal_snr_db": 10.0,
+        "episodes": 1000,
+        "test_seed": 10042,
+        "success_rate": 0.903,
+        "final_distance_mean": 0.879164457321167,
+        "control_effort_mean": 226.83460998535156,
+        "success_rate_los": 0.9988623261451721,
+        "success_rate_nlos": 0.20661157369613647,
+        "wilson": {
+          "wilson_low": 0.8830847944509657,
+          "wilson_high": 0.9198308382096769,
+          "p_hat": 0.903,
+          "success_count": 903,
+          "total": 1000
+        },
+        "gain_mean_db": 0.18255560100078583,
+        "gain_std_db": 7.525412082672119
+      },
+      {
+        "experiment": "AERIAL_TRAIN",
+        "amendment": "AERIAL-TRAIN-3GPP-2026-10-26",
+        "method": "digital",
+        "k": 54,
+        "nominal_snr_db": 15.0,
+        "episodes": 1000,
+        "test_seed": 10042,
+        "success_rate": 0.936,
+        "final_distance_mean": 0.48812171816825867,
+        "control_effort_mean": 178.6269989013672,
+        "success_rate_los": 1.0,
+        "success_rate_nlos": 0.4710743725299835,
+        "wilson": {
+          "wilson_low": 0.9190992674988255,
+          "wilson_high": 0.9495637991017706,
+          "p_hat": 0.936,
+          "success_count": 936,
+          "total": 1000
+        },
+        "gain_mean_db": 0.18255560100078583,
+        "gain_std_db": 7.525412082672119
+      },
+      {
+        "experiment": "AERIAL_TRAIN",
+        "amendment": "AERIAL-TRAIN-3GPP-2026-10-26",
+        "method": "digital",
+        "k": 54,
+        "nominal_snr_db": 20.0,
+        "episodes": 1000,
+        "test_seed": 10042,
+        "success_rate": 0.969,
+        "final_distance_mean": 0.24652430415153503,
+        "control_effort_mean": 148.87864685058594,
+        "success_rate_los": 1.0,
+        "success_rate_nlos": 0.7438016533851624,
+        "wilson": {
+          "wilson_low": 0.9563345039877078,
+          "wilson_high": 0.9780759965528414,
+          "p_hat": 0.969,
+          "success_count": 969,
+          "total": 1000
+        },
+        "gain_mean_db": 0.18255560100078583,
+        "gain_std_db": 7.525412082672119
+      }
+    ]
+  },
+  "required_nominal_db": {
+    "frozen_rayleigh_k18": {
+      "0.90": -4.73,
+      "0.99": 15.0
+    },
+    "aerial_train_k18": {
+      "0.90": null,
+      "0.99": null
+    },
+    "digital_k18": {
+      "0.90": null,
+      "0.99": null
+    },
+    "frozen_rayleigh_k54": {
+      "0.90": -7.83,
+      "0.99": 9.17
+    },
+    "aerial_train_k54": {
+      "0.90": null,
+      "0.99": null
+    },
+    "digital_k54": {
+      "0.90": 9.69,
+      "0.99": null
+    }
+  },
+  "required_tx_db": {
+    "frozen_rayleigh_k18": {
+      "0.90": 90.9,
+      "0.99": 110.63
+    },
+    "aerial_train_k18": {
+      "0.90": null,
+      "0.99": null
+    },
+    "digital_k18": {
+      "0.90": null,
+      "0.99": null
+    },
+    "frozen_rayleigh_k54": {
+      "0.90": 87.8,
+      "0.99": 104.8
+    },
+    "aerial_train_k54": {
+      "0.90": null,
+      "0.99": null
+    },
+    "digital_k54": {
+      "0.90": 105.32,
+      "0.99": null
+    }
+  },
+  "gaps": {
+    "k18": {
+      "aerial_train_minus_frozen_db": {
+        "0.90": null,
+        "0.99": null
+      },
+      "aerial_train_minus_digital_db": {
+        "0.90": null,
+        "0.99": null
+      }
+    },
+    "k54": {
+      "aerial_train_minus_frozen_db": {
+        "0.90": null,
+        "0.99": null
+      },
+      "aerial_train_minus_digital_db": {
+        "0.90": null,
+        "0.99": null
+      }
+    }
+  },
+  "protocol_note": "nominal SNR = mean path loss removed; transmit SNR = nominal + PL_mean. E=1000 per point, one shared per-episode gain vector (paired).",
+  "train_done": 2,
+  "eval_slots": 48,
+  "eval_slots_expected": 48
+}

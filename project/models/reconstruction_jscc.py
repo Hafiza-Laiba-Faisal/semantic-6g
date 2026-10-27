@@ -24,6 +24,7 @@ import torch
 
 from project import config
 from project.channels.awgn import awgn_channel
+from project.channels.aerial import sample_aerial_gain
 from project.channels.complex_utils import power_normalize
 from project.channels.rayleigh import equalize_zf, rayleigh_channel
 from project.data.normalization import denormalize, normalize
@@ -70,6 +71,7 @@ class ReconstructionDeepJSCC(torch.nn.Module):
         denormalize_output: bool = True,
         noise: Optional[torch.Tensor] = None,
         h: Optional[torch.Tensor] = None,
+        aerial_gain: Optional[torch.Tensor] = None,
     ) -> torch.Tensor:
         """One transmission of the state through the frozen pipeline.
 
@@ -85,17 +87,30 @@ class ReconstructionDeepJSCC(torch.nn.Module):
         noise / h : optional pre-generated realizations for paired
             evaluation (complex [B, k] noise; complex [B, 1] h); used
             verbatim instead of sampling - Step-3 conventions untouched.
+        aerial_gain : optional per-episode large-scale gain [B, 1] for
+            ``channel="umaaerial"`` (A-12). None = sample from the 3GPP
+            dispersion model. Ignored by the frozen channels.
         """
-        if channel not in ("awgn", "rayleigh"):
+        if channel not in ("awgn", "rayleigh", "umaaerial"):
             raise ValueError(f"unknown channel {channel!r}")
         z = self.encode(s)
         if channel == "awgn":
             y = awgn_channel(z, snr_db, generator=generator, noise=noise)
             y_eq = y
-        else:
+        elif channel == "rayleigh":
             y, h_used = rayleigh_channel(z, snr_db, generator=generator,
                                          return_h=True, noise=noise, h=h)
             y_eq = equalize_zf(y, h_used)
+        else:
+            # A-12: 3GPP UMa-aerial dispersion.  One block gain per codeword
+            # (LoS/NLoS + shadowing); perfect-CSI ZF on the true h*g, so the
+            # decoder sees unit-power symbols with the noise amplified by
+            # 1/(h*g) - exactly the effective-SNR penalty of that episode.
+            g = (aerial_gain if aerial_gain is not None
+                 else sample_aerial_gain(s.shape[0], generator=generator))
+            y, h_used = rayleigh_channel(z * g, snr_db, generator=generator,
+                                         return_h=True, noise=noise, h=h)
+            y_eq = equalize_zf(y, h_used * g)
         s_bar_hat = self.decoder(y_eq)
         if denormalize_output:
             return denormalize(s_bar_hat)
@@ -107,6 +122,7 @@ class ReconstructionDeepJSCC(torch.nn.Module):
         snr_db: float,
         channel: str = "awgn",
         generator: Optional[torch.Generator] = None,
+        aerial_gain: Optional[torch.Tensor] = None,
     ) -> torch.Tensor:
         """Return the NORMALIZED estimate for the frozen loss (item 7/8).
 
@@ -116,4 +132,4 @@ class ReconstructionDeepJSCC(torch.nn.Module):
         is the canonical training path.
         """
         return self.forward(s, snr_db, channel=channel, generator=generator,
-                            denormalize_output=False)
+                            denormalize_output=False, aerial_gain=aerial_gain)

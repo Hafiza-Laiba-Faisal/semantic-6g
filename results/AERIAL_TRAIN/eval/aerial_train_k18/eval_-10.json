@@ -1,0 +1,23 @@
+{
+  "experiment": "AERIAL_TRAIN",
+  "amendment": "AERIAL-TRAIN-3GPP-2026-10-26",
+  "method": "aerial_train",
+  "k": 18,
+  "nominal_snr_db": -10.0,
+  "episodes": 1000,
+  "test_seed": 10042,
+  "success_rate": 0.027,
+  "final_distance_mean": 10.288822174072266,
+  "control_effort_mean": 775.30615234375,
+  "success_rate_los": 0.027303753420710564,
+  "success_rate_nlos": 0.024793388321995735,
+  "wilson": {
+    "wilson_low": 0.018621382774294995,
+    "wilson_high": 0.03899873075304015,
+    "p_hat": 0.027,
+    "success_count": 27,
+    "total": 1000
+  },
+  "gain_mean_db": 0.18255560100078583,
+  "gain_std_db": 7.525412082672119
+}

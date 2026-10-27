@@ -99,6 +99,16 @@ class ArchCell(rw.WaveCell):
         spec["hidden"] = WIDTH
         return spec
 
+    def load_ckpt(self):
+        """Load with the REAL width; the base loader assumes the frozen 128."""
+        ckpt = self.dir() / "final_ckpt.pt"
+        if not ckpt.exists():
+            return None
+        model = ReconstructionDeepJSCC(k=self.k, hidden_dims=(WIDTH, WIDTH))
+        payload = torch.load(ckpt, weights_only=False)
+        model.load_state_dict(payload["model_state"])
+        return model
+
 
 def cells():
     out = []

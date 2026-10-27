@@ -143,3 +143,22 @@ python tools/run_aerial_link.py --d2d=500 --h=50 --fc=2.0 --episodes=1000
 python tools/run_aerial_link.py --d2d=500 --h=50 --fc=2.0 --episodes=1000 --reuse
 python -m tests.test_aerial_link     # 26 checks: formulas + mapping arithmetic
 ```
+
+## 7. Follow-up: training *under* the channel (A-12)
+
+This study changes only the evaluation channel; the checkpoints were all
+trained on the frozen Rayleigh model. A-12 (same date, `results/AERIAL_TRAIN/`)
+retrains the λ-shaped arm **under** the per-episode 3GPP dispersion
+(LoS/NLoS draw + TR 38.901 shadowing, block fading, no Doppler) and reports
+the paired operating point against the numbers above. The two studies are
+complementary: A-10 = "what does the channel cost a frozen policy", A-12 =
+"can training on it recover the cost".
+
+**Outcome (2026-10-27): A-12 ran as registered and both training cells
+diverged** - the checkpoints are dead networks (0.023-0.029 and 0.013-0.025 at
+every nominal SNR), so A-12 yields no trained operating point to compare
+against. It does **not** change anything in sections 1-6 above: the numbers
+here are produced by untouched Wave-C checkpoints on the same gain vector and
+reproduce exactly. What A-12 adds is a limitation, documented with its cause
+(effective-SNR spread 9.37 vs 5.59 dB; ~4 % of episodes ≥20 dB below the
+training curriculum). See `RESULTS_AERIAL_TRAIN_2026-10-26.md`.

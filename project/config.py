@@ -249,6 +249,10 @@ RNG_KEYS = {
     "shuffle": "shuffle",
     "noise_train": "noise_train",
     "noise_test": "noise_test",
+    # A-12 (2026-10-26): per-episode 3GPP large-scale gain stream.  Additive:
+    # every generator is seed + hash(key), so existing streams are unchanged.
+    "aerial_gain": "aerial_gain",
+    "aerial_eval": "aerial_eval",
 }
 
 

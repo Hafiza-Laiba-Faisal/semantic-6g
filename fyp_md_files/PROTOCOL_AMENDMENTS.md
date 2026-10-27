@@ -20,9 +20,10 @@ number in this log was typed by hand from memory.
 | Wave-A | 46 train / 90 eval slots (18 units) | 44 + 2 failed / **85** | A-3 | `incomplete` **by design** |
 | Wave-B | 375 cells, 15 units | **350** | A-5 | `complete` |
 | Wave-C | 32 cells declared, 4-cell screening | 4 / 20 eval slots (4 units) | A-8b | `complete` (screening scope only) |
-| ARCH_ABL | 2 train / 10 eval slots (2 units) | 2 / 10 | scope reduced in A-9 | A-9 |
-| AERIAL | evaluation only (no training universe) | 1 geometry, 2 models + 2 digital | - | A-10 |
-| POLAR | evaluation only (no training universe) | 50 conditions x 2 coders | - | A-11 |
+| ARCH_ABL | 2 train / 10 eval slots (2 units) | 2 / 10 | scope reduced in A-9 | A-9 complete |
+| AERIAL | evaluation only (no training universe) | 1 geometry, 2 models + 2 digital | - | A-10 complete |
+| POLAR | evaluation only (no training universe) | 50 conditions x 2 coders | - | A-11 complete |
+| AERIAL_TRAIN | 2 train / 48 method-unit-SNR slots | 2 / 48 | A-12 | A-12 complete, **negative** (training diverged; no cell retrained) |
 
 "Accounted" always means *evaluated or explicitly declared*. Nothing is
 imputed, nothing is dropped silently, and no failed cell is replaced.
@@ -444,6 +445,78 @@ M1/M2 and all Wave artifacts are untouched.
 
 ---
 
+## A-12 - Training under the 3GPP UMa-aerial dispersion (2026-10-26)
+
+**Question.** A-10 evaluated Rayleigh-trained checkpoints on a 3GPP aerial
+link. A reviewer can object that the models were never *trained* on that
+channel. Does training under the 3GPP statistics change the lambda arm's
+operating point - and, in particular, does it recover any of the ~99 dB
+transmit-SNR penalty?
+
+**Channel (added, opt-in; `channel="umaaerial"`).**
+
+* one LoS/NLoS draw per episode with the TR 36.777 P_LoS of the geometry,
+* one log-normal shadow term per episode, TR 38.901 UMa sigma (LoS 4 dB,
+  NLoS 6 dB),
+* perfect-CSI ZF on the true `h*g`; an episode whose offset is `-o` dB is
+  exactly the frozen Rayleigh channel at `SNR - o` (unit-tested),
+* the gain is **centred on the geometry mean path loss** (dB), so the frozen
+  nominal SNR axis keeps its meaning and the experiment isolates dispersion
+  rather than an arbitrary link budget. Transmit SNR = nominal + PL_mean,
+* block fading over the episode. **No Doppler** and no time-correlated
+  shadowing: the environment is a 2-D double integrator with no altitude or
+  velocity in the state, so a Doppler term would require a different
+  benchmark, not a channel patch.
+
+**Design (pre-registered 2026-10-26T13:10Z, before the first cell).**
+
+| field | value |
+|---|---|
+| arm | `lam_ctl_heavy` (the frozen task arm sits at ~0.02 success and cannot discriminate a channel effect) |
+| k | 18, 54 |
+| channel | umaaerial |
+| seeds | 42 |
+| width / steps / lambdas | frozen (128 / 3000 / 1.0, 0.1, 0.1, 2.0) |
+| cells | 2 |
+| eval | E=1000, nominal grid -15..+20 dB (8 points), one shared per-episode gain vector (paired) |
+| comparators | Wave-C `lam_ctl_heavy` Rayleigh checkpoints (untouched), frozen digital K=7 with B = `M2_B_BY_K[k]` |
+| output | `results/AERIAL_TRAIN/` |
+
+**Why the comparison is exact, not approximate.** Under perfect-CSI ZF the
+block gain only changes the effective SNR, so evaluating the pre-generated
+paired realizations with the noise divided by `g` is the UMa-aerial
+realization itself - no curve interpolation, no re-training of the
+comparators.
+
+**What is NOT changed.** Frozen M1/M2, Wave-A/B/C universes, results and
+checkpoints; seeds; step budget; architecture; loss weights; environment;
+controller; evaluation episodes/seed/grid; statistics. Only the channel seen
+during these two trainings is new. Frozen artifacts stay read-only; the new
+runner writes exclusively under `results/AERIAL_TRAIN/`.
+
+**Known limits.** Absolute link budget still depends on `reference_pl_db`
+(here the geometry mean, reported explicitly); shadowing is per-episode, not
+time-correlated; SC/conv digital baselines are unchanged; nothing here claims
+hardware feasibility.
+
+**Result (2026-10-27, run as registered — no retraining, no re-selection).**
+Both cells completed (no NaN losses) and both training runs **diverged**. They
+reached the frozen λ-arm's terminal task loss (15.4 at step 105 for k = 18,
+15.6 at step 160 for k = 54, vs 16.1 for every converged Wave-C cell) and then
+left it: 14–17 % of steps have loss > 10³, 203–311 steps have non-finite
+encoder gradients, ~75 % of steps exceed 10⁶. The resulting checkpoints are
+dead networks — 0.023–0.029 (k = 18) and 0.013–0.025 (k = 54) at *every*
+nominal SNR, and 0.027 / 0.014 flat on the frozen AWGN channel as a control.
+Cause: the dispersion doubles the effective-SNR spread (9.37 vs 5.59 dB at the
+same mean), putting ~4 % of episodes ≥20 dB below the frozen 0–20 dB training
+curriculum and 55× (vs 14×) worst-case noise amplification into every batch;
+the frozen recipe has no outlier control. Consequence: A-12 **cannot** be used
+to compare "trained on 3GPP" with "trained on Rayleigh", and the A-10
+evaluation-only result stands unchanged (its numbers reproduce on the same
+gain vector). A fair test requires a new amendment (truncated training tail,
+robust loss, or SNR-curriculum shift); none was applied. Details:
+`fyp_md_files/RESULTS_AERIAL_TRAIN_2026-10-26.md`.
+
 ---
 
 ## 1. What a reviewer can check independently
@@ -455,11 +528,13 @@ python tools/run_wave_a.py verify        # wave ids, frozen-identity fingerprint
 python tools/run_wave_b.py verify        # coverage contract + 70 σ=0 gates
 python tools/run_wave_c.py verify        # screening scope + eval-slot contract
 python tools/run_arch_ablation.py verify # capacity-ablation pre-flight (A-9)
+python tools/run_aerial_training.py verify # 3GPP training-channel pre-flight (A-12)
 python tools/run_all.py status           # 21 ok, 1 accepted, 0 pending
 
 python -m tests.test_wave_a_tooling      # 60 checks
 python -m tests.test_aerial_link         # 26 checks (3GPP formulas + mapping)
-python -m tests.test_arch_width          # 14 checks (capacity plumbing)
+python -m tests.test_aerial_training     # 25 checks (3GPP training channel)
+python -m tests.test_arch_width          # 16 checks (capacity plumbing)
 ```
 
 Hash check for the frozen evidence:

@@ -30,6 +30,15 @@ How it enters THIS system (differentiability, no invented physics):
   (h sampling + noise convention reused verbatim; no duplicated RNG).
 
 NOT USED by default; enabled only when a config passes channel="umaaerial".
+
+Two uses of the same formulas:
+
+* A-10 (evaluation only): a DETERMINISTIC mean path loss ``g`` evaluated at an
+  effective SNR, or as a LoS/NLoS mixture of the same measured curve.
+* A-12 (training): ``sample_aerial_gain`` draws one gain per episode from the
+  LoS/NLoS split plus log-normal shadowing, centred on the mean path loss, so
+  the model is trained *under* the 3GPP dispersion rather than evaluated on
+  it.  Block fading over the episode; no Doppler.
 """
 
 from __future__ import annotations
@@ -98,6 +107,84 @@ def aerial_gain(d2d_m: float, h_m: float, fc_ghz: float,
 
 
 # ---------------------------------------------------------------------------
+# per-episode dispersion channel (A-12: training UNDER the 3GPP statistics)
+# ---------------------------------------------------------------------------
+
+# TR 38.901 Table 7.4.1-1 (UMa): shadow-fading standard deviation, dB.
+SHADOW_SIGMA_DB = {"los": 4.0, "nlos": 6.0}
+
+# Pinned geometry of the A-12 training channel.  Recorded in every cell spec
+# and in the run summary; changing it creates a different experiment.
+TRAINING_GEOMETRY = {"d2d_m": 500.0, "h_m": 50.0, "fc_ghz": 2.0}
+
+
+def sample_aerial_offsets_db(
+    batch: int,
+    generator: Optional[torch.Generator] = None,
+    *,
+    d2d_m: Optional[float] = None,
+    h_m: Optional[float] = None,
+    fc_ghz: Optional[float] = None,
+    reference_pl_db: Optional[float] = None,
+    device: Optional[torch.device] = None,
+    dtype: torch.dtype = torch.float32,
+) -> Tuple[torch.Tensor, torch.Tensor]:
+    """Per-episode large-scale offset (dB), ``[B, 1]``, and the LoS mask.
+
+    One Bernoulli LoS/NLoS draw per episode (probability ``P_LoS`` of the
+    geometry) plus one log-normal shadow term ``N(0, sigma_branch^2)``:
+
+        offset_db = PL_branch + shadow - reference_pl_db
+
+    ``reference_pl_db=None`` centres the offset on the geometry's MEAN path
+    loss, so the trained model sees the 3GPP *dispersion* (LoS/NLoS split +
+    shadowing) around the frozen link budget.  A numeric reference keeps
+    the absolute loss (the A-10 evaluation convention).
+
+    Block-fading assumption: the offset is constant over one episode
+    (``T_MAX`` steps).  Doppler / time-correlated shadowing are out of
+    scope and are stated as such in the amendment.
+    """
+    geo = TRAINING_GEOMETRY
+    d2d_m = geo["d2d_m"] if d2d_m is None else float(d2d_m)
+    h_m = geo["h_m"] if h_m is None else float(h_m)
+    fc_ghz = geo["fc_ghz"] if fc_ghz is None else float(fc_ghz)
+
+    p_los = los_probability(d2d_m, h_m)
+    d3d = math.hypot(d2d_m, h_m)
+    pl_los = los_path_loss_db(d3d, fc_ghz)
+    pl_nlos = nlos_path_loss_db(d3d, h_m, fc_ghz)
+    if reference_pl_db is None:
+        reference_pl_db = p_los * pl_los + (1.0 - p_los) * pl_nlos
+
+    u = torch.rand(batch, 1, generator=generator, device=device, dtype=dtype)
+    is_los = u < p_los
+    pl = torch.where(is_los, torch.full_like(u, pl_los),
+                     torch.full_like(u, pl_nlos))
+    sigma = torch.where(is_los, torch.full_like(u, SHADOW_SIGMA_DB["los"]),
+                        torch.full_like(u, SHADOW_SIGMA_DB["nlos"]))
+    shadow = torch.randn(batch, 1, generator=generator, device=device,
+                         dtype=dtype) * sigma
+    return pl + shadow - float(reference_pl_db), is_los
+
+
+def sample_aerial_gain(
+    batch: int,
+    generator: Optional[torch.Generator] = None,
+    **kwargs,
+) -> torch.Tensor:
+    """Per-episode multiplicative gain ``g = 10^(-offset_db/20)``, ``[B, 1]``.
+
+    See :func:`sample_aerial_offsets_db` for the sampling convention.  The
+    gain multiplies the codeword before the frozen Rayleigh pass; perfect-CSI
+    ZF on ``h*g`` then turns it into an effective-SNR penalty of
+    ``-20 log10(g)`` dB for that episode.
+    """
+    offsets_db, _ = sample_aerial_offsets_db(batch, generator, **kwargs)
+    return 10.0 ** (-offsets_db / 20.0)
+
+
+# ---------------------------------------------------------------------------
 # channel dispatch-compatible wrapper
 # ---------------------------------------------------------------------------
 
@@ -143,6 +230,11 @@ CHANNEL_INFO = {
                     "d1=max(460log10(h)-700,18)",
         "pl_los_db": "28.0 + 22*log10(d3D) + 20*log10(fc_GHz)",
         "pl_nlos_db": "-17.5 + (46-7*log10(h))*log10(d3D) + 20*log10(40*pi*fc/3)",
+        "shadow_sigma_db": SHADOW_SIGMA_DB,
+        "training_geometry": TRAINING_GEOMETRY,
+        "training_channel": ("per-episode LoS/NLoS draw + log-normal "
+                             "shadowing, block-fading over the episode; "
+                             "no Doppler"),
         "csi_error_hook": "csi_error_sigma",
         "default_disabled": True,
         "additive_to_frozen": True,

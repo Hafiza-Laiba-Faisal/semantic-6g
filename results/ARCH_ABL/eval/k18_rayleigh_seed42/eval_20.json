@@ -1,0 +1,36 @@
+{
+  "STEP": "ARCH_ABL",
+  "experiment": "ARCH_ABL",
+  "unit": "k18_rayleigh_seed42",
+  "k": 18,
+  "channel": "rayleigh",
+  "seed": 42,
+  "snr_db": 20.0,
+  "test_seed": 10042,
+  "episodes": 1000,
+  "t_max": 100,
+  "paired_reference": "frozen M1/M2 realizations not reused; wave evals are self-paired (same episodes within unit, across tags)",
+  "protocol_note": "Arch diagnostic protocol: E=1000, non-frozen amendment ARCH_CAPACITY-2026-10-26; NOT comparable 1:1 to frozen M1/M2 (E=5000)",
+  "non_frozen": true,
+  "wall_s": 1.0,
+  "aggregate_frozen_task": {
+    "episodes": 1000,
+    "success_count": 39,
+    "failure_count": 961,
+    "success_rate": 0.039,
+    "final_distance_mean": 8.307255744934082,
+    "avg_distance_mean": 8.553156852722168,
+    "control_effort_mean": 776.4872436523438,
+    "min_distance_mean": 6.38167667388916,
+    "mse_mean": 0.662818968296051,
+    "ttg_success_mean": 29.102563858032227,
+    "ttg_success_median": 27.0
+  },
+  "wilson_frozen_task": {
+    "wilson_low": 0.02865896090418048,
+    "wilson_high": 0.05286931041950135,
+    "p_hat": 0.039,
+    "success_count": 39,
+    "total": 1000
+  }
+}

@@ -29,6 +29,7 @@ from typing import Dict, Optional, Tuple
 import torch
 
 from project import config
+from project.channels.aerial import sample_aerial_gain
 from project.data.normalization import denormalize, normalize
 from project.losses.task_loss import task_loss
 from project.models.reconstruction_jscc import ReconstructionDeepJSCC
@@ -51,11 +52,15 @@ def closed_loop_rollout(
     velocities [B, T+1, 2])``. Every operation is differentiable w.r.t.
     the communication parameters; noise/fading are constants.
     """
-    if channel not in ("awgn", "rayleigh"):
+    if channel not in ("awgn", "rayleigh", "umaaerial"):
         raise ValueError(f"unknown channel {channel!r}")
     p = s0[:, 0:2]
     v = s0[:, 2:4]
     g = s0[:, 4:6]
+
+    # A-12: one block gain per episode, held for the whole rollout
+    block_gain = (sample_aerial_gain(s0.shape[0], generator=generator)
+                  if channel == "umaaerial" else None)
 
     positions = [p]
     velocities = [v]
@@ -65,7 +70,8 @@ def closed_loop_rollout(
     for _ in range(t_max):
         # communication: normalized estimate of the current state
         s_bar_hat = comm.forward_losses(s, snr_db, channel=channel,
-                                        generator=generator)
+                                        generator=generator,
+                                        aerial_gain=block_gain)
         s_hat = denormalize(s_bar_hat)              # physical estimate
         u = pd_controller(s_hat)                    # frozen controller
         p, v = dynamics_step(p, v, u, dt=config.DT, v_max=config.V_MAX)
@@ -135,12 +141,13 @@ def train_task_oriented(
     frozen task-loss weights (ld, lu, lv, lT). None = frozen config
     values (bitwise-identical training path).
     """
-    if channel not in ("awgn", "rayleigh"):
+    if channel not in ("awgn", "rayleigh", "umaaerial"):
         raise ValueError(f"unknown channel {channel!r}")
     config.set_global_seed(seed)                     # weight init
     gen_states = config.derive_generator("episodes", seed)
     gen_snr = config.derive_generator("noise_train", seed)
     gen_noise = config.derive_generator("noise_test", seed)
+    gen_diag = config.derive_generator("aerial_gain", seed)  # A-12 only
     env = NavigationEnv()
 
     # fixed deterministic evaluation batch (same distribution, fixed seeds)
@@ -184,8 +191,11 @@ def train_task_oriented(
 
         # detached diagnostics only (never optimized)
         with torch.no_grad():
+            diag_gain = (sample_aerial_gain(s0.shape[0], generator=gen_diag)
+                         if channel == "umaaerial" else None)
             s_bar_hat_diag = model.forward_losses(s0, snr_db, channel=channel,
-                                                  generator=gen_noise)
+                                                  generator=gen_noise,
+                                                  aerial_gain=diag_gain)
             recon_mse = float(((s_bar_hat_diag - normalize(s0)) ** 2)
                               .sum(dim=-1).mean() / 6.0)
 

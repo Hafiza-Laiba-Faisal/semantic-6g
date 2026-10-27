@@ -27,7 +27,10 @@ worse at low SNR and reaches parity only by 10-15 dB.**
 
 Both baselines are deterministic and untrained, so one evaluation stream is
 the honest design; three "seeds" of the same deterministic pipeline would be
-fake replication. At E = 1000 the binomial 95% CI is about +/-3 pp at p = 0.5
+fake replication. The conv column is the frozen comparator *re-run at
+E = 1000*, so its absolute values can differ from the frozen E = 5000 report
+by sampling alone (e.g. k = 18/awgn/0 dB: 0.143 here vs 0.164 published);
+the polar-vs-conv contrast below is exactly paired within this run. At E = 1000 the binomial 95% CI is about +/-3 pp at p = 0.5
 and +/-1 pp near p = 0.95.
 
 Polar details: 48 source bits max (B = 8), CRC-8, block length N = next power

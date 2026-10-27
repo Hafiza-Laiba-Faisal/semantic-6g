@@ -1,12 +1,14 @@
-"""Figures for the A-10 (aerial) and A-11 (polar) blocks.
+"""Figures for the A-10 (aerial), A-11 (polar) and A-12 (aerial training) blocks.
 
 Reads existing artifacts only (read-only):
   results/AERIAL/step_aerial_summary.json
   results/POLAR/step_polar_summary_E1000.json
+  results/AERIAL_TRAIN/step_aerial_training_summary.json
 
 Writes:
   fyp_md_files/figures/fig_aerial_required_snr.png
   fyp_md_files/figures/fig_polar_vs_conv.png
+  fyp_md_files/figures/fig_aerial_training.png
 
 No training, no evaluation, no writes under results/.
 Run:  .venv\\Scripts\\python.exe tools/make_figures_extensions.py
@@ -109,6 +111,50 @@ def polar():
     print("wrote", out.relative_to(ROOT))
 
 
+def aerial_training():
+    src = (ROOT / "results" / "AERIAL_TRAIN"
+           / "step_aerial_training_summary.json")
+    if not src.exists():
+        print("skip aerial_training: summary not written yet")
+        return
+    d = json.loads(src.read_text())
+    pl = d["channel"]["pl_mean_db"]
+    style = {
+        "frozen_rayleigh": ("trained on Rayleigh (A-10 baseline)",
+                            "#1f77b4", "o", "-"),
+        "aerial_train": ("trained on 3GPP UMa-aerial (A-12)",
+                         "#d62728", "s", "-"),
+        "digital": ("digital (conv), B = M2_B_BY_K", "#2ca02c", "^", ":"),
+    }
+    fig, axes = plt.subplots(1, 2, figsize=(7.6, 3.2), sharey=True)
+    for ax, k in zip(axes, (18, 54)):
+        for method, (label, col, mk, ls) in style.items():
+            rows = d["curves"].get(f"{method}_k{k}")
+            if not rows:
+                continue
+            ax.plot([r["nominal_snr_db"] for r in rows],
+                    [r["success_rate"] for r in rows],
+                    ls, color=col, marker=mk, ms=3.2, lw=1.3, label=label)
+        for t in (0.9, 0.99):
+            ax.axhline(t, color="grey", lw=0.6, ls=":")
+        ax.set_title(f"k = {k}")
+        ax.set_xlabel("nominal SNR (dB);  tx = nominal + "
+                      f"{pl:.1f} dB")
+        ax.set_ylim(0, 1.05)
+    axes[0].set_ylabel("success rate")
+    handles, labels = axes[0].get_legend_handles_labels()
+    fig.legend(handles, labels, loc="lower center", ncol=3, frameon=False,
+               fontsize=7, bbox_to_anchor=(0.5, -0.03))
+    fig.suptitle("Training under the 3GPP UMa-aerial dispersion (A-12), "
+                 "E=1000, paired gains", fontsize=9)
+    fig.tight_layout(rect=(0, 0.07, 1, 1))
+    out = FIG / "fig_aerial_training.png"
+    fig.savefig(out, bbox_inches="tight")
+    plt.close(fig)
+    print("wrote", out.relative_to(ROOT))
+
+
 if __name__ == "__main__":
     aerial()
     polar()
+    aerial_training()

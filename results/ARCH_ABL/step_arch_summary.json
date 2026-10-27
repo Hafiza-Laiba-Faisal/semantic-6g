@@ -1,0 +1,162 @@
+{
+  "experiment": "ARCH_ABL",
+  "status": "complete",
+  "amendment": "ARCH_CAPACITY-2026-10-26",
+  "question": "is the frozen-arm failure a capacity artefact? hidden 256 vs the frozen 128 at k=18",
+  "design": {
+    "width": 256,
+    "k": 18,
+    "arms": {
+      "frozen_task": null
+    },
+    "channels": [
+      "awgn",
+      "rayleigh"
+    ],
+    "seeds": [
+      42
+    ],
+    "steps": 3000
+  },
+  "protocol_note": "E=1000 diagnostic grid; the frozen M1/M2 protocol uses E=5000",
+  "train_rows": [
+    {
+      "wave_id": "ARCH_frozen_task_task_awgn_k18_seed42",
+      "tag": "frozen_task",
+      "k": 18,
+      "channel": "awgn",
+      "seed": 42,
+      "hidden": 256,
+      "exit_status": "complete",
+      "task_loss_final": 1343.603759765625,
+      "nan_batches": 0,
+      "grads_finite": true,
+      "wall_seconds": null
+    },
+    {
+      "wave_id": "ARCH_frozen_task_task_rayleigh_k18_seed42",
+      "tag": "frozen_task",
+      "k": 18,
+      "channel": "rayleigh",
+      "seed": 42,
+      "hidden": 256,
+      "exit_status": "complete",
+      "task_loss_final": 658.7545166015625,
+      "nan_batches": 0,
+      "grads_finite": true,
+      "wall_seconds": null
+    }
+  ],
+  "pooled_rows": [
+    {
+      "tag": "frozen_task",
+      "k": 18,
+      "channel": "awgn",
+      "snr_db": 0.0,
+      "n_seeds": 1,
+      "success_rate_pooled": 0.027,
+      "final_distance_mean": 9.639908790588379,
+      "control_effort_mean": 768.93798828125
+    },
+    {
+      "tag": "frozen_task",
+      "k": 18,
+      "channel": "awgn",
+      "snr_db": 5.0,
+      "n_seeds": 1,
+      "success_rate_pooled": 0.026,
+      "final_distance_mean": 9.640953063964844,
+      "control_effort_mean": 769.2219848632812
+    },
+    {
+      "tag": "frozen_task",
+      "k": 18,
+      "channel": "awgn",
+      "snr_db": 10.0,
+      "n_seeds": 1,
+      "success_rate_pooled": 0.024,
+      "final_distance_mean": 9.662071228027344,
+      "control_effort_mean": 768.9390258789062
+    },
+    {
+      "tag": "frozen_task",
+      "k": 18,
+      "channel": "awgn",
+      "snr_db": 15.0,
+      "n_seeds": 1,
+      "success_rate_pooled": 0.026,
+      "final_distance_mean": 9.673185348510742,
+      "control_effort_mean": 768.4425659179688
+    },
+    {
+      "tag": "frozen_task",
+      "k": 18,
+      "channel": "awgn",
+      "snr_db": 20.0,
+      "n_seeds": 1,
+      "success_rate_pooled": 0.027,
+      "final_distance_mean": 9.681933403015137,
+      "control_effort_mean": 768.5413208007812
+    },
+    {
+      "tag": "frozen_task",
+      "k": 18,
+      "channel": "rayleigh",
+      "snr_db": 0.0,
+      "n_seeds": 1,
+      "success_rate_pooled": 0.041,
+      "final_distance_mean": 8.300363540649414,
+      "control_effort_mean": 774.4398193359375
+    },
+    {
+      "tag": "frozen_task",
+      "k": 18,
+      "channel": "rayleigh",
+      "snr_db": 5.0,
+      "n_seeds": 1,
+      "success_rate_pooled": 0.044,
+      "final_distance_mean": 8.28425407409668,
+      "control_effort_mean": 775.91943359375
+    },
+    {
+      "tag": "frozen_task",
+      "k": 18,
+      "channel": "rayleigh",
+      "snr_db": 10.0,
+      "n_seeds": 1,
+      "success_rate_pooled": 0.042,
+      "final_distance_mean": 8.27305793762207,
+      "control_effort_mean": 775.562255859375
+    },
+    {
+      "tag": "frozen_task",
+      "k": 18,
+      "channel": "rayleigh",
+      "snr_db": 15.0,
+      "n_seeds": 1,
+      "success_rate_pooled": 0.042,
+      "final_distance_mean": 8.274192810058594,
+      "control_effort_mean": 775.88134765625
+    },
+    {
+      "tag": "frozen_task",
+      "k": 18,
+      "channel": "rayleigh",
+      "snr_db": 20.0,
+      "n_seeds": 1,
+      "success_rate_pooled": 0.039,
+      "final_distance_mean": 8.307255744934082,
+      "control_effort_mean": 776.4872436523438
+    }
+  ],
+  "declared_but_unrun": {
+    "lam_ctl_heavy@256": "lambda arm at width 256 (declared, not run)",
+    "seed43@256": "seed 43 for both channels (declared, not run)"
+  },
+  "scope_note": "pre-registered 2x2x2=8 cells; reduced to the frozen arm x 2 channels x seed 42 at 12:25 UTC on 2026-10-26 (no cell completed, no metric existed)",
+  "train_done": 2,
+  "eval_slots_complete": 10,
+  "eval_slots_expected": 10,
+  "eval_units_complete": 2,
+  "capacity_bug_note": "Wave-A cap_h256 was invalid because the model constructors bound config.HIDDEN_DIMS at import time; this run verifies the real weight shape before training."
+}

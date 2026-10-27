@@ -2,7 +2,11 @@ FROM python:3.9-slim
 
 WORKDIR /app
 COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+# CPU-only, like the frozen environment (environment.yml): the default PyPI
+# torch wheel for Linux is a ~2 GB CUDA build the image cannot use.
+RUN pip install --no-cache-dir \
+        --extra-index-url https://download.pytorch.org/whl/cpu \
+        -r requirements.txt
 
 COPY project/ project/
 COPY tools/ tools/

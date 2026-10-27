@@ -1,0 +1,70 @@
+name: CI
+
+# Verifies the two things that cannot be verified on the development machine:
+#   1. the Docker image actually builds and its default command runs
+#   2. the full test suite passes on a clean Linux + Python 3.9 + CPU torch env
+#
+# Nothing here trains or writes to results/; the tests are design/protocol
+# guards, not experiments.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  tests:
+    name: tests (python 3.9, CPU torch)
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.9"
+          cache: pip
+
+      - name: install (CPU wheels)
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install --no-cache-dir \
+            --extra-index-url https://download.pytorch.org/whl/cpu \
+            -r requirements.txt
+
+      - name: structural validation (M1-M5 matrix)
+        run: python main.py validate-matrix
+
+      - name: unit + protocol tests
+        run: |
+          set -e
+          for f in tests/test_*.py; do
+            m="tests.$(basename "$f" .py)"
+            echo "::group::$m"
+            python -m "$m"
+            echo "::endgroup::"
+          done
+
+  docker:
+    name: docker image (build + run)
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: build
+        run: docker build --tag semantic-6g:ci .
+
+      - name: container default command (structural validation)
+        run: docker run --rm semantic-6g:ci
+
+      - name: container can run a test module
+        run: docker run --rm semantic-6g:ci python -m tests.test_channels
+
+      - name: image size
+        run: docker image inspect semantic-6g:ci --format '{{.Size}} bytes'

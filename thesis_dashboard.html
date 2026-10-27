@@ -67,7 +67,7 @@ td.left { text-align: left; }
   background: white; transition: box-shadow .2s; }
 .fig-item:hover { box-shadow: 0 4px 16px rgba(0,0,0,.15); }
 .fig-item img { width: 100%; height: 150px; object-fit: cover; display: block;
-  background: #f9fafb; }
+  background: #f9fafb; cursor: zoom-in; }
 .fig-item .fig-label { padding: 8px 10px; font-size: 11px; color: #374151;
   font-weight: 600; border-top: 1px solid #f3f4f6; }
 .fig-item .fig-sub { padding: 0 10px 8px; font-size: 10.5px; color: #6b7280; }
@@ -176,7 +176,7 @@ td.left { text-align: left; }
     <div class="claim">
       <div class="c-num">Claim 1 — Bandwidth Crossover</div>
       <div class="c-text">Semantic JSCC wins at low bandwidth (k≤18), digital wins at high bandwidth (k≥24)</div>
-      <div class="c-proof">📍 Proven by M2 + Wave-B · Crossover at k=18→24 confirmed</div>
+      <div class="c-proof">📍 Proven by M2 + Wave-B · Crossover at k=18→24 confirmed <b>for the unshaped arms</b> · A-14 (Oct 2026): the λ-shaped link is at ceiling at k=24 (0.998, seed range ≤0.004)</div>
     </div>
     <div class="claim">
       <div class="c-num">Claim 2 — λ-Shaping Fix</div>
@@ -233,6 +233,64 @@ td.left { text-align: left; }
       </div>
     </div>
   </div>
+</div>
+
+<!-- ══ REVIEWER GAPS (A-9 … A-14) ══ -->
+<div class="section-title">🧪 Reviewer Gaps Closed — A-9 … A-14 (26–27 Oct 2026)</div>
+<div class="card">
+  <h2>Every new run, what it asked, and what it actually shows</h2>
+  <table>
+    <tr>
+      <th class="left">Run</th>
+      <th class="left">Question</th>
+      <th class="left">Result</th>
+      <th>Status</th>
+    </tr>
+    <tr>
+      <td class="left"><b>A-9</b> capacity</td>
+      <td class="left">Is the low-bandwidth failure a capacity artefact?</td>
+      <td class="left">No — width 256 still fails: 0.027 awgn / 0.041 rayleigh (vs 0.018 / 0.024 at width 128). Task loss falls while recon MSE explodes</td>
+      <td class="s-low">negative</td>
+    </tr>
+    <tr>
+      <td class="left"><b>A-10</b> aerial</td>
+      <td class="left">Does the λ policy hold under a 3GPP aerial channel?</td>
+      <td class="left">SR 0.90 at 90.6 dB (k=18) / 87.3 dB (k=54) tx SNR; digital needs 105.3 dB at k=54 and never reaches 0.90 at k=18</td>
+      <td class="s-high">done</td>
+    </tr>
+    <tr>
+      <td class="left"><b>A-11</b> polar</td>
+      <td class="left">Is the digital baseline just one convolutional code?</td>
+      <td class="left">k=12/18/24 within 0.05; polar better at k=30 (+0.06…+0.12 at ≥10 dB); worse at k=54/B=8 below 10 dB</td>
+      <td class="s-high">done</td>
+    </tr>
+    <tr>
+      <td class="left"><b>A-12</b> aerial training</td>
+      <td class="left">Does training on the full 3GPP dispersion help?</td>
+      <td class="left">Diverged at both k (final loss 4320 / 210, 311 / 203 non-finite gradient steps). Checkpoints flat at 0.02–0.03 SR</td>
+      <td class="s-low">negative, kept</td>
+    </tr>
+    <tr>
+      <td class="left"><b>A-13</b> aerial training</td>
+      <td class="left">Same design, outage tail (&gt;20 dB, 3.78 %) resampled?</td>
+      <td class="left">Stable (loss 4643 → 16.2); operating point moves ≤2 dB vs the Rayleigh-trained arm — inside sampling error</td>
+      <td class="s-high">done</td>
+    </tr>
+    <tr>
+      <td class="left"><b>A-14</b> k=24 seeds</td>
+      <td class="left">Is the k=24 number a one-initialisation artefact?</td>
+      <td class="left">No — 3 seeds × 2 channels: 0.995–1.000, seed-to-seed range ≤0.004</td>
+      <td class="s-high">done</td>
+    </tr>
+    <tr>
+      <td class="left"><b>Mechanism</b></td>
+      <td class="left">Why does λ shaping stabilise training?</td>
+      <td class="left">λ keeps p99 encoder gradient ~10² vs ~10¹⁸ without it (0 vs 75–100 non-finite steps); capacity ruled out; the trigger is rare outage episodes (A-12)</td>
+      <td class="s-high">measured</td>
+    </tr>
+  </table>
+  <div class="note">⚠️ <b>Read these with their caveats</b> — A-13 trained on 96.2 % of the dispersion (100 % LoS, 66 % NLoS) and evaluated on 100 %; never quote it as “3GPP training recovers X dB”. A-14’s metric is at its ceiling, so it rules out a large initialisation dependence rather than measuring seed variance at a non-saturated point. A-12 is reported as the negative result it is and was not retrained.</div>
+  <div class="note">🎯 <b>Crossover scope:</b> the M2 table below compares digital against the <i>unshaped</i> semantic arms. With λ shaping the link is at ceiling at k=18–24 and at parity with digital at k=54 (0.999 vs 1.000 at 20 dB), so “digital wins at k ≥ 24” must be stated as “digital wins against the unshaped arms”.</div>
 </div>
 
 <!-- ══ KEY RESULTS TABLE ══ -->
@@ -316,27 +374,27 @@ td.left { text-align: left; }
   <h2>🏆 Main Results — Show These to Supervisor First</h2>
   <div class="fig-grid">
     <div class="fig-item">
-      <img src="fyp_md_files/figures/fig2_m2_awgn.png" alt="M2 AWGN 3-way">
+      <img src="fyp_md_files/figures/fig2_m2_awgn.png" alt="M2 AWGN 3-way" onclick="openImg(this.src,'fig2_m2_awgn — M2 AWGN 3-way comparison: crossover at k=18–24')">
       <div class="fig-label"><span class="fig-badge fb-main">MAIN</span> fig2_m2_awgn</div>
       <div class="fig-sub">3-way comparison — crossover visible</div>
     </div>
     <div class="fig-item">
-      <img src="fyp_md_files/figures/fig4_bandwidth_crossover.png" alt="Crossover">
+      <img src="fyp_md_files/figures/fig4_bandwidth_crossover.png" alt="Crossover" onclick="openImg(this.src,'fig4_bandwidth_crossover — Crossover point annotated at k=18–24')">
       <div class="fig-label"><span class="fig-badge fb-main">MAIN</span> fig4_bandwidth_crossover</div>
       <div class="fig-sub">Crossover at k=18–24 annotated</div>
     </div>
     <div class="fig-item">
-      <img src="fyp_md_files/figures/fig5_full_bandwidth_axis.png" alt="Full bandwidth">
+      <img src="fyp_md_files/figures/fig5_full_bandwidth_axis.png" alt="Full bandwidth" onclick="openImg(this.src,'fig5_full_bandwidth_axis — M1+M2 combined, full k axis at 0 dB')">
       <div class="fig-label"><span class="fig-badge fb-main">MAIN</span> fig5_full_bandwidth_axis</div>
       <div class="fig-sub">Full story in one figure</div>
     </div>
     <div class="fig-item">
-      <img src="fyp_md_files/figures/fig1_m1_sr_vs_snr.png" alt="M1 SR">
+      <img src="fyp_md_files/figures/fig1_m1_sr_vs_snr.png" alt="M1 SR" onclick="openImg(this.src,'fig1_m1_sr_vs_snr — M1 low-bandwidth recon vs task')">
       <div class="fig-label"><span class="fig-badge fb-main">MAIN</span> fig1_m1_sr_vs_snr</div>
       <div class="fig-sub">M1 low-bandwidth results</div>
     </div>
     <div class="fig-item">
-      <img src="fyp_md_files/figures/fig3_m2_rayleigh.png" alt="M2 Rayleigh">
+      <img src="fyp_md_files/figures/fig3_m2_rayleigh.png" alt="M2 Rayleigh" onclick="openImg(this.src,'fig3_m2_rayleigh — M2 Rayleigh channel 3-way comparison')">
       <div class="fig-label"><span class="fig-badge fb-main">MAIN</span> fig3_m2_rayleigh</div>
       <div class="fig-sub">Rayleigh channel results</div>
     </div>
@@ -347,22 +405,22 @@ td.left { text-align: left; }
   <h2>📊 Statistical Validation</h2>
   <div class="fig-grid">
     <div class="fig-item">
-      <img src="fyp_md_files/figures/fig_new2_mcnemar_heatmap.png" alt="McNemar">
+      <img src="fyp_md_files/figures/fig_new2_mcnemar_heatmap.png" alt="McNemar" onclick="openImg(this.src,'McNemar heatmap — 198/198 cells statistically significant')">
       <div class="fig-label"><span class="fig-badge fb-stat">STATS</span> McNemar heatmap</div>
       <div class="fig-sub">198/198 cells significant</div>
     </div>
     <div class="fig-item">
-      <img src="fyp_md_files/figures/fig_new1_per_seed_agreement.png" alt="Per seed">
+      <img src="fyp_md_files/figures/fig_new1_per_seed_agreement.png" alt="Per seed" onclick="openImg(this.src,'Per-seed agreement — 3 seeds consistent results')">
       <div class="fig-label"><span class="fig-badge fb-stat">STATS</span> Per-seed agreement</div>
       <div class="fig-sub">3 seeds consistent</div>
     </div>
     <div class="fig-item">
-      <img src="fyp_md_files/figures/fig_new3_seed_spread_bars.png" alt="Seed bars">
+      <img src="fyp_md_files/figures/fig_new3_seed_spread_bars.png" alt="Seed bars" onclick="openImg(this.src,'Seed spread bars — mean ± 1σ across seeds 42/43/44')">
       <div class="fig-label"><span class="fig-badge fb-stat">STATS</span> Seed spread bars</div>
       <div class="fig-sub">Mean ± 1σ across seeds</div>
     </div>
     <div class="fig-item">
-      <img src="fyp_md_files/figures/fig_new4_sr_table.png" alt="SR table">
+      <img src="fyp_md_files/figures/fig_new4_sr_table.png" alt="SR table" onclick="openImg(this.src,'SR summary table — full M1 results')">
       <div class="fig-label"><span class="fig-badge fb-stat">STATS</span> SR summary table</div>
       <div class="fig-sub">Full M1 results table</div>
     </div>
@@ -373,32 +431,32 @@ td.left { text-align: left; }
   <h2>🌊 Wave-A/B/C Results</h2>
   <div class="fig-grid">
     <div class="fig-item">
-      <img src="fyp_md_files/figures/fig_wavec2_sr_vs_k.png" alt="Wave-C key">
+      <img src="fyp_md_files/figures/fig_wavec2_sr_vs_k.png" alt="Wave-C key" onclick="openImg(this.src,'Wave-C KEY — λ-shaping holds at k=12,18,54')">
       <div class="fig-label"><span class="fig-badge fb-wave">WAVE-C</span> SR vs k — KEY</div>
       <div class="fig-sub">λ-shaping holds k=12,18,54</div>
     </div>
     <div class="fig-item">
-      <img src="fyp_md_files/figures/fig_wavec1_sr_vs_snr.png" alt="Wave-C SNR">
+      <img src="fyp_md_files/figures/fig_wavec1_sr_vs_snr.png" alt="Wave-C SNR" onclick="openImg(this.src,'Wave-C SR vs SNR — k=18,54 near-perfect at all SNRs')">
       <div class="fig-label"><span class="fig-badge fb-wave">WAVE-C</span> SR vs SNR</div>
       <div class="fig-sub">k=18,54 near-perfect SR</div>
     </div>
     <div class="fig-item">
-      <img src="fyp_md_files/figures/fig_wave_a_arms.png" alt="Wave-A arms">
+      <img src="fyp_md_files/figures/fig_wave_a_arms.png" alt="Wave-A arms" onclick="openImg(this.src,'Wave-A arms — λ diagnosis at k=12, lam_ctl_heavy wins')">
       <div class="fig-label"><span class="fig-badge fb-wave">WAVE-A</span> Arms comparison</div>
       <div class="fig-sub">λ diagnosis at k=12</div>
     </div>
     <div class="fig-item">
-      <img src="fyp_md_files/figures/fig_waveb1_sr_vs_k_csi_bands.png" alt="Wave-B CSI">
+      <img src="fyp_md_files/figures/fig_waveb1_sr_vs_k_csi_bands.png" alt="Wave-B CSI" onclick="openImg(this.src,'Wave-B CSI robustness — SR insensitive to σ up to 0.4')">
       <div class="fig-label"><span class="fig-badge fb-wave">WAVE-B</span> CSI robustness</div>
       <div class="fig-sub">SR insensitive to σ≤0.4</div>
     </div>
     <div class="fig-item">
-      <img src="fyp_md_files/figures/fig_waveb2_mse_vs_csi_sigma.png" alt="MSE vs sigma">
+      <img src="fyp_md_files/figures/fig_waveb2_mse_vs_csi_sigma.png" alt="MSE vs sigma" onclick="openImg(this.src,'Wave-B MSE vs σ_csi — ~18% penalty across all k')">
       <div class="fig-label"><span class="fig-badge fb-wave">WAVE-B</span> MSE vs σ_csi</div>
       <div class="fig-sub">~18% penalty annotated</div>
     </div>
     <div class="fig-item">
-      <img src="fyp_md_files/figures/fig_wave_b_sr_vs_k.png" alt="Wave-B SR">
+      <img src="fyp_md_files/figures/fig_wave_b_sr_vs_k.png" alt="Wave-B SR" onclick="openImg(this.src,'Wave-B SR vs bandwidth — all σ levels overlaid')">
       <div class="fig-label"><span class="fig-badge fb-wave">WAVE-B</span> SR vs bandwidth</div>
       <div class="fig-sub">All σ levels overlaid</div>
     </div>
@@ -409,34 +467,49 @@ td.left { text-align: left; }
   <h2>📁 Supporting Figures</h2>
   <div class="fig-grid">
     <div class="fig-item">
-      <img src="fyp_md_files/figures/fig12_trajectories.png" alt="Trajectories">
+      <img src="fyp_md_files/figures/fig12_trajectories.png" alt="Trajectories" onclick="openImg(this.src,'fig12_trajectories — UAV paths, smooth-but-wrong = λ issue')">
       <div class="fig-label"><span class="fig-badge fb-supp">SUPP</span> fig12_trajectories</div>
       <div class="fig-sub">UAV paths — smooth-but-wrong</div>
     </div>
     <div class="fig-item">
-      <img src="fyp_md_files/figures/fig7_control_effort.png" alt="Control effort">
+      <img src="fyp_md_files/figures/fig7_control_effort.png" alt="Control effort" onclick="openImg(this.src,'fig7_control_effort — control energy per method')">
       <div class="fig-label"><span class="fig-badge fb-supp">SUPP</span> fig7_control_effort</div>
       <div class="fig-sub">Energy efficiency metric</div>
     </div>
     <div class="fig-item">
-      <img src="fyp_md_files/figures/fig9_sr_heatmaps.png" alt="Heatmaps">
+      <img src="fyp_md_files/figures/fig9_sr_heatmaps.png" alt="Heatmaps" onclick="openImg(this.src,'fig9_sr_heatmaps — SR across (k,SNR) grid')">
       <div class="fig-label"><span class="fig-badge fb-supp">SUPP</span> fig9_sr_heatmaps</div>
       <div class="fig-sub">SR across (k,SNR) grid</div>
     </div>
     <div class="fig-item">
-      <img src="fyp_md_files/figures/fig10_training_curves.png" alt="Training">
+      <img src="fyp_md_files/figures/fig10_training_curves.png" alt="Training" onclick="openImg(this.src,'fig10_training_curves — oscillation explained by λ issue (Wave-A diagnosed)')">
       <div class="fig-label"><span class="fig-badge fb-supp">SUPP</span> fig10_training_curves</div>
       <div class="fig-sub">Oscillation — λ issue diagnosed</div>
     </div>
     <div class="fig-item">
-      <img src="fyp_md_files/figures/fig15_constellation.png" alt="Constellation">
+      <img src="fyp_md_files/figures/fig15_constellation.png" alt="Constellation" onclick="openImg(this.src,'fig15_constellation — learned encoder symbol allocation')">
       <div class="fig-label"><span class="fig-badge fb-supp">SUPP</span> fig15_constellation</div>
       <div class="fig-sub">Learned encoder symbols</div>
     </div>
     <div class="fig-item">
-      <img src="fyp_md_files/figures/fig6_final_distance.png" alt="Distance">
+      <img src="fyp_md_files/figures/fig6_final_distance.png" alt="Distance" onclick="openImg(this.src,'fig6_final_distance — final distance to goal per method')">
       <div class="fig-label"><span class="fig-badge fb-supp">SUPP</span> fig6_final_distance</div>
       <div class="fig-sub">Final distance metric</div>
+    </div>
+    <div class="fig-item">
+      <img src="fyp_md_files/figures/fig_training_stability.png" alt="Training stability" onclick="openImg(this.src,'fig_training_stability — A-9…A-14 gradient conditioning: λ arm flat at ~10^1, frozen arm 10^18, A-12 10^19, A-13 back to O(1)')">
+      <div class="fig-label"><span class="fig-badge fb-main">NEW</span> fig_training_stability</div>
+      <div class="fig-sub">Mechanism: λ bounds the gradient</div>
+    </div>
+    <div class="fig-item">
+      <img src="fyp_md_files/figures/fig_aerial_required_snr.png" alt="Aerial required SNR" onclick="openImg(this.src,'fig_aerial_required_snr — A-10: tx SNR needed for SR 0.90 under 3GPP UMa-aerial vs digital')">
+      <div class="fig-label"><span class="fig-badge fb-main">NEW</span> fig_aerial_required_snr</div>
+      <div class="fig-sub">A-10: 90.6 / 87.3 dB vs 105.3 dB</div>
+    </div>
+    <div class="fig-item">
+      <img src="fyp_md_files/figures/fig_aerial_training.png" alt="Aerial training" onclick="openImg(this.src,'fig_aerial_training — A-12 (full dispersion, diverged), A-13 (tail resampled), frozen and digital comparators')">
+      <div class="fig-label"><span class="fig-badge fb-supp">NEW</span> fig_aerial_training</div>
+      <div class="fig-sub">A-12 negative vs A-13 stable</div>
     </div>
   </div>
 </div>
@@ -450,7 +523,7 @@ td.left { text-align: left; }
     <div class="file-row">
       <div class="file-icon">📋</div>
       <div>
-        <div class="file-name">THESIS_DISCLOSURE_PARAGRAPHS.md</div>
+        <div class="file-name"><a href="fyp_md_files/THESIS_DISCLOSURE_PARAGRAPHS.md" target="_blank">THESIS_DISCLOSURE_PARAGRAPHS.md</a></div>
         <div class="file-desc">6 ready paragraphs: Rayleigh, SC decoder, stats, training history, Wave-A, Wave-B</div>
       </div>
       <div class="file-tag"><span class="pill p-done">Ready</span></div>
@@ -458,7 +531,7 @@ td.left { text-align: left; }
     <div class="file-row">
       <div class="file-icon">🗺️</div>
       <div>
-        <div class="file-name">RESEARCH_ROADMAP.md</div>
+        <div class="file-name"><a href="fyp_md_files/RESEARCH_ROADMAP.md" target="_blank">RESEARCH_ROADMAP.md</a></div>
         <div class="file-desc">Claims, novelty, citations list, issues status, full audit trail</div>
       </div>
       <div class="file-tag"><span class="pill p-done">Ready</span></div>
@@ -466,7 +539,7 @@ td.left { text-align: left; }
     <div class="file-row">
       <div class="file-icon">📝</div>
       <div>
-        <div class="file-name">SUPERVISOR_APPROVAL_MEMO.md</div>
+        <div class="file-name"><a href="fyp_md_files/SUPERVISOR_APPROVAL_MEMO.md" target="_blank">SUPERVISOR_APPROVAL_MEMO.md</a></div>
         <div class="file-desc">RQ revision, uplink clarification, all approval items</div>
       </div>
       <div class="file-tag"><span class="pill p-done">Ready</span></div>
@@ -474,7 +547,7 @@ td.left { text-align: left; }
     <div class="file-row">
       <div class="file-icon">📐</div>
       <div>
-        <div class="file-name">03-final-mathematical-implementation-specification.md</div>
+        <div class="file-name"><a href="fyp_md_files/03-final-mathematical-implementation-specification.md" target="_blank">03-final-mathematical-implementation-specification.md</a></div>
         <div class="file-desc">All math equations — copy into Chapter 3</div>
       </div>
       <div class="file-tag"><span class="pill p-done">Ready</span></div>
@@ -482,7 +555,7 @@ td.left { text-align: left; }
     <div class="file-row">
       <div class="file-icon">🔒</div>
       <div>
-        <div class="file-name">05-implementation-audit.md</div>
+        <div class="file-name"><a href="fyp_md_files/05-implementation-audit.md" target="_blank">05-implementation-audit.md</a></div>
         <div class="file-desc">All frozen decisions documented with justifications</div>
       </div>
       <div class="file-tag"><span class="pill p-done">Ready</span></div>
@@ -494,7 +567,7 @@ td.left { text-align: left; }
     <div class="file-row">
       <div class="file-icon">📁</div>
       <div>
-        <div class="file-name">RESULTS_WAVE_A_WAVE_B_2026-10-21.md</div>
+        <div class="file-name"><a href="fyp_md_files/RESULTS_WAVE_A_WAVE_B_2026-10-21.md" target="_blank">RESULTS_WAVE_A_WAVE_B_2026-10-21.md</a></div>
         <div class="file-desc">Wave-A arms table + Wave-B CSI table — all numbers</div>
       </div>
       <div class="file-tag"><span class="pill p-done">Ready</span></div>
@@ -502,7 +575,7 @@ td.left { text-align: left; }
     <div class="file-row">
       <div class="file-icon">📁</div>
       <div>
-        <div class="file-name">RESULTS_WAVE_C_2026-10-22.md</div>
+        <div class="file-name"><a href="fyp_md_files/RESULTS_WAVE_C_2026-10-22.md" target="_blank">RESULTS_WAVE_C_2026-10-22.md</a></div>
         <div class="file-desc">Wave-C λ-shaping results table</div>
       </div>
       <div class="file-tag"><span class="pill p-done">Ready</span></div>
@@ -510,7 +583,7 @@ td.left { text-align: left; }
     <div class="file-row">
       <div class="file-icon">🔢</div>
       <div>
-        <div class="file-name">results/M1/step10_m1_summary.json</div>
+        <div class="file-name"><a href="results/M1/step10_m1_summary.json" target="_blank">results/M1/step10_m1_summary.json</a></div>
         <div class="file-desc">M1 all numbers — 198 eval units</div>
       </div>
       <div class="file-tag"><span class="pill p-info">JSON</span></div>
@@ -518,7 +591,7 @@ td.left { text-align: left; }
     <div class="file-row">
       <div class="file-icon">🔢</div>
       <div>
-        <div class="file-name">results/M2/step11_m2_summary.json</div>
+        <div class="file-name"><a href="results/M2/step11_m2_summary.json" target="_blank">results/M2/step11_m2_summary.json</a></div>
         <div class="file-desc">M2 all numbers — 150 eval units</div>
       </div>
       <div class="file-tag"><span class="pill p-info">JSON</span></div>
@@ -526,7 +599,7 @@ td.left { text-align: left; }
     <div class="file-row">
       <div class="file-icon">🔢</div>
       <div>
-        <div class="file-name">results/WAVE_B/step_wave_b_summary.json</div>
+        <div class="file-name"><a href="results/WAVE_B/step_wave_b_summary.json" target="_blank">results/WAVE_B/step_wave_b_summary.json</a></div>
         <div class="file-desc">Wave-B CSI robustness — 350 cells</div>
       </div>
       <div class="file-tag"><span class="pill p-info">JSON</span></div>
@@ -534,7 +607,7 @@ td.left { text-align: left; }
     <div class="file-row">
       <div class="file-icon">📚</div>
       <div>
-        <div class="file-name">FIGURES_README.md</div>
+        <div class="file-name"><a href="fyp_md_files/FIGURES_README.md" target="_blank">FIGURES_README.md</a></div>
         <div class="file-desc">Complete figures index — what each figure shows, chapter map</div>
       </div>
       <div class="file-tag"><span class="pill p-done">Ready</span></div>
@@ -641,5 +714,26 @@ td.left { text-align: left; }
 </div>
 
 </div><!-- /container -->
+<!-- ══ LIGHTBOX MODAL ══ -->
+<div id="lightbox" onclick="closeLightbox()" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.88);z-index:9999;cursor:zoom-out;align-items:center;justify-content:center;">
+  <img id="lightbox-img" src="" style="max-width:92%;max-height:92%;border-radius:8px;box-shadow:0 8px 40px rgba(0,0,0,.6);">
+  <div id="lightbox-caption" style="position:fixed;bottom:24px;left:50%;transform:translateX(-50%);color:white;font-size:14px;background:rgba(0,0,0,.6);padding:6px 18px;border-radius:20px;"></div>
+  <div style="position:fixed;top:18px;right:24px;color:white;font-size:28px;font-weight:700;cursor:pointer" onclick="closeLightbox()">✕</div>
+</div>
+
+<script>
+function openImg(src, caption) {
+  var lb = document.getElementById('lightbox');
+  document.getElementById('lightbox-img').src = src;
+  document.getElementById('lightbox-caption').textContent = caption;
+  lb.style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+}
+function closeLightbox() {
+  document.getElementById('lightbox').style.display = 'none';
+  document.body.style.overflow = '';
+}
+document.addEventListener('keydown', function(e){ if(e.key==='Escape') closeLightbox(); });
+</script>
 </body>
 </html>

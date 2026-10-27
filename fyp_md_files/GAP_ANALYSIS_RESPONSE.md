@@ -14,7 +14,7 @@ dated amendment (A-9, A-10, A-11, A-12, A-13, A-14).
 | 2 | digital baseline is one convolutional code | **done** | A-11, `results/POLAR/` | k=12/18/24 within 0.05 at the payload ceiling; polar better at k=30 (+0.06..+0.12 at >=10 dB), worse at k=54/B=8 below 10 dB |
 | 3 | capacity ablation invalid / missing | **done** (2 cells) | A-9, `results/ARCH_ABL/` | width 256 still fails: 0.027 awgn / 0.041 rayleigh vs 0.018/0.024 at 128; the task loss falls while reconstruction MSE explodes to ~10³ |
 | 4 | k=24 multi-initialisation missing | **done** | A-14, `results/K24_SEEDS/` | 6 cells, 3 seeds: seed-to-seed range **≤ 0.004** at every SNR (0.995–1.000); the k=24 number is not a one-init artefact, but the metric is at its ceiling |
-| 5 | packaging / reproducibility | **partial** | `environment.yml`, Dockerfile | conda spec added; Docker CMD fixed; image not built (no docker on this machine); Zenodo needs the user |
+| 5 | packaging / reproducibility | **partial** | `environment.yml`, `Dockerfile`, `.github/workflows/ci.yml` | conda spec added; Docker CMD fixed and CPU-wheel install; the image is now built + smoke-run on GitHub Actions (cannot be built on this machine: no docker); Zenodo needs the user |
 | 6 | novelty argument | **clarified** (mechanism now measured) | section 6, `RESULTS_MECHANISM_2026-10-27.md` | four defensible claims; mechanism measured at gradient level (λ bounds ‖g‖ by ~14 orders; capacity does not fix it; outage episodes are the trigger); still open: which λ term, Doppler, competitive polar receiver |
 
 ## 1. 3GPP aerial channel (A-10)
@@ -215,8 +215,16 @@ is not saturated and still has no multi-seed estimate. Doc:
   `python main.py validate-matrix` (dependency-free structural check) and the
   comment shows how to mount `results/` for the dashboard.
 - **Docker was not built here**: no `docker` binary on this machine (same for
-  `conda`). The image is therefore *unverified*; the command it runs is
-  verified locally (`main.py validate-matrix` passes).
+  `conda`). A GitHub Actions workflow (`.github/workflows/ci.yml`) now builds
+  the image on every push to `main`, runs its default command and one test
+  module *inside* the container, and prints the image size — so the image is
+  verified on CI even though it cannot be built locally. Until that first run
+  is green it is still marked unverified. The `Dockerfile` now installs torch
+  from the CPU wheel index, because the default Linux wheel is a ~2 GB CUDA
+  build the CPU-only image cannot use.
+- The same workflow runs `python main.py validate-matrix` and every
+  `tests/test_*.py` module on a clean Linux + Python 3.9 + CPU-torch
+  environment, i.e. on a machine that is not this one.
 - Zenodo DOI cannot be minted by the agent: it needs the user's account. The
   repository is already self-contained (results + docs + evidence zip), so a
   GitHub release tarball can be deposited as-is.
@@ -273,7 +281,8 @@ new `tools/run_arch_ablation.py`, `tools/run_aerial_link.py`,
 `tools/run_polar_baseline.py`, `tools/run_aerial_training.py`
 (`--variant=a12|a13`), `tools/run_k24_seeds.py`, `tools/diag_aerial_checkpoints.py`,
 `tools/analyse_training_stability.py`, `tools/make_figures_extensions.py`,
-`environment.yml`, `Dockerfile`, five new figures, seven result docs,
+`environment.yml`, `Dockerfile` (CPU wheel index), `.github/workflows/ci.yml`
+(image build + full test suite on GitHub), five new figures, seven result docs,
 A-9/A-10/A-11/A-12/A-13/A-14, and
 `tests/test_aerial_link.py` (26 checks) + `tests/test_arch_width.py`
 (16 checks) + `tests/test_aerial_training.py` (34 checks) +
@@ -313,3 +322,8 @@ python tools/run_k24_seeds.py verify         # A-14 pre-flight (6 cells, 30 slot
 python tools/run_k24_seeds.py status         # A-14 progress
 python tools/analyse_training_stability.py   # mechanism table + JSON (read-only)
 ```
+
+Reproducibility on a clean machine: `.github/workflows/ci.yml` runs
+`main.py validate-matrix`, every `tests/test_*.py` module and a Docker
+build + container smoke test on GitHub Actions (the image cannot be built on
+the development machine — no `docker` binary).

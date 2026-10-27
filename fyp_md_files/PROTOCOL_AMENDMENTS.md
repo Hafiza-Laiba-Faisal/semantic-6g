@@ -25,6 +25,7 @@ number in this log was typed by hand from memory.
 | POLAR | evaluation only (no training universe) | 50 conditions x 2 coders | - | A-11 complete |
 | AERIAL_TRAIN | 2 train / 48 method-unit-SNR slots | 2 / 48 | A-12 | A-12 complete, **negative** (training diverged; no cell retrained) |
 | AERIAL_TRAIN_TRUNC | 2 train / 48 slots (+1 pre-flight, writes nothing) | 2 / 48, pre-flight PASS at +20 dB | A-13 | A-13 complete (operating point unchanged) |
+| K24_SEEDS | 6 train / 30 slots | pre-registered | A-14 | pending |
 
 "Accounted" always means *evaluated or explicitly declared*. Nothing is
 imputed, nothing is dropped silently, and no failed cell is replaced.
@@ -616,6 +617,57 @@ operating point does **not** move materially, so A-10 stands; A-13 is not
 evidence of a gain and must not be quoted as one. Details:
 `fyp_md_files/RESULTS_AERIAL_TRAIN_TRUNC_2026-10-27.md`; figure
 `fig_aerial_training.png`.
+
+---
+
+## A-14 - seed variance of the lambda arm at k = 24 (2026-10-27)
+
+**Approved by:** the user, 2026-10-27, as the remaining reviewer point
+("k = 24 multi-initialisation missing"). Written **before the first A-14 cell**;
+no A-14 number existed when this text was committed.
+
+**Question.** k = 24 is the bandwidth where the task-oriented and classical
+links cross over, and every k = 24 number in the thesis is currently a single
+seed. Is the crossover position, and the lambda arm's success rate there, an
+artefact of one initialisation?
+
+**Design (fixed before the run).**
+
+| field | value |
+|---|---|
+| arm | `lam_ctl_heavy` (λ_d 1.0, λ_u 0.1, λ_v 0.1, λ_T 2.0) - the Wave-C tag, unchanged |
+| k | 24 (the crossover condition) |
+| seeds | 45, 46, 47 (the Wave-A A3 seed set, reused so the numbers are comparable) |
+| channels | awgn, rayleigh |
+| cells | 6 |
+| width / steps / lr / clip / batch | 128 / 3000 / 1e-3 / 1.0 / 256 episodes - all frozen |
+| evaluation | E = 1000, 5-SNR grid 0…20 dB → 6 units / 30 slots |
+| output | `results/K24_SEEDS/` (own root; no other universe is touched) |
+| runner | `tools/run_k24_seeds.py` |
+
+**Why seeds 45–47.** Wave-A arm A3 already used {45, 46, 47} for the
+*instability* arm at k = 12, so these are the thesis's declared extra seeds,
+not a fresh choice.
+
+**Statistics declared up front.** Per-seed success rates are reported
+individually, then mean and range (min–max) across the three seeds; the range
+is reported instead of a confidence interval, because n = 3. Nothing is pooled
+across seeds to produce a tighter interval, and no seed will be dropped.
+
+**What is NOT changed.** Architecture, width, loss weights, step budget,
+optimiser, environment, controller, evaluation episodes/seed/grid, statistics
+of the frozen protocol. Frozen M1/M2/Wave-A/B/C and the A-9…A-13 artifacts stay
+read-only. This run adds cells to a **new** root; it does not extend or
+re-denominate any published universe.
+
+**Cost (measured, not estimated).** A-13's 3000-step cells took 76–81 min each
+under 2-way parallelism, so 6 cells run as 2 shards × 3 cells ≈ **4 h** wall
+clock. (The "~40 min/cell" figure in `GAP_ANALYSIS_RESPONSE.md` §4 was an
+estimate made before A-12/A-13 measured it; the estimate is corrected there.)
+
+**Limits.** n = 3 seeds; two channels; one width; E = 1000. This quantifies
+seed sensitivity at one bandwidth; it is not a variance model for the whole
+grid, and it does not touch the 32-cell Wave-C universe.
 
 ---
 

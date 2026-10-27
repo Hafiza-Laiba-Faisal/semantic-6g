@@ -1,10 +1,10 @@
 # Reviewer / roadmap gaps - what is now implemented
 
-**Date:** 2026-10-26 - **Scope:** implementation response to the review points
-(capacity, polar baseline, 3GPP channel, reproducibility, novelty). Everything
-here is additive: no frozen M1/M2 artifact was edited, nothing was retrained
-to improve a number, and every new run has a dated amendment (A-9, A-10, A-11,
-A-12).
+**Date:** 2026-10-26 (updated 2026-10-27) - **Scope:** implementation response to
+the review points (capacity, polar baseline, 3GPP channel, seed variance,
+reproducibility, novelty). Everything here is additive: no frozen M1/M2 artifact
+was edited, nothing was retrained to improve a number, and every new run has a
+dated amendment (A-9, A-10, A-11, A-12, A-13, A-14).
 
 ## At a glance
 
@@ -13,7 +13,7 @@ A-12).
 | 1 | channel is only AWGN/Rayleigh, no 3GPP aerial model | **done** | A-10, `results/AERIAL/`; A-12 (negative); A-13, `results/AERIAL_TRAIN_TRUNC/` | lambda policy needs 90.6 dB (k=18) / 87.3 dB (k=54) tx SNR for 0.90 - digital needs 105.3 dB at k=54 and never reaches 0.90 at k=18. Training *under* the dispersion moves this by <=2 dB (inside sampling error), so the evaluation-only result stands; A-12 (full dispersion) diverged and is reported as-is |
 | 2 | digital baseline is one convolutional code | **done** | A-11, `results/POLAR/` | k=12/18/24 within 0.05 at the payload ceiling; polar better at k=30 (+0.06..+0.12 at >=10 dB), worse at k=54/B=8 below 10 dB |
 | 3 | capacity ablation invalid / missing | **done** (2 cells) | A-9, `results/ARCH_ABL/` | width 256 still fails: 0.027 awgn / 0.041 rayleigh vs 0.018/0.024 at 128; the task loss falls while reconstruction MSE explodes to ~10³ |
-| 4 | k=24 multi-initialisation missing | **not run** (designed, costed) | section 4 | 6 cells, ~2.5-3 h at 2-way parallelism |
+| 4 | k=24 multi-initialisation missing | **done** | A-14, `results/K24_SEEDS/` | 6 cells, 3 seeds: seed-to-seed range **≤ 0.004** at every SNR (0.995–1.000); the k=24 number is not a one-init artefact, but the metric is at its ceiling |
 | 5 | packaging / reproducibility | **partial** | `environment.yml`, Dockerfile | conda spec added; Docker CMD fixed; image not built (no docker on this machine); Zenodo needs the user |
 | 6 | novelty argument | **clarified** (mechanism now measured) | section 6, `RESULTS_MECHANISM_2026-10-27.md` | four defensible claims; mechanism measured at gradient level (λ bounds ‖g‖ by ~14 orders; capacity does not fix it; outage episodes are the trigger); still open: which λ term, Doppler, competitive polar receiver |
 
@@ -168,7 +168,7 @@ Limits: one seed, one width, one k, 3000 steps, E = 1000. Nothing here is a
 claim about residual or attention architectures. Details:
 `RESULTS_ARCH_2026-10-26.md`.
 
-## 4. k = 24 multi-initialisation (A-14, running)
+## 4. k = 24 multi-initialisation (A-14, done)
 
 It needs 6 new training cells (heavy lambda, k = 24, awgn + rayleigh,
 seeds 45/46/47) at the frozen 3000-step budget. Measured cost from A-12/A-13 is
@@ -194,7 +194,17 @@ Statistics were declared up front: per-seed values plus mean and min–max range
 across the three seeds; the range is **not** a confidence interval (n = 3), and
 no seed may be dropped.
 
-Do not describe k = 24 as having a variance estimate until this finishes.
+**Result (30/30 eval slots).** All six cells reached the frozen terminal regime
+(final loss 16.0–17.6, minimum 13.6–14.1, **0** non-finite gradients, 0 NaN
+batches). Success rate at 0 dB — awgn 0.9970 / 1.0000 / 0.9960, rayleigh
+0.9950 / 0.9950 / 0.9990; at 20 dB — awgn 0.998 / 0.999 / 0.998, rayleigh
+0.999 / 0.998 / 1.000. The seed-to-seed range is **≤ 0.004 at every SNR**,
+equal to the binomial sampling error at E = 1000 (Wilson ≈ 0.003). So the
+k = 24 result is not an initialisation artefact — but the metric is at its
+ceiling, so this rules out a *large* initialisation dependence rather than
+measuring seed variance at a non-saturated point; the frozen task arm at k = 24
+is not saturated and still has no multi-seed estimate. Doc:
+`RESULTS_K24_SEEDS_2026-10-27.md`.
 
 ## 5. Packaging and reproducibility
 
@@ -241,7 +251,11 @@ Do not describe k = 24 as having a variance estimate until this finishes.
   the same λ arm, A-13 returns to O(1) when 3.78 % of episodes are resampled).
   Still open: **which** λ term does the work (needs λ_u-only / λ_v-only arms)
   and a curvature-level (sharpness) measurement.
-- Seed variance at k = 24 (section 4) and the full 32-cell Wave-C grid.
+- Seed variance at k = 24 — **delivered** (A-14, section 4): three seeds per
+  channel, range ≤ 0.004, i.e. not a one-init artefact, with the caveat that the
+  metric is at its ceiling. Still open: the full 32-cell Wave-C grid, and a
+  multi-seed estimate for the *frozen task arm* at k = 24 (which is not
+  saturated).
 - Doppler and time-correlated shadowing (A-13 trains and evaluates a
   block-fading dispersion only); the 3GPP training channel now exists but the
   outage tail had to be excluded, which must be stated with every number.
@@ -259,7 +273,7 @@ new `tools/run_arch_ablation.py`, `tools/run_aerial_link.py`,
 `tools/run_polar_baseline.py`, `tools/run_aerial_training.py`
 (`--variant=a12|a13`), `tools/run_k24_seeds.py`, `tools/diag_aerial_checkpoints.py`,
 `tools/analyse_training_stability.py`, `tools/make_figures_extensions.py`,
-`environment.yml`, `Dockerfile`, four figures, six result docs,
+`environment.yml`, `Dockerfile`, five new figures, seven result docs,
 A-9/A-10/A-11/A-12/A-13/A-14, and
 `tests/test_aerial_link.py` (26 checks) + `tests/test_arch_width.py`
 (16 checks) + `tests/test_aerial_training.py` (34 checks) +
@@ -279,7 +293,7 @@ evaluations.
 | ARCH_ABL | 8 cells (2 arms x 2 ch x 2 seeds) | 2 (frozen arm x 2 ch x seed 42) | 256-wide wall clock |
 | AERIAL_TRAIN | 2 cells x 1 seed | 2 (lam_ctl_heavy, k=18/54, umaaerial) | run as registered in full; **negative** (training diverged), kept as the record, not retrained |
 | AERIAL_TRAIN_TRUNC | 2 cells x 1 seed (+1 pre-flight) | 2 (same design, outage tail > 20 dB resampled) | run as registered in full; pre-flight passed at the primary cap |
-| k=24 inits | 6 cells | 0 | section 4 |
+| k=24 inits | 6 cells | 6 (A-14, 3 seeds x 2 channels) | run in full; 30/30 eval slots; seed range ≤ 0.004 |
 | polar at E=5000 | 50 conditions | 0 (E=1000 run) | protocol budget needs ~4x the wall clock |
 
 ## 9. Verify

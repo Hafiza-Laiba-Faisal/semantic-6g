@@ -1,0 +1,504 @@
+{
+  "experiment": "K24_SEEDS",
+  "amendment": "K24-SEEDS-2026-10-27",
+  "status": "complete",
+  "question": "is the k=24 lambda-arm number an artefact of one initialisation?",
+  "design": {
+    "arm": "lam_ctl_heavy",
+    "lambdas": [
+      1.0,
+      0.1,
+      0.1,
+      2.0
+    ],
+    "k": 24,
+    "seeds": [
+      45,
+      46,
+      47
+    ],
+    "channels": [
+      "awgn",
+      "rayleigh"
+    ],
+    "steps": 3000,
+    "width": 128,
+    "eval_snr_grid_db": [
+      0.0,
+      5.0,
+      10.0,
+      15.0,
+      20.0
+    ],
+    "eval_episodes": 1000
+  },
+  "protocol_note": "E=1000 Wave-A diagnostic grid (frozen M1/M2 protocol uses E=5000)",
+  "statistics_note": "n=3 seeds; per-seed values are reported and the range across seeds is reported instead of a confidence interval; no value is pooled across seeds",
+  "train_rows": [
+    {
+      "wave_id": "K24_lam_ctl_heavy_task_awgn_k24_seed45",
+      "channel": "awgn",
+      "seed": 45,
+      "k": 24,
+      "exit_status": "complete",
+      "task_loss_final": 17.41368865966797,
+      "nan_batches": 0,
+      "grads_finite": true,
+      "wall_seconds": null
+    },
+    {
+      "wave_id": "K24_lam_ctl_heavy_task_awgn_k24_seed46",
+      "channel": "awgn",
+      "seed": 46,
+      "k": 24,
+      "exit_status": "complete",
+      "task_loss_final": 15.990861892700195,
+      "nan_batches": 0,
+      "grads_finite": true,
+      "wall_seconds": null
+    },
+    {
+      "wave_id": "K24_lam_ctl_heavy_task_awgn_k24_seed47",
+      "channel": "awgn",
+      "seed": 47,
+      "k": 24,
+      "exit_status": "complete",
+      "task_loss_final": 17.197975158691406,
+      "nan_batches": 0,
+      "grads_finite": true,
+      "wall_seconds": null
+    },
+    {
+      "wave_id": "K24_lam_ctl_heavy_task_rayleigh_k24_seed45",
+      "channel": "rayleigh",
+      "seed": 45,
+      "k": 24,
+      "exit_status": "complete",
+      "task_loss_final": 17.628076553344727,
+      "nan_batches": 0,
+      "grads_finite": true,
+      "wall_seconds": null
+    },
+    {
+      "wave_id": "K24_lam_ctl_heavy_task_rayleigh_k24_seed46",
+      "channel": "rayleigh",
+      "seed": 46,
+      "k": 24,
+      "exit_status": "complete",
+      "task_loss_final": 16.02968406677246,
+      "nan_batches": 0,
+      "grads_finite": true,
+      "wall_seconds": null
+    },
+    {
+      "wave_id": "K24_lam_ctl_heavy_task_rayleigh_k24_seed47",
+      "channel": "rayleigh",
+      "seed": 47,
+      "k": 24,
+      "exit_status": "complete",
+      "task_loss_final": 17.432165145874023,
+      "nan_batches": 0,
+      "grads_finite": true,
+      "wall_seconds": null
+    }
+  ],
+  "per_seed": {
+    "awgn_seed45": [
+      {
+        "snr_db": 0.0,
+        "success_rate": 0.997,
+        "success_count": 997,
+        "episodes": 1000,
+        "final_distance_mean": 0.09510261565446854,
+        "control_effort_mean": 253.17735290527344
+      },
+      {
+        "snr_db": 5.0,
+        "success_rate": 0.998,
+        "success_count": 998,
+        "episodes": 1000,
+        "final_distance_mean": 0.08457116782665253,
+        "control_effort_mean": 235.94076538085938
+      },
+      {
+        "snr_db": 10.0,
+        "success_rate": 0.998,
+        "success_count": 998,
+        "episodes": 1000,
+        "final_distance_mean": 0.08929393440485,
+        "control_effort_mean": 231.115966796875
+      },
+      {
+        "snr_db": 15.0,
+        "success_rate": 0.998,
+        "success_count": 998,
+        "episodes": 1000,
+        "final_distance_mean": 0.09066171944141388,
+        "control_effort_mean": 229.64947509765625
+      },
+      {
+        "snr_db": 20.0,
+        "success_rate": 0.998,
+        "success_count": 998,
+        "episodes": 1000,
+        "final_distance_mean": 0.09149548411369324,
+        "control_effort_mean": 229.19012451171875
+      }
+    ],
+    "awgn_seed46": [
+      {
+        "snr_db": 0.0,
+        "success_rate": 1.0,
+        "success_count": 1000,
+        "episodes": 1000,
+        "final_distance_mean": 0.043864257633686066,
+        "control_effort_mean": 247.3287353515625
+      },
+      {
+        "snr_db": 5.0,
+        "success_rate": 1.0,
+        "success_count": 1000,
+        "episodes": 1000,
+        "final_distance_mean": 0.039164457470178604,
+        "control_effort_mean": 232.24659729003906
+      },
+      {
+        "snr_db": 10.0,
+        "success_rate": 0.999,
+        "success_count": 999,
+        "episodes": 1000,
+        "final_distance_mean": 0.038141410797834396,
+        "control_effort_mean": 227.00772094726562
+      },
+      {
+        "snr_db": 15.0,
+        "success_rate": 0.999,
+        "success_count": 999,
+        "episodes": 1000,
+        "final_distance_mean": 0.03826000541448593,
+        "control_effort_mean": 225.1892547607422
+      },
+      {
+        "snr_db": 20.0,
+        "success_rate": 0.999,
+        "success_count": 999,
+        "episodes": 1000,
+        "final_distance_mean": 0.038223493844270706,
+        "control_effort_mean": 224.63345336914062
+      }
+    ],
+    "awgn_seed47": [
+      {
+        "snr_db": 0.0,
+        "success_rate": 0.996,
+        "success_count": 996,
+        "episodes": 1000,
+        "final_distance_mean": 0.08534654229879379,
+        "control_effort_mean": 248.0217742919922
+      },
+      {
+        "snr_db": 5.0,
+        "success_rate": 0.997,
+        "success_count": 997,
+        "episodes": 1000,
+        "final_distance_mean": 0.06087931990623474,
+        "control_effort_mean": 231.27490234375
+      },
+      {
+        "snr_db": 10.0,
+        "success_rate": 0.997,
+        "success_count": 997,
+        "episodes": 1000,
+        "final_distance_mean": 0.056934066116809845,
+        "control_effort_mean": 226.12631225585938
+      },
+      {
+        "snr_db": 15.0,
+        "success_rate": 0.997,
+        "success_count": 997,
+        "episodes": 1000,
+        "final_distance_mean": 0.058258429169654846,
+        "control_effort_mean": 224.18702697753906
+      },
+      {
+        "snr_db": 20.0,
+        "success_rate": 0.998,
+        "success_count": 998,
+        "episodes": 1000,
+        "final_distance_mean": 0.0590706393122673,
+        "control_effort_mean": 223.5913543701172
+      }
+    ],
+    "rayleigh_seed45": [
+      {
+        "snr_db": 0.0,
+        "success_rate": 0.995,
+        "success_count": 995,
+        "episodes": 1000,
+        "final_distance_mean": 0.10569044947624207,
+        "control_effort_mean": 326.07781982421875
+      },
+      {
+        "snr_db": 5.0,
+        "success_rate": 0.998,
+        "success_count": 998,
+        "episodes": 1000,
+        "final_distance_mean": 0.06677568703889847,
+        "control_effort_mean": 267.76287841796875
+      },
+      {
+        "snr_db": 10.0,
+        "success_rate": 0.999,
+        "success_count": 999,
+        "episodes": 1000,
+        "final_distance_mean": 0.04688651114702225,
+        "control_effort_mean": 241.89842224121094
+      },
+      {
+        "snr_db": 15.0,
+        "success_rate": 0.999,
+        "success_count": 999,
+        "episodes": 1000,
+        "final_distance_mean": 0.041639264672994614,
+        "control_effort_mean": 230.90109252929688
+      },
+      {
+        "snr_db": 20.0,
+        "success_rate": 0.999,
+        "success_count": 999,
+        "episodes": 1000,
+        "final_distance_mean": 0.039371803402900696,
+        "control_effort_mean": 226.92820739746094
+      }
+    ],
+    "rayleigh_seed46": [
+      {
+        "snr_db": 0.0,
+        "success_rate": 0.995,
+        "success_count": 995,
+        "episodes": 1000,
+        "final_distance_mean": 0.1157524585723877,
+        "control_effort_mean": 320.7215576171875
+      },
+      {
+        "snr_db": 5.0,
+        "success_rate": 0.999,
+        "success_count": 999,
+        "episodes": 1000,
+        "final_distance_mean": 0.07065950334072113,
+        "control_effort_mean": 260.0252685546875
+      },
+      {
+        "snr_db": 10.0,
+        "success_rate": 0.999,
+        "success_count": 999,
+        "episodes": 1000,
+        "final_distance_mean": 0.06186283379793167,
+        "control_effort_mean": 235.0371551513672
+      },
+      {
+        "snr_db": 15.0,
+        "success_rate": 0.998,
+        "success_count": 998,
+        "episodes": 1000,
+        "final_distance_mean": 0.06205946207046509,
+        "control_effort_mean": 225.05709838867188
+      },
+      {
+        "snr_db": 20.0,
+        "success_rate": 0.998,
+        "success_count": 998,
+        "episodes": 1000,
+        "final_distance_mean": 0.06204775348305702,
+        "control_effort_mean": 221.22683715820312
+      }
+    ],
+    "rayleigh_seed47": [
+      {
+        "snr_db": 0.0,
+        "success_rate": 0.999,
+        "success_count": 999,
+        "episodes": 1000,
+        "final_distance_mean": 0.09119033068418503,
+        "control_effort_mean": 317.4999694824219
+      },
+      {
+        "snr_db": 5.0,
+        "success_rate": 1.0,
+        "success_count": 1000,
+        "episodes": 1000,
+        "final_distance_mean": 0.06853674352169037,
+        "control_effort_mean": 259.5128173828125
+      },
+      {
+        "snr_db": 10.0,
+        "success_rate": 1.0,
+        "success_count": 1000,
+        "episodes": 1000,
+        "final_distance_mean": 0.05985027179121971,
+        "control_effort_mean": 235.10289001464844
+      },
+      {
+        "snr_db": 15.0,
+        "success_rate": 1.0,
+        "success_count": 1000,
+        "episodes": 1000,
+        "final_distance_mean": 0.05740061029791832,
+        "control_effort_mean": 225.2625274658203
+      },
+      {
+        "snr_db": 20.0,
+        "success_rate": 1.0,
+        "success_count": 1000,
+        "episodes": 1000,
+        "final_distance_mean": 0.05612392723560333,
+        "control_effort_mean": 220.81675720214844
+      }
+    ]
+  },
+  "spread_across_seeds": [
+    {
+      "channel": "awgn",
+      "snr_db": 0.0,
+      "n_seeds": 3,
+      "mean": 0.9976666666666666,
+      "min": 0.996,
+      "max": 1.0,
+      "range": 0.0040000000000000036,
+      "per_seed": [
+        0.997,
+        1.0,
+        0.996
+      ]
+    },
+    {
+      "channel": "awgn",
+      "snr_db": 5.0,
+      "n_seeds": 3,
+      "mean": 0.9983333333333334,
+      "min": 0.997,
+      "max": 1.0,
+      "range": 0.0030000000000000027,
+      "per_seed": [
+        0.998,
+        1.0,
+        0.997
+      ]
+    },
+    {
+      "channel": "awgn",
+      "snr_db": 10.0,
+      "n_seeds": 3,
+      "mean": 0.9979999999999999,
+      "min": 0.997,
+      "max": 0.999,
+      "range": 0.0020000000000000018,
+      "per_seed": [
+        0.998,
+        0.999,
+        0.997
+      ]
+    },
+    {
+      "channel": "awgn",
+      "snr_db": 15.0,
+      "n_seeds": 3,
+      "mean": 0.9979999999999999,
+      "min": 0.997,
+      "max": 0.999,
+      "range": 0.0020000000000000018,
+      "per_seed": [
+        0.998,
+        0.999,
+        0.997
+      ]
+    },
+    {
+      "channel": "awgn",
+      "snr_db": 20.0,
+      "n_seeds": 3,
+      "mean": 0.9983333333333334,
+      "min": 0.998,
+      "max": 0.999,
+      "range": 0.0010000000000000009,
+      "per_seed": [
+        0.998,
+        0.999,
+        0.998
+      ]
+    },
+    {
+      "channel": "rayleigh",
+      "snr_db": 0.0,
+      "n_seeds": 3,
+      "mean": 0.9963333333333333,
+      "min": 0.995,
+      "max": 0.999,
+      "range": 0.0040000000000000036,
+      "per_seed": [
+        0.995,
+        0.995,
+        0.999
+      ]
+    },
+    {
+      "channel": "rayleigh",
+      "snr_db": 5.0,
+      "n_seeds": 3,
+      "mean": 0.999,
+      "min": 0.998,
+      "max": 1.0,
+      "range": 0.0020000000000000018,
+      "per_seed": [
+        0.998,
+        0.999,
+        1.0
+      ]
+    },
+    {
+      "channel": "rayleigh",
+      "snr_db": 10.0,
+      "n_seeds": 3,
+      "mean": 0.9993333333333334,
+      "min": 0.999,
+      "max": 1.0,
+      "range": 0.0010000000000000009,
+      "per_seed": [
+        0.999,
+        0.999,
+        1.0
+      ]
+    },
+    {
+      "channel": "rayleigh",
+      "snr_db": 15.0,
+      "n_seeds": 3,
+      "mean": 0.999,
+      "min": 0.998,
+      "max": 1.0,
+      "range": 0.0020000000000000018,
+      "per_seed": [
+        0.999,
+        0.998,
+        1.0
+      ]
+    },
+    {
+      "channel": "rayleigh",
+      "snr_db": 20.0,
+      "n_seeds": 3,
+      "mean": 0.999,
+      "min": 0.998,
+      "max": 1.0,
+      "range": 0.0020000000000000018,
+      "per_seed": [
+        0.999,
+        0.998,
+        1.0
+      ]
+    }
+  ],
+  "train_done": 6,
+  "eval_slots_complete": 30,
+  "eval_slots_expected": 30
+}

@@ -308,7 +308,7 @@ def _figure(deep):
             return "#17becf", "-"
         return "#1f77b4", "-"
 
-    fig, axes = plt.subplots(1, 2, figsize=(10.2, 4.1))
+    fig, axes = plt.subplots(1, 2, figsize=(10.6, 4.3))
     ax = axes[0]
     shown = 0
     for r in deep:
@@ -382,9 +382,9 @@ def _figure(deep):
     ax.set_ylabel("log10 encoder gradient norm")
     ax.set_title("per-step gradient distribution (5-95 % whiskers)", fontsize=8.5)
     ax.grid(alpha=0.25, lw=0.5, axis="y")
-    fig.legend(handles, labels, loc="lower center", ncol=4, fontsize=5.0,
+    fig.legend(handles, labels, loc="lower center", ncol=5, fontsize=4.5,
                frameon=False, bbox_to_anchor=(0.5, 0.0))
-    fig.tight_layout(rect=(0, 0.14, 1, 1))
+    fig.tight_layout(rect=(0, 0.17, 1, 1))
     out = ROOT / "fyp_md_files" / "figures" / "fig_training_stability.png"
     fig.savefig(out, bbox_inches="tight")
     plt.close(fig)

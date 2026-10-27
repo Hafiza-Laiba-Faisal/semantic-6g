@@ -18,12 +18,13 @@ importantly, what it does not.
 
 ## Data actually available
 
-118 training reports exist; **only 12 stored a full per-step history**
+118 training reports exist; **only 18 stored a full per-step history**
 (`grad_enc`, `grad_dec`, `recon_mse_diag`, loss components):
 
 | group | cells with history | width | channels |
 |---|---|---|---|
 | λ-heavy (0.1/0.1) + frozen protocol | 4 (Wave-C, k = 18/54) | 128 | awgn, rayleigh |
+| λ-heavy + frozen protocol, k = 24 | 6 (A-14, 3 seeds) | 128 | awgn, rayleigh |
 | λ-light (0.01/0.01) + frozen protocol | 2 (Wave-C, k = 18) | 128 | awgn |
 | frozen task arm (λ_u = λ_v = 0) | 2 (A-9, k = 18) | **256** | awgn, rayleigh |
 | λ-heavy + 3GPP dispersion, full tail | 2 (A-12, k = 18/54) | 128 | UMa-aerial |
@@ -44,6 +45,8 @@ stated with every number.
 | λ-heavy, k = 54 rayleigh | 3.31 | 67 | 0 | yes |
 | λ-light, k = 18 awgn, seed 42 | 3.95 | 57 | 0 | yes |
 | λ-light, k = 18 awgn, seed 43 | 4.09 | 113 | 0 | yes |
+| λ-heavy, k = 24, awgn, seeds 45/46/47 (A-14) | 3.69 / 3.68 / 4.06 | 92 / 107 / 77 | 0 | yes |
+| λ-heavy, k = 24, rayleigh, seeds 45/46/47 (A-14) | 3.65 / 3.54 / 4.10 | 94 / 96 / 85 | 0 | yes |
 | **frozen task arm, k = 18 awgn (w 256)** | **3.0 × 10¹⁰** | **2.4 × 10¹⁸** | **75** | **no** |
 | **frozen task arm, k = 18 rayleigh (w 256)** | **8.1 × 10⁷** | **5.0 × 10¹⁸** | **100** | **no** |
 | **λ-heavy + full 3GPP tail, k = 18 (A-12)** | **2.4 × 10¹⁴** | **2.0 × 10¹⁹** | **311** | **no** |
@@ -52,17 +55,22 @@ stated with every number.
 | λ-heavy + tail resampled, k = 54 (A-13) | 4.27 | 68 | 0 | yes |
 
 Coarse view over all completed cells that stored a numeric final gradient
-(only 12 of 112 do): λ-heavy median final ‖g‖ = **2.8** (n = 8, max 1.5 × 10⁹
+(only 16 of 118 do): λ-heavy median final ‖g‖ = **1.9** (n = 14, max 1.5 × 10⁹
 from A-12), λ-light = **1.9** (n = 2), frozen task arm = **1.1 × 10⁵** (n = 2,
 the 256-wide A-9 cells). The coarse view is thin and is not used for any claim
 beyond "the λ cells end at O(1)".
+
+The six A-14 cells are a third, independent replication of the same pattern at
+a different bandwidth (k = 24) and three seeds: p50 3.5–4.1, p99 77–107, zero
+non-finite steps, all converged — the same regime as the Wave-C and A-13 cells
+and ~10¹⁴ away from the frozen arm's stored histories.
 
 ## Result 2 — a quasi-2 × 2 that isolates the trigger
 
 | λ shaping | training episodes | outcome | p50 ‖g_enc‖ |
 |---|---|---|---|
 | off | standard (awgn/rayleigh) | diverges, 0/2 converged | 10⁷–10¹⁰ |
-| **on** | standard (awgn/rayleigh) | converges, 6/6 | 3.3–4.1 |
+| **on** | standard (awgn/rayleigh) | converges, 10/10 | 3.3–4.1 |
 | on | 3GPP, full dispersion | diverges, 0/2 | ~10¹⁴ |
 | on | 3GPP, outage tail (> 20 dB) resampled | converges, 2/2 | 4.3–6.2 |
 

@@ -1,0 +1,36 @@
+{
+  "STEP": "K24_SEEDS",
+  "experiment": "K24_SEEDS",
+  "unit": "k24_rayleigh_seed46",
+  "k": 24,
+  "channel": "rayleigh",
+  "seed": 46,
+  "snr_db": 20.0,
+  "test_seed": 10042,
+  "episodes": 1000,
+  "t_max": 100,
+  "paired_reference": "frozen M1/M2 realizations not reused; wave evals are self-paired (same episodes within unit, across tags)",
+  "protocol_note": "K24 diagnostic protocol: E=1000, non-frozen amendment K24-SEEDS-2026-10-27; NOT comparable 1:1 to frozen M1/M2 (E=5000)",
+  "non_frozen": true,
+  "wall_s": 1.2,
+  "aggregate_lam_ctl_heavy": {
+    "episodes": 1000,
+    "success_count": 998,
+    "failure_count": 2,
+    "success_rate": 0.998,
+    "final_distance_mean": 0.06204775348305702,
+    "avg_distance_mean": 2.012103319168091,
+    "control_effort_mean": 221.22683715820312,
+    "min_distance_mean": 0.03754468262195587,
+    "mse_mean": 0.2446395754814148,
+    "ttg_success_mean": 34.287574768066406,
+    "ttg_success_median": 34.0
+  },
+  "wilson_lam_ctl_heavy": {
+    "wilson_low": 0.9927371921365079,
+    "wilson_high": 0.9994513564118793,
+    "p_hat": 0.998,
+    "success_count": 998,
+    "total": 1000
+  }
+}

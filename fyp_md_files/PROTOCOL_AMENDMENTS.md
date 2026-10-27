@@ -669,6 +669,20 @@ estimate made before A-12/A-13 measured it; the estimate is corrected there.)
 seed sensitivity at one bandwidth; it is not a variance model for the whole
 grid, and it does not touch the 32-cell Wave-C universe.
 
+**Result (added after the run; the text above was not edited).** All 6 cells
+trained to the frozen terminal regime (final loss 16.0–17.6, minimum
+13.6–14.1, **0** non-finite gradient steps, 0 NaN batches) and all 30 eval
+slots completed. Success rate at 0 dB: awgn 0.9970 / 1.0000 / 0.9960, rayleigh
+0.9950 / 0.9950 / 0.9990; at 20 dB: awgn 0.998 / 0.999 / 0.998, rayleigh
+0.999 / 0.998 / 1.000. The seed-to-seed **range is ≤ 0.004 at every SNR**,
+the same size as the binomial sampling error at E = 1000 (Wilson half-width
+≈ 0.003). Conclusion: the k = 24 result is **not** an artefact of one
+initialisation, but the metric is at its ceiling, so the run rules out a large
+initialisation dependence rather than measuring seed variance at a
+non-saturated point. The frozen task arm at k = 24 (which is not saturated)
+still has no multi-seed estimate. Details:
+`fyp_md_files/RESULTS_K24_SEEDS_2026-10-27.md`.
+
 ---
 
 ## 1. What a reviewer can check independently

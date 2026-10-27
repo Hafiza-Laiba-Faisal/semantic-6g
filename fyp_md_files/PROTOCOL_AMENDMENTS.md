@@ -25,7 +25,7 @@ number in this log was typed by hand from memory.
 | POLAR | evaluation only (no training universe) | 50 conditions x 2 coders | - | A-11 complete |
 | AERIAL_TRAIN | 2 train / 48 method-unit-SNR slots | 2 / 48 | A-12 | A-12 complete, **negative** (training diverged; no cell retrained) |
 | AERIAL_TRAIN_TRUNC | 2 train / 48 slots (+1 pre-flight, writes nothing) | 2 / 48, pre-flight PASS at +20 dB | A-13 | A-13 complete (operating point unchanged) |
-| K24_SEEDS | 6 train / 30 slots | pre-registered | A-14 | pending |
+| K24_SEEDS | 6 train / 30 slots | 6 / 30 | A-14 | complete (seed range ≤ 0.004; metric at ceiling) |
 
 "Accounted" always means *evaluated or explicitly declared*. Nothing is
 imputed, nothing is dropped silently, and no failed cell is replaced.

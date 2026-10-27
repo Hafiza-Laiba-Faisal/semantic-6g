@@ -14,7 +14,7 @@ dated amendment (A-9, A-10, A-11, A-12, A-13, A-14).
 | 2 | digital baseline is one convolutional code | **done** | A-11, `results/POLAR/` | k=12/18/24 within 0.05 at the payload ceiling; polar better at k=30 (+0.06..+0.12 at >=10 dB), worse at k=54/B=8 below 10 dB |
 | 3 | capacity ablation invalid / missing | **done** (2 cells) | A-9, `results/ARCH_ABL/` | width 256 still fails: 0.027 awgn / 0.041 rayleigh vs 0.018/0.024 at 128; the task loss falls while reconstruction MSE explodes to ~10³ |
 | 4 | k=24 multi-initialisation missing | **done** | A-14, `results/K24_SEEDS/` | 6 cells, 3 seeds: seed-to-seed range **≤ 0.004** at every SNR (0.995–1.000); the k=24 number is not a one-init artefact, but the metric is at its ceiling |
-| 5 | packaging / reproducibility | **partial** | `environment.yml`, `Dockerfile`, `.github/workflows/ci.yml` | conda spec added; Docker CMD fixed and CPU-wheel install; the image is now built + smoke-run on GitHub Actions (cannot be built on this machine: no docker); Zenodo needs the user |
+| 5 | packaging / reproducibility | **done** (except the DOI) | `environment.yml`, `Dockerfile`, `.github/workflows/ci.yml` | conda spec added; Docker CMD fixed and CPU-wheel install; **CI run #1 passed** — image builds, default command and a test module run inside the container, full suite green on Linux; only the Zenodo deposit needs the user |
 | 6 | novelty argument | **clarified** (mechanism now measured) | section 6, `RESULTS_MECHANISM_2026-10-27.md` | four defensible claims; mechanism measured at gradient level (λ bounds ‖g‖ by ~14 orders; capacity does not fix it; outage episodes are the trigger); still open: which λ term, Doppler, competitive polar receiver |
 
 ## 1. 3GPP aerial channel (A-10)
@@ -218,10 +218,11 @@ is not saturated and still has no multi-seed estimate. Doc:
   `conda`). A GitHub Actions workflow (`.github/workflows/ci.yml`) now builds
   the image on every push to `main`, runs its default command and one test
   module *inside* the container, and prints the image size — so the image is
-  verified on CI even though it cannot be built locally. Until that first run
-  is green it is still marked unverified. The `Dockerfile` now installs torch
-  from the CPU wheel index, because the default Linux wheel is a ~2 GB CUDA
-  build the CPU-only image cannot use.
+  verified on CI even though it cannot be built locally. **Verified**: CI run
+  #1 (2026-10-27, commit `6738109`) passed both jobs — the image built, its
+  default command ran, and `tests.test_channels` ran inside the container. The
+  `Dockerfile` installs torch from the CPU wheel index, because the default
+  Linux wheel is a ~2 GB CUDA build the CPU-only image cannot use.
 - The same workflow runs `python main.py validate-matrix` and every
   `tests/test_*.py` module on a clean Linux + Python 3.9 + CPU-torch
   environment, i.e. on a machine that is not this one.
@@ -252,7 +253,7 @@ is not saturated and still has no multi-seed estimate. Doc:
 
 - A mechanism result — **partially delivered**
   (`RESULTS_MECHANISM_2026-10-27.md`): λ shaping bounds the encoder gradient
-  norm by ~14 orders of magnitude (p99 ~60 vs ~10¹⁸) and every λ cell under the
+  norm by ~14 orders of magnitude (p99 ~60–110 vs ~10¹⁸) and every λ cell under the
   frozen protocol converges with zero non-finite gradient steps; capacity is
   ruled out (the exploding cells are the *wider* ones, and A-9's 256-wide frozen
   cell still fails); the trigger is rare outage episodes (A-12 explodes with

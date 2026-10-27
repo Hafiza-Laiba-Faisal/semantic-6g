@@ -165,5 +165,13 @@ python -m tests.test_aerial_training                      # 25 checks
 ```
 
 Summary JSON: `results/AERIAL_TRAIN/step_aerial_training_summary.json`
-(2/2 train cells, 48/48 evaluation slots). Figure: `fig_aerial_training.png`
-— the flat red curves are the honest picture.
+(2/2 train cells, 48/48 evaluation slots). It carries `status: complete`,
+which only means every declared slot was filled, **and** an explicit
+`outcome: negative` — do not read `complete` as success. Figure:
+`fig_aerial_training.png` — the flat red curves are the honest picture.
+
+The AWGN/Rayleigh control above is reproducible without touching anything:
+
+```powershell
+python tools/diag_aerial_checkpoints.py
+```

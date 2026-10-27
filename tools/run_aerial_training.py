@@ -486,6 +486,14 @@ def cmd_finalize():
         "amendment": AMENDMENT,
         "status": ("complete" if done == EXPECTED_CELLS
                    and n_slots == 3 * EXPECTED_SLOTS else "incomplete"),
+        "status_note": ("'complete' = every declared cell was trained and every "
+                        "evaluation slot written; it is NOT a statement that "
+                        "the run succeeded. See 'outcome'."),
+        "outcome": ("negative - both training cells diverged (loss reached the "
+                    "frozen terminal value and then collapsed; checkpoints are "
+                    "dead networks: flat ~0.02 on the aerial channel and on "
+                    "frozen awgn). No cell was retrained. See "
+                    "fyp_md_files/RESULTS_AERIAL_TRAIN_2026-10-26.md"),
         "question": ("does training UNDER the 3GPP UMa-aerial dispersion "
                      "change the lambda arm's operating point?"),
         "design": {"tag": TAG, "lambdas": list(rw.LAMBDA_TAGS[TAG]),

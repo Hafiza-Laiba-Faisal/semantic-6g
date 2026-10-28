@@ -685,6 +685,100 @@ still has no multi-seed estimate. Details:
 
 ---
 
+## A-15 - 5G NR polar comparator for the classical link (2026-10-28)
+
+**Approved by:** the user, 2026-10-28, choosing "5G polar/LDPC baseline
+upgrade" as the first Transactions-level item. Written **before the first
+A-15 cell** of the full grid.
+
+**Disclosure (required by this protocol's own rules).** A timing smoke of
+five cells - the whole k grid at rayleigh, 10 dB, E = 1000 - was run *before*
+this text to size the job. Those five cells are part of the grid below and
+will be reported exactly as measured. No other A-15 cell existed when this
+was written.
+
+**Question.** The thesis compares task-oriented semantic links against a
+"digital" baseline that is a rate-1/2 K = 7 convolutional code (A-11 added a
+CRC-8 polar with SC decoding, but with a non-5G reliability order, no rate
+matching and no list decoding). Does the reported gap - and the dB-scale
+advantage of A-13 - depend on that particular classical link being weak? For
+payloads of 6-48 bits, 5G NR itself uses polar coding, so the fair comparator
+is the specified 5G NR polar chain, not a stronger code chosen after the fact.
+
+**Link (evaluation only; nothing is trained).**
+
+| stage | 5G NR rule used |
+|---|---|
+| payload | `A = 6B` bits per state - identical to the frozen conv packet |
+| CRC | CRC-6 for `A <= 19`, CRC-11 for `A >= 20` (38.212 6.3.1.2, uplink) |
+| mother code | `n = max(min(n1, n2, n_max), n_min)`, `n_max = 10`, `n_min = 5` (5.3.1) |
+| construction | 1024-entry reliability sequence, Table 5.3.1.2-1, truncated to `< N` |
+| rate matching | pre-frozen positions (5.3.1.2), sub-block interleaver (5.4.1.1), bit selection (5.4.1.2) |
+| coded length | `E = 2k` bits = exactly `k` QPSK symbols - identical channel uses |
+| receiver | CRC-aided SCL, list `L = 8`, exact tanh LLR recursion, exact path metric |
+| fallback | if no path passes CRC the best-metric path is emitted (counted as a normal trial) |
+
+**Budget matching.** Payload, modulation and channel uses are identical to
+the frozen comparator; only the code and decoder differ. For `A >= 20` the
+5G CRC (11 bits) is longer than the conv tail (6 bits), so the 5G code runs at
+a **higher** rate there - 0.583 at k = 30 and 0.546 at k = 54 versus 0.500 -
+which is a cost to 5G, not a favour.
+
+**Design (fixed before the grid run).**
+
+| field | value |
+|---|---|
+| k grid | 12, 18, 24, 30, 54 (`M2_K_VALUES`) |
+| B per k | 1, 2, 3, 4, 8 (`M2_B_BY_K`) |
+| channels | awgn, rayleigh |
+| SNR grid | 0, 5, 10, 15, 20 dB (`M2_SNR_DB`) |
+| episodes | E = 1000, `config.TEST_SEED`, the A-11 stream |
+| cells / slots | 50 slots |
+| methods | `polar5g` (new); `conv` and `polar` re-run in the same job so the contrast is exactly paired and A-11's numbers are reproduced |
+| output | `results/POLAR5G/` (own root) |
+| runner | `tools/run_polar5g.py` |
+| implementation gates | `tests/test_polar5g.py` - 9 gates, all passing before any cell |
+
+**Statistics declared up front.** These links are deterministic and
+untrained, so re-labelling one result as three "seeds" would be fake
+replication: one evaluation stream, Wilson 95% binomial CI per cell, no
+pooling across channels. Same convention as A-11.
+
+**Declared deviations from TS 38.212, with the reason each cannot move BLER
+on our channels.**
+
+* *Input bit interleaver* (5.3.1.1) - not applied for uplink UCI; it is a
+  downlink (DCI) feature.
+* *Channel interleaver* (5.4.1.3) - a fixed permutation of the E coded bits
+  before modulation; it re-maps burst errors, and the channels here are AWGN
+  and block-fading Rayleigh with no bursts.
+* *PC (parity-check) bits* - defined for `12 <= A <= 19`; omitted here, as in
+  the reference Sionna implementation, which documents the same omission.
+* *`A = 6` (k = 12)* - below the 5G polar minimum (`A >= 12`); the same chain
+  is run and that cell is labelled a non-spec extension in every table.
+
+**What is NOT changed.** No training, no checkpoint, no seed, no step budget,
+no architecture, no loss weight, no environment, no evaluation episode/seed/
+grid, no statistic of the frozen protocol. Frozen M1/M2/Wave-A/B/C and the
+A-9...A-14 artifacts stay read-only; this run writes only under
+`results/POLAR5G/`.
+
+**Decision rule declared in advance.** Every one of the 50 slots is reported
+as measured. The list size, the construction and the rate-matching mode are
+not re-tuned after seeing results. If the specified 5G link closes part or all
+of the gap to the lambda arm, that is the result and it will be written as
+such; the A-13 transmit-SNR numbers were obtained against the conv comparator
+and would not automatically transfer to the 5G one.
+
+**Cost (measured).** 15 s (k = 12) to 180 s (k = 54) per 1000-episode cell
+for `polar5g`; the whole 50-slot job is ~55 min single-threaded.
+
+**Limits.** One list size; no PC bits; no channel interleaver; no Doppler or
+time-correlated fading; block-fading Rayleigh only; no LDPC arm (LDPC is not
+the 5G choice at these payload sizes).
+
+---
+
 ## 1. What a reviewer can check independently
 
 ```powershell

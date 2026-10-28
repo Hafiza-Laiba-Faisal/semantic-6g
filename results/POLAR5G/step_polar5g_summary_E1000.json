@@ -1,0 +1,2465 @@
+{
+  "experiment": "POLAR5G",
+  "amendment": "A-15",
+  "amendment_label": "POLAR-5G-COMPARATOR-2026-10-28",
+  "question": "does the classical-versus-neural gap depend on the classical link being a convolutional code? 5G NR polar (CRC-6/11, 5G construction, rate matching, CA-SCL L=8) on the frozen grid and identical episodes",
+  "design": {
+    "k_grid": [
+      12,
+      18,
+      24,
+      30,
+      54
+    ],
+    "bits_by_k": {
+      "12": 1,
+      "18": 2,
+      "24": 3,
+      "30": 4,
+      "54": 8
+    },
+    "snr_grid_db": [
+      0.0,
+      5.0,
+      10.0,
+      15.0,
+      20.0
+    ],
+    "channels": [
+      "awgn",
+      "rayleigh"
+    ],
+    "episodes": 1000,
+    "test_seed": 10042,
+    "methods": [
+      "polar5g",
+      "conv",
+      "polar"
+    ]
+  },
+  "protocol_note": "deterministic untrained baselines: one evaluation stream, binomial (Wilson) CI, no seed relabelling",
+  "polar5g_code": {
+    "12": {
+      "a_bits": 6,
+      "crc_len": 6,
+      "k_bits": 12,
+      "e_bits": 24,
+      "n": 5,
+      "N": 32,
+      "rate": 0.5,
+      "mode": "shortening",
+      "n_pre_frozen": 8,
+      "list_size": 8
+    },
+    "18": {
+      "a_bits": 12,
+      "crc_len": 6,
+      "k_bits": 18,
+      "e_bits": 36,
+      "n": 5,
+      "N": 32,
+      "rate": 0.5,
+      "mode": "repetition",
+      "n_pre_frozen": 0,
+      "list_size": 8
+    },
+    "24": {
+      "a_bits": 18,
+      "crc_len": 6,
+      "k_bits": 24,
+      "e_bits": 48,
+      "n": 6,
+      "N": 64,
+      "rate": 0.5,
+      "mode": "shortening",
+      "n_pre_frozen": 16,
+      "list_size": 8
+    },
+    "30": {
+      "a_bits": 24,
+      "crc_len": 11,
+      "k_bits": 35,
+      "e_bits": 60,
+      "n": 6,
+      "N": 64,
+      "rate": 0.5833333333333334,
+      "mode": "shortening",
+      "n_pre_frozen": 4,
+      "list_size": 8
+    },
+    "54": {
+      "a_bits": 48,
+      "crc_len": 11,
+      "k_bits": 59,
+      "e_bits": 108,
+      "n": 7,
+      "N": 128,
+      "rate": 0.5462962962962963,
+      "mode": "shortening",
+      "n_pre_frozen": 20,
+      "list_size": 8
+    }
+  },
+  "spec_deviations": [
+    "input bit interleaver: downlink-only feature, not used for UCI",
+    "channel interleaver: fixed permutation, no burst errors here",
+    "PC bits: not implemented (also omitted by the Sionna reference)",
+    "k=12 / A=6 is below the 5G polar minimum and is an extension",
+    "CRC-11 for A>=20 makes the 5G rate higher than the conv rate"
+  ],
+  "rows": [
+    {
+      "k": 12,
+      "bits_per_component": 1,
+      "channel": "awgn",
+      "snr_db": 0.0,
+      "episodes": 1000,
+      "test_seed": 10042,
+      "polar5g": {
+        "success_rate": 0.064,
+        "success_count": 64,
+        "final_distance_mean": 4.42302942276001,
+        "control_effort_mean": 794.1871948242188,
+        "ci95": [
+          0.05043597980625934,
+          0.08090107576107321
+        ],
+        "wall_seconds": 29.81
+      },
+      "conv": {
+        "success_rate": 0.063,
+        "success_count": 63,
+        "final_distance_mean": 4.372556686401367,
+        "control_effort_mean": 795.9200439453125,
+        "ci95": [
+          0.049549444227037005,
+          0.07979526513746835
+        ],
+        "wall_seconds": 6.875
+      },
+      "polar": {
+        "success_rate": 0.034,
+        "success_count": 34,
+        "final_distance_mean": 7.341332912445068,
+        "control_effort_mean": 778.1153564453125,
+        "ci95": [
+          0.024431201022401962,
+          0.04713546846011402
+        ],
+        "wall_seconds": 3.706
+      }
+    },
+    {
+      "k": 12,
+      "bits_per_component": 1,
+      "channel": "awgn",
+      "snr_db": 5.0,
+      "episodes": 1000,
+      "test_seed": 10042,
+      "polar5g": {
+        "success_rate": 0.066,
+        "success_count": 66,
+        "final_distance_mean": 4.360457897186279,
+        "control_effort_mean": 796.4757080078125,
+        "ci95": [
+          0.052212125206787474,
+          0.08310962276619951
+        ],
+        "wall_seconds": 30.757
+      },
+      "conv": {
+        "success_rate": 0.066,
+        "success_count": 66,
+        "final_distance_mean": 4.360457897186279,
+        "control_effort_mean": 796.4757080078125,
+        "ci95": [
+          0.052212125206787474,
+          0.08310962276619951
+        ],
+        "wall_seconds": 4.153
+      },
+      "polar": {
+        "success_rate": 0.071,
+        "success_count": 71,
+        "final_distance_mean": 4.747292518615723,
+        "control_effort_mean": 781.7484741210938,
+        "ci95": [
+          0.05666945999361375,
+          0.08861401899350932
+        ],
+        "wall_seconds": 4.36
+      }
+    },
+    {
+      "k": 12,
+      "bits_per_component": 1,
+      "channel": "awgn",
+      "snr_db": 10.0,
+      "episodes": 1000,
+      "test_seed": 10042,
+      "polar5g": {
+        "success_rate": 0.066,
+        "success_count": 66,
+        "final_distance_mean": 4.360457897186279,
+        "control_effort_mean": 796.4757080078125,
+        "ci95": [
+          0.052212125206787474,
+          0.08310962276619951
+        ],
+        "wall_seconds": 31.143
+      },
+      "conv": {
+        "success_rate": 0.066,
+        "success_count": 66,
+        "final_distance_mean": 4.360457897186279,
+        "control_effort_mean": 796.4757080078125,
+        "ci95": [
+          0.052212125206787474,
+          0.08310962276619951
+        ],
+        "wall_seconds": 4.2
+      },
+      "polar": {
+        "success_rate": 0.066,
+        "success_count": 66,
+        "final_distance_mean": 4.366147518157959,
+        "control_effort_mean": 796.3536376953125,
+        "ci95": [
+          0.052212125206787474,
+          0.08310962276619951
+        ],
+        "wall_seconds": 4.423
+      }
+    },
+    {
+      "k": 12,
+      "bits_per_component": 1,
+      "channel": "awgn",
+      "snr_db": 15.0,
+      "episodes": 1000,
+      "test_seed": 10042,
+      "polar5g": {
+        "success_rate": 0.066,
+        "success_count": 66,
+        "final_distance_mean": 4.360457897186279,
+        "control_effort_mean": 796.4757080078125,
+        "ci95": [
+          0.052212125206787474,
+          0.08310962276619951
+        ],
+        "wall_seconds": 31.117
+      },
+      "conv": {
+        "success_rate": 0.066,
+        "success_count": 66,
+        "final_distance_mean": 4.360457897186279,
+        "control_effort_mean": 796.4757080078125,
+        "ci95": [
+          0.052212125206787474,
+          0.08310962276619951
+        ],
+        "wall_seconds": 3.976
+      },
+      "polar": {
+        "success_rate": 0.066,
+        "success_count": 66,
+        "final_distance_mean": 4.360457897186279,
+        "control_effort_mean": 796.4757080078125,
+        "ci95": [
+          0.052212125206787474,
+          0.08310962276619951
+        ],
+        "wall_seconds": 4.723
+      }
+    },
+    {
+      "k": 12,
+      "bits_per_component": 1,
+      "channel": "awgn",
+      "snr_db": 20.0,
+      "episodes": 1000,
+      "test_seed": 10042,
+      "polar5g": {
+        "success_rate": 0.066,
+        "success_count": 66,
+        "final_distance_mean": 4.360457897186279,
+        "control_effort_mean": 796.4757080078125,
+        "ci95": [
+          0.052212125206787474,
+          0.08310962276619951
+        ],
+        "wall_seconds": 31.976
+      },
+      "conv": {
+        "success_rate": 0.066,
+        "success_count": 66,
+        "final_distance_mean": 4.360457897186279,
+        "control_effort_mean": 796.4757080078125,
+        "ci95": [
+          0.052212125206787474,
+          0.08310962276619951
+        ],
+        "wall_seconds": 3.753
+      },
+      "polar": {
+        "success_rate": 0.066,
+        "success_count": 66,
+        "final_distance_mean": 4.360457897186279,
+        "control_effort_mean": 796.4757080078125,
+        "ci95": [
+          0.052212125206787474,
+          0.08310962276619951
+        ],
+        "wall_seconds": 4.825
+      }
+    },
+    {
+      "k": 12,
+      "bits_per_component": 1,
+      "channel": "rayleigh",
+      "snr_db": 0.0,
+      "episodes": 1000,
+      "test_seed": 10042,
+      "polar5g": {
+        "success_rate": 0.058,
+        "success_count": 58,
+        "final_distance_mean": 4.665709972381592,
+        "control_effort_mean": 788.662109375,
+        "ci95": [
+          0.045133070071593756,
+          0.07424990827877548
+        ],
+        "wall_seconds": 29.831
+      },
+      "conv": {
+        "success_rate": 0.063,
+        "success_count": 63,
+        "final_distance_mean": 4.541416168212891,
+        "control_effort_mean": 790.4718017578125,
+        "ci95": [
+          0.049549444227037005,
+          0.07979526513746835
+        ],
+        "wall_seconds": 3.887
+      },
+      "polar": {
+        "success_rate": 0.042,
+        "success_count": 42,
+        "final_distance_mean": 7.027417182922363,
+        "control_effort_mean": 782.9566650390625,
+        "ci95": [
+          0.031220715828023885,
+          0.05628472327710986
+        ],
+        "wall_seconds": 3.767
+      }
+    },
+    {
+      "k": 12,
+      "bits_per_component": 1,
+      "channel": "rayleigh",
+      "snr_db": 5.0,
+      "episodes": 1000,
+      "test_seed": 10042,
+      "polar5g": {
+        "success_rate": 0.064,
+        "success_count": 64,
+        "final_distance_mean": 4.472235202789307,
+        "control_effort_mean": 793.7257690429688,
+        "ci95": [
+          0.05043597980625934,
+          0.08090107576107321
+        ],
+        "wall_seconds": 30.861
+      },
+      "conv": {
+        "success_rate": 0.059,
+        "success_count": 59,
+        "final_distance_mean": 4.445103645324707,
+        "control_effort_mean": 794.0001220703125,
+        "ci95": [
+          0.04601408784574914,
+          0.07536123670744732
+        ],
+        "wall_seconds": 4.283
+      },
+      "polar": {
+        "success_rate": 0.071,
+        "success_count": 71,
+        "final_distance_mean": 4.793750286102295,
+        "control_effort_mean": 783.8709716796875,
+        "ci95": [
+          0.05666945999361375,
+          0.08861401899350932
+        ],
+        "wall_seconds": 4.508
+      }
+    },
+    {
+      "k": 12,
+      "bits_per_component": 1,
+      "channel": "rayleigh",
+      "snr_db": 10.0,
+      "episodes": 1000,
+      "test_seed": 10042,
+      "polar5g": {
+        "success_rate": 0.063,
+        "success_count": 63,
+        "final_distance_mean": 4.416655540466309,
+        "control_effort_mean": 795.4312133789062,
+        "ci95": [
+          0.049549444227037005,
+          0.07979526513746835
+        ],
+        "wall_seconds": 31.897
+      },
+      "conv": {
+        "success_rate": 0.059,
+        "success_count": 59,
+        "final_distance_mean": 4.3942718505859375,
+        "control_effort_mean": 796.3798828125,
+        "ci95": [
+          0.04601408784574914,
+          0.07536123670744732
+        ],
+        "wall_seconds": 4.204
+      },
+      "polar": {
+        "success_rate": 0.07,
+        "success_count": 70,
+        "final_distance_mean": 4.5416765213012695,
+        "control_effort_mean": 788.7653198242188,
+        "ci95": [
+          0.055776130777577704,
+          0.08751500200671816
+        ],
+        "wall_seconds": 4.824
+      }
+    },
+    {
+      "k": 12,
+      "bits_per_component": 1,
+      "channel": "rayleigh",
+      "snr_db": 15.0,
+      "episodes": 1000,
+      "test_seed": 10042,
+      "polar5g": {
+        "success_rate": 0.066,
+        "success_count": 66,
+        "final_distance_mean": 4.379540920257568,
+        "control_effort_mean": 796.3564453125,
+        "ci95": [
+          0.052212125206787474,
+          0.08310962276619951
+        ],
+        "wall_seconds": 31.338
+      },
+      "conv": {
+        "success_rate": 0.063,
+        "success_count": 63,
+        "final_distance_mean": 4.369565486907959,
+        "control_effort_mean": 796.38232421875,
+        "ci95": [
+          0.049549444227037005,
+          0.07979526513746835
+        ],
+        "wall_seconds": 4.215
+      },
+      "polar": {
+        "success_rate": 0.061,
+        "success_count": 61,
+        "final_distance_mean": 4.435848712921143,
+        "control_effort_mean": 793.6917724609375,
+        "ci95": [
+          0.04777956041163888,
+          0.07758045654721199
+        ],
+        "wall_seconds": 4.939
+      }
+    },
+    {
+      "k": 12,
+      "bits_per_component": 1,
+      "channel": "rayleigh",
+      "snr_db": 20.0,
+      "episodes": 1000,
+      "test_seed": 10042,
+      "polar5g": {
+        "success_rate": 0.068,
+        "success_count": 68,
+        "final_distance_mean": 4.3609619140625,
+        "control_effort_mean": 796.44873046875,
+        "ci95": [
+          0.05399222846448211,
+          0.08531421191415932
+        ],
+        "wall_seconds": 35.563
+      },
+      "conv": {
+        "success_rate": 0.066,
+        "success_count": 66,
+        "final_distance_mean": 4.358338832855225,
+        "control_effort_mean": 796.493408203125,
+        "ci95": [
+          0.052212125206787474,
+          0.08310962276619951
+        ],
+        "wall_seconds": 5.083
+      },
+      "polar": {
+        "success_rate": 0.062,
+        "success_count": 62,
+        "final_distance_mean": 4.385437965393066,
+        "control_effort_mean": 795.9019775390625,
+        "ci95": [
+          0.04866396326101466,
+          0.07868839990066345
+        ],
+        "wall_seconds": 5.805
+      }
+    },
+    {
+      "k": 18,
+      "bits_per_component": 2,
+      "channel": "awgn",
+      "snr_db": 0.0,
+      "episodes": 1000,
+      "test_seed": 10042,
+      "polar5g": {
+        "success_rate": 0.16,
+        "success_count": 160,
+        "final_distance_mean": 2.446425676345825,
+        "control_effort_mean": 746.719482421875,
+        "ci95": [
+          0.138584892534484,
+          0.1840173985042616
+        ],
+        "wall_seconds": 44.57
+      },
+      "conv": {
+        "success_rate": 0.143,
+        "success_count": 143,
+        "final_distance_mean": 2.36236572265625,
+        "control_effort_mean": 743.4686889648438,
+        "ci95": [
+          0.12266696873653779,
+          0.16606543685414507
+        ],
+        "wall_seconds": 6.014
+      },
+      "polar": {
+        "success_rate": 0.031,
+        "success_count": 31,
+        "final_distance_mean": 6.792314529418945,
+        "control_effort_mean": 757.4774169921875,
+        "ci95": [
+          0.02192386473850233,
+          0.04366576613553198
+        ],
+        "wall_seconds": 6.276
+      }
+    },
+    {
+      "k": 18,
+      "bits_per_component": 2,
+      "channel": "awgn",
+      "snr_db": 5.0,
+      "episodes": 1000,
+      "test_seed": 10042,
+      "polar5g": {
+        "success_rate": 0.148,
+        "success_count": 148,
+        "final_distance_mean": 2.345571756362915,
+        "control_effort_mean": 739.529296875,
+        "ci95": [
+          0.12733863362020514,
+          0.17135550298461383
+        ],
+        "wall_seconds": 36.735
+      },
+      "conv": {
+        "success_rate": 0.148,
+        "success_count": 148,
+        "final_distance_mean": 2.3460874557495117,
+        "control_effort_mean": 739.4374389648438,
+        "ci95": [
+          0.12733863362020514,
+          0.17135550298461383
+        ],
+        "wall_seconds": 5.009
+      },
+      "polar": {
+        "success_rate": 0.149,
+        "success_count": 149,
+        "final_distance_mean": 2.788580894470215,
+        "control_effort_mean": 751.9633178710938,
+        "ci95": [
+          0.1282740046402946,
+          0.17241247816735156
+        ],
+        "wall_seconds": 5.785
+      }
+    },
+    {
+      "k": 18,
+      "bits_per_component": 2,
+      "channel": "awgn",
+      "snr_db": 10.0,
+      "episodes": 1000,
+      "test_seed": 10042,
+      "polar5g": {
+        "success_rate": 0.148,
+        "success_count": 148,
+        "final_distance_mean": 2.3460874557495117,
+        "control_effort_mean": 739.4374389648438,
+        "ci95": [
+          0.12733863362020514,
+          0.17135550298461383
+        ],
+        "wall_seconds": 36.467
+      },
+      "conv": {
+        "success_rate": 0.148,
+        "success_count": 148,
+        "final_distance_mean": 2.3460874557495117,
+        "control_effort_mean": 739.4374389648438,
+        "ci95": [
+          0.12733863362020514,
+          0.17135550298461383
+        ],
+        "wall_seconds": 4.991
+      },
+      "polar": {
+        "success_rate": 0.146,
+        "success_count": 146,
+        "final_distance_mean": 2.34464168548584,
+        "control_effort_mean": 740.5557861328125,
+        "ci95": [
+          0.1254689208733851,
+          0.1692405233257794
+        ],
+        "wall_seconds": 6.191
+      }
+    },
+    {
+      "k": 18,
+      "bits_per_component": 2,
+      "channel": "awgn",
+      "snr_db": 15.0,
+      "episodes": 1000,
+      "test_seed": 10042,
+      "polar5g": {
+        "success_rate": 0.148,
+        "success_count": 148,
+        "final_distance_mean": 2.3460874557495117,
+        "control_effort_mean": 739.4374389648438,
+        "ci95": [
+          0.12733863362020514,
+          0.17135550298461383
+        ],
+        "wall_seconds": 37.754
+      },
+      "conv": {
+        "success_rate": 0.148,
+        "success_count": 148,
+        "final_distance_mean": 2.3460874557495117,
+        "control_effort_mean": 739.4374389648438,
+        "ci95": [
+          0.12733863362020514,
+          0.17135550298461383
+        ],
+        "wall_seconds": 5.168
+      },
+      "polar": {
+        "success_rate": 0.148,
+        "success_count": 148,
+        "final_distance_mean": 2.3460874557495117,
+        "control_effort_mean": 739.4374389648438,
+        "ci95": [
+          0.12733863362020514,
+          0.17135550298461383
+        ],
+        "wall_seconds": 6.821
+      }
+    },
+    {
+      "k": 18,
+      "bits_per_component": 2,
+      "channel": "awgn",
+      "snr_db": 20.0,
+      "episodes": 1000,
+      "test_seed": 10042,
+      "polar5g": {
+        "success_rate": 0.148,
+        "success_count": 148,
+        "final_distance_mean": 2.3460874557495117,
+        "control_effort_mean": 739.4374389648438,
+        "ci95": [
+          0.12733863362020514,
+          0.17135550298461383
+        ],
+        "wall_seconds": 34.512
+      },
+      "conv": {
+        "success_rate": 0.148,
+        "success_count": 148,
+        "final_distance_mean": 2.3460874557495117,
+        "control_effort_mean": 739.4374389648438,
+        "ci95": [
+          0.12733863362020514,
+          0.17135550298461383
+        ],
+        "wall_seconds": 5.236
+      },
+      "polar": {
+        "success_rate": 0.148,
+        "success_count": 148,
+        "final_distance_mean": 2.3460874557495117,
+        "control_effort_mean": 739.4374389648438,
+        "ci95": [
+          0.12733863362020514,
+          0.17135550298461383
+        ],
+        "wall_seconds": 6.348
+      }
+    },
+    {
+      "k": 18,
+      "bits_per_component": 2,
+      "channel": "rayleigh",
+      "snr_db": 0.0,
+      "episodes": 1000,
+      "test_seed": 10042,
+      "polar5g": {
+        "success_rate": 0.161,
+        "success_count": 161,
+        "final_distance_mean": 2.7822015285491943,
+        "control_effort_mean": 747.20849609375,
+        "ci95": [
+          0.13952416184016234,
+          0.1850704754014105
+        ],
+        "wall_seconds": 37.214
+      },
+      "conv": {
+        "success_rate": 0.172,
+        "success_count": 172,
+        "final_distance_mean": 2.574526786804199,
+        "control_effort_mean": 747.368896484375,
+        "ci95": [
+          0.14987601887484397,
+          0.1966344265978282
+        ],
+        "wall_seconds": 6.651
+      },
+      "polar": {
+        "success_rate": 0.059,
+        "success_count": 59,
+        "final_distance_mean": 6.099614143371582,
+        "control_effort_mean": 753.8086547851562,
+        "ci95": [
+          0.04601408784574914,
+          0.07536123670744732
+        ],
+        "wall_seconds": 6.987
+      }
+    },
+    {
+      "k": 18,
+      "bits_per_component": 2,
+      "channel": "rayleigh",
+      "snr_db": 5.0,
+      "episodes": 1000,
+      "test_seed": 10042,
+      "polar5g": {
+        "success_rate": 0.151,
+        "success_count": 151,
+        "final_distance_mean": 2.4885244369506836,
+        "control_effort_mean": 747.0635986328125,
+        "ci95": [
+          0.13014576187205482,
+          0.1745254133412458
+        ],
+        "wall_seconds": 44.628
+      },
+      "conv": {
+        "success_rate": 0.164,
+        "success_count": 164,
+        "final_distance_mean": 2.4241371154785156,
+        "control_effort_mean": 744.6396484375,
+        "ci95": [
+          0.1423438135383711,
+          0.18822786231168337
+        ],
+        "wall_seconds": 7.149
+      },
+      "polar": {
+        "success_rate": 0.147,
+        "success_count": 147,
+        "final_distance_mean": 3.158099412918091,
+        "control_effort_mean": 748.9982299804688,
+        "ci95": [
+          0.12640360474203105,
+          0.1702981856599607
+        ],
+        "wall_seconds": 7.463
+      }
+    },
+    {
+      "k": 18,
+      "bits_per_component": 2,
+      "channel": "rayleigh",
+      "snr_db": 10.0,
+      "episodes": 1000,
+      "test_seed": 10042,
+      "polar5g": {
+        "success_rate": 0.16,
+        "success_count": 160,
+        "final_distance_mean": 2.377870798110962,
+        "control_effort_mean": 745.2901000976562,
+        "ci95": [
+          0.138584892534484,
+          0.1840173985042616
+        ],
+        "wall_seconds": 44.528
+      },
+      "conv": {
+        "success_rate": 0.147,
+        "success_count": 147,
+        "final_distance_mean": 2.3704354763031006,
+        "control_effort_mean": 741.4402465820312,
+        "ci95": [
+          0.12640360474203105,
+          0.1702981856599607
+        ],
+        "wall_seconds": 5.648
+      },
+      "polar": {
+        "success_rate": 0.164,
+        "success_count": 164,
+        "final_distance_mean": 2.5256659984588623,
+        "control_effort_mean": 749.1276245117188,
+        "ci95": [
+          0.1423438135383711,
+          0.18822786231168337
+        ],
+        "wall_seconds": 7.485
+      }
+    },
+    {
+      "k": 18,
+      "bits_per_component": 2,
+      "channel": "rayleigh",
+      "snr_db": 15.0,
+      "episodes": 1000,
+      "test_seed": 10042,
+      "polar5g": {
+        "success_rate": 0.146,
+        "success_count": 146,
+        "final_distance_mean": 2.348414897918701,
+        "control_effort_mean": 741.409423828125,
+        "ci95": [
+          0.1254689208733851,
+          0.1692405233257794
+        ],
+        "wall_seconds": 46.626
+      },
+      "conv": {
+        "success_rate": 0.153,
+        "success_count": 153,
+        "final_distance_mean": 2.3453564643859863,
+        "control_effort_mean": 740.3956909179688,
+        "ci95": [
+          0.13201885442660544,
+          0.1766370131923496
+        ],
+        "wall_seconds": 5.78
+      },
+      "polar": {
+        "success_rate": 0.153,
+        "success_count": 153,
+        "final_distance_mean": 2.418154716491699,
+        "control_effort_mean": 744.3515014648438,
+        "ci95": [
+          0.13201885442660544,
+          0.1766370131923496
+        ],
+        "wall_seconds": 7.421
+      }
+    },
+    {
+      "k": 18,
+      "bits_per_component": 2,
+      "channel": "rayleigh",
+      "snr_db": 20.0,
+      "episodes": 1000,
+      "test_seed": 10042,
+      "polar5g": {
+        "success_rate": 0.149,
+        "success_count": 149,
+        "final_distance_mean": 2.349696397781372,
+        "control_effort_mean": 740.417236328125,
+        "ci95": [
+          0.1282740046402946,
+          0.17241247816735156
+        ],
+        "wall_seconds": 47.044
+      },
+      "conv": {
+        "success_rate": 0.151,
+        "success_count": 151,
+        "final_distance_mean": 2.338200569152832,
+        "control_effort_mean": 739.2032470703125,
+        "ci95": [
+          0.13014576187205482,
+          0.1745254133412458
+        ],
+        "wall_seconds": 5.82
+      },
+      "polar": {
+        "success_rate": 0.15,
+        "success_count": 150,
+        "final_distance_mean": 2.3554248809814453,
+        "control_effort_mean": 741.2815551757812,
+        "ci95": [
+          0.1292097149821607,
+          0.1734691140283127
+        ],
+        "wall_seconds": 7.434
+      }
+    },
+    {
+      "k": 24,
+      "bits_per_component": 3,
+      "channel": "awgn",
+      "snr_db": 0.0,
+      "episodes": 1000,
+      "test_seed": 10042,
+      "polar5g": {
+        "success_rate": 0.319,
+        "success_count": 319,
+        "final_distance_mean": 1.0761600732803345,
+        "control_effort_mean": 512.9884643554688,
+        "ci95": [
+          0.29085118095956225,
+          0.34853415632871115
+        ],
+        "wall_seconds": 139.266
+      },
+      "conv": {
+        "success_rate": 0.265,
+        "success_count": 265,
+        "final_distance_mean": 1.030254602432251,
+        "control_effort_mean": 465.84161376953125,
+        "ci95": [
+          0.23858278861465607,
+          0.29321585372094755
+        ],
+        "wall_seconds": 12.03
+      },
+      "polar": {
+        "success_rate": 0.035,
+        "success_count": 35,
+        "final_distance_mean": 7.60984468460083,
+        "control_effort_mean": 726.0899047851562,
+        "ci95": [
+          0.025272112485012703,
+          0.0482869032003305
+        ],
+        "wall_seconds": 7.167
+      }
+    },
+    {
+      "k": 24,
+      "bits_per_component": 3,
+      "channel": "awgn",
+      "snr_db": 5.0,
+      "episodes": 1000,
+      "test_seed": 10042,
+      "polar5g": {
+        "success_rate": 0.286,
+        "success_count": 286,
+        "final_distance_mean": 1.0463520288467407,
+        "control_effort_mean": 430.0999755859375,
+        "ci95": [
+          0.25885221375652506,
+          0.31478569883845015
+        ],
+        "wall_seconds": 141.628
+      },
+      "conv": {
+        "success_rate": 0.286,
+        "success_count": 286,
+        "final_distance_mean": 1.0465247631072998,
+        "control_effort_mean": 430.09735107421875,
+        "ci95": [
+          0.25885221375652506,
+          0.31478569883845015
+        ],
+        "wall_seconds": 8.986
+      },
+      "polar": {
+        "success_rate": 0.332,
+        "success_count": 332,
+        "final_distance_mean": 1.9686167240142822,
+        "control_effort_mean": 621.75927734375,
+        "ci95": [
+          0.3035031247681872,
+          0.3617827131568402
+        ],
+        "wall_seconds": 9.087
+      }
+    },
+    {
+      "k": 24,
+      "bits_per_component": 3,
+      "channel": "awgn",
+      "snr_db": 10.0,
+      "episodes": 1000,
+      "test_seed": 10042,
+      "polar5g": {
+        "success_rate": 0.286,
+        "success_count": 286,
+        "final_distance_mean": 1.0465247631072998,
+        "control_effort_mean": 430.09735107421875,
+        "ci95": [
+          0.25885221375652506,
+          0.31478569883845015
+        ],
+        "wall_seconds": 141.402
+      },
+      "conv": {
+        "success_rate": 0.286,
+        "success_count": 286,
+        "final_distance_mean": 1.0465247631072998,
+        "control_effort_mean": 430.09735107421875,
+        "ci95": [
+          0.25885221375652506,
+          0.31478569883845015
+        ],
+        "wall_seconds": 10.164
+      },
+      "polar": {
+        "success_rate": 0.266,
+        "success_count": 266,
+        "final_distance_mean": 1.0353959798812866,
+        "control_effort_mean": 435.75128173828125,
+        "ci95": [
+          0.2395462548357791,
+          0.29424473370265175
+        ],
+        "wall_seconds": 8.691
+      }
+    },
+    {
+      "k": 24,
+      "bits_per_component": 3,
+      "channel": "awgn",
+      "snr_db": 15.0,
+      "episodes": 1000,
+      "test_seed": 10042,
+      "polar5g": {
+        "success_rate": 0.286,
+        "success_count": 286,
+        "final_distance_mean": 1.0465247631072998,
+        "control_effort_mean": 430.09735107421875,
+        "ci95": [
+          0.25885221375652506,
+          0.31478569883845015
+        ],
+        "wall_seconds": 162.243
+      },
+      "conv": {
+        "success_rate": 0.286,
+        "success_count": 286,
+        "final_distance_mean": 1.0465247631072998,
+        "control_effort_mean": 430.09735107421875,
+        "ci95": [
+          0.25885221375652506,
+          0.31478569883845015
+        ],
+        "wall_seconds": 9.342
+      },
+      "polar": {
+        "success_rate": 0.286,
+        "success_count": 286,
+        "final_distance_mean": 1.0465247631072998,
+        "control_effort_mean": 430.09735107421875,
+        "ci95": [
+          0.25885221375652506,
+          0.31478569883845015
+        ],
+        "wall_seconds": 10.268
+      }
+    },
+    {
+      "k": 24,
+      "bits_per_component": 3,
+      "channel": "awgn",
+      "snr_db": 20.0,
+      "episodes": 1000,
+      "test_seed": 10042,
+      "polar5g": {
+        "success_rate": 0.286,
+        "success_count": 286,
+        "final_distance_mean": 1.0465247631072998,
+        "control_effort_mean": 430.09735107421875,
+        "ci95": [
+          0.25885221375652506,
+          0.31478569883845015
+        ],
+        "wall_seconds": 163.81
+      },
+      "conv": {
+        "success_rate": 0.286,
+        "success_count": 286,
+        "final_distance_mean": 1.0465247631072998,
+        "control_effort_mean": 430.09735107421875,
+        "ci95": [
+          0.25885221375652506,
+          0.31478569883845015
+        ],
+        "wall_seconds": 9.515
+      },
+      "polar": {
+        "success_rate": 0.286,
+        "success_count": 286,
+        "final_distance_mean": 1.0465247631072998,
+        "control_effort_mean": 430.09735107421875,
+        "ci95": [
+          0.25885221375652506,
+          0.31478569883845015
+        ],
+        "wall_seconds": 9.029
+      }
+    },
+    {
+      "k": 24,
+      "bits_per_component": 3,
+      "channel": "rayleigh",
+      "snr_db": 0.0,
+      "episodes": 1000,
+      "test_seed": 10042,
+      "polar5g": {
+        "success_rate": 0.372,
+        "success_count": 372,
+        "final_distance_mean": 1.6342694759368896,
+        "control_effort_mean": 606.039306640625,
+        "ci95": [
+          0.3425855843534176,
+          0.4023941016846984
+        ],
+        "wall_seconds": 101.569
+      },
+      "conv": {
+        "success_rate": 0.339,
+        "success_count": 339,
+        "final_distance_mean": 1.2318658828735352,
+        "control_effort_mean": 574.0450439453125,
+        "ci95": [
+          0.31032607732071144,
+          0.3689061840241064
+        ],
+        "wall_seconds": 6.267
+      },
+      "polar": {
+        "success_rate": 0.057,
+        "success_count": 57,
+        "final_distance_mean": 6.596155643463135,
+        "control_effort_mean": 718.57275390625,
+        "ci95": [
+          0.04425323441955428,
+          0.07313739772798773
+        ],
+        "wall_seconds": 5.539
+      }
+    },
+    {
+      "k": 24,
+      "bits_per_component": 3,
+      "channel": "rayleigh",
+      "snr_db": 5.0,
+      "episodes": 1000,
+      "test_seed": 10042,
+      "polar5g": {
+        "success_rate": 0.312,
+        "success_count": 312,
+        "final_distance_mean": 1.0513776540756226,
+        "control_effort_mean": 500.5447692871094,
+        "ci95": [
+          0.2840491872940642,
+          0.34138972657441874
+        ],
+        "wall_seconds": 88.988
+      },
+      "conv": {
+        "success_rate": 0.27,
+        "success_count": 270,
+        "final_distance_mean": 1.0380383729934692,
+        "control_effort_mean": 488.2586975097656,
+        "ci95": [
+          0.24340189633576415,
+          0.29835847701397555
+        ],
+        "wall_seconds": 6.886
+      },
+      "polar": {
+        "success_rate": 0.295,
+        "success_count": 295,
+        "final_distance_mean": 2.377897262573242,
+        "control_effort_mean": 648.9034423828125,
+        "ci95": [
+          0.26756192226597875,
+          0.3240071061544414
+        ],
+        "wall_seconds": 6.327
+      }
+    },
+    {
+      "k": 24,
+      "bits_per_component": 3,
+      "channel": "rayleigh",
+      "snr_db": 10.0,
+      "episodes": 1000,
+      "test_seed": 10042,
+      "polar5g": {
+        "success_rate": 0.271,
+        "success_count": 271,
+        "final_distance_mean": 1.0295531749725342,
+        "control_effort_mean": 455.815185546875,
+        "ci95": [
+          0.24436624773932128,
+          0.2993864718132457
+        ],
+        "wall_seconds": 96.971
+      },
+      "conv": {
+        "success_rate": 0.28,
+        "success_count": 280,
+        "final_distance_mean": 1.0337464809417725,
+        "control_effort_mean": 450.6078186035156,
+        "ci95": [
+          0.2530532224981304,
+          0.3086306128798815
+        ],
+        "wall_seconds": 7.781
+      },
+      "polar": {
+        "success_rate": 0.353,
+        "success_count": 353,
+        "final_distance_mean": 1.1582622528076172,
+        "control_effort_mean": 532.6759643554688,
+        "ci95": [
+          0.3239932175735867,
+          0.3831318906108122
+        ],
+        "wall_seconds": 6.819
+      }
+    },
+    {
+      "k": 24,
+      "bits_per_component": 3,
+      "channel": "rayleigh",
+      "snr_db": 15.0,
+      "episodes": 1000,
+      "test_seed": 10042,
+      "polar5g": {
+        "success_rate": 0.275,
+        "success_count": 275,
+        "final_distance_mean": 1.0481343269348145,
+        "control_effort_mean": 438.25274658203125,
+        "ci95": [
+          0.24822539918582381,
+          0.303496705178052
+        ],
+        "wall_seconds": 95.751
+      },
+      "conv": {
+        "success_rate": 0.273,
+        "success_count": 273,
+        "final_distance_mean": 1.0429123640060425,
+        "control_effort_mean": 437.2006530761719,
+        "ci95": [
+          0.24629547549340855,
+          0.30144193646481293
+        ],
+        "wall_seconds": 6.914
+      },
+      "polar": {
+        "success_rate": 0.28,
+        "success_count": 280,
+        "final_distance_mean": 1.0286160707473755,
+        "control_effort_mean": 467.9029541015625,
+        "ci95": [
+          0.2530532224981304,
+          0.3086306128798815
+        ],
+        "wall_seconds": 8.042
+      }
+    },
+    {
+      "k": 24,
+      "bits_per_component": 3,
+      "channel": "rayleigh",
+      "snr_db": 20.0,
+      "episodes": 1000,
+      "test_seed": 10042,
+      "polar5g": {
+        "success_rate": 0.279,
+        "success_count": 279,
+        "final_distance_mean": 1.0502383708953857,
+        "control_effort_mean": 432.7738037109375,
+        "ci95": [
+          0.2520873156578569,
+          0.30760417351732783
+        ],
+        "wall_seconds": 98.361
+      },
+      "conv": {
+        "success_rate": 0.277,
+        "success_count": 277,
+        "final_distance_mean": 1.050559163093567,
+        "control_effort_mean": 432.3011169433594,
+        "ci95": [
+          0.25015601411118915,
+          0.3055507826583411
+        ],
+        "wall_seconds": 6.662
+      },
+      "polar": {
+        "success_rate": 0.267,
+        "success_count": 267,
+        "final_distance_mean": 1.0484002828598022,
+        "control_effort_mean": 442.7171936035156,
+        "ci95": [
+          0.2405098993499018,
+          0.29527343539135625
+        ],
+        "wall_seconds": 7.104
+      }
+    },
+    {
+      "k": 30,
+      "bits_per_component": 4,
+      "channel": "awgn",
+      "snr_db": 0.0,
+      "episodes": 1000,
+      "test_seed": 10042,
+      "polar5g": {
+        "success_rate": 0.737,
+        "success_count": 737,
+        "final_distance_mean": 0.9416666626930237,
+        "control_effort_mean": 535.0618896484375,
+        "ci95": [
+          0.7088424436928642,
+          0.7633436063771868
+        ],
+        "wall_seconds": 114.213
+      },
+      "conv": {
+        "success_rate": 0.658,
+        "success_count": 658,
+        "final_distance_mean": 0.5454721450805664,
+        "control_effort_mean": 284.6703796386719,
+        "ci95": [
+          0.6280430834689386,
+          0.6867476165777622
+        ],
+        "wall_seconds": 7.881
+      },
+      "polar": {
+        "success_rate": 0.037,
+        "success_count": 37,
+        "final_distance_mean": 7.654778957366943,
+        "control_effort_mean": 725.953125,
+        "ci95": [
+          0.02696102468045289,
+          0.05058268341054474
+        ],
+        "wall_seconds": 6.028
+      }
+    },
+    {
+      "k": 30,
+      "bits_per_component": 4,
+      "channel": "awgn",
+      "snr_db": 5.0,
+      "episodes": 1000,
+      "test_seed": 10042,
+      "polar5g": {
+        "success_rate": 0.516,
+        "success_count": 516,
+        "final_distance_mean": 0.5179551243782043,
+        "control_effort_mean": 176.01632690429688,
+        "ci95": [
+          0.48502358387647304,
+          0.5468539553687625
+        ],
+        "wall_seconds": 130.941
+      },
+      "conv": {
+        "success_rate": 0.515,
+        "success_count": 515,
+        "final_distance_mean": 0.5185257792472839,
+        "control_effort_mean": 175.94578552246094,
+        "ci95": [
+          0.48402549947806195,
+          0.5458596935643463
+        ],
+        "wall_seconds": 9.852
+      },
+      "polar": {
+        "success_rate": 0.178,
+        "success_count": 178,
+        "final_distance_mean": 3.4590654373168945,
+        "control_effort_mean": 653.7200927734375,
+        "ci95": [
+          0.15553722047993956,
+          0.20292730220969596
+        ],
+        "wall_seconds": 6.594
+      }
+    },
+    {
+      "k": 30,
+      "bits_per_component": 4,
+      "channel": "awgn",
+      "snr_db": 10.0,
+      "episodes": 1000,
+      "test_seed": 10042,
+      "polar5g": {
+        "success_rate": 0.515,
+        "success_count": 515,
+        "final_distance_mean": 0.5185178518295288,
+        "control_effort_mean": 175.94322204589844,
+        "ci95": [
+          0.48402549947806195,
+          0.5458596935643463
+        ],
+        "wall_seconds": 94.679
+      },
+      "conv": {
+        "success_rate": 0.515,
+        "success_count": 515,
+        "final_distance_mean": 0.5185178518295288,
+        "control_effort_mean": 175.94322204589844,
+        "ci95": [
+          0.48402549947806195,
+          0.5458596935643463
+        ],
+        "wall_seconds": 5.637
+      },
+      "polar": {
+        "success_rate": 0.572,
+        "success_count": 572,
+        "final_distance_mean": 0.5130480527877808,
+        "control_effort_mean": 192.3341522216797,
+        "ci95": [
+          0.541114629509388,
+          0.6023342970941716
+        ],
+        "wall_seconds": 5.411
+      }
+    },
+    {
+      "k": 30,
+      "bits_per_component": 4,
+      "channel": "awgn",
+      "snr_db": 15.0,
+      "episodes": 1000,
+      "test_seed": 10042,
+      "polar5g": {
+        "success_rate": 0.515,
+        "success_count": 515,
+        "final_distance_mean": 0.5185178518295288,
+        "control_effort_mean": 175.94322204589844,
+        "ci95": [
+          0.48402549947806195,
+          0.5458596935643463
+        ],
+        "wall_seconds": 74.727
+      },
+      "conv": {
+        "success_rate": 0.515,
+        "success_count": 515,
+        "final_distance_mean": 0.5185178518295288,
+        "control_effort_mean": 175.94322204589844,
+        "ci95": [
+          0.48402549947806195,
+          0.5458596935643463
+        ],
+        "wall_seconds": 3.453
+      },
+      "polar": {
+        "success_rate": 0.515,
+        "success_count": 515,
+        "final_distance_mean": 0.5185178518295288,
+        "control_effort_mean": 175.94322204589844,
+        "ci95": [
+          0.48402549947806195,
+          0.5458596935643463
+        ],
+        "wall_seconds": 3.529
+      }
+    },
+    {
+      "k": 30,
+      "bits_per_component": 4,
+      "channel": "awgn",
+      "snr_db": 20.0,
+      "episodes": 1000,
+      "test_seed": 10042,
+      "polar5g": {
+        "success_rate": 0.515,
+        "success_count": 515,
+        "final_distance_mean": 0.5185178518295288,
+        "control_effort_mean": 175.94322204589844,
+        "ci95": [
+          0.48402549947806195,
+          0.5458596935643463
+        ],
+        "wall_seconds": 69.582
+      },
+      "conv": {
+        "success_rate": 0.515,
+        "success_count": 515,
+        "final_distance_mean": 0.5185178518295288,
+        "control_effort_mean": 175.94322204589844,
+        "ci95": [
+          0.48402549947806195,
+          0.5458596935643463
+        ],
+        "wall_seconds": 3.65
+      },
+      "polar": {
+        "success_rate": 0.515,
+        "success_count": 515,
+        "final_distance_mean": 0.5185178518295288,
+        "control_effort_mean": 175.94322204589844,
+        "ci95": [
+          0.48402549947806195,
+          0.5458596935643463
+        ],
+        "wall_seconds": 4.37
+      }
+    },
+    {
+      "k": 30,
+      "bits_per_component": 4,
+      "channel": "rayleigh",
+      "snr_db": 0.0,
+      "episodes": 1000,
+      "test_seed": 10042,
+      "polar5g": {
+        "success_rate": 0.542,
+        "success_count": 542,
+        "final_distance_mean": 1.6798391342163086,
+        "control_effort_mean": 600.7869873046875,
+        "ci95": [
+          0.5110172029772966,
+          0.5726613375414467
+        ],
+        "wall_seconds": 58.396
+      },
+      "conv": {
+        "success_rate": 0.697,
+        "success_count": 697,
+        "final_distance_mean": 0.8365196585655212,
+        "control_effort_mean": 515.955810546875,
+        "ci95": [
+          0.6678071329400123,
+          0.7246850690169498
+        ],
+        "wall_seconds": 4.217
+      },
+      "polar": {
+        "success_rate": 0.042,
+        "success_count": 42,
+        "final_distance_mean": 7.095382213592529,
+        "control_effort_mean": 716.2848510742188,
+        "ci95": [
+          0.031220715828023885,
+          0.05628472327710986
+        ],
+        "wall_seconds": 3.01
+      }
+    },
+    {
+      "k": 30,
+      "bits_per_component": 4,
+      "channel": "rayleigh",
+      "snr_db": 5.0,
+      "episodes": 1000,
+      "test_seed": 10042,
+      "polar5g": {
+        "success_rate": 0.745,
+        "success_count": 745,
+        "final_distance_mean": 0.5742419362068176,
+        "control_effort_mean": 366.61761474609375,
+        "ci95": [
+          0.7170828966141466,
+          0.771041923078522
+        ],
+        "wall_seconds": 63.064
+      },
+      "conv": {
+        "success_rate": 0.679,
+        "success_count": 679,
+        "final_distance_mean": 0.5536400675773621,
+        "control_effort_mean": 308.9370422363281,
+        "ci95": [
+          0.6494259520378269,
+          0.7072040182682453
+        ],
+        "wall_seconds": 4.022
+      },
+      "polar": {
+        "success_rate": 0.292,
+        "success_count": 292,
+        "final_distance_mean": 2.7550277709960938,
+        "control_effort_mean": 647.1753540039062,
+        "ci95": [
+          0.2646572082575304,
+          0.3209347815544081
+        ],
+        "wall_seconds": 3.775
+      }
+    },
+    {
+      "k": 30,
+      "bits_per_component": 4,
+      "channel": "rayleigh",
+      "snr_db": 10.0,
+      "episodes": 1000,
+      "test_seed": 10042,
+      "polar5g": {
+        "success_rate": 0.635,
+        "success_count": 635,
+        "final_distance_mean": 0.5119380950927734,
+        "control_effort_mean": 241.2357940673828,
+        "ci95": [
+          0.6046966883157053,
+          0.6642700490659693
+        ],
+        "wall_seconds": 66.916
+      },
+      "conv": {
+        "success_rate": 0.593,
+        "success_count": 593,
+        "final_distance_mean": 0.5136533379554749,
+        "control_effort_mean": 220.0970916748047,
+        "ci95": [
+          0.562250802021724,
+          0.6230373948412075
+        ],
+        "wall_seconds": 5.036
+      },
+      "polar": {
+        "success_rate": 0.686,
+        "success_count": 686,
+        "final_distance_mean": 0.8320618271827698,
+        "control_effort_mean": 433.2222595214844,
+        "ci95": [
+          0.6565682399199134,
+          0.7140081538059494
+        ],
+        "wall_seconds": 4.523
+      }
+    },
+    {
+      "k": 30,
+      "bits_per_component": 4,
+      "channel": "rayleigh",
+      "snr_db": 15.0,
+      "episodes": 1000,
+      "test_seed": 10042,
+      "polar5g": {
+        "success_rate": 0.561,
+        "success_count": 561,
+        "final_distance_mean": 0.5150519609451294,
+        "control_effort_mean": 196.82455444335938,
+        "ci95": [
+          0.5300657570538558,
+          0.5914673613186046
+        ],
+        "wall_seconds": 68.651
+      },
+      "conv": {
+        "success_rate": 0.544,
+        "success_count": 544,
+        "final_distance_mean": 0.5150664448738098,
+        "control_effort_mean": 189.82485961914062,
+        "ci95": [
+          0.5130201879988806,
+          0.5746430449255172
+        ],
+        "wall_seconds": 4.076
+      },
+      "polar": {
+        "success_rate": 0.666,
+        "success_count": 666,
+        "final_distance_mean": 0.5337198376655579,
+        "control_effort_mean": 264.2845764160156,
+        "ci95": [
+          0.636181277346189,
+          0.6945481923231294
+        ],
+        "wall_seconds": 4.614
+      }
+    },
+    {
+      "k": 30,
+      "bits_per_component": 4,
+      "channel": "rayleigh",
+      "snr_db": 20.0,
+      "episodes": 1000,
+      "test_seed": 10042,
+      "polar5g": {
+        "success_rate": 0.537,
+        "success_count": 537,
+        "final_distance_mean": 0.5160841345787048,
+        "control_effort_mean": 182.40887451171875,
+        "ci95": [
+          0.5060119191883528,
+          0.5677048903162545
+        ],
+        "wall_seconds": 72.155
+      },
+      "conv": {
+        "success_rate": 0.528,
+        "success_count": 528,
+        "final_distance_mean": 0.5179615020751953,
+        "control_effort_mean": 180.4890594482422,
+        "ci95": [
+          0.49701023296209834,
+          0.5587754607170637
+        ],
+        "wall_seconds": 7.407
+      },
+      "polar": {
+        "success_rate": 0.582,
+        "success_count": 582,
+        "final_distance_mean": 0.5114972591400146,
+        "control_effort_mean": 204.46502685546875,
+        "ci95": [
+          0.5511724096520939,
+          0.612199978979738
+        ],
+        "wall_seconds": 5.371
+      }
+    },
+    {
+      "k": 54,
+      "bits_per_component": 8,
+      "channel": "awgn",
+      "snr_db": 0.0,
+      "episodes": 1000,
+      "test_seed": 10042,
+      "polar5g": {
+        "success_rate": 0.546,
+        "success_count": 546,
+        "final_distance_mean": 1.8155463933944702,
+        "control_effort_mean": 611.8534545898438,
+        "ci95": [
+          0.5150236717843845,
+          0.5766242535456677
+        ],
+        "wall_seconds": 222.474
+      },
+      "conv": {
+        "success_rate": 0.976,
+        "success_count": 976,
+        "final_distance_mean": 0.37242987751960754,
+        "control_effort_mean": 357.4327697753906,
+        "ci95": [
+          0.9645368449129426,
+          0.9838199476328138
+        ],
+        "wall_seconds": 9.861
+      },
+      "polar": {
+        "success_rate": 0.034,
+        "success_count": 34,
+        "final_distance_mean": 8.447668075561523,
+        "control_effort_mean": 722.72412109375,
+        "ci95": [
+          0.024431201022401962,
+          0.04713546846011402
+        ],
+        "wall_seconds": 7.45
+      }
+    },
+    {
+      "k": 54,
+      "bits_per_component": 8,
+      "channel": "awgn",
+      "snr_db": 5.0,
+      "episodes": 1000,
+      "test_seed": 10042,
+      "polar5g": {
+        "success_rate": 1.0,
+        "success_count": 1000,
+        "final_distance_mean": 0.030242178589105606,
+        "control_effort_mean": 106.94391632080078,
+        "ci95": [
+          0.9961731014136095,
+          1.0
+        ],
+        "wall_seconds": 232.438
+      },
+      "conv": {
+        "success_rate": 1.0,
+        "success_count": 1000,
+        "final_distance_mean": 0.03009273298084736,
+        "control_effort_mean": 106.87159729003906,
+        "ci95": [
+          0.9961731014136095,
+          1.0
+        ],
+        "wall_seconds": 8.562
+      },
+      "polar": {
+        "success_rate": 0.256,
+        "success_count": 256,
+        "final_distance_mean": 3.0644965171813965,
+        "control_effort_mean": 648.3020629882812,
+        "ci95": [
+          0.22991972382787,
+          0.28394780268228864
+        ],
+        "wall_seconds": 6.028
+      }
+    },
+    {
+      "k": 54,
+      "bits_per_component": 8,
+      "channel": "awgn",
+      "snr_db": 10.0,
+      "episodes": 1000,
+      "test_seed": 10042,
+      "polar5g": {
+        "success_rate": 1.0,
+        "success_count": 1000,
+        "final_distance_mean": 0.03009273298084736,
+        "control_effort_mean": 106.87159729003906,
+        "ci95": [
+          0.9961731014136095,
+          1.0
+        ],
+        "wall_seconds": 143.576
+      },
+      "conv": {
+        "success_rate": 1.0,
+        "success_count": 1000,
+        "final_distance_mean": 0.03009273298084736,
+        "control_effort_mean": 106.87159729003906,
+        "ci95": [
+          0.9961731014136095,
+          1.0
+        ],
+        "wall_seconds": 6.514
+      },
+      "polar": {
+        "success_rate": 0.999,
+        "success_count": 999,
+        "final_distance_mean": 0.070823535323143,
+        "control_effort_mean": 129.8299102783203,
+        "ci95": [
+          0.9943572970398398,
+          0.9998234581709429
+        ],
+        "wall_seconds": 8.015
+      }
+    },
+    {
+      "k": 54,
+      "bits_per_component": 8,
+      "channel": "awgn",
+      "snr_db": 15.0,
+      "episodes": 1000,
+      "test_seed": 10042,
+      "polar5g": {
+        "success_rate": 1.0,
+        "success_count": 1000,
+        "final_distance_mean": 0.03009273298084736,
+        "control_effort_mean": 106.87159729003906,
+        "ci95": [
+          0.9961731014136095,
+          1.0
+        ],
+        "wall_seconds": 189.229
+      },
+      "conv": {
+        "success_rate": 1.0,
+        "success_count": 1000,
+        "final_distance_mean": 0.03009273298084736,
+        "control_effort_mean": 106.87159729003906,
+        "ci95": [
+          0.9961731014136095,
+          1.0
+        ],
+        "wall_seconds": 6.372
+      },
+      "polar": {
+        "success_rate": 1.0,
+        "success_count": 1000,
+        "final_distance_mean": 0.03009273298084736,
+        "control_effort_mean": 106.87159729003906,
+        "ci95": [
+          0.9961731014136095,
+          1.0
+        ],
+        "wall_seconds": 6.861
+      }
+    },
+    {
+      "k": 54,
+      "bits_per_component": 8,
+      "channel": "awgn",
+      "snr_db": 20.0,
+      "episodes": 1000,
+      "test_seed": 10042,
+      "polar5g": {
+        "success_rate": 1.0,
+        "success_count": 1000,
+        "final_distance_mean": 0.03009273298084736,
+        "control_effort_mean": 106.87159729003906,
+        "ci95": [
+          0.9961731014136095,
+          1.0
+        ],
+        "wall_seconds": 154.022
+      },
+      "conv": {
+        "success_rate": 1.0,
+        "success_count": 1000,
+        "final_distance_mean": 0.03009273298084736,
+        "control_effort_mean": 106.87159729003906,
+        "ci95": [
+          0.9961731014136095,
+          1.0
+        ],
+        "wall_seconds": 6.579
+      },
+      "polar": {
+        "success_rate": 1.0,
+        "success_count": 1000,
+        "final_distance_mean": 0.03009273298084736,
+        "control_effort_mean": 106.87159729003906,
+        "ci95": [
+          0.9961731014136095,
+          1.0
+        ],
+        "wall_seconds": 6.788
+      }
+    },
+    {
+      "k": 54,
+      "bits_per_component": 8,
+      "channel": "rayleigh",
+      "snr_db": 0.0,
+      "episodes": 1000,
+      "test_seed": 10042,
+      "polar5g": {
+        "success_rate": 0.525,
+        "success_count": 525,
+        "final_distance_mean": 1.9625383615493774,
+        "control_effort_mean": 618.591796875,
+        "ci95": [
+          0.4940119014700143,
+          0.5557967536006662
+        ],
+        "wall_seconds": 141.035
+      },
+      "conv": {
+        "success_rate": 0.717,
+        "success_count": 717,
+        "final_distance_mean": 1.0423388481140137,
+        "control_effort_mean": 549.6366577148438,
+        "ci95": [
+          0.6882910866376466,
+          0.74404803937586
+        ],
+        "wall_seconds": 6.527
+      },
+      "polar": {
+        "success_rate": 0.032,
+        "success_count": 32,
+        "final_distance_mean": 7.326193332672119,
+        "control_effort_mean": 712.0661010742188,
+        "ci95": [
+          0.02275696612786701,
+          0.04482501094899452
+        ],
+        "wall_seconds": 5.588
+      }
+    },
+    {
+      "k": 54,
+      "bits_per_component": 8,
+      "channel": "rayleigh",
+      "snr_db": 5.0,
+      "episodes": 1000,
+      "test_seed": 10042,
+      "polar5g": {
+        "success_rate": 0.976,
+        "success_count": 976,
+        "final_distance_mean": 0.3816722631454468,
+        "control_effort_mean": 354.8018798828125,
+        "ci95": [
+          0.9645368449129426,
+          0.9838199476328138
+        ],
+        "wall_seconds": 170.136
+      },
+      "conv": {
+        "success_rate": 0.982,
+        "success_count": 982,
+        "final_distance_mean": 0.29812490940093994,
+        "control_effort_mean": 300.66265869140625,
+        "ci95": [
+          0.9717265156214581,
+          0.9885843541412616
+        ],
+        "wall_seconds": 9.489
+      },
+      "polar": {
+        "success_rate": 0.326,
+        "success_count": 326,
+        "final_distance_mean": 2.5833096504211426,
+        "control_effort_mean": 640.242431640625,
+        "ci95": [
+          0.29766062459508447,
+          0.3556711361129795
+        ],
+        "wall_seconds": 7.422
+      }
+    },
+    {
+      "k": 54,
+      "bits_per_component": 8,
+      "channel": "rayleigh",
+      "snr_db": 10.0,
+      "episodes": 1000,
+      "test_seed": 10042,
+      "polar5g": {
+        "success_rate": 0.997,
+        "success_count": 997,
+        "final_distance_mean": 0.14980830252170563,
+        "control_effort_mean": 193.92562866210938,
+        "ci95": [
+          0.9912168282105721,
+          0.9989792345945557
+        ],
+        "wall_seconds": 167.088
+      },
+      "conv": {
+        "success_rate": 0.999,
+        "success_count": 999,
+        "final_distance_mean": 0.1160857081413269,
+        "control_effort_mean": 172.21697998046875,
+        "ci95": [
+          0.9943572970398398,
+          0.9998234581709429
+        ],
+        "wall_seconds": 6.102
+      },
+      "polar": {
+        "success_rate": 0.932,
+        "success_count": 932,
+        "final_distance_mean": 0.5098114013671875,
+        "control_effort_mean": 398.1760559082031,
+        "ci95": [
+          0.9146857880858408,
+          0.946007771535518
+        ],
+        "wall_seconds": 7.372
+      }
+    },
+    {
+      "k": 54,
+      "bits_per_component": 8,
+      "channel": "rayleigh",
+      "snr_db": 15.0,
+      "episodes": 1000,
+      "test_seed": 10042,
+      "polar5g": {
+        "success_rate": 1.0,
+        "success_count": 1000,
+        "final_distance_mean": 0.07422533631324768,
+        "control_effort_mean": 135.27940368652344,
+        "ci95": [
+          0.9961731014136095,
+          1.0
+        ],
+        "wall_seconds": 159.111
+      },
+      "conv": {
+        "success_rate": 1.0,
+        "success_count": 1000,
+        "final_distance_mean": 0.0645279586315155,
+        "control_effort_mean": 127.93161010742188,
+        "ci95": [
+          0.9961731014136095,
+          1.0
+        ],
+        "wall_seconds": 7.849
+      },
+      "polar": {
+        "success_rate": 0.995,
+        "success_count": 995,
+        "final_distance_mean": 0.1928720772266388,
+        "control_effort_mean": 216.6626434326172,
+        "ci95": [
+          0.9883488743952387,
+          0.9978624960042348
+        ],
+        "wall_seconds": 7.744
+      }
+    },
+    {
+      "k": 54,
+      "bits_per_component": 8,
+      "channel": "rayleigh",
+      "snr_db": 20.0,
+      "episodes": 1000,
+      "test_seed": 10042,
+      "polar5g": {
+        "success_rate": 1.0,
+        "success_count": 1000,
+        "final_distance_mean": 0.04540827497839928,
+        "control_effort_mean": 116.03984069824219,
+        "ci95": [
+          0.9961731014136095,
+          1.0
+        ],
+        "wall_seconds": 157.78
+      },
+      "conv": {
+        "success_rate": 1.0,
+        "success_count": 1000,
+        "final_distance_mean": 0.043444953858852386,
+        "control_effort_mean": 113.99752807617188,
+        "ci95": [
+          0.9961731014136095,
+          1.0
+        ],
+        "wall_seconds": 7.128
+      },
+      "polar": {
+        "success_rate": 0.998,
+        "success_count": 998,
+        "final_distance_mean": 0.08607098460197449,
+        "control_effort_mean": 142.35040283203125,
+        "ci95": [
+          0.9927370411104123,
+          0.9994513678975429
+        ],
+        "wall_seconds": 7.661
+      }
+    }
+  ],
+  "pooled_5snr": [
+    {
+      "method": "conv",
+      "k": 12,
+      "channel": "awgn",
+      "success_rate_pooled_5snr": 0.0654,
+      "ci95": [
+        0.05887529037972387,
+        0.07259202065586128
+      ]
+    },
+    {
+      "method": "conv",
+      "k": 12,
+      "channel": "rayleigh",
+      "success_rate_pooled_5snr": 0.062,
+      "ci95": [
+        0.05564588549944279,
+        0.0690266461010779
+      ]
+    },
+    {
+      "method": "conv",
+      "k": 18,
+      "channel": "awgn",
+      "success_rate_pooled_5snr": 0.147,
+      "ci95": [
+        0.13745571987792823,
+        0.15708629759920376
+      ]
+    },
+    {
+      "method": "conv",
+      "k": 18,
+      "channel": "rayleigh",
+      "success_rate_pooled_5snr": 0.1574,
+      "ci95": [
+        0.14756898771165664,
+        0.16775706097861368
+      ]
+    },
+    {
+      "method": "conv",
+      "k": 24,
+      "channel": "awgn",
+      "success_rate_pooled_5snr": 0.2818,
+      "ci95": [
+        0.26950124368777684,
+        0.2944337937442635
+      ]
+    },
+    {
+      "method": "conv",
+      "k": 24,
+      "channel": "rayleigh",
+      "success_rate_pooled_5snr": 0.2878,
+      "ci95": [
+        0.2754174319818629,
+        0.3005083926885264
+      ]
+    },
+    {
+      "method": "conv",
+      "k": 30,
+      "channel": "awgn",
+      "success_rate_pooled_5snr": 0.5436,
+      "ci95": [
+        0.5297652867841612,
+        0.5573677671478418
+      ]
+    },
+    {
+      "method": "conv",
+      "k": 30,
+      "channel": "rayleigh",
+      "success_rate_pooled_5snr": 0.6082,
+      "ci95": [
+        0.594590977518957,
+        0.6216428856792705
+      ]
+    },
+    {
+      "method": "conv",
+      "k": 54,
+      "channel": "awgn",
+      "success_rate_pooled_5snr": 0.9952,
+      "ci95": [
+        0.9928673977037032,
+        0.9967722423680367
+      ]
+    },
+    {
+      "method": "conv",
+      "k": 54,
+      "channel": "rayleigh",
+      "success_rate_pooled_5snr": 0.9396,
+      "ci95": [
+        0.9326531185494097,
+        0.9458718931136295
+      ]
+    },
+    {
+      "method": "polar",
+      "k": 12,
+      "channel": "awgn",
+      "success_rate_pooled_5snr": 0.0606,
+      "ci95": [
+        0.054317758793900564,
+        0.06755692245100536
+      ]
+    },
+    {
+      "method": "polar",
+      "k": 12,
+      "channel": "rayleigh",
+      "success_rate_pooled_5snr": 0.0612,
+      "ci95": [
+        0.05488683597118466,
+        0.06818692399755616
+      ]
+    },
+    {
+      "method": "polar",
+      "k": 18,
+      "channel": "awgn",
+      "success_rate_pooled_5snr": 0.1244,
+      "ci95": [
+        0.11553915838058947,
+        0.13383756049876114
+      ]
+    },
+    {
+      "method": "polar",
+      "k": 18,
+      "channel": "rayleigh",
+      "success_rate_pooled_5snr": 0.1346,
+      "ci95": [
+        0.12541976313327913,
+        0.14434129405126483
+      ]
+    },
+    {
+      "method": "polar",
+      "k": 24,
+      "channel": "awgn",
+      "success_rate_pooled_5snr": 0.241,
+      "ci95": [
+        0.22934675506498545,
+        0.2530509291462814
+      ]
+    },
+    {
+      "method": "polar",
+      "k": 24,
+      "channel": "rayleigh",
+      "success_rate_pooled_5snr": 0.2504,
+      "ci95": [
+        0.23858581250454935,
+        0.26259743838013105
+      ]
+    },
+    {
+      "method": "polar",
+      "k": 30,
+      "channel": "awgn",
+      "success_rate_pooled_5snr": 0.3634,
+      "ci95": [
+        0.3501775306433358,
+        0.3768322132302514
+      ]
+    },
+    {
+      "method": "polar",
+      "k": 30,
+      "channel": "rayleigh",
+      "success_rate_pooled_5snr": 0.4536,
+      "ci95": [
+        0.43984138797350136,
+        0.46742985738326626
+      ]
+    },
+    {
+      "method": "polar",
+      "k": 54,
+      "channel": "awgn",
+      "success_rate_pooled_5snr": 0.6578,
+      "ci95": [
+        0.6445323664991589,
+        0.6708253378694207
+      ]
+    },
+    {
+      "method": "polar",
+      "k": 54,
+      "channel": "rayleigh",
+      "success_rate_pooled_5snr": 0.6566,
+      "ci95": [
+        0.643322284614812,
+        0.6696372623060977
+      ]
+    },
+    {
+      "method": "polar5g",
+      "k": 12,
+      "channel": "awgn",
+      "success_rate_pooled_5snr": 0.0656,
+      "ci95": [
+        0.059065423534122884,
+        0.07280158040940725
+      ]
+    },
+    {
+      "method": "polar5g",
+      "k": 12,
+      "channel": "rayleigh",
+      "success_rate_pooled_5snr": 0.0638,
+      "ci95": [
+        0.057354889008909525,
+        0.07091487876311588
+      ]
+    },
+    {
+      "method": "polar5g",
+      "k": 18,
+      "channel": "awgn",
+      "success_rate_pooled_5snr": 0.1504,
+      "ci95": [
+        0.1407601962036977,
+        0.16057660070849875
+      ]
+    },
+    {
+      "method": "polar5g",
+      "k": 18,
+      "channel": "rayleigh",
+      "success_rate_pooled_5snr": 0.1534,
+      "ci95": [
+        0.14367736551666282,
+        0.16365482501470813
+      ]
+    },
+    {
+      "method": "polar5g",
+      "k": 24,
+      "channel": "awgn",
+      "success_rate_pooled_5snr": 0.2926,
+      "ci95": [
+        0.2801523180100586,
+        0.3053661364510101
+      ]
+    },
+    {
+      "method": "polar5g",
+      "k": 24,
+      "channel": "rayleigh",
+      "success_rate_pooled_5snr": 0.3018,
+      "ci95": [
+        0.2892322285370667,
+        0.31467209968947035
+      ]
+    },
+    {
+      "method": "polar5g",
+      "k": 30,
+      "channel": "awgn",
+      "success_rate_pooled_5snr": 0.5596,
+      "ci95": [
+        0.5457989705570695,
+        0.5733095160105309
+      ]
+    },
+    {
+      "method": "polar5g",
+      "k": 30,
+      "channel": "rayleigh",
+      "success_rate_pooled_5snr": 0.604,
+      "ci95": [
+        0.5903689516808058,
+        0.6174713604505774
+      ]
+    },
+    {
+      "method": "polar5g",
+      "k": 54,
+      "channel": "awgn",
+      "success_rate_pooled_5snr": 0.9092,
+      "ci95": [
+        0.9009184781759716,
+        0.9168532114794323
+      ]
+    },
+    {
+      "method": "polar5g",
+      "k": 54,
+      "channel": "rayleigh",
+      "success_rate_pooled_5snr": 0.8996,
+      "ci95": [
+        0.8909604255759254,
+        0.9076260044981201
+      ]
+    }
+  ],
+  "wall_seconds_total": 5131.8
+}

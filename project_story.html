@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Project Story &amp; Supervisor Brief — Task-Oriented DeepJSCC for UAV Navigation</title>
+<style>
+  :root{
+    --navy:#132a45; --navy2:#1d466f; --ink:#16202c; --muted:#5b6b7c;
+    --line:#dfe7ef; --bg:#eef3f8; --card:#ffffff;
+    --blue:#2563eb; --green:#15803d; --green-bg:#dcfce7;
+    --amber:#b45309; --amber-bg:#fef3c7; --red:#b91c1c; --red-bg:#fee2e2;
+    --violet:#6d28d9; --violet-bg:#f3e8ff;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:"Segoe UI",system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--ink);line-height:1.6}
+
+  /* ---------- hero ---------- */
+  .hero{background:linear-gradient(135deg,#10243c 0%,#1d466f 55%,#2f6f9f 100%);color:#fff;padding:42px 24px 34px}
+  .hero-inner{max-width:1180px;margin:0 auto}
+  .eyebrow{font-size:12px;letter-spacing:.14em;text-transform:uppercase;opacity:.78;font-weight:600}
+  .hero h1{font-size:clamp(24px,3.4vw,40px);line-height:1.16;margin:10px 0 12px;font-weight:800;max-width:900px}
+  .lede{font-size:15px;max-width:820px;opacity:.92}
+  .meta{display:flex;flex-wrap:wrap;gap:8px 22px;margin-top:20px;font-size:13px;opacity:.9}
+  .meta b{font-weight:700;opacity:1}
+  .badges{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px}
+  .badge{padding:5px 12px;border-radius:999px;font-size:11.5px;font-weight:700;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.22)}
+  .badge.g{background:#16a34a;border-color:#16a34a}
+  .badge.b{background:#2563eb;border-color:#2563eb}
+  .badge.p{background:#7c3aed;border-color:#7c3aed}
+  .badge.o{background:#d97706;border-color:#d97706}
+
+  /* ---------- nav ---------- */
+  .toc{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.96);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+  .toc-inner{max-width:1180px;margin:0 auto;display:flex;gap:4px;overflow-x:auto;padding:0 16px}
+  .toc a{flex:0 0 auto;padding:12px 12px;font-size:12.5px;font-weight:600;color:var(--muted);text-decoration:none;border-bottom:3px solid transparent;white-space:nowrap}
+  .toc a:hover,.toc a.active{color:var(--navy);border-bottom-color:var(--blue)}
+
+  /* ---------- layout ---------- */
+  main{max-width:1180px;margin:0 auto;padding:28px 18px 60px}
+  section{margin-bottom:34px;scroll-margin-top:64px}
+  .section-head{display:flex;align-items:baseline;gap:12px;margin-bottom:14px;border-left:4px solid var(--blue);padding-left:12px}
+  .section-head .num{font-size:12px;font-weight:800;color:var(--blue);letter-spacing:.08em}
+  .section-head h2{font-size:21px;color:var(--navy);font-weight:800}
+  .section-head .ur{font-size:12.5px;color:var(--muted);font-style:italic}
+
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px;box-shadow:0 2px 10px rgba(16,36,60,.05)}
+  .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  .grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+
+  /* ---------- answer card ---------- */
+  .answer{background:linear-gradient(135deg,#ecfdf5,#eff6ff);border:1px solid #a7f3d0;border-left:6px solid #059669}
+  .answer .tag{display:inline-block;background:#059669;color:#fff;font-size:10.5px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;padding:3px 9px;border-radius:6px;margin-bottom:10px}
+  .answer h2{font-size:19px;color:#065f46;margin-bottom:8px}
+  .answer .cite{font-size:15px;font-weight:700;color:var(--navy);line-height:1.5}
+  .answer .why{font-size:13.5px;color:#334155;margin-top:10px}
+  .answer .note{font-size:12.5px;color:#475569;margin-top:10px;background:rgba(255,255,255,.6);border-radius:8px;padding:10px 12px}
+
+  /* ---------- urdu note ---------- */
+  .urdu{background:#fffbeb;border:1px solid #fcd34d;border-radius:12px;padding:16px 18px;font-size:14px;color:#713f12}
+  .urdu b{color:#92400e}
+
+  /* ---------- stats ---------- */
+  .stat{background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px;text-align:center}
+  .stat .n{font-size:29px;font-weight:800;line-height:1;color:var(--blue)}
+  .stat .l{font-size:11.5px;font-weight:700;color:#475569;margin-top:6px;text-transform:uppercase;letter-spacing:.04em}
+  .stat .s{font-size:11px;color:#94a3b8;margin-top:3px}
+  .stat.green .n{color:var(--green)} .stat.violet .n{color:var(--violet)} .stat.amber .n{color:var(--amber)}
+
+  /* ---------- timeline ---------- */
+  .timeline{position:relative;margin-left:8px;padding-left:26px;border-left:2px solid #cbd5e1}
+  .tl{position:relative;padding:0 0 20px}
+  .tl:last-child{padding-bottom:0}
+  .tl::before{content:"";position:absolute;left:-34px;top:4px;width:14px;height:14px;border-radius:50%;background:#fff;border:3px solid var(--blue)}
+  .tl.done::before{background:var(--blue)}
+  .tl .when{font-size:11px;font-weight:800;color:var(--blue);text-transform:uppercase;letter-spacing:.07em}
+  .tl h3{font-size:14.5px;color:var(--navy);margin:2px 0 4px}
+  .tl p{font-size:13px;color:#475569}
+  .tl .out{display:inline-block;margin-top:6px;font-size:11.5px;font-weight:700;background:#eff6ff;color:#1d4ed8;padding:2px 8px;border-radius:6px}
+
+  /* ---------- tables ---------- */
+  .table-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:10px}
+  table{width:100%;border-collapse:collapse;font-size:12.5px;background:#fff}
+  th,td{padding:8px 10px;border-bottom:1px solid #edf2f7;text-align:center;vertical-align:top}
+  th{background:#f8fafc;color:#334155;font-size:11.5px;text-transform:uppercase;letter-spacing:.03em;font-weight:800}
+  td.left,th.left{text-align:left}
+  tr:last-child td{border-bottom:none}
+  .best{background:var(--green-bg);color:#14532d;font-weight:800}
+  .bad{background:var(--red-bg);color:#7f1d1d;font-weight:700}
+  .mid{background:var(--amber-bg);color:#78350f;font-weight:700}
+  .small{font-size:11.5px;color:var(--muted)}
+
+  /* ---------- formula ---------- */
+  .formula{background:#0f172a;color:#e2e8f0;border-radius:10px;padding:14px 16px;font-family:Consolas,"Courier New",monospace;font-size:13px;overflow-x:auto;line-height:1.75}
+  .formula .c{color:#94a3b8}
+  .formula .k{color:#7dd3fc}
+  .formula .v{color:#fcd34d}
+
+  /* ---------- callouts ---------- */
+  .callout{border-radius:10px;padding:13px 16px;font-size:13px;margin-top:12px}
+  .callout.info{background:#eff6ff;border:1px solid #bfdbfe;color:#1e3a8a}
+  .callout.warn{background:var(--amber-bg);border:1px solid #fcd34d;color:#78350f}
+  .callout.ok{background:var(--green-bg);border:1px solid #86efac;color:#14532d}
+  .callout.bad{background:var(--red-bg);border:1px solid #fca5a5;color:#7f1d1d}
+  .callout b{font-weight:800}
+
+  /* ---------- figure grid ---------- */
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px}
+  figure{background:#fff;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+  figure img{width:100%;height:190px;object-fit:contain;background:#fbfdff;cursor:zoom-in;display:block;padding:6px}
+  figcaption{padding:8px 10px;font-size:11.5px;color:#475569;border-top:1px solid #f1f5f9}
+  figcaption b{color:var(--navy);display:block;font-size:12px;margin-bottom:2px}
+
+  /* ---------- q&a ---------- */
+  details{background:#fff;border:1px solid var(--line);border-radius:10px;padding:12px 16px;margin-bottom:8px}
+  details[open]{border-color:#bfdbfe;box-shadow:0 2px 8px rgba(37,99,235,.06)}
+  summary{cursor:pointer;font-weight:700;color:var(--navy);font-size:13.5px;list-style:none}
+  summary::-webkit-details-marker{display:none}
+  summary::before{content:"Q";display:inline-grid;place-items:center;width:20px;height:20px;background:#dbeafe;color:#1d4ed8;border-radius:5px;font-size:11px;font-weight:800;margin-right:9px}
+  details p{font-size:13px;color:#475569;margin-top:9px;padding-left:29px}
+
+  /* ---------- misc ---------- */
+  .pill{display:inline-block;padding:2px 9px;border-radius:999px;font-size:10.5px;font-weight:800;letter-spacing:.03em}
+  .pill.done{background:var(--green-bg);color:#166534}
+  .pill.next{background:var(--violet-bg);color:#5b21b6}
+  .pill.fail{background:var(--red-bg);color:#991b1b}
+  .pill.info{background:#dbeafe;color:#1d4ed8}
+  ul.clean{list-style:none}
+  ul.clean li{position:relative;padding-left:20px;margin:7px 0;font-size:13px;color:#475569}
+  ul.clean li::before{content:"→";position:absolute;left:0;color:var(--blue);font-weight:800}
+  .kv{display:grid;grid-template-columns:170px 1fr;gap:8px 14px;font-size:13px}
+  .kv dt{font-weight:700;color:#334155}
+  .kv dd{color:#475569}
+  footer{border-top:1px solid var(--line);background:#fff;padding:22px;text-align:center;font-size:12px;color:#94a3b8}
+
+  /* ---------- lightbox ---------- */
+  #lb{display:none;position:fixed;inset:0;background:rgba(3,10,20,.92);z-index:999;align-items:center;justify-content:center;cursor:zoom-out}
+  #lb img{max-width:94%;max-height:90%;border-radius:8px;box-shadow:0 10px 50px rgba(0,0,0,.6)}
+  #lb .cap{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);color:#fff;background:rgba(0,0,0,.6);padding:7px 18px;border-radius:999px;font-size:13px}
+
+  @media (max-width:900px){
+    .grid-2,.grid-3,.grid-4{grid-template-columns:1fr}
+    .kv{grid-template-columns:1fr}
+    .hero{padding:30px 18px}
+  }
+  @media print{
+    .toc,#lb{display:none}
+    body{background:#fff}
+    .card,.stat,figure{box-shadow:none}
+    section{break-inside:avoid}
+  }
+</style>
+</head>
+<body>
+
+<!-- ================= HERO ================= -->
+<header class="hero">
+  <div class="hero-inner">
+    <div class="eyebrow">Final Year Project · Supervisor Brief · LCWU</div>
+    <h1>Task-Oriented Deep Joint Source–Channel Coding for UAV Navigation under Noisy and Fading Channels</h1>
+    <p class="lede">How we started, what problem we defined, which paper we used as the UAV reference, how we found the solution, and what the data actually proves — one page for Madam.</p>
+    <div class="meta">
+      <span><b>Team:</b> Areesha Sohail (1005) · Amna Shahid (1004) · Hafiza Laiba Faisal (1015)</span>
+      <span><b>Supervisor:</b> Ismat Hira</span>
+      <span><b>Department:</b> Electrical Engineering</span>
+      <span><b>Year:</b> 2026</span>
+    </div>
+    <div class="badges">
+      <span class="badge g">Simulation complete</span>
+      <span class="badge b">3 methods · matched bandwidth</span>
+      <span class="badge p">2.5M+ episodes evaluated</span>
+      <span class="badge o">57/57 tests pass</span>
+    </div>
+  </div>
+</header>
+
+<!-- ================= NAV ================= -->
+<nav class="toc">
+  <div class="toc-inner">
+    <a href="#answer">UAV paper</a>
+    <a href="#summary">One-page summary</a>
+    <a href="#start">How we started</a>
+    <a href="#problem">Problem statement</a>
+    <a href="#papers">References</a>
+    <a href="#system">System model</a>
+    <a href="#solution">How we solved it</a>
+    <a href="#results">Results</a>
+    <a href="#limits">Limitations</a>
+    <a href="#viva">Viva Q&amp;A</a>
+    <a href="#files">Files</a>
+  </div>
+</nav>
+
+<main>
+
+<!-- ================= ANSWER ================= -->
+<section id="answer">
+  <div class="card answer">
+    <span class="tag">Direct answer for Madam</span>
+    <h2>UAV reference paper — kaunsa paper use hua?</h2>
+    <div class="cite">
+      Fang, Z., Liu, Z., Wang, J., Hu, S., Guo, Y., Deng, Y., &amp; Fang, Y. (2025).
+      <em>Task-Oriented Communications for Visual Navigation with Edge-Aerial Collaboration in Low Altitude Economy.</em>
+      arXiv:2504.18317. &nbsp;<a href="https://arxiv.org/abs/2504.18317" target="_blank" rel="noopener" style="color:#1d4ed8;font-weight:700">Open paper ↗</a>
+    </div>
+    <div class="why">
+      This is the UAV-specific task-oriented navigation paper in our literature review. We used it to position our work:
+      it studies <b>UAV visual navigation with edge collaboration</b> using an O-VIB encoder and a Shannon-capacity link model.
+      Our project differs by transmitting a <b>6-dimensional kinematic state</b> (not images) over a
+      <b>differentiable symbol-level AWGN / Rayleigh channel</b>, and by optimising a <b>closed-loop goal-reaching objective</b>
+      rather than a localisation objective.
+    </div>
+    <div class="note">
+      <b>Important distinction for viva:</b> Fang et al. is the <b>UAV navigation reference</b>, not the paper we copied.
+      Our <b>method</b> follows Diao et al. (2024, 2025) — task-oriented JSCC trained against a downstream control task (autonomous driving).
+      Our <b>UAV dynamics</b> follow Shiri, Park &amp; Bennis (2019) — discrete-time double integrator with communication-aware control.
+      The full citation map is in <a href="#papers" style="color:#1d4ed8;font-weight:700">Section 5</a>.
+    </div>
+  </div>
+</section>
+
+<!-- ================= SUMMARY ================= -->
+<section id="summary">
+  <div class="section-head">
+    <span class="num">01</span>
+    <h2>One-page summary</h2>
+    <span class="ur">Mam ke liye ek line mein</span>
+  </div>
+
+  <div class="urdu" style="margin-bottom:16px">
+    <b>Roman Urdu summary:</b> Humne ek simulation-only FYP kiya hai jisme UAV apna 6-number ka navigation state
+    (position, velocity, goal) noisy/fading wireless channel par ground station ko bhejta hai. Humne teen systems compare kiye —
+    classical digital, reconstruction-oriented DeepJSCC, aur task-oriented DeepJSCC — bilkul same bandwidth aur same channel par.
+    Shuru mein task-oriented system sirf <b>2–5%</b> goal reach kar raha tha. Diagnosis se pata chala ke loss mein
+    control/velocity penalty <b>zero</b> thi; <b>&lambda;<sub>u</sub> = &lambda;<sub>v</sub> = 0.1</b> karne se success
+    <b>99%+</b> ho gayi. Phir humne bandwidth crossover, CSI error, 3GPP aerial link, aur 5G polar baseline se validate kiya.
+    <hr style="border:none;border-top:1px solid #fcd34d;margin:12px 0">
+    <b>Mam ke liye 30-second brief:</b>
+    <ol style="margin:8px 0 0 20px;font-size:13.5px;line-height:1.7">
+      <li><b>Shuru:</b> UAV ka navigation state (position, velocity, goal) noisy/fading link par transmit karna — reconstruction ke bajaye mission success ko optimise karna.</li>
+      <li><b>Problem:</b> fixed bandwidth mein har state component ko equal fidelity se bhejna zaroori nahi; asli sawal goal reach karna hai.</li>
+      <li><b>Solution:</b> task-oriented DeepJSCC + control/velocity penalty (&lambda;<sub>u</sub>=&lambda;<sub>v</sub>=0.1) — is se frozen arm 2–5% se 99%+ ho gaya.</li>
+      <li><b>Result:</b> k &le; 18 par neural JSCC jeetta hai; k &ge; 24 par classical digital jeetta hai — fading aur low SNR mein hamara faida sab se bara hai.</li>
+    </ol>
+  </div>
+
+  <div class="grid-4">
+    <div class="stat"><div class="n">3</div><div class="l">Methods compared</div><div class="s">digital · reconstruction · task</div></div>
+    <div class="stat green"><div class="n">6</div><div class="l">State dimensions</div><div class="s">x, y, vx, vy, xg, yg</div></div>
+    <div class="stat violet"><div class="n">5</div><div class="l">Bandwidth points</div><div class="s">k = 12, 18, 24, 30, 54</div></div>
+    <div class="stat amber"><div class="n">99.7%</div><div class="l">Best task success</div><div class="s">&lambda;-shaped, k = 12</div></div>
+  </div>
+
+  <div class="grid-2" style="margin-top:16px">
+    <div class="card">
+      <h3 style="font-size:14px;color:var(--navy);margin-bottom:8px">The question we asked</h3>
+      <p style="font-size:13.5px;color:#475569">Under a fixed wireless budget, should a UAV transmit its navigation state using a system optimised for <b>reconstruction fidelity</b>, or one optimised directly for <b>reaching the goal</b>? And when is a classical digital link simply better?</p>
+    </div>
+    <div class="card">
+      <h3 style="font-size:14px;color:var(--navy);margin-bottom:8px">The answer the data gave</h3>
+      <p style="font-size:13.5px;color:#475569"><b>Low bandwidth (k ≤ 18):</b> neural JSCC clearly wins. <b>High bandwidth (k ≥ 24):</b> classical digital wins. The task-oriented arm only works when the control/velocity penalty is non-zero — otherwise it collapses to 2–5% success.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= START ================= -->
+<section id="start">
+  <div class="section-head">
+    <span class="num">02</span>
+    <h2>How we started — the full journey</h2>
+    <span class="ur">Shuru se result tak</span>
+  </div>
+
+  <div class="card">
+    <div class="timeline">
+      <div class="tl done">
+        <div class="when">Phase 0 · Sep 2026</div>
+        <h3>Problem selection</h3>
+        <p>We started from a practical observation: UAVs depend on a wireless link for navigation state, and that link is noisy and fading. Existing DeepJSCC work optimises reconstruction, but reconstruction error is not the mission objective — reaching the goal is.</p>
+        <span class="out">Topic: task-oriented communication for UAV navigation</span>
+      </div>
+      <div class="tl done">
+        <div class="when">Phase 1 · Sep 2026</div>
+        <h3>Literature review and gap analysis</h3>
+        <p>We studied DeepJSCC (Bourtsoulatze et al. 2019), task-oriented VIB (Shao et al. 2022), task-oriented JSCC for control (Diao et al. 2024/2025), and four UAV-specific papers (Fang et al. 2025; Xu et al. 2023; Wu et al. 2024; Tang et al. 2025). None combined a low-dimensional UAV state, a differentiable AWGN/Rayleigh channel, and a closed-loop goal-reaching loss.</p>
+        <span class="out">Gap identified and written as the proposal</span>
+      </div>
+      <div class="tl done">
+        <div class="when">Phase 2 · Sep–Oct 2026</div>
+        <h3>Mathematical specification</h3>
+        <p>We fixed the state vector, normalisation, UAV double-integrator dynamics, PD controller, AWGN and Rayleigh channel equations, power normalisation, bandwidth convention, and the task loss. Every constant was written into <code>project/config.py</code> with a provenance tag — no magic numbers elsewhere.</p>
+        <span class="out">Frozen, auditable protocol</span>
+      </div>
+      <div class="tl done">
+        <div class="when">Phase 3 · Oct 2026</div>
+        <h3>Implementation in Python / PyTorch</h3>
+        <p>Three matched pipelines: a conventional digital chain (quantise → convolutional code → QPSK), a reconstruction DeepJSCC autoencoder, and a task-oriented DeepJSCC whose loss is defined on the navigation rollout. The channel is a differentiable layer, so gradients flow from the goal-reaching loss back to the encoder.</p>
+        <span class="out">CPU-only · deterministic · 57/57 tests</span>
+      </div>
+      <div class="tl done">
+        <div class="when">Phase 4 · Oct 2026</div>
+        <h3>M1 — low-bandwidth experiment (k = 1, 2, 3)</h3>
+        <p>198 evaluation units, 3 seeds. Reconstruction reached 24–31% success; the task-oriented arm sat at 2–5% and was flat across SNR. That was the first red flag: the task arm was not learning the task.</p>
+        <span class="out">Finding: task arm failed at low k</span>
+      </div>
+      <div class="tl done">
+        <div class="when">Phase 5 · Oct 2026</div>
+        <h3>M2 — matched-budget three-way comparison (k = 12 … 54)</h3>
+        <p>150 evaluation units, 3 seeds × 5,000 episodes. The bandwidth crossover appeared: neural JSCC wins at k = 12 and 18, digital overtakes at k = 24 and dominates at k = 54. But the task arm was still the worst method at every k.</p>
+        <span class="out">Finding: crossover + task pathology</span>
+      </div>
+      <div class="tl done">
+        <div class="when">Phase 6 · 21 Oct 2026</div>
+        <h3>Wave-A — diagnosis and the fix</h3>
+        <p>We ran an arm ablation: control/velocity penalties, reconstruction auxiliary loss, fixed-SNR training, longer training, capacity. Only one change moved the needle — adding <b>&lambda;<sub>u</sub> = &lambda;<sub>v</sub> = 0.1</b> to the task loss took success from 2–5% to <b>99.7%</b>. Three controls confirmed the result was real, not a bypass.</p>
+        <span class="out">Root cause found: missing control penalty</span>
+      </div>
+      <div class="tl done">
+        <div class="when">Phase 7 · 22–28 Oct 2026</div>
+        <h3>Validation waves</h3>
+        <p>Wave-B (350 CSI cells), Wave-C (k = 18 and 54), A-9…A-14 (architecture, aerial link, mechanism, seeds), and A-15 (5G NR polar comparator, complete). The fix generalises, the mechanism is a ~14-order gradient-magnitude effect, and the crossover survives a stronger classical baseline.</p>
+        <span class="out">Thesis-ready, with honest limits</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= PROBLEM ================= -->
+<section id="problem">
+  <div class="section-head">
+    <span class="num">03</span>
+    <h2>Problem statement, gap and research questions</h2>
+    <span class="ur">Asli masla kya tha</span>
+  </div>
+
+  <div class="card">
+    <h3 style="font-size:14px;color:var(--navy);margin-bottom:8px">Problem statement (from the approved proposal)</h3>
+    <blockquote style="border-left:4px solid #93c5fd;background:#f8fafc;padding:14px 16px;border-radius:0 8px 8px 0;font-size:13.5px;color:#334155">
+      When a UAV's navigation-relevant state information (position, velocity, and goal information) is transmitted over a noisy or fading wireless channel using either a conventional digital pipeline or a reconstruction-oriented DeepJSCC scheme, the communication system is optimised to minimise a generic distortion measure on the transmitted state vector. This measure does not necessarily correspond to what matters operationally: the UAV's ability to reach its goal safely and efficiently. Under a fixed bandwidth and SNR budget, a communication system that spends its limited channel-use budget reproducing every component of the state vector with equal fidelity may perform worse, in terms of navigation outcome, than a system that allocates its representational capacity toward the state information that is most relevant to the navigation decision. The problem addressed in this project is therefore whether, and to what extent, training a DeepJSCC encoder/decoder directly against a navigation-task objective — a Task-Oriented DeepJSCC system — improves UAV navigation performance relative to conventional digital communication and reconstruction-oriented DeepJSCC, under identical AWGN and Rayleigh fading channel conditions.
+    </blockquote>
+
+    <div class="grid-2" style="margin-top:16px">
+      <div>
+        <h3 style="font-size:14px;color:var(--navy);margin-bottom:6px">Research gap</h3>
+        <ul class="clean">
+          <li>DeepJSCC is mature for <b>image reconstruction</b>, not UAV state transmission.</li>
+          <li>Task-oriented VIB is established for <b>classification</b>, not closed-loop control.</li>
+          <li>UAV semantic work covers <b>scheduling, triggering, waypoint repetition, or localisation</b> — not a trained channel-symbol codec for goal-reaching.</li>
+          <li>Task-oriented JSCC for control is proven for <b>autonomous driving with cameras</b>, not a 6-D UAV kinematic state.</li>
+          <li>No prior work compares all three methods under <b>matched bandwidth, matched SNR, and both AWGN and Rayleigh fading</b>.</li>
+        </ul>
+      </div>
+      <div>
+        <h3 style="font-size:14px;color:var(--navy);margin-bottom:6px">Research questions</h3>
+        <ul class="clean">
+          <li><b>RQ1:</b> Does task-oriented DeepJSCC beat reconstruction DeepJSCC and a conventional digital link on UAV goal-reaching?</li>
+          <li><b>RQ2:</b> How do channel type, SNR, and bandwidth change that gap?</li>
+        </ul>
+        <h3 style="font-size:14px;color:var(--navy);margin:12px 0 6px">Objectives</h3>
+        <ul class="clean">
+          <li>Build an end-to-end task-oriented DeepJSCC framework for a 6-D UAV state.</li>
+          <li>Integrate it with a 2-D UAV kinematic model and quantify communication-induced degradation.</li>
+          <li>Benchmark against digital and reconstruction baselines at identical channel, SNR, and bandwidth.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= PAPERS ================= -->
+<section id="papers">
+  <div class="section-head">
+    <span class="num">04</span>
+    <h2>Reference papers — what we used and what we did not copy</h2>
+    <span class="ur">Kaunsa paper kis kaam aaya</span>
+  </div>
+
+  <div class="card" style="margin-bottom:14px">
+    <div class="table-wrap">
+      <table>
+        <tr>
+          <th class="left" style="width:18%">Role in our FYP</th>
+          <th class="left" style="width:34%">Paper</th>
+          <th class="left" style="width:26%">What we took</th>
+          <th class="left" style="width:22%">What we did NOT copy</th>
+        </tr>
+        <tr style="background:#ecfdf5">
+          <td class="left"><b>UAV navigation reference</b><br><span class="pill done">closest UAV paper</span></td>
+          <td class="left"><b>Fang, Z., Liu, Z., Wang, J., Hu, S., Guo, Y., Deng, Y., &amp; Fang, Y. (2025).</b> Task-Oriented Communications for Visual Navigation with Edge-Aerial Collaboration in Low Altitude Economy. <em>arXiv:2504.18317.</em></td>
+          <td class="left">UAV-specific task-oriented navigation framing; edge–aerial collaboration; the gap that the link is modelled as Shannon capacity and the task is localisation.</td>
+          <td class="left">O-VIB image encoder; multi-camera source; capacity-level channel abstraction; localisation-only task.</td>
+        </tr>
+        <tr>
+          <td class="left"><b>UAV dynamics &amp; communication-aware control</b></td>
+          <td class="left"><b>Shiri, H., Park, J., &amp; Bennis, M. (2019).</b> Remote UAV Online Path Planning via Neural Network Based Opportunistic Control. <em>arXiv:1910.04969.</em></td>
+          <td class="left">Discrete-time double-integrator model; 2-D position/velocity state; communication-aware UAV control motivation.</td>
+          <td class="left">HJB neural controller; delay model; 3GPP urban-micro path-loss chain.</td>
+        </tr>
+        <tr>
+          <td class="left"><b>Method reference (task-oriented JSCC for control)</b></td>
+          <td class="left"><b>Diao, Y., Meng, Z., Xu, X., She, C., &amp; Zhao, P. G. (2024).</b> Task-Oriented Source-Channel Coding Enabled Autonomous Driving Based on Edge Computing. <em>IEEE INFOCOM Workshops.</em><br><br><b>Diao, Y., Zhang, Y., De Martini, D., Zhao, P. G., &amp; Li, E. L. (2025).</b> Task-Oriented Co-Design of Communication, Computing, and Control for Edge-Enabled Industrial CPS. <em>IEEE JSAC.</em><br><br><b>Diao, Y. (2025).</b> PhD thesis, University of Glasgow.</td>
+          <td class="left">End-to-end task-oriented VIB/JSCC trained against a downstream control objective; the principle that communication should be judged by task outcome, not fidelity.</td>
+          <td class="left">CARLA simulator; camera imagery; DTCP trajectory prediction; delay decomposition; driving score.</td>
+        </tr>
+        <tr>
+          <td class="left"><b>DeepJSCC foundation</b></td>
+          <td class="left"><b>Bourtsoulatze, E., Kurka, D. B., &amp; Gündüz, D. (2019).</b> Deep Joint Source-Channel Coding for Wireless Image Transmission. <em>IEEE TCCN, 5(3), 567–579.</em></td>
+          <td class="left">Encoder/decoder architecture; power normalisation; AWGN and slow Rayleigh evaluation protocol; graceful degradation.</td>
+          <td class="left">Image source; PSNR/MS-SSIM reconstruction objective.</td>
+        </tr>
+        <tr>
+          <td class="left"><b>Task-oriented IB theory</b></td>
+          <td class="left"><b>Shao, J., Mao, Y., &amp; Zhang, J. (2022).</b> Learning Task-Oriented Communication for Edge Inference: An Information Bottleneck Approach. <em>IEEE JSAC, 40(1), 197–211.</em></td>
+          <td class="left">Variational information bottleneck principle; task-aware, differentiable training.</td>
+          <td class="left">Classification labels; image features; AWGN-only edge inference.</td>
+        </tr>
+        <tr>
+          <td class="left"><b>UAV semantic communication context</b></td>
+          <td class="left"><b>Xu, Y., Zhou, H., &amp; Deng, Y. (2023).</b> Task-Oriented Semantics-Aware Communication for Wireless UAV Control and Command Transmission. <em>IEEE Communications Letters, 27(8).</em><br><br><b>Wu, W., Yang, Y., Deng, Y., &amp; Aghvami, A. H. (2024).</b> Goal-Oriented Semantic Communications for Robotic Waypoint Transmission. <em>arXiv:2312.13182.</em><br><br><b>Tang, M., Feng, C., &amp; Quek, T. Q. S. (2025).</b> Decentralized Semantic Communication and Cooperative Tracking Control for a UAV Swarm over MIMO Fading Channels. <em>IEEE TVT.</em></td>
+          <td class="left">Positioning of our contribution: these cover scheduling, repetition, and event-triggering, not a learned joint source–channel codec for goal-reaching.</td>
+          <td class="left">Their scheduling / triggering / repetition mechanisms.</td>
+        </tr>
+      </table>
+    </div>
+    <div class="callout info" style="margin-top:12px">
+      <b>One-line defence:</b> “Fang et al. is our UAV navigation reference; Diao et al. is our method reference; Shiri et al. is our dynamics reference. We did not copy any of them — we combined their insights into a UAV-specific, state-based, closed-loop benchmark.”
+    </div>
+  </div>
+</section>
+
+<!-- ================= SYSTEM ================= -->
+<section id="system">
+  <div class="section-head">
+    <span class="num">05</span>
+    <h2>System model — what exactly we simulated</h2>
+    <span class="ur">Mathematical model</span>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3 style="font-size:14px;color:var(--navy);margin-bottom:8px">1 · UAV state and dynamics</h3>
+      <div class="formula">
+        <span class="c"># state (6-D)</span><br>
+        s<sub>t</sub> = [x, y, v<sub>x</sub>, v<sub>y</sub>, x<sub>g</sub>, y<sub>g</sub>] ∈ ℝ<sup>6</sup><br><br>
+        <span class="c"># double integrator, Δt = 0.1 s, T = 100 steps</span><br>
+        p<sub>t+1</sub> = p<sub>t</sub> + Δt·v<sub>t</sub> + ½Δt²·u<sub>t</sub><br>
+        v<sub>t+1</sub> = v<sub>t</sub> + Δt·u<sub>t</sub>
+      </div>
+      <p style="font-size:12.5px;color:#64748b;margin-top:8px">Workspace ±8 m, success radius 0.5 m, |u| ≤ 2 m/s², |v| ≤ 5 m/s.</p>
+    </div>
+    <div class="card">
+      <h3 style="font-size:14px;color:var(--navy);margin-bottom:8px">2 · Shared controller</h3>
+      <div class="formula">
+        <span class="c"># identical for ALL three methods</span><br>
+        u<sub>t</sub> = clip(−K<sub>p</sub>(p<sub>t</sub> − p<sub>g</sub>) − K<sub>v</sub>v<sub>t</sub>, ±u<sub>max</sub>)<br><br>
+        K<sub>p</sub> = 1.0, K<sub>v</sub> = 2.0, u<sub>max</sub> = 2.0
+      </div>
+      <p style="font-size:12.5px;color:#64748b;margin-top:8px">Keeping the controller fixed makes the comparison fair: only the communication system changes.</p>
+    </div>
+  </div>
+
+  <div class="grid-2" style="margin-top:14px">
+    <div class="card">
+      <h3 style="font-size:14px;color:var(--navy);margin-bottom:8px">3 · Channel (differentiable)</h3>
+      <div class="formula">
+        <span class="c"># AWGN</span><br>
+        y = z + n, &nbsp; n ~ CN(0, σ²I), &nbsp; σ² = 10<sup>−SNR/10</sup><br><br>
+        <span class="c"># slow Rayleigh + perfect CSI, ZF</span><br>
+        y = h·z + n, &nbsp; h ~ CN(0,1) per codeword<br>
+        ŷ = y / h
+      </div>
+      <p style="font-size:12.5px;color:#64748b;margin-top:8px">Power normalised per codeword: ‖z‖² = kP, P = 1.</p>
+    </div>
+    <div class="card">
+      <h3 style="font-size:14px;color:var(--navy);margin-bottom:8px">4 · Task-oriented loss</h3>
+      <div class="formula">
+        L = λ<sub>d</sub>·L<sub>d</sub> + λ<sub>u</sub>·L<sub>u</sub> + λ<sub>v</sub>·L<sub>v</sub> + λ<sub>T</sub>·L<sub>T</sub><br><br>
+        L<sub>d</sub> = mean ‖p<sub>t</sub> − p<sub>g</sub>‖²<br>
+        L<sub>u</sub> = mean ‖u<sub>t</sub>‖² &nbsp;&nbsp; L<sub>v</sub> = mean ‖v<sub>t</sub>‖²<br>
+        L<sub>T</sub> = ‖p<sub>T</sub> − p<sub>g</sub>‖²<br><br>
+        <span class="c"># frozen:</span> (λ<sub>d</sub>, λ<sub>u</sub>, λ<sub>v</sub>, λ<sub>T</sub>) = (1, 0, 0, 2)<br>
+        <span class="c"># fixed:</span> (1, <b>0.1</b>, <b>0.1</b>, 2)
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:14px">
+    <h3 style="font-size:14px;color:var(--navy);margin-bottom:8px">5 · Three matched methods</h3>
+    <div class="grid-3">
+      <div style="background:#f8fafc;border-radius:9px;padding:12px">
+        <b style="font-size:13px">A · Conventional digital</b>
+        <p style="font-size:12.5px;color:#475569;margin-top:4px">B bits/scalar → frame/pad → K=7, rate-1/2 convolutional code → QPSK. Exactly k channel uses: 6B + 6 = k.</p>
+      </div>
+      <div style="background:#f8fafc;border-radius:9px;padding:12px">
+        <b style="font-size:13px">B · Reconstruction DeepJSCC</b>
+        <p style="font-size:12.5px;color:#475569;margin-top:4px">6 → 128 → 128 → 2k real symbols; trained on state reconstruction MSE only.</p>
+      </div>
+      <div style="background:#f8fafc;border-radius:9px;padding:12px">
+        <b style="font-size:13px">C · Task-oriented DeepJSCC</b>
+        <p style="font-size:12.5px;color:#475569;margin-top:4px">Same encoder/decoder, but trained end-to-end on the navigation rollout loss — gradients flow through decoder, channel, and encoder.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= SOLUTION ================= -->
+<section id="solution">
+  <div class="section-head">
+    <span class="num">06</span>
+    <h2>How we found the solution</h2>
+    <span class="ur">Solution kaise mila — step by step</span>
+  </div>
+
+  <div class="card">
+    <div class="grid-2">
+      <div>
+        <h3 style="font-size:14px;color:var(--navy)">Step 1 — Notice the failure</h3>
+        <p style="font-size:13px;color:#475569;margin-top:4px">In M1 and M2 the task-oriented arm sat at <b>2–5% success</b>, flat across SNR. That is not “noisy channel” behaviour — it looked like the model had never learned the task.</p>
+
+        <h3 style="font-size:14px;color:var(--navy);margin-top:14px">Step 2 — Form a hypothesis</h3>
+        <p style="font-size:13px;color:#475569;margin-top:4px">The frozen loss had <b>λ<sub>u</sub> = λ<sub>v</sub> = 0</b>. With no control or velocity penalty, the encoder could satisfy the distance terms with a representation that was useless for the controller. We hypothesised that the task loss was under-constrained, not that the architecture was too small.</p>
+
+        <h3 style="font-size:14px;color:var(--navy);margin-top:14px">Step 3 — Run an ablation, not a guess</h3>
+        <p style="font-size:13px;color:#475569;margin-top:4px">Wave-A tested six arms at k = 12, 3 seeds, both channels. Only the control-penalty arms moved. Reconstruction auxiliary loss, fixed-SNR training, longer training, and extra capacity did <b>not</b> fix it.</p>
+
+        <h3 style="font-size:14px;color:var(--navy);margin-top:14px">Step 4 — Verify it is real</h3>
+        <p style="font-size:13px;color:#475569;margin-top:4px">Three controls: an untrained model scores 0.016 (metric not exploitable), −20 dB drops success to 0.279 (channel genuinely used), and one λ-light arm is degenerate (the effect is fragile, so we report it).</p>
+      </div>
+      <div>
+        <div class="table-wrap">
+          <table>
+            <tr><th class="left">Wave-A arm (k = 12)</th><th>AWGN SR</th><th>Rayleigh SR</th></tr>
+            <tr><td class="left">Frozen task loss (λ<sub>u</sub>=λ<sub>v</sub>=0)</td><td class="bad">0.020–0.048</td><td class="bad">0.033</td></tr>
+            <tr><td class="left">λ<sub>ctl</sub> light (0.01, 0.01)</td><td class="best">0.995</td><td class="bad">0.019</td></tr>
+            <tr><td class="left"><b>λ<sub>ctl</sub> heavy (0.1, 0.1)</b></td><td class="best">0.997</td><td class="best">0.997</td></tr>
+            <tr><td class="left">Reconstruction auxiliary loss</td><td class="mid">0.243</td><td class="mid">0.244</td></tr>
+            <tr><td class="left">Fixed 10 dB training</td><td>0.050</td><td>—</td></tr>
+            <tr><td class="left">Longer training (12k steps)</td><td>0.035</td><td>—</td></tr>
+            <tr><td class="left">Untrained random model</td><td>0.016</td><td>—</td></tr>
+          </table>
+        </div>
+        <div class="callout ok" style="margin-top:10px">
+          <b>Fix:</b> set λ<sub>u</sub> = λ<sub>v</sub> = 0.1. Success went from <b>2–5% → 99.7%</b> at k = 12, on both channels, in 3/3 seeds.
+        </div>
+        <div class="callout info">
+          <b>Why it works (A-9 mechanism study):</b> the frozen arm’s encoder gradient exploded to ~10<sup>14</sup>; λ-shaping brings it down to O(1), eliminating non-finite gradient steps. The effect is a gradient-conditioning effect, not a capacity effect.
+        </div>
+      </div>
+    </div>
+
+    <h3 style="font-size:14px;color:var(--navy);margin:18px 0 8px">Then we checked whether the fix generalises</h3>
+    <div class="grid-4">
+      <div class="stat green"><div class="n">k=18</div><div class="l">λ-shaping holds</div><div class="s">0.999 AWGN · 0.993 Rayleigh</div></div>
+      <div class="stat green"><div class="n">k=54</div><div class="l">λ-shaping holds</div><div class="s">0.998 AWGN · 0.996 Rayleigh</div></div>
+      <div class="stat violet"><div class="n">k=24</div><div class="l">3 seeds, at ceiling</div><div class="s">0.998 · seed range ≤ 0.004</div></div>
+      <div class="stat amber"><div class="n">σ=0.4</div><div class="l">CSI error robustness</div><div class="s">SR flat · MSE +18%</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= RESULTS ================= -->
+<section id="results">
+  <div class="section-head">
+    <span class="num">07</span>
+    <h2>What the data shows</h2>
+    <span class="ur">Results — numbers ke saath</span>
+  </div>
+
+  <div class="card" style="margin-bottom:14px">
+    <h3 style="font-size:14px;color:var(--navy);margin-bottom:8px">M2 — the bandwidth crossover (AWGN, 3 seeds × 5,000 episodes)</h3>
+    <div class="table-wrap">
+      <table>
+        <tr><th>k</th><th>Reconstruction</th><th>Task (frozen λ)</th><th>Digital</th><th class="left">What it means</th></tr>
+        <tr><td><b>12</b></td><td class="best">0.253</td><td class="bad">0.054</td><td>0.064</td><td class="left">Neural JSCC ≈ 4× the digital link</td></tr>
+        <tr><td><b>18</b></td><td class="best">0.237</td><td class="bad">0.025</td><td>0.165</td><td class="left">Neural still ahead</td></tr>
+        <tr><td><b>24</b></td><td>0.235</td><td class="bad">0.036</td><td class="best">0.324</td><td class="left"><b>Crossover:</b> digital overtakes</td></tr>
+        <tr><td><b>30</b></td><td>0.262</td><td class="bad">0.021</td><td class="best">0.629</td><td class="left">Digital clearly better</td></tr>
+        <tr><td><b>54</b></td><td>0.249</td><td class="bad">0.036</td><td class="best">0.935</td><td class="left">Digital dominates</td></tr>
+      </table>
+    </div>
+    <p class="small" style="margin-top:8px">Reconstruction MSE is flat in k (0.049–0.054): the neural decoder is limited by its objective, not by bandwidth.</p>
+  </div>
+
+  <div class="card" style="margin-bottom:14px">
+    <h3 style="font-size:14px;color:var(--navy);margin-bottom:8px">Wave-C — the λ-shaped link vs the best baseline (E = 1000)</h3>
+    <div class="table-wrap">
+      <table>
+        <tr><th>Condition</th><th>λ-shaped</th><th>Best baseline</th><th>Gap</th><th class="left">Reading</th></tr>
+        <tr><td>k = 18, AWGN, 0 dB</td><td class="best">0.999</td><td>0.164</td><td class="best">+83.5 pp</td><td class="left">Huge win at low bandwidth</td></tr>
+        <tr><td>k = 18, Rayleigh, 0 dB</td><td class="best">0.993</td><td>0.166</td><td class="best">+82.7 pp</td><td class="left">Holds under fading</td></tr>
+        <tr><td>k = 54, AWGN, 0 dB</td><td class="best">0.998</td><td>0.974</td><td>+2.4 pp</td><td class="left">Near parity; digital saturates</td></tr>
+        <tr><td>k = 54, Rayleigh, 0 dB</td><td class="best">0.996</td><td>0.718</td><td class="best">+27.8 pp</td><td class="left">Fading is where shaping matters</td></tr>
+        <tr><td>k = 54, Rayleigh, 20 dB</td><td>0.998</td><td class="best">1.000</td><td>−0.2 pp</td><td class="left">Honest parity, not a win</td></tr>
+      </table>
+    </div>
+    <div class="callout warn" style="margin-top:10px">
+      <b>Do not over-claim:</b> at high bandwidth and high SNR the classical link is at 1.000. Our advantage lives at <b>low SNR, low bandwidth, and fading</b> — exactly the regime the thesis is about.
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:14px">
+    <h3 style="font-size:14px;color:var(--navy);margin-bottom:8px">A-15 — is the digital baseline artificially weak? (5G NR polar, E = 1000, pooled over 5 SNRs)</h3>
+    <div class="table-wrap">
+      <table>
+        <tr><th>k</th><th>Convolutional (frozen)</th><th>5G NR polar + CA-SCL</th><th class="left">Reading</th></tr>
+        <tr><td><b>12</b></td><td>0.0654</td><td>0.0656</td><td class="left">Identical — crossover unchanged</td></tr>
+        <tr><td><b>18</b></td><td>0.1470</td><td>0.1504</td><td class="left">Identical within CI</td></tr>
+        <tr><td><b>24</b></td><td>0.2818</td><td>0.2926</td><td class="left">5G slightly better; still above reconstruction 0.235</td></tr>
+        <tr><td><b>30</b></td><td>0.5436</td><td>0.5596</td><td class="left">5G slightly better</td></tr>
+        <tr><td><b>54</b></td><td class="best">0.9952</td><td>0.9092</td><td class="left">Conv still stronger (5G runs at a higher rate here)</td></tr>
+      </table>
+    </div>
+    <p class="small" style="margin-top:8px">Conclusion: the reported neural-vs-digital gap does <b>not</b> depend on the convolutional code being weak. The crossover at k = 18 → 24 survives a full 5G NR polar comparator.</p>
+  </div>
+
+  <div class="figs">
+    <figure>
+      <img src="fyp_md_files/figures/fig1_m1_sr_vs_snr.png" alt="M1 success rate vs SNR" onclick="openLb(this)">
+      <figcaption><b>M1 — low bandwidth</b>Task vs reconstruction at k = 1, 2, 3. The task arm is flat and low.</figcaption>
+    </figure>
+    <figure>
+      <img src="fyp_md_files/figures/fig4_bandwidth_crossover.png" alt="Bandwidth crossover" onclick="openLb(this)">
+      <figcaption><b>M2 — bandwidth crossover</b>Neural JSCC wins at k ≤ 18; digital wins at k ≥ 24.</figcaption>
+    </figure>
+    <figure>
+      <img src="fyp_md_files/figures/fig_wave_a_arms.png" alt="Wave-A arm ablation" onclick="openLb(this)">
+      <figcaption><b>Wave-A — arm ablation</b>Only the control-penalty arm recovers the task.</figcaption>
+    </figure>
+    <figure>
+      <img src="fyp_md_files/figures/fig_wavec1_sr_vs_snr.png" alt="Wave-C success vs SNR" onclick="openLb(this)">
+      <figcaption><b>Wave-C — generalisation</b>λ-shaping holds at k = 18 and k = 54.</figcaption>
+    </figure>
+    <figure>
+      <img src="fyp_md_files/figures/fig_waveb1_sr_vs_k_csi_bands.png" alt="Wave-B CSI bands" onclick="openLb(this)">
+      <figcaption><b>Wave-B — CSI error</b>Success rate is flat up to σ = 0.4; MSE degrades ~18%.</figcaption>
+    </figure>
+    <figure>
+      <img src="fyp_md_files/figures/fig_aerial_required_snr.png" alt="Aerial required SNR" onclick="openLb(this)">
+      <figcaption><b>A-10 — 3GPP aerial link</b>Required transmit SNR at 500 m / 50 m / 2 GHz.</figcaption>
+    </figure>
+    <figure>
+      <img src="fyp_md_files/figures/fig_polar_vs_conv.png" alt="Polar vs convolutional" onclick="openLb(this)">
+      <figcaption><b>A-11 — polar vs convolutional</b>The crossover does not depend on the specific classical code.</figcaption>
+    </figure>
+    <figure>
+      <img src="fyp_md_files/figures/fig_training_stability.png" alt="Training stability" onclick="openLb(this)">
+      <figcaption><b>A-9 — mechanism</b>λ-shaping bounds the encoder gradient by ~14 orders.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- ================= LIMITS ================= -->
+<section id="limits">
+  <div class="section-head">
+    <span class="num">08</span>
+    <h2>Honest limitations — what we do <em>not</em> claim</h2>
+    <span class="ur">Kya claim nahi kar sakte</span>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3 style="font-size:14px;color:var(--navy);margin-bottom:8px">Scope limits</h3>
+      <ul class="clean">
+        <li><b>Simulation only.</b> No physical UAV, no SDR, no flight test.</li>
+        <li><b>2-D kinematics.</b> No altitude, attitude, wind, or rotor dynamics.</li>
+        <li><b>Fixed PD controller.</b> The controller is not jointly learned, by design, to keep the comparison fair.</li>
+        <li><b>Perfect CSI</b> in the main study; CSI error is a separate ablation (Wave-B).</li>
+        <li><b>Flat Rayleigh fading.</b> No Doppler, shadowing, or 3GPP dispersion in the main matrix.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3 style="font-size:14px;color:var(--navy);margin-bottom:8px">Result limits</h3>
+      <ul class="clean">
+        <li><b>λ-shaping is not a universal cure.</b> A-12 showed it still diverges when training contains &gt;20 dB outage episodes; resampling the tail (A-13) restores stability but does not move the operating point.</li>
+        <li><b>The 0.99+ result is at the task ceiling.</b> It proves the policy works, but it cannot resolve small differences between good methods.</li>
+        <li><b>Two Wave-A cells failed</b> (non-finite gradients). They are reported as failures, not retrained away.</li>
+        <li><b>CSI success-rate insensitivity is coarse.</b> MSE exposes an 18% degradation that SR hides.</li>
+        <li><b>Polar baseline:</b> A-11 used SC polar without rate matching. A-15 (full 5G NR chain, CA-SCL L = 8) is now complete and confirms the crossover — it does not overturn it.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="callout bad" style="margin-top:12px">
+    <b>Never say:</b> “task-oriented always beats digital”, “our system works at every SNR”, or “we validated on real UAV hardware”. None of these is supported by the artifacts.
+  </div>
+</section>
+
+<!-- ================= VIVA ================= -->
+<section id="viva">
+  <div class="section-head">
+    <span class="num">09</span>
+    <h2>Viva questions Madam may ask</h2>
+    <span class="ur">Mam ke sawal aur jawab</span>
+  </div>
+
+  <details open>
+    <summary>Which UAV paper did you use as the reference?</summary>
+    <p><b>Fang et al. (2025), arXiv:2504.18317</b> — “Task-Oriented Communications for Visual Navigation with Edge-Aerial Collaboration in Low Altitude Economy.” It is the UAV-specific task-oriented navigation paper in our review. Our method reference is Diao et al. (2024/2025), and our UAV dynamics reference is Shiri et al. (2019).</p>
+  </details>
+  <details>
+    <summary>Why not just use the Fang et al. method directly?</summary>
+    <p>Fang et al. transmit multi-camera image features and estimate position. We transmit a 6-D kinematic state and close the loop through a controller to a goal. Their channel is a Shannon-capacity abstraction; ours is a differentiable symbol-level AWGN/Rayleigh layer so the task loss can train the encoder end-to-end.</p>
+  </details>
+  <details>
+    <summary>What exactly is “task-oriented” here?</summary>
+    <p>The encoder and decoder are trained on the navigation rollout loss — distance to goal, control effort, velocity, and terminal distance — not on state reconstruction MSE. The receiver’s job is to support the control decision, not to reproduce the state bit-for-bit.</p>
+  </details>
+  <details>
+    <summary>Why did the task arm fail at first?</summary>
+    <p>The frozen loss had λ<sub>u</sub> = λ<sub>v</sub> = 0. Without a control or velocity penalty, the representation was not constrained to be useful for the controller, and the encoder gradient exploded to ~10<sup>14</sup>. Setting λ<sub>u</sub> = λ<sub>v</sub> = 0.1 fixed it.</p>
+  </details>
+  <details>
+    <summary>Is 99.7% too good to be true?</summary>
+    <p>We checked three controls: an untrained model scores 0.016; at −20 dB success drops to 0.279; and the λ-light Rayleigh arm is degenerate at 0.019. The policy also ends two orders of magnitude closer to the goal while using less than half the control effort — it is tracking, not idling.</p>
+  </details>
+  <details>
+    <summary>So does semantic communication always win?</summary>
+    <p>No. It wins at low bandwidth (k ≤ 18) and under fading. At k ≥ 24 the classical digital link overtakes, and at k = 54 / 20 dB it reaches 1.000 while we reach 0.998. We report that parity honestly.</p>
+  </details>
+  <details>
+    <summary>What is the main contribution?</summary>
+    <p>Three things: (1) a matched-budget, paired three-way benchmark for UAV state transmission over AWGN and Rayleigh; (2) the bandwidth-crossover result — a direct “when should 6G use semantic communication?” answer; (3) the λ-shaping diagnosis and mechanism, which explains why task-oriented training collapses and how to fix it.</p>
+  </details>
+  <details>
+    <summary>What would you do next?</summary>
+    <p>Write the thesis chapters from the frozen artifacts, test a harder task (tighter goal radius / shorter horizon) so the metric is no longer at ceiling, and optionally extend A-13 to a full-dispersion training run with the outage tail handled. A-15 (5G NR CA-SCL) is already complete; M5 remains deferred.</p>
+  </details>
+</section>
+
+<!-- ================= FILES ================= -->
+<section id="files">
+  <div class="section-head">
+    <span class="num">10</span>
+    <h2>Where everything lives</h2>
+    <span class="ur">Files ka map</span>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3 style="font-size:14px;color:var(--navy);margin-bottom:8px">Documents</h3>
+      <div class="table-wrap">
+        <table>
+          <tr><th class="left">File</th><th class="left">What it contains</th></tr>
+          <tr><td class="left"><code>fyp_md_files/fyp-proposal.txt</code></td><td class="left">Full approved proposal: problem, literature, gap, RQs, methodology, references</td></tr>
+          <tr><td class="left"><code>fyp_md_files/RESEARCH_ROADMAP.md</code></td><td class="left">Short Roman-Urdu summary of the whole project and results</td></tr>
+          <tr><td class="left"><code>fyp_md_files/RESULTS_WAVE_A_WAVE_B_2026-10-21.md</code></td><td class="left">λ ablation + CSI sweep</td></tr>
+          <tr><td class="left"><code>fyp_md_files/RESULTS_WAVE_C_2026-10-22.md</code></td><td class="left">Generalisation to k = 18 / 54</td></tr>
+          <tr><td class="left"><code>fyp_md_files/RESULTS_MECHANISM_2026-10-27.md</code></td><td class="left">Gradient-conditioning mechanism</td></tr>
+          <tr><td class="left"><code>fyp_md_files/PROTOCOL_AMENDMENTS.md</code></td><td class="left">Every pre-registered amendment A-1 … A-15</td></tr>
+          <tr><td class="left"><code>fyp_md_files/THESIS_DISCLOSURE_PARAGRAPHS.md</code></td><td class="left">Ready-to-paste disclosure text</td></tr>
+        </table>
+      </div>
+    </div>
+    <div class="card">
+      <h3 style="font-size:14px;color:var(--navy);margin-bottom:8px">Code and artifacts</h3>
+      <div class="table-wrap">
+        <table>
+          <tr><th class="left">Path</th><th class="left">What it is</th></tr>
+          <tr><td class="left"><code>project/config.py</code></td><td class="left">Every frozen constant, with provenance tags</td></tr>
+          <tr><td class="left"><code>project/uav/</code></td><td class="left">Dynamics, controller, rollouts</td></tr>
+          <tr><td class="left"><code>project/channels/</code></td><td class="left">AWGN and Rayleigh layers</td></tr>
+          <tr><td class="left"><code>project/models/</code></td><td class="left">DeepJSCC encoder / decoder</td></tr>
+          <tr><td class="left"><code>project/training/</code></td><td class="left">Reconstruction and task-oriented trainers</td></tr>
+          <tr><td class="left"><code>project/baselines/digital.py</code></td><td class="left">Conventional digital chain</td></tr>
+          <tr><td class="left"><code>results/</code></td><td class="left">All evaluation JSONs and summaries</td></tr>
+          <tr><td class="left"><code>results/POLAR5G/</code></td><td class="left">A-15 5G NR polar comparator (50 cells, CA-SCL L = 8)</td></tr>
+          <tr><td class="left"><code>tests/</code></td><td class="left">57/57 passing protocol and regression tests</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout info" style="margin-top:14px">
+    <b>Reproduce:</b> <code>python main.py --help</code> · <code>python -m pytest tests/ -q</code> · full protocol in <code>SETUP.md</code> and <code>ARCHITECTURE.md</code>. All experiments are CPU-only and deterministic; no GPU is required.
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div>FYP · Task-Oriented DeepJSCC for UAV Navigation · LCWU Department of Electrical Engineering · 2026</div>
+  <div style="margin-top:4px">Areesha Sohail · Amna Shahid · Hafiza Laiba Faisal &nbsp;|&nbsp; Supervisor: Ismat Hira</div>
+  <div style="margin-top:6px"><a href="thesis_dashboard.html" style="color:#2563eb;font-weight:600">← Back to the Thesis Dashboard</a></div>
+</footer>
+
+<div id="lb" onclick="this.style.display='none'">
+  <img id="lbimg" src="" alt="">
+  <div class="cap" id="lbcap"></div>
+</div>
+
+<script>
+  function openLb(img){
+    document.getElementById('lbimg').src = img.src;
+    document.getElementById('lbcap').textContent = img.alt;
+    document.getElementById('lb').style.display = 'flex';
+  }
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'Escape') document.getElementById('lb').style.display = 'none';
+  });
+
+  // highlight the section currently in view
+  var links = Array.prototype.slice.call(document.querySelectorAll('.toc a'));
+  var secs = links.map(function(a){ return document.querySelector(a.getAttribute('href')); });
+  function onScroll(){
+    var y = window.scrollY + 90, idx = 0;
+    secs.forEach(function(s,i){ if(s && s.offsetTop <= y) idx = i; });
+    links.forEach(function(a,i){ a.classList.toggle('active', i === idx); });
+  }
+  window.addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
+</script>
+</body>
+</html>

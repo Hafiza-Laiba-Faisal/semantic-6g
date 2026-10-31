@@ -257,6 +257,52 @@ def style_document(doc: Document) -> None:
     title.paragraph_format.space_after = Pt(18)
 
 
+def _list_number_abstract_id(doc) -> int:
+    """Return the abstractNumId used by the built-in "List Number" style."""
+    numbering = doc.part.numbering_part.element
+    styles = doc.styles.element
+    num_id = None
+    for style in styles.findall(qn("w:style")):
+        if style.get(qn("w:styleId")) == "ListNumber":
+            p_pr = style.find(qn("w:pPr"))
+            if p_pr is not None:
+                num_pr = p_pr.find(qn("w:numPr"))
+                if num_pr is not None:
+                    num_el = num_pr.find(qn("w:numId"))
+                    if num_el is not None:
+                        num_id = num_el.get(qn("w:val"))
+            break
+    if num_id is not None:
+        for num in numbering.findall(qn("w:num")):
+            if num.get(qn("w:numId")) == num_id:
+                abstract = num.find(qn("w:abstractNumId"))
+                if abstract is not None:
+                    return int(abstract.get(qn("w:val")))
+    return 7
+
+
+def new_numbering_id(doc, abstract_id: int | None = None) -> int:
+    """Create a fresh numbering instance so each numbered list restarts at 1."""
+    numbering = doc.part.numbering_part.element
+    ids = [
+        int(num.get(qn("w:numId")))
+        for num in numbering.findall(qn("w:num"))
+        if num.get(qn("w:numId"))
+    ]
+    new_id = max(ids, default=0) + 1
+    num = OxmlElement("w:num")
+    num.set(qn("w:numId"), str(new_id))
+    abstract = OxmlElement("w:abstractNumId")
+    abstract.set(
+        qn("w:val"),
+        str(abstract_id if abstract_id is not None
+            else _list_number_abstract_id(doc)),
+    )
+    num.append(abstract)
+    numbering.append(num)
+    return new_id
+
+
 def build(
     md_path: Path = MD_PATH,
     out_path: Path = OUT_PATH,
@@ -294,6 +340,8 @@ def build(
     pending_break = False
     suppress_next_break = False
     toc_added = False
+    current_num_id = None
+    in_code = False
     i = 0
 
     # A little breathing room above the title.
@@ -304,6 +352,29 @@ def build(
         raw = lines[i]
         line = raw.rstrip()
         stripped = line.strip()
+
+        # Fenced code blocks are rendered verbatim: no inline parsing, no
+        # heading detection, and a monospace font. This keeps shell snippets
+        # with '#' comments from turning into document headings.
+        if stripped.startswith("```"):
+            in_code = not in_code
+            i += 1
+            continue
+        if in_code:
+            p = doc.add_paragraph()
+            p.paragraph_format.space_before = Pt(0)
+            p.paragraph_format.space_after = Pt(0)
+            p.paragraph_format.left_indent = Inches(0.2)
+            run = p.add_run(line if line else " ")
+            run.font.name = "Consolas"
+            run.font.size = Pt(8.5)
+            i += 1
+            continue
+
+        # A numbered list ends at the first non-numbered line, so the next
+        # numbered list gets a fresh numbering instance and restarts at 1.
+        if not re.match(r"^\d+\.\s+", stripped):
+            current_num_id = None
 
         if stripped == PAGEBREAK:
             if suppress_next_break:
@@ -398,7 +469,12 @@ def build(
             continue
 
         if re.match(r"^\d+\.\s+", stripped):
+            if current_num_id is None:
+                current_num_id = new_numbering_id(doc)
             p = doc.add_paragraph(style="List Number")
+            num_pr = p._p.get_or_add_pPr().get_or_add_numPr()
+            num_pr.get_or_add_ilvl().val = 0
+            num_pr.get_or_add_numId().val = current_num_id
             if pending_break:
                 p.paragraph_format.page_break_before = True
                 pending_break = False

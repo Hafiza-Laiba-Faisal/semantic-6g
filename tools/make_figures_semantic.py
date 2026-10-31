@@ -54,7 +54,7 @@ CAVEAT = ("trajectory MSE censors boundary-exited episodes "
           "(post-exit su = s) — diagnostic metric, see thesis section 5.4")
 
 # ---- fig13: reconstruction MSE vs SNR --------------------------------------
-fig, axes = plt.subplots(1, 2, figsize=(9, 3.7), sharey=True)
+fig, axes = plt.subplots(1, 2, figsize=(9, 4.8), sharey=True)
 for ax, ch in zip(axes, CHANNELS):
     for m, lab, c, mk in METH:
         for k in KS2:
@@ -67,31 +67,37 @@ for ax, ch in zip(axes, CHANNELS):
     ax.set_xticks(SNR2)
     ax.set_yscale("log")
 axes[0].set_ylabel("trajectory MSE (normalized state, /6)")
-axes[0].legend(ncol=2, fontsize=6.8, loc="upper right")
-fig.text(0.5, -0.02, CAVEAT, ha="center", fontsize=8, color="0.35")
+handles, labels = axes[0].get_legend_handles_labels()
+fig.legend(handles, labels, loc="lower center", ncol=5, fontsize=6.5,
+           frameon=False, bbox_to_anchor=(0.5, 0.10))
+fig.text(0.5, 0.01, CAVEAT, ha="center", fontsize=7.5, color="0.35")
 fig.suptitle("Semantic reconstruction fidelity vs SNR — all methods, "
-             "all bandwidths", y=1.04, fontsize=12)
-fig.savefig(FIG / "fig13_mse_vs_snr.png")
+             "all bandwidths", y=0.98, fontsize=12)
+fig.subplots_adjust(left=0.09, right=0.99, top=0.86, bottom=0.30,
+                    wspace=0.08)
+fig.savefig(FIG / "fig13_mse_vs_snr.png", bbox_inches="tight")
 plt.close(fig)
 
 # ---- fig14: rate-distortion (MSE vs bandwidth rho) --------------------------
-fig, axes = plt.subplots(1, 3, figsize=(11.5, 3.5), sharey=True)
+fig, axes = plt.subplots(1, 3, figsize=(11.5, 4.6), sharey=True)
 for ax, snr in zip(axes, (0.0, 10.0, 20.0)):
     for m, lab, c, mk in METH:
         ax.plot([k / 6 for k in KS2],
                 [mse(m, k, "awgn", snr) for k in KS2],
                 marker=mk, ms=5, lw=1.5, color=c, label=lab)
     ax.set_title(f"AWGN @ {snr:g} dB")
-    ax.set_xlabel("bandwidth ratio ρ = k/6")
     ax.set_yscale("log")
     ax.set_xticks([k / 6 for k in KS2])
     ax.set_xticklabels([f"{k/6:g}\n(k={k})" for k in KS2], fontsize=8)
 axes[0].set_ylabel("trajectory MSE (normalized state, /6)")
 axes[0].legend(loc="upper right")
-fig.text(0.5, -0.02, CAVEAT, ha="center", fontsize=8, color="0.35")
+fig.text(0.5, 0.12, "bandwidth ratio ρ = k/6", ha="center", fontsize=10)
+fig.text(0.5, 0.02, CAVEAT, ha="center", fontsize=7.5, color="0.35")
 fig.suptitle("Rate-distortion view — semantic fidelity vs bandwidth "
-             "(AWGN, pooled)", y=1.04, fontsize=12)
-fig.savefig(FIG / "fig14_rate_distortion.png")
+             "(AWGN, pooled)", y=0.98, fontsize=12)
+fig.subplots_adjust(left=0.07, right=0.99, top=0.84, bottom=0.28,
+                    wspace=0.08)
+fig.savefig(FIG / "fig14_rate_distortion.png", bbox_inches="tight")
 plt.close(fig)
 
 # ---- fig15: learned encoder constellation -----------------------------------
@@ -124,14 +130,15 @@ for ax, model, lab, c in ((axes[0], m_recon, "recon encoder", C_RECON),
                label="symbol 1")
     ax.scatter(z1.real, z1.imag, s=6, alpha=0.35, color="0.35",
                marker="^", label="symbol 2")
-    ax.set_title(f"{lab} (k=24): first 2 of 24 symbols, 500 states")
+    ax.set_title(f"{lab} (k=24), 500 states", fontsize=10, pad=8)
     ax.set_xlabel("in-phase")
     ax.set_ylabel("quadrature")
     ax.legend(loc="upper right")
     ax.set_aspect("equal")
 fig.suptitle("Learned JSCC code structure — pre-channel encoder output "
-             "@ 10 dB (semantic vs reconstruction objective)", y=1.02,
-             fontsize=12)
+             "@ 10 dB (semantic vs reconstruction objective)", y=0.99,
+             fontsize=11)
+fig.tight_layout(rect=(0, 0, 1, 0.92))
 fig.savefig(FIG / "fig15_constellation.png")
 plt.close(fig)
 

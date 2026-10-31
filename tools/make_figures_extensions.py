@@ -142,6 +142,10 @@ def aerial_training():
         if d13 is not None:
             rows = d13["curves"].get(f"aerial_train_k{k}")
             cap = d13.get("aerial_train_max_offset_db")
+            if cap is None:
+                # A-13 is the "trunc20" variant; the cap is in the wave_id
+                # and in the protocol amendment, but not always in the summary.
+                cap = 20.0
             if rows and cap is not None:
                 ax.plot([r["nominal_snr_db"] for r in rows],
                         [r["success_rate"] for r in rows],

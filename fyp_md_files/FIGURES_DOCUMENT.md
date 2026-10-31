@@ -620,15 +620,16 @@ This companion contains **all 38 figures** generated for the project. Each figur
 <!-- pagebreak -->
 ## Figure 33 — A-12 vs A-13 Training under 3GPP Dispersion
 
-![Figure 33 — A-12 full-dispersion training vs the Rayleigh-trained baseline.](fyp_md_files/figures/fig_aerial_training.png)
+![Figure 33 — A-12 full-dispersion training vs A-13 tail-resampled training, with the Rayleigh baseline and digital reference.](fyp_md_files/figures/fig_aerial_training.png)
 
-**What it shows.** A-12 versus the Rayleigh-trained baseline under the 3GPP UMa-aerial dispersion at k = 18 and 54. The full-dispersion A-12 run stays near 0.02–0.03; the Rayleigh-trained policy remains high; digital is shown for reference. The A-13 resampled variant is reported in the results table; this figure is the A-12 diagnostic.
+**What it shows.** A-12 versus A-13 under the 3GPP UMa-aerial dispersion at k = 18 and 54, with the Rayleigh-trained baseline and the digital link for reference. The full-dispersion A-12 run (red squares) stays near 0.02–0.03; the Rayleigh-trained policy (blue circles) remains high; the A-13 tail-resampled variant (purple diamonds) tracks the Rayleigh baseline almost exactly; digital is the green dotted line. The A-13 cap is >20 dB, i.e. the rare outage tail is resampled during training.
 
 **What to notice.**
-- Full-dispersion training collapses even with λ-shaping.
-- The Rayleigh-trained policy transfers well to the dispersion at evaluation.
-- Use this to explain the negative result honestly.
-- Do not claim that A-13 is plotted here; it is not.
+- Full-dispersion training collapses even with λ-shaping (A-12, red squares).
+- The Rayleigh-trained policy transfers well to the dispersion at evaluation (blue circles).
+- A-13 restores training stability but does not move the operating point: the purple diamonds sit on the blue circles, within sampling error.
+- The honest claim is “A-13 is stable and does not move the operating point”, not “A-13 recovers a specific number of dB”.
+- Digital is shown only as a reference; at k = 54 it needs much higher nominal SNR to rise.
 
 **Best placement.** Chapter 5.10 (A-12/A-13).
 

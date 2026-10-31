@@ -125,6 +125,42 @@ The central empirical finding is a bandwidth crossover: neural joint source-chan
 | E | Number of evaluation episodes |
 
 <!-- pagebreak -->
+## List of Figures
+
+- **Figure 3.1** — 3GPP UMa-aerial geometry, LoS probability, and path loss at the pinned 500 m / 50 m / 2 GHz geometry.
+- **Figure 4.1** — Experiment matrix actually executed: M1–M5, Waves A–C, and A-9…A-15.
+- **Figure 5.1** — M2 success rate versus bandwidth: the crossover between k = 18 and k = 24.
+- **Figure 5.2** — M3: the digital baseline is infeasible at k = 1, 2, 3; the first feasible packet is at k = 12.
+- **Figure 5.3** — M4: the B = 8 reference at k = 54 and the bandwidth cost of separation.
+- **Figure 5.4** — Wave-A arm ablation: only the control-penalty arms recover the task.
+- **Figure 5.5** — Training stability: λ-shaping bounds the encoder gradient by about fourteen orders of magnitude.
+- **Figure 5.6** — Wave-B: success rate versus k with CSI-error bands.
+- **Figure 5.7** — Wave-C: λ-shaping holds at k = 18 and k = 54.
+- **Figure 5.8** — A-10: required transmit SNR on the 3GPP UMa-aerial link.
+- **Figure 5.9** — A-11: polar versus convolutional digital baseline.
+
+<!-- pagebreak -->
+## List of Tables
+
+- **Table 2.1** — Positioning of the reviewed work relative to this thesis.
+- **Table 4.1** — Experimental matrix.
+- **Table 4.2** — Experiment blocks actually executed.
+- **Table 5.1** — M1 low-bandwidth results (k = 1, 2, 3).
+- **Table 5.2** — M2 success rate by bandwidth on AWGN.
+- **Table 5.3** — M3 infeasibility cells.
+- **Table 5.4** — M4 success rate at k = 54, B = 8, E = 5,000.
+- **Table 5.5** — Wave-A loss-component ablation at k = 12.
+- **Table 5.6** — Wave-B CSI-estimation-error sweep, pooled across k.
+- **Table 5.7** — Wave-C λ-heavy success rate at k = 18 and k = 54.
+- **Table 5.8** — Wave-C λ-heavy advantage over the best baseline.
+- **Table 5.9** — A-10 required transmit SNR on the 3GPP UMa-aerial link.
+- **Table 5.10** — A-15 full 5G NR polar comparator versus the convolutional baseline.
+- **Table A.1** — Frozen configuration.
+- **Table B.1** — Protocol amendments A-1…A-15.
+- **Table B.2** — Experiment blocks and status.
+- **Table C.1** — Reproduction and file map.
+
+<!-- pagebreak -->
 # Chapter 1 — Introduction
 
 ## 1.1 Background
@@ -496,7 +532,7 @@ Wave-C is a four-cell screening study: λ-heavy at k = 18 and 54, both channels,
 
 ## 4.11 Statistical Analysis
 
-All methods are evaluated on bitwise-identical episodes: initial positions, goals, noise, and fading are pre-generated once per (k, channel, SNR, seed) unit and shared across methods. This paired design removes episode-sampling variance from pairwise comparisons. Binary success is compared with the McNemar test (two-sided, continuity-corrected χ²(1)); continuous metrics use the paired t-test. Wilson 95% confidence intervals are reported on all success rates. Three training seeds are used; pooled results aggregate 15,000 episodes per condition in M2. Per-seed means and standard deviations are reported alongside pooled estimates. The pooled Wilson interval reflects variability over training replicas, not statistically independent episodes.
+All methods are evaluated on bitwise-identical episodes: initial positions, goals, noise, and fading are pre-generated once per (k, channel, SNR, seed) unit and shared across methods. This paired design removes episode-sampling variance from pairwise comparisons. Binary success is compared with the McNemar test (two-sided, continuity-corrected χ²(1)); continuous metrics use the paired t-test. Wilson 95% confidence intervals are reported on all success rates. Three training seeds are used; pooled results aggregate 15,000 episodes per condition in M2. Per-seed means and standard deviations are reported alongside pooled estimates. The pooled Wilson interval reflects variability over training replicas, not statistically independent episodes. No family-wise multiple-comparison correction is applied; the main effects are very large (for example, 0.02 versus 0.99 success), so a Holm or Bonferroni correction would not change the qualitative conclusion. The reported p-values are therefore per-comparison and descriptive for the large effects, not a confirmatory family-wise claim.
 
 ## 4.12 Reproducibility and Engineering Controls
 

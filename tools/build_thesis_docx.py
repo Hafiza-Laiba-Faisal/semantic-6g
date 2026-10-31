@@ -1,14 +1,20 @@
 #!/usr/bin/env python3
-"""Build THESIS_MASTER_DOCUMENT.docx from fyp_md_files/THESIS_MASTER_DOCUMENT.md.
+"""Build a Word document from a Markdown source file.
 
 The Markdown file is the single source of truth. This converter handles the
-subset of Markdown used in the thesis: headings, paragraphs, bullet/numbered
-lists, pipe tables, blockquotes, images, bold/italic/code spans, and explicit
-page-break markers.
+subset of Markdown used by the thesis and figure documents: headings,
+paragraphs, bullet/numbered lists, pipe tables, blockquotes, images,
+bold/italic/code spans, and explicit page-break markers.
+
+Usage:
+    python tools/build_thesis_docx.py
+    python tools/build_thesis_docx.py --md fyp_md_files/FIGURES_DOCUMENT.md \
+        --out FIGURES_DOCUMENT.docx --header "Thesis Figures"
 """
 
 from __future__ import annotations
 
+import argparse
 import re
 from pathlib import Path
 
@@ -106,6 +112,14 @@ def add_toc(doc: Document) -> None:
     doc.add_page_break()
 
 
+def enable_update_fields(doc: Document) -> None:
+    """Ask Word to refresh the TOC and page fields when the file is opened."""
+    settings = doc.settings.element
+    update = OxmlElement("w:updateFields")
+    update.set(qn("w:val"), "true")
+    settings.append(update)
+
+
 def add_inline(paragraph, text: str, size: float | None = None,
                bold: bool = False, italic: bool = False,
                color: RGBColor | None = None) -> None:
@@ -170,11 +184,15 @@ def add_table(doc: Document, rows: list[list[str]], *, center: bool = False) -> 
             add_inline(p, value, size=9, bold=(r_idx == 0))
             if r_idx == 0:
                 set_cell_shading(cell, LIGHT_NAVY)
-    # Keep table rows from splitting across pages.
+    # Keep table rows from splitting across pages and repeat the header row.
     for row in table.rows:
         tr_pr = row._tr.get_or_add_trPr()
         cant_split = OxmlElement("w:cantSplit")
         tr_pr.append(cant_split)
+    header_tr_pr = table.rows[0]._tr.get_or_add_trPr()
+    tbl_header = OxmlElement("w:tblHeader")
+    tbl_header.set(qn("w:val"), "true")
+    header_tr_pr.append(tbl_header)
     doc.add_paragraph().paragraph_format.space_after = Pt(2)
 
 
@@ -239,22 +257,27 @@ def style_document(doc: Document) -> None:
     title.paragraph_format.space_after = Pt(18)
 
 
-def build() -> None:
-    lines = MD_PATH.read_text(encoding="utf-8").splitlines()
+def build(
+    md_path: Path = MD_PATH,
+    out_path: Path = OUT_PATH,
+    header: str = "Task-Oriented DeepJSCC for UAV Navigation",
+    doc_title: str | None = None,
+) -> None:
+    lines = md_path.read_text(encoding="utf-8").splitlines()
     doc = Document()
     style_document(doc)
+    enable_update_fields(doc)
 
     props = doc.core_properties
-    props.title = "Task-Oriented DeepJSCC for UAV Navigation"
+    props.title = doc_title or header
     props.subject = "Final Year Project Thesis"
     props.author = "Areesha Sohail; Amna Shahid; Hafiza Laiba Faisal"
     props.keywords = (
         "DeepJSCC; task-oriented communication; UAV navigation; AWGN; "
-        "Rayleigh fading; 6G"
+        "Rayleigh fading; 3GPP UMa-aerial; 6G"
     )
     props.comments = (
-        "Generated from fyp_md_files/THESIS_MASTER_DOCUMENT.md by "
-        "tools/build_thesis_docx.py"
+        f"Generated from {md_path.name} by tools/build_thesis_docx.py"
     )
 
     section = doc.sections[0]
@@ -263,7 +286,7 @@ def build() -> None:
     section.left_margin = Inches(1)
     section.right_margin = Inches(1)
     section.different_first_page_header_footer = True
-    add_header(section, "Task-Oriented DeepJSCC for UAV Navigation")
+    add_header(section, header)
     add_page_number_footer(section)
 
     in_title = True
@@ -402,9 +425,23 @@ def build() -> None:
             add_inline(p, stripped)
         i += 1
 
-    doc.save(OUT_PATH)
-    print(f"Wrote {OUT_PATH} ({OUT_PATH.stat().st_size / 1024:.1f} KB)")
+    doc.save(out_path)
+    print(f"Wrote {out_path} ({out_path.stat().st_size / 1024:.1f} KB)")
 
 
 if __name__ == "__main__":
-    build()
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--md", type=Path, default=MD_PATH)
+    parser.add_argument("--out", type=Path, default=OUT_PATH)
+    parser.add_argument(
+        "--header",
+        default="Task-Oriented DeepJSCC for UAV Navigation",
+        help="Running header text",
+    )
+    parser.add_argument(
+        "--title",
+        default=None,
+        help="Document title metadata (defaults to the header)",
+    )
+    args = parser.parse_args()
+    build(args.md, args.out, args.header, args.title)

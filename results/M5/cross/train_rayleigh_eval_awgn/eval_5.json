@@ -1,0 +1,30 @@
+{
+  "experiment": "M5",
+  "step": "M5c",
+  "trained_on": "rayleigh",
+  "eval_channel": "awgn",
+  "k": 18,
+  "seed": 42,
+  "snr_db": 5.0,
+  "episodes": 1000,
+  "test_seed": 10042,
+  "t_max": 100,
+  "non_frozen": true,
+  "amendment": "M5-A16-2026-11-01",
+  "source_artifact": "results\\WAVE_C\\WAVE_C_lam_ctl_heavy_task_rayleigh_k18_seed42__b2c3f0caecd67764\\final_ckpt.pt",
+  "protocol_note": "evaluation-only cross-channel transfer; the checkpoint is not fine-tuned",
+  "aggregate_task": {
+    "episodes": 1000,
+    "success_count": 998,
+    "failure_count": 2,
+    "success_rate": 0.998,
+    "final_distance_mean": 0.06887141615152359,
+    "avg_distance_mean": 2.017303943634033,
+    "control_effort_mean": 226.27565002441406,
+    "min_distance_mean": 0.041341934353113174,
+    "mse_mean": 0.2526795268058777,
+    "ttg_success_mean": 34.444889068603516,
+    "ttg_success_median": 34.0
+  },
+  "wall_s": 0.8
+}

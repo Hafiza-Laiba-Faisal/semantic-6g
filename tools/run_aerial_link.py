@@ -190,7 +190,7 @@ D2D = H = FC = EPISODES = None
 
 
 def main(argv):
-    global D2D, H, FC, EPISODES
+    global D2D, H, FC, EPISODES, OUT
     args = dict(a.split("=", 1) for a in argv
                 if a.startswith("--") and "=" in a)
     d2d = float(args.get("--d2d", 500.0))
@@ -199,6 +199,10 @@ def main(argv):
     ref = float(args.get("--ref", 0.0))        # 0 = absolute path loss
     episodes = int(args.get("--episodes", 1000))
     reuse = "--reuse" in argv
+    # A-10 writes to results/AERIAL by default; a sweep passes --out=<dir> so
+    # the frozen A-10 artifact is never overwritten.
+    if "--out" in args:
+        OUT = ROOT / args["--out"]
     D2D, H, FC, EPISODES = d2d, h, fc, episodes
     path = OUT / "step_aerial_summary.json"
 

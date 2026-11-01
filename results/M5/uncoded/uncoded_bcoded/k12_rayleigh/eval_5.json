@@ -1,0 +1,31 @@
+{
+  "experiment": "M5",
+  "step": "M5b",
+  "variant": "uncoded_bcoded",
+  "k": 12,
+  "channel": "rayleigh",
+  "snr_db": 5.0,
+  "bits_per_component": 1,
+  "n_payload_symbols": 3,
+  "k_symbols": 12,
+  "episodes": 1000,
+  "test_seed": 10042,
+  "t_max": 100,
+  "non_frozen": true,
+  "amendment": "M5-A16-2026-11-01",
+  "protocol_note": "uncoded QPSK reference; evaluation only; same episodes/noise as the paired harness",
+  "aggregate_uncoded": {
+    "episodes": 1000,
+    "success_count": 64,
+    "failure_count": 936,
+    "success_rate": 0.064,
+    "final_distance_mean": 4.547367095947266,
+    "avg_distance_mean": 5.488890171051025,
+    "control_effort_mean": 789.7717895507812,
+    "min_distance_mean": 3.5145933628082275,
+    "mse_mean": 0.5940135717391968,
+    "ttg_success_mean": 43.40625,
+    "ttg_success_median": 41.0
+  },
+  "wall_s": 0.6
+}

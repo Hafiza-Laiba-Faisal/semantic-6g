@@ -1,5 +1,38 @@
 # FYP Project Status
 
+## 2026-11-01 — M5 executed (A-16) and 3GPP multi-geometry sweep (A-17)
+
+**Trigger.** Supervisor review (2026-11-01) demanded the deferred M5 ablations
+and a real 3GPP treatment. A-16 and A-17 were registered **before the first
+cell**, so M5 is no longer a deferred label.
+
+**Status of each block:**
+
+| Block | Universe | State at time of writing |
+|---|---|---|
+| M5a — λ term removal | 12 train / 20 eval slots | training (watcher `tools/watch_m5.py` will evaluate + finalize) |
+| M5b — uncoded QPSK reference | 20 conditions / 100 slots | **complete** |
+| M5c — cross-channel transfer | 2 units / 10 slots | **complete** |
+| A-17 — 3GPP multi-geometry | 12 geometries | sweep running under `results/AERIAL_GEOM/` |
+
+**M5b headline (new, and it changes the thesis wording):** at k = 12 the frozen
+coded baseline carries B = 1 and reaches 0.062; the *same channel uses,
+uncoded*, carry B = 4 and reach **0.526**. The low-bandwidth digital ceiling is
+a **payload/framing artefact**, not a separation artefact. Against the uncoded
+full-bandwidth link, no digital variant beats the λ-heavy arm below k = 54.
+Full write-up: `fyp_md_files/RESULTS_M5B_M5C_2026-11-01.md`.
+
+**M5c:** cross-channel transfer shows no measurable degradation (0.991–0.999),
+but the metric is saturated at k = 18, so this cannot distinguish transfer from
+ceiling. Recorded as a limitation.
+
+**Repository hygiene (same day):** root README added, `fyp_md_files/INDEX.md`
+and `results/README.md` added, generated bundles moved to `artifacts/`,
+`results/modal_token_log.txt` untracked, `pytest` added via
+`requirements-dev.txt`. Local suite: **99 passed in 126 s**.
+
+---
+
 ## Project
 TASK-ORIENTED DEEP JOINT SOURCE-CHANNEL CODING FOR UAV NAVIGATION UNDER NOISY AND FADING WIRELESS CHANNELS
 

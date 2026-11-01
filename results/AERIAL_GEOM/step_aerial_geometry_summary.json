@@ -1,0 +1,970 @@
+{
+  "experiment": "AERIAL_GEOM",
+  "amendment": "A-17",
+  "amendment_label": "AERIAL-GEOM-2026-11-01",
+  "question": "does the A-10 lambda advantage over the classical link hold across UAV geometry (distance, altitude, carrier)?",
+  "scope": "evaluation only; large-scale 3GPP UMa-aerial path loss and LoS probability; no Doppler, no shadowing correlation, no aerial small-scale fading",
+  "grid": {
+    "d2d_m": [
+      200.0,
+      500.0,
+      1000.0
+    ],
+    "h_m": [
+      50.0,
+      100.0
+    ],
+    "fc_ghz": [
+      2.0,
+      3.5
+    ]
+  },
+  "episodes": 1000,
+  "targets": [
+    "0.90",
+    "0.99"
+  ],
+  "protocol_note": "identical method to A-10: evaluate the stored Wave-C lambda-heavy checkpoints and the frozen digital baseline at effective SNR, then map to transmit SNR through the LoS/NLoS mixture",
+  "rows": [
+    {
+      "d2d_m": 200.0,
+      "h_m": 50.0,
+      "fc_ghz": 2.0,
+      "status": "measured",
+      "d3d_m": 206.15528128088303,
+      "p_los": 0.9671501231818425,
+      "pl_los_db": 84.93287814383305,
+      "pl_nlos_db": 99.89308862853821,
+      "pl_mean_db": 85.42431921542932,
+      "episodes": 1000,
+      "methods": {
+        "lam_ctl_heavy_k18": {
+          "k": 18,
+          "required_eff_db": {
+            "0.90": -8.289473684210524,
+            "0.99": -0.833333333333333
+          },
+          "required_tx_db": {
+            "0.90": 78.0,
+            "0.99": 89.0
+          },
+          "aerial_penalty_db": {
+            "0.90": 86.28947368421052,
+            "0.99": 89.83333333333333
+          }
+        },
+        "lam_ctl_heavy_k54": {
+          "k": 54,
+          "required_eff_db": {
+            "0.90": -12.33333333333333,
+            "0.99": -5.232558139534883
+          },
+          "required_tx_db": {
+            "0.90": 74.0,
+            "0.99": 85.0
+          },
+          "aerial_penalty_db": {
+            "0.90": 86.33333333333333,
+            "0.99": 90.23255813953489
+          }
+        },
+        "digital_k18": {
+          "k": 18,
+          "required_eff_db": {
+            "0.90": null,
+            "0.99": null
+          },
+          "required_tx_db": {
+            "0.90": null,
+            "0.99": null
+          },
+          "aerial_penalty_db": {
+            "0.90": null,
+            "0.99": null
+          }
+        },
+        "digital_k54": {
+          "k": 54,
+          "required_eff_db": {
+            "0.90": 3.452830188679246,
+            "0.99": 7.352941176470589
+          },
+          "required_tx_db": {
+            "0.90": 89.0,
+            "0.99": 100.0
+          },
+          "aerial_penalty_db": {
+            "0.90": 85.54716981132076,
+            "0.99": 92.6470588235294
+          }
+        }
+      },
+      "lambda_advantage_k54_at_0.90_db": 15.0,
+      "lambda_advantage_k54_at_0.99_db": 15.0,
+      "lambda_advantage_k18_at_0.90_db": null,
+      "lambda_advantage_k18_at_0.99_db": null
+    },
+    {
+      "d2d_m": 200.0,
+      "h_m": 50.0,
+      "fc_ghz": 3.5,
+      "status": "measured",
+      "d3d_m": 206.15528128088303,
+      "p_los": 0.9671501231818425,
+      "pl_los_db": 89.79363911755894,
+      "pl_nlos_db": 104.7538496022641,
+      "pl_mean_db": 90.28508018915521,
+      "episodes": 1000,
+      "methods": {
+        "lam_ctl_heavy_k18": {
+          "k": 18,
+          "required_eff_db": {
+            "0.90": -8.289473684210524,
+            "0.99": -0.833333333333333
+          },
+          "required_tx_db": {
+            "0.90": 83.0,
+            "0.99": 94.0
+          },
+          "aerial_penalty_db": {
+            "0.90": 91.28947368421052,
+            "0.99": 94.83333333333333
+          }
+        },
+        "lam_ctl_heavy_k54": {
+          "k": 54,
+          "required_eff_db": {
+            "0.90": -12.33333333333333,
+            "0.99": -5.232558139534883
+          },
+          "required_tx_db": {
+            "0.90": 79.0,
+            "0.99": 90.0
+          },
+          "aerial_penalty_db": {
+            "0.90": 91.33333333333333,
+            "0.99": 95.23255813953489
+          }
+        },
+        "digital_k18": {
+          "k": 18,
+          "required_eff_db": {
+            "0.90": null,
+            "0.99": null
+          },
+          "required_tx_db": {
+            "0.90": null,
+            "0.99": null
+          },
+          "aerial_penalty_db": {
+            "0.90": null,
+            "0.99": null
+          }
+        },
+        "digital_k54": {
+          "k": 54,
+          "required_eff_db": {
+            "0.90": 3.452830188679246,
+            "0.99": 7.352941176470589
+          },
+          "required_tx_db": {
+            "0.90": 94.0,
+            "0.99": 105.0
+          },
+          "aerial_penalty_db": {
+            "0.90": 90.54716981132076,
+            "0.99": 97.6470588235294
+          }
+        }
+      },
+      "lambda_advantage_k54_at_0.90_db": 15.0,
+      "lambda_advantage_k54_at_0.99_db": 15.0,
+      "lambda_advantage_k18_at_0.90_db": null,
+      "lambda_advantage_k18_at_0.99_db": null
+    },
+    {
+      "d2d_m": 200.0,
+      "h_m": 100.0,
+      "fc_ghz": 2.0,
+      "status": "measured",
+      "d3d_m": 223.60679774997897,
+      "p_los": 1.0,
+      "pl_los_db": 85.70926996097583,
+      "pl_nlos_db": 96.14589216870459,
+      "pl_mean_db": 85.70926996097583,
+      "episodes": 1000,
+      "methods": {
+        "lam_ctl_heavy_k18": {
+          "k": 18,
+          "required_eff_db": {
+            "0.90": -8.289473684210524,
+            "0.99": -0.833333333333333
+          },
+          "required_tx_db": {
+            "0.90": 78.0,
+            "0.99": 85.0
+          },
+          "aerial_penalty_db": {
+            "0.90": 86.28947368421052,
+            "0.99": 85.83333333333333
+          }
+        },
+        "lam_ctl_heavy_k54": {
+          "k": 54,
+          "required_eff_db": {
+            "0.90": -12.33333333333333,
+            "0.99": -5.232558139534883
+          },
+          "required_tx_db": {
+            "0.90": 74.0,
+            "0.99": 81.0
+          },
+          "aerial_penalty_db": {
+            "0.90": 86.33333333333333,
+            "0.99": 86.23255813953489
+          }
+        },
+        "digital_k18": {
+          "k": 18,
+          "required_eff_db": {
+            "0.90": null,
+            "0.99": null
+          },
+          "required_tx_db": {
+            "0.90": null,
+            "0.99": null
+          },
+          "aerial_penalty_db": {
+            "0.90": null,
+            "0.99": null
+          }
+        },
+        "digital_k54": {
+          "k": 54,
+          "required_eff_db": {
+            "0.90": 3.452830188679246,
+            "0.99": 7.352941176470589
+          },
+          "required_tx_db": {
+            "0.90": 90.0,
+            "0.99": 94.0
+          },
+          "aerial_penalty_db": {
+            "0.90": 86.54716981132076,
+            "0.99": 86.6470588235294
+          }
+        }
+      },
+      "lambda_advantage_k54_at_0.90_db": 16.0,
+      "lambda_advantage_k54_at_0.99_db": 13.0,
+      "lambda_advantage_k18_at_0.90_db": null,
+      "lambda_advantage_k18_at_0.99_db": null
+    },
+    {
+      "d2d_m": 200.0,
+      "h_m": 100.0,
+      "fc_ghz": 3.5,
+      "status": "measured",
+      "d3d_m": 223.60679774997897,
+      "p_los": 1.0,
+      "pl_los_db": 90.57003093470172,
+      "pl_nlos_db": 101.00665314243048,
+      "pl_mean_db": 90.57003093470172,
+      "episodes": 1000,
+      "methods": {
+        "lam_ctl_heavy_k18": {
+          "k": 18,
+          "required_eff_db": {
+            "0.90": -8.289473684210524,
+            "0.99": -0.833333333333333
+          },
+          "required_tx_db": {
+            "0.90": 83.0,
+            "0.99": 90.0
+          },
+          "aerial_penalty_db": {
+            "0.90": 91.28947368421052,
+            "0.99": 90.83333333333333
+          }
+        },
+        "lam_ctl_heavy_k54": {
+          "k": 54,
+          "required_eff_db": {
+            "0.90": -12.33333333333333,
+            "0.99": -5.232558139534883
+          },
+          "required_tx_db": {
+            "0.90": 79.0,
+            "0.99": 86.0
+          },
+          "aerial_penalty_db": {
+            "0.90": 91.33333333333333,
+            "0.99": 91.23255813953489
+          }
+        },
+        "digital_k18": {
+          "k": 18,
+          "required_eff_db": {
+            "0.90": null,
+            "0.99": null
+          },
+          "required_tx_db": {
+            "0.90": null,
+            "0.99": null
+          },
+          "aerial_penalty_db": {
+            "0.90": null,
+            "0.99": null
+          }
+        },
+        "digital_k54": {
+          "k": 54,
+          "required_eff_db": {
+            "0.90": 3.452830188679246,
+            "0.99": 7.352941176470589
+          },
+          "required_tx_db": {
+            "0.90": 95.0,
+            "0.99": 98.0
+          },
+          "aerial_penalty_db": {
+            "0.90": 91.54716981132076,
+            "0.99": 90.6470588235294
+          }
+        }
+      },
+      "lambda_advantage_k54_at_0.90_db": 16.0,
+      "lambda_advantage_k54_at_0.99_db": 12.0,
+      "lambda_advantage_k18_at_0.90_db": null,
+      "lambda_advantage_k18_at_0.99_db": null
+    },
+    {
+      "d2d_m": 500.0,
+      "h_m": 50.0,
+      "fc_ghz": 2.0,
+      "status": "measured",
+      "d3d_m": 502.4937810560445,
+      "p_los": 0.8887485122408123,
+      "pl_los_db": 93.44547512028112,
+      "pl_nlos_db": 113.09040374047927,
+      "pl_mean_db": 95.63100265620122,
+      "episodes": 1000,
+      "methods": {
+        "lam_ctl_heavy_k18": {
+          "k": 18,
+          "required_eff_db": {
+            "0.90": -8.289473684210524,
+            "0.99": -0.833333333333333
+          },
+          "required_tx_db": {
+            "0.90": 91.0,
+            "0.99": 107.0
+          },
+          "aerial_penalty_db": {
+            "0.90": 99.28947368421052,
+            "0.99": 107.83333333333333
+          }
+        },
+        "lam_ctl_heavy_k54": {
+          "k": 54,
+          "required_eff_db": {
+            "0.90": -12.33333333333333,
+            "0.99": -5.232558139534883
+          },
+          "required_tx_db": {
+            "0.90": 87.0,
+            "0.99": 102.0
+          },
+          "aerial_penalty_db": {
+            "0.90": 99.33333333333333,
+            "0.99": 107.23255813953489
+          }
+        },
+        "digital_k18": {
+          "k": 18,
+          "required_eff_db": {
+            "0.90": null,
+            "0.99": null
+          },
+          "required_tx_db": {
+            "0.90": null,
+            "0.99": null
+          },
+          "aerial_penalty_db": {
+            "0.90": null,
+            "0.99": null
+          }
+        },
+        "digital_k54": {
+          "k": 54,
+          "required_eff_db": {
+            "0.90": 3.452830188679246,
+            "0.99": 7.352941176470589
+          },
+          "required_tx_db": {
+            "0.90": 108.0,
+            "0.99": 117.0
+          },
+          "aerial_penalty_db": {
+            "0.90": 104.54716981132076,
+            "0.99": 109.6470588235294
+          }
+        }
+      },
+      "lambda_advantage_k54_at_0.90_db": 21.0,
+      "lambda_advantage_k54_at_0.99_db": 15.0,
+      "lambda_advantage_k18_at_0.90_db": null,
+      "lambda_advantage_k18_at_0.99_db": null
+    },
+    {
+      "d2d_m": 500.0,
+      "h_m": 50.0,
+      "fc_ghz": 3.5,
+      "status": "measured",
+      "d3d_m": 502.4937810560445,
+      "p_los": 0.8887485122408123,
+      "pl_los_db": 98.306236094007,
+      "pl_nlos_db": 117.95116471420516,
+      "pl_mean_db": 100.49176362992709,
+      "episodes": 1000,
+      "methods": {
+        "lam_ctl_heavy_k18": {
+          "k": 18,
+          "required_eff_db": {
+            "0.90": -8.289473684210524,
+            "0.99": -0.833333333333333
+          },
+          "required_tx_db": {
+            "0.90": 96.0,
+            "0.99": 112.0
+          },
+          "aerial_penalty_db": {
+            "0.90": 104.28947368421052,
+            "0.99": 112.83333333333333
+          }
+        },
+        "lam_ctl_heavy_k54": {
+          "k": 54,
+          "required_eff_db": {
+            "0.90": -12.33333333333333,
+            "0.99": -5.232558139534883
+          },
+          "required_tx_db": {
+            "0.90": 92.0,
+            "0.99": 107.0
+          },
+          "aerial_penalty_db": {
+            "0.90": 104.33333333333333,
+            "0.99": 112.23255813953489
+          }
+        },
+        "digital_k18": {
+          "k": 18,
+          "required_eff_db": {
+            "0.90": null,
+            "0.99": null
+          },
+          "required_tx_db": {
+            "0.90": null,
+            "0.99": null
+          },
+          "aerial_penalty_db": {
+            "0.90": null,
+            "0.99": null
+          }
+        },
+        "digital_k54": {
+          "k": 54,
+          "required_eff_db": {
+            "0.90": 3.452830188679246,
+            "0.99": 7.352941176470589
+          },
+          "required_tx_db": {
+            "0.90": 113.0,
+            "0.99": 122.0
+          },
+          "aerial_penalty_db": {
+            "0.90": 109.54716981132076,
+            "0.99": 114.6470588235294
+          }
+        }
+      },
+      "lambda_advantage_k54_at_0.90_db": 21.0,
+      "lambda_advantage_k54_at_0.99_db": 15.0,
+      "lambda_advantage_k18_at_0.90_db": null,
+      "lambda_advantage_k18_at_0.99_db": null
+    },
+    {
+      "d2d_m": 500.0,
+      "h_m": 100.0,
+      "fc_ghz": 2.0,
+      "status": "measured",
+      "d3d_m": 509.9019513592785,
+      "p_los": 0.9446020592039228,
+      "pl_los_db": 93.58530674095863,
+      "pl_nlos_db": 107.60194566686138,
+      "pl_mean_db": 94.36179967433578,
+      "episodes": 1000,
+      "methods": {
+        "lam_ctl_heavy_k18": {
+          "k": 18,
+          "required_eff_db": {
+            "0.90": -8.289473684210524,
+            "0.99": -0.833333333333333
+          },
+          "required_tx_db": {
+            "0.90": 87.0,
+            "0.99": 99.0
+          },
+          "aerial_penalty_db": {
+            "0.90": 95.28947368421052,
+            "0.99": 99.83333333333333
+          }
+        },
+        "lam_ctl_heavy_k54": {
+          "k": 54,
+          "required_eff_db": {
+            "0.90": -12.33333333333333,
+            "0.99": -5.232558139534883
+          },
+          "required_tx_db": {
+            "0.90": 83.0,
+            "0.99": 95.0
+          },
+          "aerial_penalty_db": {
+            "0.90": 95.33333333333333,
+            "0.99": 100.23255813953489
+          }
+        },
+        "digital_k18": {
+          "k": 18,
+          "required_eff_db": {
+            "0.90": null,
+            "0.99": null
+          },
+          "required_tx_db": {
+            "0.90": null,
+            "0.99": null
+          },
+          "aerial_penalty_db": {
+            "0.90": null,
+            "0.99": null
+          }
+        },
+        "digital_k54": {
+          "k": 54,
+          "required_eff_db": {
+            "0.90": 3.452830188679246,
+            "0.99": 7.352941176470589
+          },
+          "required_tx_db": {
+            "0.90": 99.0,
+            "0.99": 110.0
+          },
+          "aerial_penalty_db": {
+            "0.90": 95.54716981132076,
+            "0.99": 102.6470588235294
+          }
+        }
+      },
+      "lambda_advantage_k54_at_0.90_db": 16.0,
+      "lambda_advantage_k54_at_0.99_db": 15.0,
+      "lambda_advantage_k18_at_0.90_db": null,
+      "lambda_advantage_k18_at_0.99_db": null
+    },
+    {
+      "d2d_m": 500.0,
+      "h_m": 100.0,
+      "fc_ghz": 3.5,
+      "status": "measured",
+      "d3d_m": 509.9019513592785,
+      "p_los": 0.9446020592039228,
+      "pl_los_db": 98.44606771468452,
+      "pl_nlos_db": 112.46270664058727,
+      "pl_mean_db": 99.22256064806167,
+      "episodes": 1000,
+      "methods": {
+        "lam_ctl_heavy_k18": {
+          "k": 18,
+          "required_eff_db": {
+            "0.90": -8.289473684210524,
+            "0.99": -0.833333333333333
+          },
+          "required_tx_db": {
+            "0.90": 92.0,
+            "0.99": 104.0
+          },
+          "aerial_penalty_db": {
+            "0.90": 100.28947368421052,
+            "0.99": 104.83333333333333
+          }
+        },
+        "lam_ctl_heavy_k54": {
+          "k": 54,
+          "required_eff_db": {
+            "0.90": -12.33333333333333,
+            "0.99": -5.232558139534883
+          },
+          "required_tx_db": {
+            "0.90": 88.0,
+            "0.99": 100.0
+          },
+          "aerial_penalty_db": {
+            "0.90": 100.33333333333333,
+            "0.99": 105.23255813953489
+          }
+        },
+        "digital_k18": {
+          "k": 18,
+          "required_eff_db": {
+            "0.90": null,
+            "0.99": null
+          },
+          "required_tx_db": {
+            "0.90": null,
+            "0.99": null
+          },
+          "aerial_penalty_db": {
+            "0.90": null,
+            "0.99": null
+          }
+        },
+        "digital_k54": {
+          "k": 54,
+          "required_eff_db": {
+            "0.90": 3.452830188679246,
+            "0.99": 7.352941176470589
+          },
+          "required_tx_db": {
+            "0.90": 103.0,
+            "0.99": 115.0
+          },
+          "aerial_penalty_db": {
+            "0.90": 99.54716981132076,
+            "0.99": 107.6470588235294
+          }
+        }
+      },
+      "lambda_advantage_k54_at_0.90_db": 15.0,
+      "lambda_advantage_k54_at_0.99_db": 15.0,
+      "lambda_advantage_k18_at_0.90_db": null,
+      "lambda_advantage_k18_at_0.99_db": null
+    },
+    {
+      "d2d_m": 1000.0,
+      "h_m": 50.0,
+      "fc_ghz": 2.0,
+      "status": "measured",
+      "d3d_m": 1001.2492197250393,
+      "p_los": 0.772051870462364,
+      "pl_los_db": 100.03252810749404,
+      "pl_nlos_db": 123.30249461848234,
+      "pl_mean_db": 105.33687344807726,
+      "episodes": 1000,
+      "methods": {
+        "lam_ctl_heavy_k18": {
+          "k": 18,
+          "required_eff_db": {
+            "0.90": -8.289473684210524,
+            "0.99": -0.833333333333333
+          },
+          "required_tx_db": {
+            "0.90": 108.0,
+            "0.99": 118.0
+          },
+          "aerial_penalty_db": {
+            "0.90": 116.28947368421052,
+            "0.99": 118.83333333333333
+          }
+        },
+        "lam_ctl_heavy_k54": {
+          "k": 54,
+          "required_eff_db": {
+            "0.90": -12.33333333333333,
+            "0.99": -5.232558139534883
+          },
+          "required_tx_db": {
+            "0.90": 103.0,
+            "0.99": 115.0
+          },
+          "aerial_penalty_db": {
+            "0.90": 115.33333333333333,
+            "0.99": 120.23255813953489
+          }
+        },
+        "digital_k18": {
+          "k": 18,
+          "required_eff_db": {
+            "0.90": null,
+            "0.99": null
+          },
+          "required_tx_db": {
+            "0.90": null,
+            "0.99": null
+          },
+          "aerial_penalty_db": {
+            "0.90": null,
+            "0.99": null
+          }
+        },
+        "digital_k54": {
+          "k": 54,
+          "required_eff_db": {
+            "0.90": 3.452830188679246,
+            "0.99": 7.352941176470589
+          },
+          "required_tx_db": {
+            "0.90": 123.0,
+            "0.99": 128.0
+          },
+          "aerial_penalty_db": {
+            "0.90": 119.54716981132076,
+            "0.99": 120.6470588235294
+          }
+        }
+      },
+      "lambda_advantage_k54_at_0.90_db": 20.0,
+      "lambda_advantage_k54_at_0.99_db": 13.0,
+      "lambda_advantage_k18_at_0.90_db": null,
+      "lambda_advantage_k18_at_0.99_db": null
+    },
+    {
+      "d2d_m": 1000.0,
+      "h_m": 50.0,
+      "fc_ghz": 3.5,
+      "status": "measured",
+      "d3d_m": 1001.2492197250393,
+      "p_los": 0.772051870462364,
+      "pl_los_db": 104.89328908121993,
+      "pl_nlos_db": 128.16325559220823,
+      "pl_mean_db": 110.19763442180314,
+      "episodes": 1000,
+      "methods": {
+        "lam_ctl_heavy_k18": {
+          "k": 18,
+          "required_eff_db": {
+            "0.90": -8.289473684210524,
+            "0.99": -0.833333333333333
+          },
+          "required_tx_db": {
+            "0.90": 113.0,
+            "0.99": 123.0
+          },
+          "aerial_penalty_db": {
+            "0.90": 121.28947368421052,
+            "0.99": 123.83333333333333
+          }
+        },
+        "lam_ctl_heavy_k54": {
+          "k": 54,
+          "required_eff_db": {
+            "0.90": -12.33333333333333,
+            "0.99": -5.232558139534883
+          },
+          "required_tx_db": {
+            "0.90": 108.0,
+            "0.99": 120.0
+          },
+          "aerial_penalty_db": {
+            "0.90": 120.33333333333333,
+            "0.99": 125.23255813953489
+          }
+        },
+        "digital_k18": {
+          "k": 18,
+          "required_eff_db": {
+            "0.90": null,
+            "0.99": null
+          },
+          "required_tx_db": {
+            "0.90": null,
+            "0.99": null
+          },
+          "aerial_penalty_db": {
+            "0.90": null,
+            "0.99": null
+          }
+        },
+        "digital_k54": {
+          "k": 54,
+          "required_eff_db": {
+            "0.90": 3.452830188679246,
+            "0.99": 7.352941176470589
+          },
+          "required_tx_db": {
+            "0.90": 127.0,
+            "0.99": 133.0
+          },
+          "aerial_penalty_db": {
+            "0.90": 123.54716981132076,
+            "0.99": 125.6470588235294
+          }
+        }
+      },
+      "lambda_advantage_k54_at_0.90_db": 19.0,
+      "lambda_advantage_k54_at_0.99_db": 13.0,
+      "lambda_advantage_k18_at_0.90_db": null,
+      "lambda_advantage_k18_at_0.99_db": null
+    },
+    {
+      "d2d_m": 1000.0,
+      "h_m": 100.0,
+      "fc_ghz": 2.0,
+      "status": "measured",
+      "d3d_m": 1004.987562112089,
+      "p_los": 0.8533103499974952,
+      "pl_los_db": 100.06813502488869,
+      "pl_nlos_db": 117.03151407985058,
+      "pl_mean_db": 102.55648716132087,
+      "episodes": 1000,
+      "methods": {
+        "lam_ctl_heavy_k18": {
+          "k": 18,
+          "required_eff_db": {
+            "0.90": -8.289473684210524,
+            "0.99": -0.833333333333333
+          },
+          "required_tx_db": {
+            "0.90": 99.0,
+            "0.99": 112.0
+          },
+          "aerial_penalty_db": {
+            "0.90": 107.28947368421052,
+            "0.99": 112.83333333333333
+          }
+        },
+        "lam_ctl_heavy_k54": {
+          "k": 54,
+          "required_eff_db": {
+            "0.90": -12.33333333333333,
+            "0.99": -5.232558139534883
+          },
+          "required_tx_db": {
+            "0.90": 94.0,
+            "0.99": 107.0
+          },
+          "aerial_penalty_db": {
+            "0.90": 106.33333333333333,
+            "0.99": 112.23255813953489
+          }
+        },
+        "digital_k18": {
+          "k": 18,
+          "required_eff_db": {
+            "0.90": null,
+            "0.99": null
+          },
+          "required_tx_db": {
+            "0.90": null,
+            "0.99": null
+          },
+          "aerial_penalty_db": {
+            "0.90": null,
+            "0.99": null
+          }
+        },
+        "digital_k54": {
+          "k": 54,
+          "required_eff_db": {
+            "0.90": 3.452830188679246,
+            "0.99": 7.352941176470589
+          },
+          "required_tx_db": {
+            "0.90": 114.0,
+            "0.99": 122.0
+          },
+          "aerial_penalty_db": {
+            "0.90": 110.54716981132076,
+            "0.99": 114.6470588235294
+          }
+        }
+      },
+      "lambda_advantage_k54_at_0.90_db": 20.0,
+      "lambda_advantage_k54_at_0.99_db": 15.0,
+      "lambda_advantage_k18_at_0.90_db": null,
+      "lambda_advantage_k18_at_0.99_db": null
+    },
+    {
+      "d2d_m": 1000.0,
+      "h_m": 100.0,
+      "fc_ghz": 3.5,
+      "status": "measured",
+      "d3d_m": 1004.987562112089,
+      "p_los": 0.8533103499974952,
+      "pl_los_db": 104.92889599861458,
+      "pl_nlos_db": 121.89227505357647,
+      "pl_mean_db": 107.41724813504676,
+      "episodes": 1000,
+      "methods": {
+        "lam_ctl_heavy_k18": {
+          "k": 18,
+          "required_eff_db": {
+            "0.90": -8.289473684210524,
+            "0.99": -0.833333333333333
+          },
+          "required_tx_db": {
+            "0.90": 103.0,
+            "0.99": 116.0
+          },
+          "aerial_penalty_db": {
+            "0.90": 111.28947368421052,
+            "0.99": 116.83333333333333
+          }
+        },
+        "lam_ctl_heavy_k54": {
+          "k": 54,
+          "required_eff_db": {
+            "0.90": -12.33333333333333,
+            "0.99": -5.232558139534883
+          },
+          "required_tx_db": {
+            "0.90": 99.0,
+            "0.99": 112.0
+          },
+          "aerial_penalty_db": {
+            "0.90": 111.33333333333333,
+            "0.99": 117.23255813953489
+          }
+        },
+        "digital_k18": {
+          "k": 18,
+          "required_eff_db": {
+            "0.90": null,
+            "0.99": null
+          },
+          "required_tx_db": {
+            "0.90": null,
+            "0.99": null
+          },
+          "aerial_penalty_db": {
+            "0.90": null,
+            "0.99": null
+          }
+        },
+        "digital_k54": {
+          "k": 54,
+          "required_eff_db": {
+            "0.90": 3.452830188679246,
+            "0.99": 7.352941176470589
+          },
+          "required_tx_db": {
+            "0.90": 119.0,
+            "0.99": 126.0
+          },
+          "aerial_penalty_db": {
+            "0.90": 115.54716981132076,
+            "0.99": 118.6470588235294
+          }
+        }
+      },
+      "lambda_advantage_k54_at_0.90_db": 20.0,
+      "lambda_advantage_k54_at_0.99_db": 14.0,
+      "lambda_advantage_k18_at_0.90_db": null,
+      "lambda_advantage_k18_at_0.99_db": null
+    }
+  ],
+  "counts": {
+    "geometries": 12,
+    "measured": 12
+  }
+}

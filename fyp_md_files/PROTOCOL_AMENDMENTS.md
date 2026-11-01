@@ -27,7 +27,7 @@ number in this log was typed by hand from memory.
 | AERIAL_TRAIN_TRUNC | 2 train / 48 slots (+1 pre-flight, writes nothing) | 2 / 48, pre-flight PASS at +20 dB | A-13 | A-13 complete (operating point unchanged) |
 | K24_SEEDS | 6 train / 30 slots | 6 / 30 | A-14 | complete (seed range â‰¤ 0.004; metric at ceiling) |
 | M5 | 12 train + 130 eval slots | 0 / 12 train, 0 / 130 slots | A-16 | **registered 2026-11-01, in progress** |
-| AERIAL_GEOM | evaluation only, 12 geometries | 0 / 12 | A-17 | **registered 2026-11-01, in progress** |
+| AERIAL_GEOM | evaluation only, 12 geometries | 12 / 12 | A-17 | **complete** (advantage 15–21 dB, does not collapse) |
 
 "Accounted" always means *evaluated or explicitly declared*. Nothing is
 imputed, nothing is dropped silently, and no failed cell is replaced.
@@ -973,5 +973,6 @@ loss weight, the channel model, the evaluation seeds, the SNR grid or the
 statistics requires **a new dated entry in this file, approved by the user,
 before the run** â€” never a silent edit, and never a retrain justified by a
 result being ugly.
+
 
 

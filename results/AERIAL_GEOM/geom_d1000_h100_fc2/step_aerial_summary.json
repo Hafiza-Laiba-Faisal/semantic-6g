@@ -1,0 +1,2048 @@
+{
+  "experiment": "AERIAL",
+  "amendment": "A-10",
+  "amendment_label": "AERIAL-3GPP-2026-10-26",
+  "scope": "3GPP TR 36.777 / TR 38.901 UMa-aerial large-scale layer: P_LoS, LoS/NLoS path loss, mixture over the same curve. No Doppler, no shadowing, no aerial-specific small-scale fading.",
+  "geometry": {
+    "d2d_m": 1000.0,
+    "h_m": 100.0,
+    "fc_ghz": 2.0,
+    "d3d_m": 1004.987562112089,
+    "reference_pl_db": 0.0
+  },
+  "aerial": {
+    "p_los": 0.8533103499974952,
+    "pl_los_db": 100.06813502488869,
+    "pl_nlos_db": 117.03151407985058,
+    "pl_mean_db": 102.55648716132087,
+    "gain_mean": 7.4503322714358445e-06,
+    "formulas": {
+      "source": "3GPP TR 36.777 / TR 38.901 UMa-aerial (via arXiv:2105.13717)",
+      "los_prob": "d1/r + exp(-r/p1)(1-d1/r), p1=4300log10(h)-3800, d1=max(460log10(h)-700,18)",
+      "pl_los_db": "28.0 + 22*log10(d3D) + 20*log10(fc_GHz)",
+      "pl_nlos_db": "-17.5 + (46-7*log10(h))*log10(d3D) + 20*log10(40*pi*fc/3)",
+      "shadow_sigma_db": {
+        "los": 4.0,
+        "nlos": 6.0
+      },
+      "training_geometry": {
+        "d2d_m": 500.0,
+        "h_m": 50.0,
+        "fc_ghz": 2.0
+      },
+      "training_channel": "per-episode LoS/NLoS draw + log-normal shadowing, block-fading over the episode; no Doppler",
+      "csi_error_hook": "csi_error_sigma",
+      "default_disabled": true,
+      "additive_to_frozen": true
+    }
+  },
+  "eff_grid_db": [
+    -40,
+    -35,
+    -30,
+    -25,
+    -20,
+    -15,
+    -10,
+    -5,
+    0,
+    5,
+    10,
+    15,
+    20,
+    25
+  ],
+  "episodes": 1000,
+  "eff_grid_measured": [
+    -40,
+    -35,
+    -30,
+    -25,
+    -20,
+    -15,
+    -10,
+    -5,
+    0,
+    5,
+    10,
+    15,
+    20,
+    25
+  ],
+  "reuse": true,
+  "methods": {
+    "lam_ctl_heavy_k18": {
+      "k": 18,
+      "curve_eff": [
+        {
+          "snr_eff_db": -40.0,
+          "success_rate": 0.026,
+          "final_distance_mean": 9.599188804626465,
+          "control_effort_mean": 774.001953125
+        },
+        {
+          "snr_eff_db": -35.0,
+          "success_rate": 0.038,
+          "final_distance_mean": 9.011943817138672,
+          "control_effort_mean": 767.9368286132812
+        },
+        {
+          "snr_eff_db": -30.0,
+          "success_rate": 0.073,
+          "final_distance_mean": 7.890320777893066,
+          "control_effort_mean": 763.4529418945312
+        },
+        {
+          "snr_eff_db": -25.0,
+          "success_rate": 0.142,
+          "final_distance_mean": 5.932455062866211,
+          "control_effort_mean": 748.1326293945312
+        },
+        {
+          "snr_eff_db": -20.0,
+          "success_rate": 0.345,
+          "final_distance_mean": 3.648465871810913,
+          "control_effort_mean": 730.1759643554688
+        },
+        {
+          "snr_eff_db": -15.0,
+          "success_rate": 0.63,
+          "final_distance_mean": 1.7188011407852173,
+          "control_effort_mean": 702.8922119140625
+        },
+        {
+          "snr_eff_db": -10.0,
+          "success_rate": 0.861,
+          "final_distance_mean": 0.6203906536102295,
+          "control_effort_mean": 619.8248901367188
+        },
+        {
+          "snr_eff_db": -5.0,
+          "success_rate": 0.975,
+          "final_distance_mean": 0.24003219604492188,
+          "control_effort_mean": 476.1781005859375
+        },
+        {
+          "snr_eff_db": 0.0,
+          "success_rate": 0.993,
+          "final_distance_mean": 0.12523068487644196,
+          "control_effort_mean": 340.5924987792969
+        },
+        {
+          "snr_eff_db": 5.0,
+          "success_rate": 0.997,
+          "final_distance_mean": 0.09101803600788116,
+          "control_effort_mean": 265.9440002441406
+        },
+        {
+          "snr_eff_db": 10.0,
+          "success_rate": 0.996,
+          "final_distance_mean": 0.08334418386220932,
+          "control_effort_mean": 235.55923461914062
+        },
+        {
+          "snr_eff_db": 15.0,
+          "success_rate": 0.997,
+          "final_distance_mean": 0.07876749336719513,
+          "control_effort_mean": 222.84251403808594
+        },
+        {
+          "snr_eff_db": 20.0,
+          "success_rate": 0.997,
+          "final_distance_mean": 0.0779343768954277,
+          "control_effort_mean": 217.86044311523438
+        },
+        {
+          "snr_eff_db": 25.0,
+          "success_rate": 0.997,
+          "final_distance_mean": 0.07851102948188782,
+          "control_effort_mean": 216.0588836669922
+        }
+      ],
+      "required_eff_db": {
+        "0.90": -8.289473684210524,
+        "0.99": -0.833333333333333
+      },
+      "mixture_tx": [
+        {
+          "snr_tx_db": 40.0,
+          "success_rate": 0.0
+        },
+        {
+          "snr_tx_db": 41.0,
+          "success_rate": 0.0
+        },
+        {
+          "snr_tx_db": 42.0,
+          "success_rate": 0.0
+        },
+        {
+          "snr_tx_db": 43.0,
+          "success_rate": 0.0
+        },
+        {
+          "snr_tx_db": 44.0,
+          "success_rate": 0.0
+        },
+        {
+          "snr_tx_db": 45.0,
+          "success_rate": 0.0
+        },
+        {
+          "snr_tx_db": 46.0,
+          "success_rate": 0.0
+        },
+        {
+          "snr_tx_db": 47.0,
+          "success_rate": 0.0
+        },
+        {
+          "snr_tx_db": 48.0,
+          "success_rate": 0.0
+        },
+        {
+          "snr_tx_db": 49.0,
+          "success_rate": 0.0
+        },
+        {
+          "snr_tx_db": 50.0,
+          "success_rate": 0.0
+        },
+        {
+          "snr_tx_db": 51.0,
+          "success_rate": 0.0
+        },
+        {
+          "snr_tx_db": 52.0,
+          "success_rate": 0.0
+        },
+        {
+          "snr_tx_db": 53.0,
+          "success_rate": 0.0
+        },
+        {
+          "snr_tx_db": 54.0,
+          "success_rate": 0.0
+        },
+        {
+          "snr_tx_db": 55.0,
+          "success_rate": 0.0
+        },
+        {
+          "snr_tx_db": 56.0,
+          "success_rate": 0.0
+        },
+        {
+          "snr_tx_db": 57.0,
+          "success_rate": 0.0
+        },
+        {
+          "snr_tx_db": 58.0,
+          "success_rate": 0.0
+        },
+        {
+          "snr_tx_db": 59.0,
+          "success_rate": 0.0
+        },
+        {
+          "snr_tx_db": 60.0,
+          "success_rate": 0.020674420729628613
+        },
+        {
+          "snr_tx_db": 61.0,
+          "success_rate": 0.02409447716728521
+        },
+        {
+          "snr_tx_db": 62.0,
+          "success_rate": 0.0261424220072792
+        },
+        {
+          "snr_tx_db": 63.0,
+          "success_rate": 0.028190366847273187
+        },
+        {
+          "snr_tx_db": 64.0,
+          "success_rate": 0.030238311687267174
+        },
+        {
+          "snr_tx_db": 65.0,
+          "success_rate": 0.032286256527261165
+        },
+        {
+          "snr_tx_db": 66.0,
+          "success_rate": 0.037991983496343286
+        },
+        {
+          "snr_tx_db": 67.0,
+          "success_rate": 0.04396515594632575
+        },
+        {
+          "snr_tx_db": 68.0,
+          "success_rate": 0.04993832839630822
+        },
+        {
+          "snr_tx_db": 69.0,
+          "success_rate": 0.055911500846290686
+        },
+        {
+          "snr_tx_db": 70.0,
+          "success_rate": 0.06188467329627316
+        },
+        {
+          "snr_tx_db": 71.0,
+          "success_rate": 0.07326500193708156
+        },
+        {
+          "snr_tx_db": 72.0,
+          "success_rate": 0.085040684767047
+        },
+        {
+          "snr_tx_db": 73.0,
+          "success_rate": 0.09681636759701243
+        },
+        {
+          "snr_tx_db": 74.0,
+          "success_rate": 0.10859205042697785
+        },
+        {
+          "snr_tx_db": 75.0,
+          "success_rate": 0.12036773325694329
+        },
+        {
+          "snr_tx_db": 76.0,
+          "success_rate": 0.15345397283898746
+        },
+        {
+          "snr_tx_db": 77.0,
+          "success_rate": 0.19179211142602162
+        },
+        {
+          "snr_tx_db": 78.0,
+          "success_rate": 0.22689766462443092
+        },
+        {
+          "snr_tx_db": 79.0,
+          "success_rate": 0.26189411999433526
+        },
+        {
+          "snr_tx_db": 80.0,
+          "success_rate": 0.2968905753642396
+        },
+        {
+          "snr_tx_db": 81.0,
+          "success_rate": 0.34492781919437115
+        },
+        {
+          "snr_tx_db": 82.0,
+          "success_rate": 0.39391856430423444
+        },
+        {
+          "snr_tx_db": 83.0,
+          "success_rate": 0.4435628169731294
+        },
+        {
+          "snr_tx_db": 84.0,
+          "success_rate": 0.4932283344730042
+        },
+        {
+          "snr_tx_db": 85.0,
+          "success_rate": 0.5428938519728789
+        },
+        {
+          "snr_tx_db": 86.0,
+          "success_rate": 0.5839715331696771
+        },
+        {
+          "snr_tx_db": 87.0,
+          "success_rate": 0.624421298889579
+        },
+        {
+          "snr_tx_db": 88.0,
+          "success_rate": 0.6658371192619624
+        },
+        {
+          "snr_tx_db": 89.0,
+          "success_rate": 0.7072843746018813
+        },
+        {
+          "snr_tx_db": 90.0,
+          "success_rate": 0.7487316299418002
+        },
+        {
+          "snr_tx_db": 91.0,
+          "success_rate": 0.7715719066250534
+        },
+        {
+          "snr_tx_db": 92.0,
+          "success_rate": 0.7930516997750306
+        },
+        {
+          "snr_tx_db": 93.0,
+          "success_rate": 0.8183388847906713
+        },
+        {
+          "snr_tx_db": 94.0,
+          "success_rate": 0.8437499605607159
+        },
+        {
+          "snr_tx_db": 95.0,
+          "success_rate": 0.8691610363307605
+        },
+        {
+          "snr_tx_db": 96.0,
+          "success_rate": 0.8793048475620024
+        },
+        {
+          "snr_tx_db": 97.0,
+          "success_rate": 0.8883323646120951
+        },
+        {
+          "snr_tx_db": 98.0,
+          "success_rate": 0.8996897781769966
+        },
+        {
+          "snr_tx_db": 99.0,
+          "success_rate": 0.9111230054871302
+        },
+        {
+          "snr_tx_db": 100.0,
+          "success_rate": 0.9225562327972641
+        },
+        {
+          "snr_tx_db": 101.0,
+          "success_rate": 0.9317629840288224
+        },
+        {
+          "snr_tx_db": 102.0,
+          "success_rate": 0.9408069423589632
+        },
+        {
+          "snr_tx_db": 103.0,
+          "success_rate": 0.948316578593986
+        },
+        {
+          "snr_tx_db": 104.0,
+          "success_rate": 0.9557762887040998
+        },
+        {
+          "snr_tx_db": 105.0,
+          "success_rate": 0.9632359988142135
+        },
+        {
+          "snr_tx_db": 106.0,
+          "success_rate": 0.9699005388962646
+        },
+        {
+          "snr_tx_db": 107.0,
+          "success_rate": 0.9765069386563807
+        },
+        {
+          "snr_tx_db": 108.0,
+          "success_rate": 0.9797889738770746
+        },
+        {
+          "snr_tx_db": 109.0,
+          "success_rate": 0.9829628358271323
+        },
+        {
+          "snr_tx_db": 110.0,
+          "success_rate": 0.9861366977771899
+        },
+        {
+          "snr_tx_db": 111.0,
+          "success_rate": 0.9896286277384725
+        },
+        {
+          "snr_tx_db": 112.0,
+          "success_rate": 0.9931438138285291
+        },
+        {
+          "snr_tx_db": 113.0,
+          "success_rate": 0.9939313161939316
+        },
+        {
+          "snr_tx_db": 114.0,
+          "success_rate": 0.9946300610039401
+        },
+        {
+          "snr_tx_db": 115.0,
+          "success_rate": 0.9953288058139487
+        },
+        {
+          "snr_tx_db": 116.0,
+          "success_rate": 0.9958685166183445
+        },
+        {
+          "snr_tx_db": 117.0,
+          "success_rate": 0.9963965993583536
+        },
+        {
+          "snr_tx_db": 118.0,
+          "success_rate": 0.9965268948885172
+        },
+        {
+          "snr_tx_db": 119.0,
+          "success_rate": 0.9966442466085192
+        },
+        {
+          "snr_tx_db": 120.0,
+          "success_rate": 0.9967615983285212
+        },
+        {
+          "snr_tx_db": 121.0,
+          "success_rate": 0.9968789500485232
+        },
+        {
+          "snr_tx_db": 122.0,
+          "success_rate": 0.9969963017685253
+        },
+        {
+          "snr_tx_db": 123.0,
+          "success_rate": 0.9969715866278681
+        },
+        {
+          "snr_tx_db": 124.0,
+          "success_rate": 0.9969422486978676
+        },
+        {
+          "snr_tx_db": 125.0,
+          "success_rate": 0.9969129107678671
+        },
+        {
+          "snr_tx_db": 126.0,
+          "success_rate": 0.9968835728378667
+        },
+        {
+          "snr_tx_db": 127.0,
+          "success_rate": 0.9968542349078662
+        },
+        {
+          "snr_tx_db": 128.0,
+          "success_rate": 0.9968817237221292
+        },
+        {
+          "snr_tx_db": 129.0,
+          "success_rate": 0.9969110616521297
+        },
+        {
+          "snr_tx_db": 130.0,
+          "success_rate": 0.9969403995821302
+        },
+        {
+          "snr_tx_db": 131.0,
+          "success_rate": 0.9969697375121308
+        },
+        {
+          "snr_tx_db": 132.0,
+          "success_rate": 0.9969990754421313
+        },
+        {
+          "snr_tx_db": 133.0,
+          "success_rate": 0.997
+        },
+        {
+          "snr_tx_db": 134.0,
+          "success_rate": 0.997
+        },
+        {
+          "snr_tx_db": 135.0,
+          "success_rate": 0.997
+        },
+        {
+          "snr_tx_db": 136.0,
+          "success_rate": 0.997
+        },
+        {
+          "snr_tx_db": 137.0,
+          "success_rate": 0.997
+        },
+        {
+          "snr_tx_db": 138.0,
+          "success_rate": 0.997
+        },
+        {
+          "snr_tx_db": 139.0,
+          "success_rate": 0.997
+        },
+        {
+          "snr_tx_db": 140.0,
+          "success_rate": 0.997
+        }
+      ],
+      "required_tx_db": {
+        "0.90": 99.0,
+        "0.99": 112.0
+      },
+      "aerial_penalty_db": {
+        "0.90": 107.28947368421052,
+        "0.99": 112.83333333333333
+      }
+    },
+    "lam_ctl_heavy_k54": {
+      "k": 54,
+      "curve_eff": [
+        {
+          "snr_eff_db": -40.0,
+          "success_rate": 0.036,
+          "final_distance_mean": 8.984505653381348,
+          "control_effort_mean": 765.706298828125
+        },
+        {
+          "snr_eff_db": -35.0,
+          "success_rate": 0.064,
+          "final_distance_mean": 7.763245105743408,
+          "control_effort_mean": 759.7954711914062
+        },
+        {
+          "snr_eff_db": -30.0,
+          "success_rate": 0.139,
+          "final_distance_mean": 5.81215238571167,
+          "control_effort_mean": 750.7677612304688
+        },
+        {
+          "snr_eff_db": -25.0,
+          "success_rate": 0.315,
+          "final_distance_mean": 3.6575112342834473,
+          "control_effort_mean": 730.77978515625
+        },
+        {
+          "snr_eff_db": -20.0,
+          "success_rate": 0.613,
+          "final_distance_mean": 1.8226537704467773,
+          "control_effort_mean": 702.5773315429688
+        },
+        {
+          "snr_eff_db": -15.0,
+          "success_rate": 0.844,
+          "final_distance_mean": 0.698948860168457,
+          "control_effort_mean": 629.5509643554688
+        },
+        {
+          "snr_eff_db": -10.0,
+          "success_rate": 0.949,
+          "final_distance_mean": 0.27657487988471985,
+          "control_effort_mean": 485.4540100097656
+        },
+        {
+          "snr_eff_db": -5.0,
+          "success_rate": 0.992,
+          "final_distance_mean": 0.1428474485874176,
+          "control_effort_mean": 354.3171691894531
+        },
+        {
+          "snr_eff_db": 0.0,
+          "success_rate": 0.996,
+          "final_distance_mean": 0.10879088193178177,
+          "control_effort_mean": 279.77288818359375
+        },
+        {
+          "snr_eff_db": 5.0,
+          "success_rate": 0.998,
+          "final_distance_mean": 0.08543749898672104,
+          "control_effort_mean": 245.95521545410156
+        },
+        {
+          "snr_eff_db": 10.0,
+          "success_rate": 0.998,
+          "final_distance_mean": 0.08037200570106506,
+          "control_effort_mean": 231.6058349609375
+        },
+        {
+          "snr_eff_db": 15.0,
+          "success_rate": 0.998,
+          "final_distance_mean": 0.08054910600185394,
+          "control_effort_mean": 226.44866943359375
+        },
+        {
+          "snr_eff_db": 20.0,
+          "success_rate": 0.998,
+          "final_distance_mean": 0.08062652498483658,
+          "control_effort_mean": 224.7127227783203
+        },
+        {
+          "snr_eff_db": 25.0,
+          "success_rate": 0.998,
+          "final_distance_mean": 0.08054559677839279,
+          "control_effort_mean": 223.93179321289062
+        }
+      ],
+      "required_eff_db": {
+        "0.90": -12.33333333333333,
+        "0.99": -5.232558139534883
+      },
+      "mixture_tx": [
+        {
+          "snr_tx_db": 40.0,
+          "success_rate": 0.0
+        },
+        {
+          "snr_tx_db": 41.0,
+          "success_rate": 0.0
+        },
+        {
+          "snr_tx_db": 42.0,
+          "success_rate": 0.0
+        },
+        {
+          "snr_tx_db": 43.0,
+          "success_rate": 0.0
+        },
+        {
+          "snr_tx_db": 44.0,
+          "success_rate": 0.0
+        },
+        {
+          "snr_tx_db": 45.0,
+          "success_rate": 0.0
+        },
+        {
+          "snr_tx_db": 46.0,
+          "success_rate": 0.0
+        },
+        {
+          "snr_tx_db": 47.0,
+          "success_rate": 0.0
+        },
+        {
+          "snr_tx_db": 48.0,
+          "success_rate": 0.0
+        },
+        {
+          "snr_tx_db": 49.0,
+          "success_rate": 0.0
+        },
+        {
+          "snr_tx_db": 50.0,
+          "success_rate": 0.0
+        },
+        {
+          "snr_tx_db": 51.0,
+          "success_rate": 0.0
+        },
+        {
+          "snr_tx_db": 52.0,
+          "success_rate": 0.0
+        },
+        {
+          "snr_tx_db": 53.0,
+          "success_rate": 0.0
+        },
+        {
+          "snr_tx_db": 54.0,
+          "success_rate": 0.0
+        },
+        {
+          "snr_tx_db": 55.0,
+          "success_rate": 0.0
+        },
+        {
+          "snr_tx_db": 56.0,
+          "success_rate": 0.0
+        },
+        {
+          "snr_tx_db": 57.0,
+          "success_rate": 0.0
+        },
+        {
+          "snr_tx_db": 58.0,
+          "success_rate": 0.0
+        },
+        {
+          "snr_tx_db": 59.0,
+          "success_rate": 0.0
+        },
+        {
+          "snr_tx_db": 60.0,
+          "success_rate": 0.028626121010255003
+        },
+        {
+          "snr_tx_db": 61.0,
+          "success_rate": 0.0351721247570606
+        },
+        {
+          "snr_tx_db": 62.0,
+          "success_rate": 0.03995066271704658
+        },
+        {
+          "snr_tx_db": 63.0,
+          "success_rate": 0.04472920067703255
+        },
+        {
+          "snr_tx_db": 64.0,
+          "success_rate": 0.04950773863701853
+        },
+        {
+          "snr_tx_db": 65.0,
+          "success_rate": 0.054286276597004496
+        },
+        {
+          "snr_tx_db": 66.0,
+          "success_rate": 0.06653941282077928
+        },
+        {
+          "snr_tx_db": 67.0,
+          "success_rate": 0.07933906807074172
+        },
+        {
+          "snr_tx_db": 68.0,
+          "success_rate": 0.09213872332070415
+        },
+        {
+          "snr_tx_db": 69.0,
+          "success_rate": 0.10493837857066658
+        },
+        {
+          "snr_tx_db": 70.0,
+          "success_rate": 0.117738033820629
+        },
+        {
+          "snr_tx_db": 71.0,
+          "success_rate": 0.14660012363745675
+        },
+        {
+          "snr_tx_db": 72.0,
+          "success_rate": 0.17663664795736855
+        },
+        {
+          "snr_tx_db": 73.0,
+          "success_rate": 0.2066731722772804
+        },
+        {
+          "snr_tx_db": 74.0,
+          "success_rate": 0.23670969659719224
+        },
+        {
+          "snr_tx_db": 75.0,
+          "success_rate": 0.2667462209171041
+        },
+        {
+          "snr_tx_db": 76.0,
+          "success_rate": 0.31618489392174426
+        },
+        {
+          "snr_tx_db": 77.0,
+          "success_rate": 0.3721565977653216
+        },
+        {
+          "snr_tx_db": 78.0,
+          "success_rate": 0.4239758894612267
+        },
+        {
+          "snr_tx_db": 79.0,
+          "success_rate": 0.4756546483610914
+        },
+        {
+          "snr_tx_db": 80.0,
+          "success_rate": 0.5273334072609562
+        },
+        {
+          "snr_tx_db": 81.0,
+          "success_rate": 0.5683568877847816
+        },
+        {
+          "snr_tx_db": 82.0,
+          "success_rate": 0.6086012879946798
+        },
+        {
+          "snr_tx_db": 83.0,
+          "success_rate": 0.6501811166947735
+        },
+        {
+          "snr_tx_db": 84.0,
+          "success_rate": 0.6918043996146953
+        },
+        {
+          "snr_tx_db": 85.0,
+          "success_rate": 0.7334276825346172
+        },
+        {
+          "snr_tx_db": 86.0,
+          "success_rate": 0.7550126807473605
+        },
+        {
+          "snr_tx_db": 87.0,
+          "success_rate": 0.7751325428473453
+        },
+        {
+          "snr_tx_db": 88.0,
+          "success_rate": 0.7981221555326437
+        },
+        {
+          "snr_tx_db": 89.0,
+          "success_rate": 0.8212051485626792
+        },
+        {
+          "snr_tx_db": 90.0,
+          "success_rate": 0.8442881415927148
+        },
+        {
+          "snr_tx_db": 91.0,
+          "success_rate": 0.8575110262747736
+        },
+        {
+          "snr_tx_db": 92.0,
+          "success_rate": 0.8700129709648403
+        },
+        {
+          "snr_tx_db": 93.0,
+          "success_rate": 0.8859813470549882
+        },
+        {
+          "snr_tx_db": 94.0,
+          "success_rate": 0.9020625192051159
+        },
+        {
+          "snr_tx_db": 95.0,
+          "success_rate": 0.9181436913552438
+        },
+        {
+          "snr_tx_db": 96.0,
+          "success_rate": 0.9280225372864829
+        },
+        {
+          "snr_tx_db": 97.0,
+          "success_rate": 0.9374478887066302
+        },
+        {
+          "snr_tx_db": 98.0,
+          "success_rate": 0.9449695441939459
+        },
+        {
+          "snr_tx_db": 99.0,
+          "success_rate": 0.9524292543040596
+        },
+        {
+          "snr_tx_db": 100.0,
+          "success_rate": 0.9598889644141734
+        },
+        {
+          "snr_tx_db": 101.0,
+          "success_rate": 0.967030606513062
+        },
+        {
+          "snr_tx_db": 102.0,
+          "success_rate": 0.9741489924831767
+        },
+        {
+          "snr_tx_db": 103.0,
+          "success_rate": 0.9776872935646829
+        },
+        {
+          "snr_tx_db": 104.0,
+          "success_rate": 0.9811091003547345
+        },
+        {
+          "snr_tx_db": 105.0,
+          "success_rate": 0.984530907144786
+        },
+        {
+          "snr_tx_db": 106.0,
+          "success_rate": 0.9876346459236126
+        },
+        {
+          "snr_tx_db": 107.0,
+          "success_rate": 0.9907151285736653
+        },
+        {
+          "snr_tx_db": 108.0,
+          "success_rate": 0.9920339821515454
+        },
+        {
+          "snr_tx_db": 109.0,
+          "success_rate": 0.9932955131415668
+        },
+        {
+          "snr_tx_db": 110.0,
+          "success_rate": 0.9945570441315884
+        },
+        {
+          "snr_tx_db": 111.0,
+          "success_rate": 0.99581857512161
+        },
+        {
+          "snr_tx_db": 112.0,
+          "success_rate": 0.9970801061116314
+        },
+        {
+          "snr_tx_db": 113.0,
+          "success_rate": 0.9972335155885123
+        },
+        {
+          "snr_tx_db": 114.0,
+          "success_rate": 0.9973508673085143
+        },
+        {
+          "snr_tx_db": 115.0,
+          "success_rate": 0.9974682190285162
+        },
+        {
+          "snr_tx_db": 116.0,
+          "success_rate": 0.9975855707485183
+        },
+        {
+          "snr_tx_db": 117.0,
+          "success_rate": 0.9977029224685203
+        },
+        {
+          "snr_tx_db": 118.0,
+          "success_rate": 0.9977634474442587
+        },
+        {
+          "snr_tx_db": 119.0,
+          "success_rate": 0.9978221233042597
+        },
+        {
+          "snr_tx_db": 120.0,
+          "success_rate": 0.9978807991642606
+        },
+        {
+          "snr_tx_db": 121.0,
+          "success_rate": 0.9979394750242616
+        },
+        {
+          "snr_tx_db": 122.0,
+          "success_rate": 0.9979981508842627
+        },
+        {
+          "snr_tx_db": 123.0,
+          "success_rate": 0.998
+        },
+        {
+          "snr_tx_db": 124.0,
+          "success_rate": 0.998
+        },
+        {
+          "snr_tx_db": 125.0,
+          "success_rate": 0.998
+        },
+        {
+          "snr_tx_db": 126.0,
+          "success_rate": 0.998
+        },
+        {
+          "snr_tx_db": 127.0,
+          "success_rate": 0.998
+        },
+        {
+          "snr_tx_db": 128.0,
+          "success_rate": 0.998
+        },
+        {
+          "snr_tx_db": 129.0,
+          "success_rate": 0.998
+        },
+        {
+          "snr_tx_db": 130.0,
+          "success_rate": 0.998
+        },
+        {
+          "snr_tx_db": 131.0,
+          "success_rate": 0.998
+        },
+        {
+          "snr_tx_db": 132.0,
+          "success_rate": 0.998
+        },
+        {
+          "snr_tx_db": 133.0,
+          "success_rate": 0.998
+        },
+        {
+          "snr_tx_db": 134.0,
+          "success_rate": 0.998
+        },
+        {
+          "snr_tx_db": 135.0,
+          "success_rate": 0.998
+        },
+        {
+          "snr_tx_db": 136.0,
+          "success_rate": 0.998
+        },
+        {
+          "snr_tx_db": 137.0,
+          "success_rate": 0.998
+        },
+        {
+          "snr_tx_db": 138.0,
+          "success_rate": 0.998
+        },
+        {
+          "snr_tx_db": 139.0,
+          "success_rate": 0.998
+        },
+        {
+          "snr_tx_db": 140.0,
+          "success_rate": 0.998
+        }
+      ],
+      "required_tx_db": {
+        "0.90": 94.0,
+        "0.99": 107.0
+      },
+      "aerial_penalty_db": {
+        "0.90": 106.33333333333333,
+        "0.99": 112.23255813953489
+      }
+    },
+    "digital_k18": {
+      "k": 18,
+      "curve_eff": [
+        {
+          "snr_eff_db": -40.0,
+          "success_rate": 0.008
+        },
+        {
+          "snr_eff_db": -35.0,
+          "success_rate": 0.011
+        },
+        {
+          "snr_eff_db": -30.0,
+          "success_rate": 0.015
+        },
+        {
+          "snr_eff_db": -25.0,
+          "success_rate": 0.014
+        },
+        {
+          "snr_eff_db": -20.0,
+          "success_rate": 0.018
+        },
+        {
+          "snr_eff_db": -15.0,
+          "success_rate": 0.027
+        },
+        {
+          "snr_eff_db": -10.0,
+          "success_rate": 0.066
+        },
+        {
+          "snr_eff_db": -5.0,
+          "success_rate": 0.162
+        },
+        {
+          "snr_eff_db": 0.0,
+          "success_rate": 0.172
+        },
+        {
+          "snr_eff_db": 5.0,
+          "success_rate": 0.164
+        },
+        {
+          "snr_eff_db": 10.0,
+          "success_rate": 0.147
+        },
+        {
+          "snr_eff_db": 15.0,
+          "success_rate": 0.153
+        },
+        {
+          "snr_eff_db": 20.0,
+          "success_rate": 0.151
+        },
+        {
+          "snr_eff_db": 25.0,
+          "success_rate": 0.149
+        }
+      ],
+      "required_eff_db": {
+        "0.90": null,
+        "0.99": null
+      },
+      "mixture_tx": [
+        {
+          "snr_tx_db": 40.0,
+          "success_rate": 0.0
+        },
+        {
+          "snr_tx_db": 41.0,
+          "success_rate": 0.0
+        },
+        {
+          "snr_tx_db": 42.0,
+          "success_rate": 0.0
+        },
+        {
+          "snr_tx_db": 43.0,
+          "success_rate": 0.0
+        },
+        {
+          "snr_tx_db": 44.0,
+          "success_rate": 0.0
+        },
+        {
+          "snr_tx_db": 45.0,
+          "success_rate": 0.0
+        },
+        {
+          "snr_tx_db": 46.0,
+          "success_rate": 0.0
+        },
+        {
+          "snr_tx_db": 47.0,
+          "success_rate": 0.0
+        },
+        {
+          "snr_tx_db": 48.0,
+          "success_rate": 0.0
+        },
+        {
+          "snr_tx_db": 49.0,
+          "success_rate": 0.0
+        },
+        {
+          "snr_tx_db": 50.0,
+          "success_rate": 0.0
+        },
+        {
+          "snr_tx_db": 51.0,
+          "success_rate": 0.0
+        },
+        {
+          "snr_tx_db": 52.0,
+          "success_rate": 0.0
+        },
+        {
+          "snr_tx_db": 53.0,
+          "success_rate": 0.0
+        },
+        {
+          "snr_tx_db": 54.0,
+          "success_rate": 0.0
+        },
+        {
+          "snr_tx_db": 55.0,
+          "success_rate": 0.0
+        },
+        {
+          "snr_tx_db": 56.0,
+          "success_rate": 0.0
+        },
+        {
+          "snr_tx_db": 57.0,
+          "success_rate": 0.0
+        },
+        {
+          "snr_tx_db": 58.0,
+          "success_rate": 0.0
+        },
+        {
+          "snr_tx_db": 59.0,
+          "success_rate": 0.0
+        },
+        {
+          "snr_tx_db": 60.0,
+          "success_rate": 0.006361360224501113
+        },
+        {
+          "snr_tx_db": 61.0,
+          "success_rate": 0.007303584816817545
+        },
+        {
+          "snr_tx_db": 62.0,
+          "success_rate": 0.007815571026816043
+        },
+        {
+          "snr_tx_db": 63.0,
+          "success_rate": 0.00832755723681454
+        },
+        {
+          "snr_tx_db": 64.0,
+          "success_rate": 0.008839543446813036
+        },
+        {
+          "snr_tx_db": 65.0,
+          "success_rate": 0.009351529656811533
+        },
+        {
+          "snr_tx_db": 66.0,
+          "success_rate": 0.010022549872422558
+        },
+        {
+          "snr_tx_db": 67.0,
+          "success_rate": 0.010705198152420554
+        },
+        {
+          "snr_tx_db": 68.0,
+          "success_rate": 0.01138784643241855
+        },
+        {
+          "snr_tx_db": 69.0,
+          "success_rate": 0.012070494712416547
+        },
+        {
+          "snr_tx_db": 70.0,
+          "success_rate": 0.012753142992414541
+        },
+        {
+          "snr_tx_db": 71.0,
+          "success_rate": 0.012640621244349901
+        },
+        {
+          "snr_tx_db": 72.0,
+          "success_rate": 0.012469959174350401
+        },
+        {
+          "snr_tx_db": 73.0,
+          "success_rate": 0.012299297104350904
+        },
+        {
+          "snr_tx_db": 74.0,
+          "success_rate": 0.012128635034351404
+        },
+        {
+          "snr_tx_db": 75.0,
+          "success_rate": 0.011957972964351905
+        },
+        {
+          "snr_tx_db": 76.0,
+          "success_rate": 0.012582480922415044
+        },
+        {
+          "snr_tx_db": 77.0,
+          "success_rate": 0.014401664087685617
+        },
+        {
+          "snr_tx_db": 78.0,
+          "success_rate": 0.015206534798826518
+        },
+        {
+          "snr_tx_db": 79.0,
+          "success_rate": 0.015977196868826017
+        },
+        {
+          "snr_tx_db": 80.0,
+          "success_rate": 0.016747858938825515
+        },
+        {
+          "snr_tx_db": 81.0,
+          "success_rate": 0.018313691036887653
+        },
+        {
+          "snr_tx_db": 82.0,
+          "success_rate": 0.019937663456884646
+        },
+        {
+          "snr_tx_db": 83.0,
+          "success_rate": 0.021590049249013456
+        },
+        {
+          "snr_tx_db": 84.0,
+          "success_rate": 0.02324335959901095
+        },
+        {
+          "snr_tx_db": 85.0,
+          "success_rate": 0.024896669949008448
+        },
+        {
+          "snr_tx_db": 86.0,
+          "success_rate": 0.031321000467381774
+        },
+        {
+          "snr_tx_db": 87.0,
+          "success_rate": 0.03809417291736425
+        },
+        {
+          "snr_tx_db": 88.0,
+          "success_rate": 0.04472527850668764
+        },
+        {
+          "snr_tx_db": 89.0,
+          "success_rate": 0.051351761306667604
+        },
+        {
+          "snr_tx_db": 90.0,
+          "success_rate": 0.057978244106647564
+        },
+        {
+          "snr_tx_db": 91.0,
+          "success_rate": 0.07366966522654161
+        },
+        {
+          "snr_tx_db": 92.0,
+          "success_rate": 0.09002388601649303
+        },
+        {
+          "snr_tx_db": 93.0,
+          "success_rate": 0.10652017366710352
+        },
+        {
+          "snr_tx_db": 94.0,
+          "success_rate": 0.12302108410705742
+        },
+        {
+          "snr_tx_db": 95.0,
+          "success_rate": 0.1395219945470113
+        },
+        {
+          "snr_tx_db": 96.0,
+          "success_rate": 0.14234598050428784
+        },
+        {
+          "snr_tx_db": 97.0,
+          "success_rate": 0.14416995292428483
+        },
+        {
+          "snr_tx_db": 98.0,
+          "success_rate": 0.1461359922049409
+        },
+        {
+          "snr_tx_db": 99.0,
+          "success_rate": 0.14810665427494038
+        },
+        {
+          "snr_tx_db": 100.0,
+          "success_rate": 0.1500773163449399
+        },
+        {
+          "snr_tx_db": 101.0,
+          "success_rate": 0.14918536631391388
+        },
+        {
+          "snr_tx_db": 102.0,
+          "success_rate": 0.1480841111239224
+        },
+        {
+          "snr_tx_db": 103.0,
+          "success_rate": 0.14783525709788536
+        },
+        {
+          "snr_tx_db": 104.0,
+          "success_rate": 0.1476141398079089
+        },
+        {
+          "snr_tx_db": 105.0,
+          "success_rate": 0.14739302251793246
+        },
+        {
+          "snr_tx_db": 106.0,
+          "success_rate": 0.14574059917744325
+        },
+        {
+          "snr_tx_db": 107.0,
+          "success_rate": 0.1439835232574713
+        },
+        {
+          "snr_tx_db": 108.0,
+          "success_rate": 0.14384600954901278
+        },
+        {
+          "snr_tx_db": 109.0,
+          "success_rate": 0.14376119563906936
+        },
+        {
+          "snr_tx_db": 110.0,
+          "success_rate": 0.143676381729126
+        },
+        {
+          "snr_tx_db": 111.0,
+          "success_rate": 0.14724934994827074
+        },
+        {
+          "snr_tx_db": 112.0,
+          "success_rate": 0.15108976364831583
+        },
+        {
+          "snr_tx_db": 113.0,
+          "success_rate": 0.15248662734502488
+        },
+        {
+          "snr_tx_db": 114.0,
+          "success_rate": 0.15380397906502688
+        },
+        {
+          "snr_tx_db": 115.0,
+          "success_rate": 0.15512133078502888
+        },
+        {
+          "snr_tx_db": 116.0,
+          "success_rate": 0.15516641046013066
+        },
+        {
+          "snr_tx_db": 117.0,
+          "success_rate": 0.15511846562013665
+        },
+        {
+          "snr_tx_db": 118.0,
+          "success_rate": 0.15455908008177002
+        },
+        {
+          "snr_tx_db": 119.0,
+          "success_rate": 0.153983052501767
+        },
+        {
+          "snr_tx_db": 120.0,
+          "success_rate": 0.15340702492176403
+        },
+        {
+          "snr_tx_db": 121.0,
+          "success_rate": 0.152830997341761
+        },
+        {
+          "snr_tx_db": 122.0,
+          "success_rate": 0.15225496976175798
+        },
+        {
+          "snr_tx_db": 123.0,
+          "success_rate": 0.15142322183256865
+        },
+        {
+          "snr_tx_db": 124.0,
+          "success_rate": 0.15058315288256113
+        },
+        {
+          "snr_tx_db": 125.0,
+          "success_rate": 0.14974308393255364
+        },
+        {
+          "snr_tx_db": 126.0,
+          "success_rate": 0.14922108299377115
+        },
+        {
+          "snr_tx_db": 127.0,
+          "success_rate": 0.14872233818376265
+        },
+        {
+          "snr_tx_db": 128.0,
+          "success_rate": 0.14887710093278586
+        },
+        {
+          "snr_tx_db": 129.0,
+          "success_rate": 0.14905312851278887
+        },
+        {
+          "snr_tx_db": 130.0,
+          "success_rate": 0.14922915609279186
+        },
+        {
+          "snr_tx_db": 131.0,
+          "success_rate": 0.14940518367279487
+        },
+        {
+          "snr_tx_db": 132.0,
+          "success_rate": 0.14958121125279789
+        },
+        {
+          "snr_tx_db": 133.0,
+          "success_rate": 0.14952993185574637
+        },
+        {
+          "snr_tx_db": 134.0,
+          "success_rate": 0.14947125599574537
+        },
+        {
+          "snr_tx_db": 135.0,
+          "success_rate": 0.14941258013574438
+        },
+        {
+          "snr_tx_db": 136.0,
+          "success_rate": 0.14935390427574335
+        },
+        {
+          "snr_tx_db": 137.0,
+          "success_rate": 0.14929522841574236
+        },
+        {
+          "snr_tx_db": 138.0,
+          "success_rate": 0.14923655255574136
+        },
+        {
+          "snr_tx_db": 139.0,
+          "success_rate": 0.14917787669574037
+        },
+        {
+          "snr_tx_db": 140.0,
+          "success_rate": 0.14911920083573937
+        }
+      ],
+      "required_tx_db": {
+        "0.90": null,
+        "0.99": null
+      },
+      "aerial_penalty_db": {
+        "0.90": null,
+        "0.99": null
+      }
+    },
+    "digital_k54": {
+      "k": 54,
+      "curve_eff": [
+        {
+          "snr_eff_db": -40.0,
+          "success_rate": 0.013
+        },
+        {
+          "snr_eff_db": -35.0,
+          "success_rate": 0.013
+        },
+        {
+          "snr_eff_db": -30.0,
+          "success_rate": 0.012
+        },
+        {
+          "snr_eff_db": -25.0,
+          "success_rate": 0.011
+        },
+        {
+          "snr_eff_db": -20.0,
+          "success_rate": 0.01
+        },
+        {
+          "snr_eff_db": -15.0,
+          "success_rate": 0.017
+        },
+        {
+          "snr_eff_db": -10.0,
+          "success_rate": 0.021
+        },
+        {
+          "snr_eff_db": -5.0,
+          "success_rate": 0.104
+        },
+        {
+          "snr_eff_db": 0.0,
+          "success_rate": 0.717
+        },
+        {
+          "snr_eff_db": 5.0,
+          "success_rate": 0.982
+        },
+        {
+          "snr_eff_db": 10.0,
+          "success_rate": 0.999
+        },
+        {
+          "snr_eff_db": 15.0,
+          "success_rate": 1.0
+        },
+        {
+          "snr_eff_db": 20.0,
+          "success_rate": 1.0
+        },
+        {
+          "snr_eff_db": 25.0,
+          "success_rate": 1.0
+        }
+      ],
+      "required_eff_db": {
+        "0.90": 3.452830188679246,
+        "0.99": 7.352941176470589
+      },
+      "mixture_tx": [
+        {
+          "snr_tx_db": 40.0,
+          "success_rate": 0.0
+        },
+        {
+          "snr_tx_db": 41.0,
+          "success_rate": 0.0
+        },
+        {
+          "snr_tx_db": 42.0,
+          "success_rate": 0.0
+        },
+        {
+          "snr_tx_db": 43.0,
+          "success_rate": 0.0
+        },
+        {
+          "snr_tx_db": 44.0,
+          "success_rate": 0.0
+        },
+        {
+          "snr_tx_db": 45.0,
+          "success_rate": 0.0
+        },
+        {
+          "snr_tx_db": 46.0,
+          "success_rate": 0.0
+        },
+        {
+          "snr_tx_db": 47.0,
+          "success_rate": 0.0
+        },
+        {
+          "snr_tx_db": 48.0,
+          "success_rate": 0.0
+        },
+        {
+          "snr_tx_db": 49.0,
+          "success_rate": 0.0
+        },
+        {
+          "snr_tx_db": 50.0,
+          "success_rate": 0.0
+        },
+        {
+          "snr_tx_db": 51.0,
+          "success_rate": 0.0
+        },
+        {
+          "snr_tx_db": 52.0,
+          "success_rate": 0.0
+        },
+        {
+          "snr_tx_db": 53.0,
+          "success_rate": 0.0
+        },
+        {
+          "snr_tx_db": 54.0,
+          "success_rate": 0.0
+        },
+        {
+          "snr_tx_db": 55.0,
+          "success_rate": 0.0
+        },
+        {
+          "snr_tx_db": 56.0,
+          "success_rate": 0.0
+        },
+        {
+          "snr_tx_db": 57.0,
+          "success_rate": 0.0
+        },
+        {
+          "snr_tx_db": 58.0,
+          "success_rate": 0.0
+        },
+        {
+          "snr_tx_db": 59.0,
+          "success_rate": 0.0
+        },
+        {
+          "snr_tx_db": 60.0,
+          "success_rate": 0.010337210364814307
+        },
+        {
+          "snr_tx_db": 61.0,
+          "success_rate": 0.011093034549967438
+        },
+        {
+          "snr_tx_db": 62.0,
+          "success_rate": 0.011093034549967438
+        },
+        {
+          "snr_tx_db": 63.0,
+          "success_rate": 0.011093034549967438
+        },
+        {
+          "snr_tx_db": 64.0,
+          "success_rate": 0.011093034549967438
+        },
+        {
+          "snr_tx_db": 65.0,
+          "success_rate": 0.011093034549967438
+        },
+        {
+          "snr_tx_db": 66.0,
+          "success_rate": 0.01093400054435491
+        },
+        {
+          "snr_tx_db": 67.0,
+          "success_rate": 0.01076333847435541
+        },
+        {
+          "snr_tx_db": 68.0,
+          "success_rate": 0.010592676404355912
+        },
+        {
+          "snr_tx_db": 69.0,
+          "success_rate": 0.010422014334356413
+        },
+        {
+          "snr_tx_db": 70.0,
+          "success_rate": 0.010251352264356913
+        },
+        {
+          "snr_tx_db": 71.0,
+          "success_rate": 0.010080690194357415
+        },
+        {
+          "snr_tx_db": 72.0,
+          "success_rate": 0.009910028124357916
+        },
+        {
+          "snr_tx_db": 73.0,
+          "success_rate": 0.009739366054358416
+        },
+        {
+          "snr_tx_db": 74.0,
+          "success_rate": 0.009568703984358917
+        },
+        {
+          "snr_tx_db": 75.0,
+          "success_rate": 0.009398041914359417
+        },
+        {
+          "snr_tx_db": 76.0,
+          "success_rate": 0.00922737984435992
+        },
+        {
+          "snr_tx_db": 77.0,
+          "success_rate": 0.010903586962928357
+        },
+        {
+          "snr_tx_db": 78.0,
+          "success_rate": 0.010793021154393484
+        },
+        {
+          "snr_tx_db": 79.0,
+          "success_rate": 0.010622359084393984
+        },
+        {
+          "snr_tx_db": 80.0,
+          "success_rate": 0.010451697014394485
+        },
+        {
+          "snr_tx_db": 81.0,
+          "success_rate": 0.011553306989295208
+        },
+        {
+          "snr_tx_db": 82.0,
+          "success_rate": 0.012747941479291702
+        },
+        {
+          "snr_tx_db": 83.0,
+          "success_rate": 0.01391416259715638
+        },
+        {
+          "snr_tx_db": 84.0,
+          "success_rate": 0.015079459157152374
+        },
+        {
+          "snr_tx_db": 85.0,
+          "success_rate": 0.016244755717148365
+        },
+        {
+          "snr_tx_db": 86.0,
+          "success_rate": 0.01693295026030678
+        },
+        {
+          "snr_tx_db": 87.0,
+          "success_rate": 0.01758626061030427
+        },
+        {
+          "snr_tx_db": 88.0,
+          "success_rate": 0.018239570960301765
+        },
+        {
+          "snr_tx_db": 89.0,
+          "success_rate": 0.018892881310299262
+        },
+        {
+          "snr_tx_db": 90.0,
+          "success_rate": 0.019546191660296756
+        },
+        {
+          "snr_tx_db": 91.0,
+          "success_rate": 0.03276318845368395
+        },
+        {
+          "snr_tx_db": 92.0,
+          "success_rate": 0.04689880233364186
+        },
+        {
+          "snr_tx_db": 93.0,
+          "success_rate": 0.061034416213599785
+        },
+        {
+          "snr_tx_db": 94.0,
+          "success_rate": 0.0751700300935577
+        },
+        {
+          "snr_tx_db": 95.0,
+          "success_rate": 0.08930564397351562
+        },
+        {
+          "snr_tx_db": 96.0,
+          "success_rate": 0.1877292808281133
+        },
+        {
+          "snr_tx_db": 97.0,
+          "success_rate": 0.2923157918078057
+        },
+        {
+          "snr_tx_db": 98.0,
+          "success_rate": 0.39712960976455264
+        },
+        {
+          "snr_tx_db": 99.0,
+          "success_rate": 0.5019508241842491
+        },
+        {
+          "snr_tx_db": 100.0,
+          "success_rate": 0.6067720386039454
+        },
+        {
+          "snr_tx_db": 101.0,
+          "success_rate": 0.6562494190704823
+        },
+        {
+          "snr_tx_db": 102.0,
+          "success_rate": 0.701680233130353
+        },
+        {
+          "snr_tx_db": 103.0,
+          "success_rate": 0.7470258070738283
+        },
+        {
+          "snr_tx_db": 104.0,
+          "success_rate": 0.7923686073436975
+        },
+        {
+          "snr_tx_db": 105.0,
+          "success_rate": 0.8377114076135668
+        },
+        {
+          "snr_tx_db": 106.0,
+          "success_rate": 0.8436137744915292
+        },
+        {
+          "snr_tx_db": 107.0,
+          "success_rate": 0.8466323814015226
+        },
+        {
+          "snr_tx_db": 108.0,
+          "success_rate": 0.8518956447099294
+        },
+        {
+          "snr_tx_db": 109.0,
+          "success_rate": 0.8572319480899625
+        },
+        {
+          "snr_tx_db": 110.0,
+          "success_rate": 0.8625682514699956
+        },
+        {
+          "snr_tx_db": 111.0,
+          "success_rate": 0.8653600107602282
+        },
+        {
+          "snr_tx_db": 112.0,
+          "success_rate": 0.8679657210202694
+        },
+        {
+          "snr_tx_db": 113.0,
+          "success_rate": 0.885630518510172
+        },
+        {
+          "snr_tx_db": 114.0,
+          "success_rate": 0.9037853316704786
+        },
+        {
+          "snr_tx_db": 115.0,
+          "success_rate": 0.9219401448307851
+        },
+        {
+          "snr_tx_db": 116.0,
+          "success_rate": 0.9399359239854792
+        },
+        {
+          "snr_tx_db": 117.0,
+          "success_rate": 0.9579200750757864
+        },
+        {
+          "snr_tx_db": 118.0,
+          "success_rate": 0.9660163726642219
+        },
+        {
+          "snr_tx_db": 119.0,
+          "success_rate": 0.9737909241143548
+        },
+        {
+          "snr_tx_db": 120.0,
+          "success_rate": 0.9815654755644875
+        },
+        {
+          "snr_tx_db": 121.0,
+          "success_rate": 0.9893400270146202
+        },
+        {
+          "snr_tx_db": 122.0,
+          "success_rate": 0.997114578464753
+        },
+        {
+          "snr_tx_db": 123.0,
+          "success_rate": 0.9978426136261958
+        },
+        {
+          "snr_tx_db": 124.0,
+          "success_rate": 0.9983413584362043
+        },
+        {
+          "snr_tx_db": 125.0,
+          "success_rate": 0.9988401032462129
+        },
+        {
+          "snr_tx_db": 126.0,
+          "success_rate": 0.9993388480562213
+        },
+        {
+          "snr_tx_db": 127.0,
+          "success_rate": 0.9998375928662298
+        },
+        {
+          "snr_tx_db": 128.0,
+          "success_rate": 0.9998817237221294
+        },
+        {
+          "snr_tx_db": 129.0,
+          "success_rate": 0.9999110616521298
+        },
+        {
+          "snr_tx_db": 130.0,
+          "success_rate": 0.9999403995821303
+        },
+        {
+          "snr_tx_db": 131.0,
+          "success_rate": 0.9999697375121308
+        },
+        {
+          "snr_tx_db": 132.0,
+          "success_rate": 0.9999990754421313
+        },
+        {
+          "snr_tx_db": 133.0,
+          "success_rate": 1.0
+        },
+        {
+          "snr_tx_db": 134.0,
+          "success_rate": 1.0
+        },
+        {
+          "snr_tx_db": 135.0,
+          "success_rate": 1.0
+        },
+        {
+          "snr_tx_db": 136.0,
+          "success_rate": 1.0
+        },
+        {
+          "snr_tx_db": 137.0,
+          "success_rate": 1.0
+        },
+        {
+          "snr_tx_db": 138.0,
+          "success_rate": 1.0
+        },
+        {
+          "snr_tx_db": 139.0,
+          "success_rate": 1.0
+        },
+        {
+          "snr_tx_db": 140.0,
+          "success_rate": 1.0
+        }
+      ],
+      "required_tx_db": {
+        "0.90": 114.0,
+        "0.99": 122.0
+      },
+      "aerial_penalty_db": {
+        "0.90": 110.54716981132076,
+        "0.99": 114.6470588235294
+      }
+    }
+  },
+  "protocol_note": "evaluated at effective (post-pathloss) SNR; the mixture maps that curve onto transmit SNR with P_LoS weights"
+}

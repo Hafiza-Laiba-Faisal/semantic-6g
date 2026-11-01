@@ -1,0 +1,822 @@
+== 3GPP UMa-aerial multi-geometry sweep (A-17) ==
+   12 of 12 geometries, E=1000
+-- reuse d2D=200 m, h=50 m, fc=2 GHz
+
+=== d2D=200 m, h=50 m, fc=3.5 GHz ===
+== 3GPP UMa-aerial link budget ==
+geometry: d2D=200 m, h=50 m, fc=3.5 GHz, d3D=206.2 m, ref=0.0 dB
+P_LoS=0.9672  PL_LoS=89.79 dB  PL_NLoS=104.75 dB  PL_mean=90.29 dB  g_mean=3.060e-05
+checkpoints: [18, 54]
+-- heavy lambda, k=18 --
+   k=18 eff= -40 dB  SR=0.0260
+   k=18 eff= -35 dB  SR=0.0380
+   k=18 eff= -30 dB  SR=0.0730
+   k=18 eff= -25 dB  SR=0.1420
+   k=18 eff= -20 dB  SR=0.3450
+   k=18 eff= -15 dB  SR=0.6300
+   k=18 eff= -10 dB  SR=0.8610
+   k=18 eff=  -5 dB  SR=0.9750
+   k=18 eff=  +0 dB  SR=0.9930
+   k=18 eff=  +5 dB  SR=0.9970
+   k=18 eff= +10 dB  SR=0.9960
+   k=18 eff= +15 dB  SR=0.9970
+   k=18 eff= +20 dB  SR=0.9970
+   k=18 eff= +25 dB  SR=0.9970
+-- heavy lambda, k=54 --
+   k=54 eff= -40 dB  SR=0.0360
+   k=54 eff= -35 dB  SR=0.0640
+   k=54 eff= -30 dB  SR=0.1390
+   k=54 eff= -25 dB  SR=0.3150
+   k=54 eff= -20 dB  SR=0.6130
+   k=54 eff= -15 dB  SR=0.8440
+   k=54 eff= -10 dB  SR=0.9490
+   k=54 eff=  -5 dB  SR=0.9920
+   k=54 eff=  +0 dB  SR=0.9960
+   k=54 eff=  +5 dB  SR=0.9980
+   k=54 eff= +10 dB  SR=0.9980
+   k=54 eff= +15 dB  SR=0.9980
+   k=54 eff= +20 dB  SR=0.9980
+   k=54 eff= +25 dB  SR=0.9980
+-- digital (K=7 conv, B=2), k=18 --
+   digital k=18 eff= -40 dB  SR=0.0080
+   digital k=18 eff= -35 dB  SR=0.0110
+   digital k=18 eff= -30 dB  SR=0.0150
+   digital k=18 eff= -25 dB  SR=0.0140
+   digital k=18 eff= -20 dB  SR=0.0180
+   digital k=18 eff= -15 dB  SR=0.0270
+   digital k=18 eff= -10 dB  SR=0.0660
+   digital k=18 eff=  -5 dB  SR=0.1620
+   digital k=18 eff=  +0 dB  SR=0.1720
+   digital k=18 eff=  +5 dB  SR=0.1640
+   digital k=18 eff= +10 dB  SR=0.1470
+   digital k=18 eff= +15 dB  SR=0.1530
+   digital k=18 eff= +20 dB  SR=0.1510
+   digital k=18 eff= +25 dB  SR=0.1490
+-- digital (K=7 conv, B=8), k=54 --
+   digital k=54 eff= -40 dB  SR=0.0130
+   digital k=54 eff= -35 dB  SR=0.0130
+   digital k=54 eff= -30 dB  SR=0.0120
+   digital k=54 eff= -25 dB  SR=0.0110
+   digital k=54 eff= -20 dB  SR=0.0100
+   digital k=54 eff= -15 dB  SR=0.0170
+   digital k=54 eff= -10 dB  SR=0.0210
+   digital k=54 eff=  -5 dB  SR=0.1040
+   digital k=54 eff=  +0 dB  SR=0.7170
+   digital k=54 eff=  +5 dB  SR=0.9820
+   digital k=54 eff= +10 dB  SR=0.9990
+   digital k=54 eff= +15 dB  SR=1.0000
+   digital k=54 eff= +20 dB  SR=1.0000
+   digital k=54 eff= +25 dB  SR=1.0000
+
+wrote results\AERIAL_GEOM\geom_d200_h50_fc3.5\step_aerial_summary.json
+method                SR>=0.90 eff       tx  SR>=0.99 eff       tx
+lam_ctl_heavy_k18             -8.3     83.0          -0.8     94.0
+lam_ctl_heavy_k54            -12.3     79.0          -5.2     90.0
+digital_k18                      -        -             -        -
+digital_k54                    3.5     94.0           7.4    105.0
+
+=== d2D=200 m, h=100 m, fc=2 GHz ===
+== 3GPP UMa-aerial link budget ==
+geometry: d2D=200 m, h=100 m, fc=2.0 GHz, d3D=223.6 m, ref=0.0 dB
+P_LoS=1.0000  PL_LoS=85.71 dB  PL_NLoS=96.15 dB  PL_mean=85.71 dB  g_mean=5.182e-05
+checkpoints: [18, 54]
+-- heavy lambda, k=18 --
+   k=18 eff= -40 dB  SR=0.0260
+   k=18 eff= -35 dB  SR=0.0380
+   k=18 eff= -30 dB  SR=0.0730
+   k=18 eff= -25 dB  SR=0.1420
+   k=18 eff= -20 dB  SR=0.3450
+   k=18 eff= -15 dB  SR=0.6300
+   k=18 eff= -10 dB  SR=0.8610
+   k=18 eff=  -5 dB  SR=0.9750
+   k=18 eff=  +0 dB  SR=0.9930
+   k=18 eff=  +5 dB  SR=0.9970
+   k=18 eff= +10 dB  SR=0.9960
+   k=18 eff= +15 dB  SR=0.9970
+   k=18 eff= +20 dB  SR=0.9970
+   k=18 eff= +25 dB  SR=0.9970
+-- heavy lambda, k=54 --
+   k=54 eff= -40 dB  SR=0.0360
+   k=54 eff= -35 dB  SR=0.0640
+   k=54 eff= -30 dB  SR=0.1390
+   k=54 eff= -25 dB  SR=0.3150
+   k=54 eff= -20 dB  SR=0.6130
+   k=54 eff= -15 dB  SR=0.8440
+   k=54 eff= -10 dB  SR=0.9490
+   k=54 eff=  -5 dB  SR=0.9920
+   k=54 eff=  +0 dB  SR=0.9960
+   k=54 eff=  +5 dB  SR=0.9980
+   k=54 eff= +10 dB  SR=0.9980
+   k=54 eff= +15 dB  SR=0.9980
+   k=54 eff= +20 dB  SR=0.9980
+   k=54 eff= +25 dB  SR=0.9980
+-- digital (K=7 conv, B=2), k=18 --
+   digital k=18 eff= -40 dB  SR=0.0080
+   digital k=18 eff= -35 dB  SR=0.0110
+   digital k=18 eff= -30 dB  SR=0.0150
+   digital k=18 eff= -25 dB  SR=0.0140
+   digital k=18 eff= -20 dB  SR=0.0180
+   digital k=18 eff= -15 dB  SR=0.0270
+   digital k=18 eff= -10 dB  SR=0.0660
+   digital k=18 eff=  -5 dB  SR=0.1620
+   digital k=18 eff=  +0 dB  SR=0.1720
+   digital k=18 eff=  +5 dB  SR=0.1640
+   digital k=18 eff= +10 dB  SR=0.1470
+   digital k=18 eff= +15 dB  SR=0.1530
+   digital k=18 eff= +20 dB  SR=0.1510
+   digital k=18 eff= +25 dB  SR=0.1490
+-- digital (K=7 conv, B=8), k=54 --
+   digital k=54 eff= -40 dB  SR=0.0130
+   digital k=54 eff= -35 dB  SR=0.0130
+   digital k=54 eff= -30 dB  SR=0.0120
+   digital k=54 eff= -25 dB  SR=0.0110
+   digital k=54 eff= -20 dB  SR=0.0100
+   digital k=54 eff= -15 dB  SR=0.0170
+   digital k=54 eff= -10 dB  SR=0.0210
+   digital k=54 eff=  -5 dB  SR=0.1040
+   digital k=54 eff=  +0 dB  SR=0.7170
+   digital k=54 eff=  +5 dB  SR=0.9820
+   digital k=54 eff= +10 dB  SR=0.9990
+   digital k=54 eff= +15 dB  SR=1.0000
+   digital k=54 eff= +20 dB  SR=1.0000
+   digital k=54 eff= +25 dB  SR=1.0000
+
+wrote results\AERIAL_GEOM\geom_d200_h100_fc2\step_aerial_summary.json
+method                SR>=0.90 eff       tx  SR>=0.99 eff       tx
+lam_ctl_heavy_k18             -8.3     78.0          -0.8     85.0
+lam_ctl_heavy_k54            -12.3     74.0          -5.2     81.0
+digital_k18                      -        -             -        -
+digital_k54                    3.5     90.0           7.4     94.0
+
+=== d2D=200 m, h=100 m, fc=3.5 GHz ===
+== 3GPP UMa-aerial link budget ==
+geometry: d2D=200 m, h=100 m, fc=3.5 GHz, d3D=223.6 m, ref=0.0 dB
+P_LoS=1.0000  PL_LoS=90.57 dB  PL_NLoS=101.01 dB  PL_mean=90.57 dB  g_mean=2.961e-05
+checkpoints: [18, 54]
+-- heavy lambda, k=18 --
+   k=18 eff= -40 dB  SR=0.0260
+   k=18 eff= -35 dB  SR=0.0380
+   k=18 eff= -30 dB  SR=0.0730
+   k=18 eff= -25 dB  SR=0.1420
+   k=18 eff= -20 dB  SR=0.3450
+   k=18 eff= -15 dB  SR=0.6300
+   k=18 eff= -10 dB  SR=0.8610
+   k=18 eff=  -5 dB  SR=0.9750
+   k=18 eff=  +0 dB  SR=0.9930
+   k=18 eff=  +5 dB  SR=0.9970
+   k=18 eff= +10 dB  SR=0.9960
+   k=18 eff= +15 dB  SR=0.9970
+   k=18 eff= +20 dB  SR=0.9970
+   k=18 eff= +25 dB  SR=0.9970
+-- heavy lambda, k=54 --
+   k=54 eff= -40 dB  SR=0.0360
+   k=54 eff= -35 dB  SR=0.0640
+   k=54 eff= -30 dB  SR=0.1390
+   k=54 eff= -25 dB  SR=0.3150
+   k=54 eff= -20 dB  SR=0.6130
+   k=54 eff= -15 dB  SR=0.8440
+   k=54 eff= -10 dB  SR=0.9490
+   k=54 eff=  -5 dB  SR=0.9920
+   k=54 eff=  +0 dB  SR=0.9960
+   k=54 eff=  +5 dB  SR=0.9980
+   k=54 eff= +10 dB  SR=0.9980
+   k=54 eff= +15 dB  SR=0.9980
+   k=54 eff= +20 dB  SR=0.9980
+   k=54 eff= +25 dB  SR=0.9980
+-- digital (K=7 conv, B=2), k=18 --
+   digital k=18 eff= -40 dB  SR=0.0080
+   digital k=18 eff= -35 dB  SR=0.0110
+   digital k=18 eff= -30 dB  SR=0.0150
+   digital k=18 eff= -25 dB  SR=0.0140
+   digital k=18 eff= -20 dB  SR=0.0180
+   digital k=18 eff= -15 dB  SR=0.0270
+   digital k=18 eff= -10 dB  SR=0.0660
+   digital k=18 eff=  -5 dB  SR=0.1620
+   digital k=18 eff=  +0 dB  SR=0.1720
+   digital k=18 eff=  +5 dB  SR=0.1640
+   digital k=18 eff= +10 dB  SR=0.1470
+   digital k=18 eff= +15 dB  SR=0.1530
+   digital k=18 eff= +20 dB  SR=0.1510
+   digital k=18 eff= +25 dB  SR=0.1490
+-- digital (K=7 conv, B=8), k=54 --
+   digital k=54 eff= -40 dB  SR=0.0130
+   digital k=54 eff= -35 dB  SR=0.0130
+   digital k=54 eff= -30 dB  SR=0.0120
+   digital k=54 eff= -25 dB  SR=0.0110
+   digital k=54 eff= -20 dB  SR=0.0100
+   digital k=54 eff= -15 dB  SR=0.0170
+   digital k=54 eff= -10 dB  SR=0.0210
+   digital k=54 eff=  -5 dB  SR=0.1040
+   digital k=54 eff=  +0 dB  SR=0.7170
+   digital k=54 eff=  +5 dB  SR=0.9820
+   digital k=54 eff= +10 dB  SR=0.9990
+   digital k=54 eff= +15 dB  SR=1.0000
+   digital k=54 eff= +20 dB  SR=1.0000
+   digital k=54 eff= +25 dB  SR=1.0000
+
+wrote results\AERIAL_GEOM\geom_d200_h100_fc3.5\step_aerial_summary.json
+method                SR>=0.90 eff       tx  SR>=0.99 eff       tx
+lam_ctl_heavy_k18             -8.3     83.0          -0.8     90.0
+lam_ctl_heavy_k54            -12.3     79.0          -5.2     86.0
+digital_k18                      -        -             -        -
+digital_k54                    3.5     95.0           7.4     98.0
+
+=== d2D=500 m, h=50 m, fc=2 GHz ===
+== 3GPP UMa-aerial link budget ==
+geometry: d2D=500 m, h=50 m, fc=2.0 GHz, d3D=502.5 m, ref=0.0 dB
+P_LoS=0.8887  PL_LoS=93.45 dB  PL_NLoS=113.09 dB  PL_mean=95.63 dB  g_mean=1.654e-05
+checkpoints: [18, 54]
+-- heavy lambda, k=18 --
+   k=18 eff= -40 dB  SR=0.0260
+   k=18 eff= -35 dB  SR=0.0380
+   k=18 eff= -30 dB  SR=0.0730
+   k=18 eff= -25 dB  SR=0.1420
+   k=18 eff= -20 dB  SR=0.3450
+   k=18 eff= -15 dB  SR=0.6300
+   k=18 eff= -10 dB  SR=0.8610
+   k=18 eff=  -5 dB  SR=0.9750
+   k=18 eff=  +0 dB  SR=0.9930
+   k=18 eff=  +5 dB  SR=0.9970
+   k=18 eff= +10 dB  SR=0.9960
+   k=18 eff= +15 dB  SR=0.9970
+   k=18 eff= +20 dB  SR=0.9970
+   k=18 eff= +25 dB  SR=0.9970
+-- heavy lambda, k=54 --
+   k=54 eff= -40 dB  SR=0.0360
+   k=54 eff= -35 dB  SR=0.0640
+   k=54 eff= -30 dB  SR=0.1390
+   k=54 eff= -25 dB  SR=0.3150
+   k=54 eff= -20 dB  SR=0.6130
+   k=54 eff= -15 dB  SR=0.8440
+   k=54 eff= -10 dB  SR=0.9490
+   k=54 eff=  -5 dB  SR=0.9920
+   k=54 eff=  +0 dB  SR=0.9960
+   k=54 eff=  +5 dB  SR=0.9980
+   k=54 eff= +10 dB  SR=0.9980
+   k=54 eff= +15 dB  SR=0.9980
+   k=54 eff= +20 dB  SR=0.9980
+   k=54 eff= +25 dB  SR=0.9980
+-- digital (K=7 conv, B=2), k=18 --
+   digital k=18 eff= -40 dB  SR=0.0080
+   digital k=18 eff= -35 dB  SR=0.0110
+   digital k=18 eff= -30 dB  SR=0.0150
+   digital k=18 eff= -25 dB  SR=0.0140
+   digital k=18 eff= -20 dB  SR=0.0180
+   digital k=18 eff= -15 dB  SR=0.0270
+   digital k=18 eff= -10 dB  SR=0.0660
+   digital k=18 eff=  -5 dB  SR=0.1620
+   digital k=18 eff=  +0 dB  SR=0.1720
+   digital k=18 eff=  +5 dB  SR=0.1640
+   digital k=18 eff= +10 dB  SR=0.1470
+   digital k=18 eff= +15 dB  SR=0.1530
+   digital k=18 eff= +20 dB  SR=0.1510
+   digital k=18 eff= +25 dB  SR=0.1490
+-- digital (K=7 conv, B=8), k=54 --
+   digital k=54 eff= -40 dB  SR=0.0130
+   digital k=54 eff= -35 dB  SR=0.0130
+   digital k=54 eff= -30 dB  SR=0.0120
+   digital k=54 eff= -25 dB  SR=0.0110
+   digital k=54 eff= -20 dB  SR=0.0100
+   digital k=54 eff= -15 dB  SR=0.0170
+   digital k=54 eff= -10 dB  SR=0.0210
+   digital k=54 eff=  -5 dB  SR=0.1040
+   digital k=54 eff=  +0 dB  SR=0.7170
+   digital k=54 eff=  +5 dB  SR=0.9820
+   digital k=54 eff= +10 dB  SR=0.9990
+   digital k=54 eff= +15 dB  SR=1.0000
+   digital k=54 eff= +20 dB  SR=1.0000
+   digital k=54 eff= +25 dB  SR=1.0000
+
+wrote results\AERIAL_GEOM\geom_d500_h50_fc2\step_aerial_summary.json
+method                SR>=0.90 eff       tx  SR>=0.99 eff       tx
+lam_ctl_heavy_k18             -8.3     91.0          -0.8    107.0
+lam_ctl_heavy_k54            -12.3     87.0          -5.2    102.0
+digital_k18                      -        -             -        -
+digital_k54                    3.5    108.0           7.4    117.0
+
+=== d2D=500 m, h=50 m, fc=3.5 GHz ===
+== 3GPP UMa-aerial link budget ==
+geometry: d2D=500 m, h=50 m, fc=3.5 GHz, d3D=502.5 m, ref=0.0 dB
+P_LoS=0.8887  PL_LoS=98.31 dB  PL_NLoS=117.95 dB  PL_mean=100.49 dB  g_mean=9.450e-06
+checkpoints: [18, 54]
+-- heavy lambda, k=18 --
+   k=18 eff= -40 dB  SR=0.0260
+   k=18 eff= -35 dB  SR=0.0380
+   k=18 eff= -30 dB  SR=0.0730
+   k=18 eff= -25 dB  SR=0.1420
+   k=18 eff= -20 dB  SR=0.3450
+   k=18 eff= -15 dB  SR=0.6300
+   k=18 eff= -10 dB  SR=0.8610
+   k=18 eff=  -5 dB  SR=0.9750
+   k=18 eff=  +0 dB  SR=0.9930
+   k=18 eff=  +5 dB  SR=0.9970
+   k=18 eff= +10 dB  SR=0.9960
+   k=18 eff= +15 dB  SR=0.9970
+   k=18 eff= +20 dB  SR=0.9970
+   k=18 eff= +25 dB  SR=0.9970
+-- heavy lambda, k=54 --
+   k=54 eff= -40 dB  SR=0.0360
+   k=54 eff= -35 dB  SR=0.0640
+   k=54 eff= -30 dB  SR=0.1390
+   k=54 eff= -25 dB  SR=0.3150
+   k=54 eff= -20 dB  SR=0.6130
+   k=54 eff= -15 dB  SR=0.8440
+   k=54 eff= -10 dB  SR=0.9490
+   k=54 eff=  -5 dB  SR=0.9920
+   k=54 eff=  +0 dB  SR=0.9960
+   k=54 eff=  +5 dB  SR=0.9980
+   k=54 eff= +10 dB  SR=0.9980
+   k=54 eff= +15 dB  SR=0.9980
+   k=54 eff= +20 dB  SR=0.9980
+   k=54 eff= +25 dB  SR=0.9980
+-- digital (K=7 conv, B=2), k=18 --
+   digital k=18 eff= -40 dB  SR=0.0080
+   digital k=18 eff= -35 dB  SR=0.0110
+   digital k=18 eff= -30 dB  SR=0.0150
+   digital k=18 eff= -25 dB  SR=0.0140
+   digital k=18 eff= -20 dB  SR=0.0180
+   digital k=18 eff= -15 dB  SR=0.0270
+   digital k=18 eff= -10 dB  SR=0.0660
+   digital k=18 eff=  -5 dB  SR=0.1620
+   digital k=18 eff=  +0 dB  SR=0.1720
+   digital k=18 eff=  +5 dB  SR=0.1640
+   digital k=18 eff= +10 dB  SR=0.1470
+   digital k=18 eff= +15 dB  SR=0.1530
+   digital k=18 eff= +20 dB  SR=0.1510
+   digital k=18 eff= +25 dB  SR=0.1490
+-- digital (K=7 conv, B=8), k=54 --
+   digital k=54 eff= -40 dB  SR=0.0130
+   digital k=54 eff= -35 dB  SR=0.0130
+   digital k=54 eff= -30 dB  SR=0.0120
+   digital k=54 eff= -25 dB  SR=0.0110
+   digital k=54 eff= -20 dB  SR=0.0100
+   digital k=54 eff= -15 dB  SR=0.0170
+   digital k=54 eff= -10 dB  SR=0.0210
+   digital k=54 eff=  -5 dB  SR=0.1040
+   digital k=54 eff=  +0 dB  SR=0.7170
+   digital k=54 eff=  +5 dB  SR=0.9820
+   digital k=54 eff= +10 dB  SR=0.9990
+   digital k=54 eff= +15 dB  SR=1.0000
+   digital k=54 eff= +20 dB  SR=1.0000
+   digital k=54 eff= +25 dB  SR=1.0000
+
+wrote results\AERIAL_GEOM\geom_d500_h50_fc3.5\step_aerial_summary.json
+method                SR>=0.90 eff       tx  SR>=0.99 eff       tx
+lam_ctl_heavy_k18             -8.3     96.0          -0.8    112.0
+lam_ctl_heavy_k54            -12.3     92.0          -5.2    107.0
+digital_k18                      -        -             -        -
+digital_k54                    3.5    113.0           7.4    122.0
+
+=== d2D=500 m, h=100 m, fc=2 GHz ===
+== 3GPP UMa-aerial link budget ==
+geometry: d2D=500 m, h=100 m, fc=2.0 GHz, d3D=509.9 m, ref=0.0 dB
+P_LoS=0.9446  PL_LoS=93.59 dB  PL_NLoS=107.60 dB  PL_mean=94.36 dB  g_mean=1.914e-05
+checkpoints: [18, 54]
+-- heavy lambda, k=18 --
+   k=18 eff= -40 dB  SR=0.0260
+   k=18 eff= -35 dB  SR=0.0380
+   k=18 eff= -30 dB  SR=0.0730
+   k=18 eff= -25 dB  SR=0.1420
+   k=18 eff= -20 dB  SR=0.3450
+   k=18 eff= -15 dB  SR=0.6300
+   k=18 eff= -10 dB  SR=0.8610
+   k=18 eff=  -5 dB  SR=0.9750
+   k=18 eff=  +0 dB  SR=0.9930
+   k=18 eff=  +5 dB  SR=0.9970
+   k=18 eff= +10 dB  SR=0.9960
+   k=18 eff= +15 dB  SR=0.9970
+   k=18 eff= +20 dB  SR=0.9970
+   k=18 eff= +25 dB  SR=0.9970
+-- heavy lambda, k=54 --
+   k=54 eff= -40 dB  SR=0.0360
+   k=54 eff= -35 dB  SR=0.0640
+   k=54 eff= -30 dB  SR=0.1390
+   k=54 eff= -25 dB  SR=0.3150
+   k=54 eff= -20 dB  SR=0.6130
+   k=54 eff= -15 dB  SR=0.8440
+   k=54 eff= -10 dB  SR=0.9490
+   k=54 eff=  -5 dB  SR=0.9920
+   k=54 eff=  +0 dB  SR=0.9960
+   k=54 eff=  +5 dB  SR=0.9980
+   k=54 eff= +10 dB  SR=0.9980
+   k=54 eff= +15 dB  SR=0.9980
+   k=54 eff= +20 dB  SR=0.9980
+   k=54 eff= +25 dB  SR=0.9980
+-- digital (K=7 conv, B=2), k=18 --
+   digital k=18 eff= -40 dB  SR=0.0080
+   digital k=18 eff= -35 dB  SR=0.0110
+   digital k=18 eff= -30 dB  SR=0.0150
+   digital k=18 eff= -25 dB  SR=0.0140
+   digital k=18 eff= -20 dB  SR=0.0180
+   digital k=18 eff= -15 dB  SR=0.0270
+   digital k=18 eff= -10 dB  SR=0.0660
+   digital k=18 eff=  -5 dB  SR=0.1620
+   digital k=18 eff=  +0 dB  SR=0.1720
+   digital k=18 eff=  +5 dB  SR=0.1640
+   digital k=18 eff= +10 dB  SR=0.1470
+   digital k=18 eff= +15 dB  SR=0.1530
+   digital k=18 eff= +20 dB  SR=0.1510
+   digital k=18 eff= +25 dB  SR=0.1490
+-- digital (K=7 conv, B=8), k=54 --
+   digital k=54 eff= -40 dB  SR=0.0130
+   digital k=54 eff= -35 dB  SR=0.0130
+   digital k=54 eff= -30 dB  SR=0.0120
+   digital k=54 eff= -25 dB  SR=0.0110
+   digital k=54 eff= -20 dB  SR=0.0100
+   digital k=54 eff= -15 dB  SR=0.0170
+   digital k=54 eff= -10 dB  SR=0.0210
+   digital k=54 eff=  -5 dB  SR=0.1040
+   digital k=54 eff=  +0 dB  SR=0.7170
+   digital k=54 eff=  +5 dB  SR=0.9820
+   digital k=54 eff= +10 dB  SR=0.9990
+   digital k=54 eff= +15 dB  SR=1.0000
+   digital k=54 eff= +20 dB  SR=1.0000
+   digital k=54 eff= +25 dB  SR=1.0000
+
+wrote results\AERIAL_GEOM\geom_d500_h100_fc2\step_aerial_summary.json
+method                SR>=0.90 eff       tx  SR>=0.99 eff       tx
+lam_ctl_heavy_k18             -8.3     87.0          -0.8     99.0
+lam_ctl_heavy_k54            -12.3     83.0          -5.2     95.0
+digital_k18                      -        -             -        -
+digital_k54                    3.5     99.0           7.4    110.0
+
+=== d2D=500 m, h=100 m, fc=3.5 GHz ===
+== 3GPP UMa-aerial link budget ==
+geometry: d2D=500 m, h=100 m, fc=3.5 GHz, d3D=509.9 m, ref=0.0 dB
+P_LoS=0.9446  PL_LoS=98.45 dB  PL_NLoS=112.46 dB  PL_mean=99.22 dB  g_mean=1.094e-05
+checkpoints: [18, 54]
+-- heavy lambda, k=18 --
+   k=18 eff= -40 dB  SR=0.0260
+   k=18 eff= -35 dB  SR=0.0380
+   k=18 eff= -30 dB  SR=0.0730
+   k=18 eff= -25 dB  SR=0.1420
+   k=18 eff= -20 dB  SR=0.3450
+   k=18 eff= -15 dB  SR=0.6300
+   k=18 eff= -10 dB  SR=0.8610
+   k=18 eff=  -5 dB  SR=0.9750
+   k=18 eff=  +0 dB  SR=0.9930
+   k=18 eff=  +5 dB  SR=0.9970
+   k=18 eff= +10 dB  SR=0.9960
+   k=18 eff= +15 dB  SR=0.9970
+   k=18 eff= +20 dB  SR=0.9970
+   k=18 eff= +25 dB  SR=0.9970
+-- heavy lambda, k=54 --
+   k=54 eff= -40 dB  SR=0.0360
+   k=54 eff= -35 dB  SR=0.0640
+   k=54 eff= -30 dB  SR=0.1390
+   k=54 eff= -25 dB  SR=0.3150
+   k=54 eff= -20 dB  SR=0.6130
+   k=54 eff= -15 dB  SR=0.8440
+   k=54 eff= -10 dB  SR=0.9490
+   k=54 eff=  -5 dB  SR=0.9920
+   k=54 eff=  +0 dB  SR=0.9960
+   k=54 eff=  +5 dB  SR=0.9980
+   k=54 eff= +10 dB  SR=0.9980
+   k=54 eff= +15 dB  SR=0.9980
+   k=54 eff= +20 dB  SR=0.9980
+   k=54 eff= +25 dB  SR=0.9980
+-- digital (K=7 conv, B=2), k=18 --
+   digital k=18 eff= -40 dB  SR=0.0080
+   digital k=18 eff= -35 dB  SR=0.0110
+   digital k=18 eff= -30 dB  SR=0.0150
+   digital k=18 eff= -25 dB  SR=0.0140
+   digital k=18 eff= -20 dB  SR=0.0180
+   digital k=18 eff= -15 dB  SR=0.0270
+   digital k=18 eff= -10 dB  SR=0.0660
+   digital k=18 eff=  -5 dB  SR=0.1620
+   digital k=18 eff=  +0 dB  SR=0.1720
+   digital k=18 eff=  +5 dB  SR=0.1640
+   digital k=18 eff= +10 dB  SR=0.1470
+   digital k=18 eff= +15 dB  SR=0.1530
+   digital k=18 eff= +20 dB  SR=0.1510
+   digital k=18 eff= +25 dB  SR=0.1490
+-- digital (K=7 conv, B=8), k=54 --
+   digital k=54 eff= -40 dB  SR=0.0130
+   digital k=54 eff= -35 dB  SR=0.0130
+   digital k=54 eff= -30 dB  SR=0.0120
+   digital k=54 eff= -25 dB  SR=0.0110
+   digital k=54 eff= -20 dB  SR=0.0100
+   digital k=54 eff= -15 dB  SR=0.0170
+   digital k=54 eff= -10 dB  SR=0.0210
+   digital k=54 eff=  -5 dB  SR=0.1040
+   digital k=54 eff=  +0 dB  SR=0.7170
+   digital k=54 eff=  +5 dB  SR=0.9820
+   digital k=54 eff= +10 dB  SR=0.9990
+   digital k=54 eff= +15 dB  SR=1.0000
+   digital k=54 eff= +20 dB  SR=1.0000
+   digital k=54 eff= +25 dB  SR=1.0000
+
+wrote results\AERIAL_GEOM\geom_d500_h100_fc3.5\step_aerial_summary.json
+method                SR>=0.90 eff       tx  SR>=0.99 eff       tx
+lam_ctl_heavy_k18             -8.3     92.0          -0.8    104.0
+lam_ctl_heavy_k54            -12.3     88.0          -5.2    100.0
+digital_k18                      -        -             -        -
+digital_k54                    3.5    103.0           7.4    115.0
+
+=== d2D=1000 m, h=50 m, fc=2 GHz ===
+== 3GPP UMa-aerial link budget ==
+geometry: d2D=1000 m, h=50 m, fc=2.0 GHz, d3D=1001.2 m, ref=0.0 dB
+P_LoS=0.7721  PL_LoS=100.03 dB  PL_NLoS=123.30 dB  PL_mean=105.34 dB  g_mean=5.409e-06
+checkpoints: [18, 54]
+-- heavy lambda, k=18 --
+   k=18 eff= -40 dB  SR=0.0260
+   k=18 eff= -35 dB  SR=0.0380
+   k=18 eff= -30 dB  SR=0.0730
+   k=18 eff= -25 dB  SR=0.1420
+   k=18 eff= -20 dB  SR=0.3450
+   k=18 eff= -15 dB  SR=0.6300
+   k=18 eff= -10 dB  SR=0.8610
+   k=18 eff=  -5 dB  SR=0.9750
+   k=18 eff=  +0 dB  SR=0.9930
+   k=18 eff=  +5 dB  SR=0.9970
+   k=18 eff= +10 dB  SR=0.9960
+   k=18 eff= +15 dB  SR=0.9970
+   k=18 eff= +20 dB  SR=0.9970
+   k=18 eff= +25 dB  SR=0.9970
+-- heavy lambda, k=54 --
+   k=54 eff= -40 dB  SR=0.0360
+   k=54 eff= -35 dB  SR=0.0640
+   k=54 eff= -30 dB  SR=0.1390
+   k=54 eff= -25 dB  SR=0.3150
+   k=54 eff= -20 dB  SR=0.6130
+   k=54 eff= -15 dB  SR=0.8440
+   k=54 eff= -10 dB  SR=0.9490
+   k=54 eff=  -5 dB  SR=0.9920
+   k=54 eff=  +0 dB  SR=0.9960
+   k=54 eff=  +5 dB  SR=0.9980
+   k=54 eff= +10 dB  SR=0.9980
+   k=54 eff= +15 dB  SR=0.9980
+   k=54 eff= +20 dB  SR=0.9980
+   k=54 eff= +25 dB  SR=0.9980
+-- digital (K=7 conv, B=2), k=18 --
+   digital k=18 eff= -40 dB  SR=0.0080
+   digital k=18 eff= -35 dB  SR=0.0110
+   digital k=18 eff= -30 dB  SR=0.0150
+   digital k=18 eff= -25 dB  SR=0.0140
+   digital k=18 eff= -20 dB  SR=0.0180
+   digital k=18 eff= -15 dB  SR=0.0270
+   digital k=18 eff= -10 dB  SR=0.0660
+   digital k=18 eff=  -5 dB  SR=0.1620
+   digital k=18 eff=  +0 dB  SR=0.1720
+   digital k=18 eff=  +5 dB  SR=0.1640
+   digital k=18 eff= +10 dB  SR=0.1470
+   digital k=18 eff= +15 dB  SR=0.1530
+   digital k=18 eff= +20 dB  SR=0.1510
+   digital k=18 eff= +25 dB  SR=0.1490
+-- digital (K=7 conv, B=8), k=54 --
+   digital k=54 eff= -40 dB  SR=0.0130
+   digital k=54 eff= -35 dB  SR=0.0130
+   digital k=54 eff= -30 dB  SR=0.0120
+   digital k=54 eff= -25 dB  SR=0.0110
+   digital k=54 eff= -20 dB  SR=0.0100
+   digital k=54 eff= -15 dB  SR=0.0170
+   digital k=54 eff= -10 dB  SR=0.0210
+   digital k=54 eff=  -5 dB  SR=0.1040
+   digital k=54 eff=  +0 dB  SR=0.7170
+   digital k=54 eff=  +5 dB  SR=0.9820
+   digital k=54 eff= +10 dB  SR=0.9990
+   digital k=54 eff= +15 dB  SR=1.0000
+   digital k=54 eff= +20 dB  SR=1.0000
+   digital k=54 eff= +25 dB  SR=1.0000
+
+wrote results\AERIAL_GEOM\geom_d1000_h50_fc2\step_aerial_summary.json
+method                SR>=0.90 eff       tx  SR>=0.99 eff       tx
+lam_ctl_heavy_k18             -8.3    108.0          -0.8    118.0
+lam_ctl_heavy_k54            -12.3    103.0          -5.2    115.0
+digital_k18                      -        -             -        -
+digital_k54                    3.5    123.0           7.4    128.0
+
+=== d2D=1000 m, h=50 m, fc=3.5 GHz ===
+== 3GPP UMa-aerial link budget ==
+geometry: d2D=1000 m, h=50 m, fc=3.5 GHz, d3D=1001.2 m, ref=0.0 dB
+P_LoS=0.7721  PL_LoS=104.89 dB  PL_NLoS=128.16 dB  PL_mean=110.20 dB  g_mean=3.091e-06
+checkpoints: [18, 54]
+-- heavy lambda, k=18 --
+   k=18 eff= -40 dB  SR=0.0260
+   k=18 eff= -35 dB  SR=0.0380
+   k=18 eff= -30 dB  SR=0.0730
+   k=18 eff= -25 dB  SR=0.1420
+   k=18 eff= -20 dB  SR=0.3450
+   k=18 eff= -15 dB  SR=0.6300
+   k=18 eff= -10 dB  SR=0.8610
+   k=18 eff=  -5 dB  SR=0.9750
+   k=18 eff=  +0 dB  SR=0.9930
+   k=18 eff=  +5 dB  SR=0.9970
+   k=18 eff= +10 dB  SR=0.9960
+   k=18 eff= +15 dB  SR=0.9970
+   k=18 eff= +20 dB  SR=0.9970
+   k=18 eff= +25 dB  SR=0.9970
+-- heavy lambda, k=54 --
+   k=54 eff= -40 dB  SR=0.0360
+   k=54 eff= -35 dB  SR=0.0640
+   k=54 eff= -30 dB  SR=0.1390
+   k=54 eff= -25 dB  SR=0.3150
+   k=54 eff= -20 dB  SR=0.6130
+   k=54 eff= -15 dB  SR=0.8440
+   k=54 eff= -10 dB  SR=0.9490
+   k=54 eff=  -5 dB  SR=0.9920
+   k=54 eff=  +0 dB  SR=0.9960
+   k=54 eff=  +5 dB  SR=0.9980
+   k=54 eff= +10 dB  SR=0.9980
+   k=54 eff= +15 dB  SR=0.9980
+   k=54 eff= +20 dB  SR=0.9980
+   k=54 eff= +25 dB  SR=0.9980
+-- digital (K=7 conv, B=2), k=18 --
+   digital k=18 eff= -40 dB  SR=0.0080
+   digital k=18 eff= -35 dB  SR=0.0110
+   digital k=18 eff= -30 dB  SR=0.0150
+   digital k=18 eff= -25 dB  SR=0.0140
+   digital k=18 eff= -20 dB  SR=0.0180
+   digital k=18 eff= -15 dB  SR=0.0270
+   digital k=18 eff= -10 dB  SR=0.0660
+   digital k=18 eff=  -5 dB  SR=0.1620
+   digital k=18 eff=  +0 dB  SR=0.1720
+   digital k=18 eff=  +5 dB  SR=0.1640
+   digital k=18 eff= +10 dB  SR=0.1470
+   digital k=18 eff= +15 dB  SR=0.1530
+   digital k=18 eff= +20 dB  SR=0.1510
+   digital k=18 eff= +25 dB  SR=0.1490
+-- digital (K=7 conv, B=8), k=54 --
+   digital k=54 eff= -40 dB  SR=0.0130
+   digital k=54 eff= -35 dB  SR=0.0130
+   digital k=54 eff= -30 dB  SR=0.0120
+   digital k=54 eff= -25 dB  SR=0.0110
+   digital k=54 eff= -20 dB  SR=0.0100
+   digital k=54 eff= -15 dB  SR=0.0170
+   digital k=54 eff= -10 dB  SR=0.0210
+   digital k=54 eff=  -5 dB  SR=0.1040
+   digital k=54 eff=  +0 dB  SR=0.7170
+   digital k=54 eff=  +5 dB  SR=0.9820
+   digital k=54 eff= +10 dB  SR=0.9990
+   digital k=54 eff= +15 dB  SR=1.0000
+   digital k=54 eff= +20 dB  SR=1.0000
+   digital k=54 eff= +25 dB  SR=1.0000
+
+wrote results\AERIAL_GEOM\geom_d1000_h50_fc3.5\step_aerial_summary.json
+method                SR>=0.90 eff       tx  SR>=0.99 eff       tx
+lam_ctl_heavy_k18             -8.3    113.0          -0.8    123.0
+lam_ctl_heavy_k54            -12.3    108.0          -5.2    120.0
+digital_k18                      -        -             -        -
+digital_k54                    3.5    127.0           7.4    133.0
+
+=== d2D=1000 m, h=100 m, fc=2 GHz ===
+== 3GPP UMa-aerial link budget ==
+geometry: d2D=1000 m, h=100 m, fc=2.0 GHz, d3D=1005.0 m, ref=0.0 dB
+P_LoS=0.8533  PL_LoS=100.07 dB  PL_NLoS=117.03 dB  PL_mean=102.56 dB  g_mean=7.450e-06
+checkpoints: [18, 54]
+-- heavy lambda, k=18 --
+   k=18 eff= -40 dB  SR=0.0260
+   k=18 eff= -35 dB  SR=0.0380
+   k=18 eff= -30 dB  SR=0.0730
+   k=18 eff= -25 dB  SR=0.1420
+   k=18 eff= -20 dB  SR=0.3450
+   k=18 eff= -15 dB  SR=0.6300
+   k=18 eff= -10 dB  SR=0.8610
+   k=18 eff=  -5 dB  SR=0.9750
+   k=18 eff=  +0 dB  SR=0.9930
+   k=18 eff=  +5 dB  SR=0.9970
+   k=18 eff= +10 dB  SR=0.9960
+   k=18 eff= +15 dB  SR=0.9970
+   k=18 eff= +20 dB  SR=0.9970
+   k=18 eff= +25 dB  SR=0.9970
+-- heavy lambda, k=54 --
+   k=54 eff= -40 dB  SR=0.0360
+   k=54 eff= -35 dB  SR=0.0640
+   k=54 eff= -30 dB  SR=0.1390
+   k=54 eff= -25 dB  SR=0.3150
+   k=54 eff= -20 dB  SR=0.6130
+   k=54 eff= -15 dB  SR=0.8440
+   k=54 eff= -10 dB  SR=0.9490
+   k=54 eff=  -5 dB  SR=0.9920
+   k=54 eff=  +0 dB  SR=0.9960
+   k=54 eff=  +5 dB  SR=0.9980
+   k=54 eff= +10 dB  SR=0.9980
+   k=54 eff= +15 dB  SR=0.9980
+   k=54 eff= +20 dB  SR=0.9980
+   k=54 eff= +25 dB  SR=0.9980
+-- digital (K=7 conv, B=2), k=18 --
+   digital k=18 eff= -40 dB  SR=0.0080
+   digital k=18 eff= -35 dB  SR=0.0110
+   digital k=18 eff= -30 dB  SR=0.0150
+   digital k=18 eff= -25 dB  SR=0.0140
+   digital k=18 eff= -20 dB  SR=0.0180
+   digital k=18 eff= -15 dB  SR=0.0270
+   digital k=18 eff= -10 dB  SR=0.0660
+   digital k=18 eff=  -5 dB  SR=0.1620
+   digital k=18 eff=  +0 dB  SR=0.1720
+   digital k=18 eff=  +5 dB  SR=0.1640
+   digital k=18 eff= +10 dB  SR=0.1470
+   digital k=18 eff= +15 dB  SR=0.1530
+   digital k=18 eff= +20 dB  SR=0.1510
+   digital k=18 eff= +25 dB  SR=0.1490
+-- digital (K=7 conv, B=8), k=54 --
+   digital k=54 eff= -40 dB  SR=0.0130
+   digital k=54 eff= -35 dB  SR=0.0130
+   digital k=54 eff= -30 dB  SR=0.0120
+   digital k=54 eff= -25 dB  SR=0.0110
+   digital k=54 eff= -20 dB  SR=0.0100
+   digital k=54 eff= -15 dB  SR=0.0170
+   digital k=54 eff= -10 dB  SR=0.0210
+   digital k=54 eff=  -5 dB  SR=0.1040
+   digital k=54 eff=  +0 dB  SR=0.7170
+   digital k=54 eff=  +5 dB  SR=0.9820
+   digital k=54 eff= +10 dB  SR=0.9990
+   digital k=54 eff= +15 dB  SR=1.0000
+   digital k=54 eff= +20 dB  SR=1.0000
+   digital k=54 eff= +25 dB  SR=1.0000
+
+wrote results\AERIAL_GEOM\geom_d1000_h100_fc2\step_aerial_summary.json
+method                SR>=0.90 eff       tx  SR>=0.99 eff       tx
+lam_ctl_heavy_k18             -8.3     99.0          -0.8    112.0
+lam_ctl_heavy_k54            -12.3     94.0          -5.2    107.0
+digital_k18                      -        -             -        -
+digital_k54                    3.5    114.0           7.4    122.0
+
+=== d2D=1000 m, h=100 m, fc=3.5 GHz ===
+== 3GPP UMa-aerial link budget ==
+geometry: d2D=1000 m, h=100 m, fc=3.5 GHz, d3D=1005.0 m, ref=0.0 dB
+P_LoS=0.8533  PL_LoS=104.93 dB  PL_NLoS=121.89 dB  PL_mean=107.42 dB  g_mean=4.257e-06
+checkpoints: [18, 54]
+-- heavy lambda, k=18 --
+   k=18 eff= -40 dB  SR=0.0260
+   k=18 eff= -35 dB  SR=0.0380
+   k=18 eff= -30 dB  SR=0.0730
+   k=18 eff= -25 dB  SR=0.1420
+   k=18 eff= -20 dB  SR=0.3450
+   k=18 eff= -15 dB  SR=0.6300
+   k=18 eff= -10 dB  SR=0.8610
+   k=18 eff=  -5 dB  SR=0.9750
+   k=18 eff=  +0 dB  SR=0.9930
+   k=18 eff=  +5 dB  SR=0.9970
+   k=18 eff= +10 dB  SR=0.9960
+   k=18 eff= +15 dB  SR=0.9970
+   k=18 eff= +20 dB  SR=0.9970
+   k=18 eff= +25 dB  SR=0.9970
+-- heavy lambda, k=54 --
+   k=54 eff= -40 dB  SR=0.0360
+   k=54 eff= -35 dB  SR=0.0640
+   k=54 eff= -30 dB  SR=0.1390
+   k=54 eff= -25 dB  SR=0.3150
+   k=54 eff= -20 dB  SR=0.6130
+   k=54 eff= -15 dB  SR=0.8440
+   k=54 eff= -10 dB  SR=0.9490
+   k=54 eff=  -5 dB  SR=0.9920
+   k=54 eff=  +0 dB  SR=0.9960
+   k=54 eff=  +5 dB  SR=0.9980
+   k=54 eff= +10 dB  SR=0.9980
+   k=54 eff= +15 dB  SR=0.9980
+   k=54 eff= +20 dB  SR=0.9980
+   k=54 eff= +25 dB  SR=0.9980
+-- digital (K=7 conv, B=2), k=18 --
+   digital k=18 eff= -40 dB  SR=0.0080
+   digital k=18 eff= -35 dB  SR=0.0110
+   digital k=18 eff= -30 dB  SR=0.0150
+   digital k=18 eff= -25 dB  SR=0.0140
+   digital k=18 eff= -20 dB  SR=0.0180
+   digital k=18 eff= -15 dB  SR=0.0270
+   digital k=18 eff= -10 dB  SR=0.0660
+   digital k=18 eff=  -5 dB  SR=0.1620
+   digital k=18 eff=  +0 dB  SR=0.1720
+   digital k=18 eff=  +5 dB  SR=0.1640
+   digital k=18 eff= +10 dB  SR=0.1470
+   digital k=18 eff= +15 dB  SR=0.1530
+   digital k=18 eff= +20 dB  SR=0.1510
+   digital k=18 eff= +25 dB  SR=0.1490
+-- digital (K=7 conv, B=8), k=54 --
+   digital k=54 eff= -40 dB  SR=0.0130
+   digital k=54 eff= -35 dB  SR=0.0130
+   digital k=54 eff= -30 dB  SR=0.0120
+   digital k=54 eff= -25 dB  SR=0.0110
+   digital k=54 eff= -20 dB  SR=0.0100
+   digital k=54 eff= -15 dB  SR=0.0170
+   digital k=54 eff= -10 dB  SR=0.0210
+   digital k=54 eff=  -5 dB  SR=0.1040
+   digital k=54 eff=  +0 dB  SR=0.7170
+   digital k=54 eff=  +5 dB  SR=0.9820
+   digital k=54 eff= +10 dB  SR=0.9990
+   digital k=54 eff= +15 dB  SR=1.0000
+   digital k=54 eff= +20 dB  SR=1.0000
+   digital k=54 eff= +25 dB  SR=1.0000
+
+wrote results\AERIAL_GEOM\geom_d1000_h100_fc3.5\step_aerial_summary.json
+method                SR>=0.90 eff       tx  SR>=0.99 eff       tx
+lam_ctl_heavy_k18             -8.3    103.0          -0.8    116.0
+lam_ctl_heavy_k54            -12.3     99.0          -5.2    112.0
+digital_k18                      -        -             -        -
+digital_k54                    3.5    119.0           7.4    126.0
+
+wrote results\AERIAL_GEOM\step_aerial_geometry_summary.json
+geometry                        P_LoS  PL_mean  lam k54 tx@.90  dig k54 tx@.90     adv
+d2D=200 m, h=50 m, fc=2 GHz     0.967    85.42            74.0            89.0    15.0
+d2D=200 m, h=50 m, fc=3.5 GHz   0.967    90.29            79.0            94.0    15.0
+d2D=200 m, h=100 m, fc=2 GHz    1.000    85.71            74.0            90.0    16.0
+d2D=200 m, h=100 m, fc=3.5 GHz  1.000    90.57            79.0            95.0    16.0
+d2D=500 m, h=50 m, fc=2 GHz     0.889    95.63            87.0           108.0    21.0
+d2D=500 m, h=50 m, fc=3.5 GHz   0.889   100.49            92.0           113.0    21.0
+d2D=500 m, h=100 m, fc=2 GHz    0.945    94.36            83.0            99.0    16.0
+d2D=500 m, h=100 m, fc=3.5 GHz  0.945    99.22            88.0           103.0    15.0
+d2D=1000 m, h=50 m, fc=2 GHz    0.772   105.34           103.0           123.0    20.0
+d2D=1000 m, h=50 m, fc=3.5 GHz  0.772   110.20           108.0           127.0    19.0
+d2D=1000 m, h=100 m, fc=2 GHz   0.853   102.56            94.0           114.0    20.0
+d2D=1000 m, h=100 m, fc=3.5 GHz  0.853   107.42            99.0           119.0    20.0
+-- sweep finished in 2646s (12/12 ok)

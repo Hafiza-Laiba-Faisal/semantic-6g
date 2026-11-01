@@ -15,3 +15,14 @@ __pycache__/
 
 # local Freebuff chat export (contains conversation data)
 results/freebuff_chat_semantic-6g.txt
+
+# generated bundles / dashboards / console logs (committed snapshots live in
+# artifacts/; anything regenerated at the repo root stays untracked)
+project_all_in_one.py
+project_story.html
+thesis_dashboard.html
+run_all_output.txt
+test_eval_output.txt
+
+# CLI/tool logs that can carry credentials or workspace identifiers
+results/modal_token_log.txt

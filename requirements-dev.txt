@@ -1,0 +1,4 @@
+# Development / verification dependencies (not needed to run experiments).
+# The CI workflow invokes each test module directly (`python -m tests.test_x`),
+# so pytest is optional there; install this file to run `pytest tests -q`.
+pytest==8.4.2

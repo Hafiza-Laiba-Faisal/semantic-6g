@@ -26,3 +26,6 @@ test_eval_output.txt
 
 # CLI/tool logs that can carry credentials or workspace identifiers
 results/modal_token_log.txt
+
+# empty stderr captures
+*.err

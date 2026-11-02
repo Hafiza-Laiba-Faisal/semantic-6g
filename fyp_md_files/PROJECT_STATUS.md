@@ -10,10 +10,17 @@ cell**, so M5 is no longer a deferred label.
 
 | Block | Universe | State at time of writing |
 |---|---|---|
-| M5a — λ term removal | 12 train / 20 eval slots | training (watcher `tools/watch_m5.py` will evaluate + finalize) |
+| M5a — λ term removal | 12 train / 20 eval slots | **complete: 11 + 1 declared failure** |
 | M5b — uncoded QPSK reference | 20 conditions / 100 slots | **complete** |
 | M5c — cross-channel transfer | 2 units / 10 slots | **complete** |
-| A-17 — 3GPP multi-geometry | 12 geometries | sweep running under `results/AERIAL_GEOM/` |
+| A-17 — 3GPP multi-geometry | 12 geometries | **complete (12/12)** |
+
+**M5a headline (new):** removing the **control-effort penalty `λ_u`** alone
+collapses success to 0.016–0.027 and, at k = 18 AWGN, diverges outright
+(loss 5,213.5, non-finite grads — declared failure A-18). Removing `λ_v` or
+`λ_T` changes nothing (0.993–0.999). So `λ_u` is the active term; the
+mechanism claim is now term-specific, not "λ helps".
+Full write-up: `fyp_md_files/RESULTS_M5A_2026-11-02.md`.
 
 **M5b headline (new, and it changes the thesis wording):** at k = 12 the frozen
 coded baseline carries B = 1 and reaches 0.062; the *same channel uses,

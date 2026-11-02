@@ -26,7 +26,7 @@ number in this log was typed by hand from memory.
 | AERIAL_TRAIN | 2 train / 48 method-unit-SNR slots | 2 / 48 | A-12 | A-12 complete, **negative** (training diverged; no cell retrained) |
 | AERIAL_TRAIN_TRUNC | 2 train / 48 slots (+1 pre-flight, writes nothing) | 2 / 48, pre-flight PASS at +20 dB | A-13 | A-13 complete (operating point unchanged) |
 | K24_SEEDS | 6 train / 30 slots | 6 / 30 | A-14 | complete (seed range â‰¤ 0.004; metric at ceiling) |
-| M5 | 12 train + 130 eval slots | 0 / 12 train, 0 / 130 slots | A-16 | **registered 2026-11-01, in progress** |
+| M5 | 12 train + 130 eval slots | 11 complete + 1 declared failure / 130 | A-16, A-18 | **complete_with_declared_failures** (lambda_u is the active term) |
 | AERIAL_GEOM | evaluation only, 12 geometries | 12 / 12 | A-17 | **complete** (advantage 15–21 dB, does not collapse) |
 
 "Accounted" always means *evaluated or explicitly declared*. Nothing is
@@ -941,6 +941,32 @@ job running alongside; the 12-geometry sweep is under an hour.
 
 ---
 
+## A-18 — M5a declared failure (registered 2026-11-02, after the run)
+
+**Cell:** `M5_m5_no_u_task_awgn_k18_seed42` (arm `m5_no_u`, k = 18, AWGN,
+seed 42).
+
+**What happened.** The cell finished its 3000 steps but failed the declared
+numerical gate: final task loss **5,213.50** with `grads_finite = False` at the
+final step. Its three sibling `m5_no_u` cells also degraded badly (loss 304.8,
+2,169.9, 1,221.6; success 0.016–0.027). This is the **same failure mode** as the
+M2 conditional-accept cells recorded under A-1: removing the control-effort
+penalty removes the gradient conditioning, and at k = 18 on AWGN the loop
+diverges outright.
+
+**Decision.** Declared a **failure**, not retrained, not seed-searched, not
+excluded silently. `tools/run_m5.py` now carries it in
+`M5_DECLARED_FAILURES`, and `finalize` reports the block as
+`complete_with_declared_failures` rather than `complete`. The other 11 cells
+are unaffected, and the k = 18 AWGN evaluation unit therefore contains two arms
+(`m5_no_v`, `m5_no_T`) instead of three — stated explicitly, not pooled.
+
+**Why this is the expected result, not a lost cell.** The experiment asked
+which term carries the λ-shaping effect. A term whose removal destroys training
+is, by definition, load-bearing. The failure *is* the evidence.
+
+---
+
 ## 1. What a reviewer can check independently
 
 ```powershell
@@ -973,6 +999,7 @@ loss weight, the channel model, the evaluation seeds, the SNR grid or the
 statistics requires **a new dated entry in this file, approved by the user,
 before the run** â€” never a silent edit, and never a retrain justified by a
 result being ugly.
+
 
 
 

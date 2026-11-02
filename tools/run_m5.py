@@ -102,6 +102,11 @@ M5A_ARMS = {
 M5A_KS = (12, 18)
 M5A_SEED = 42
 
+# Declared failures (A-18): terminal, never retrained, never silently dropped.
+M5_DECLARED_FAILURES = frozenset({
+    "M5_m5_no_u_task_awgn_k18_seed42",
+})
+
 
 class M5Cell(rw.WaveCell):
     """Wave-A cell with an M5 identity and its own amendment label."""
@@ -653,15 +658,26 @@ def cmd_finalize():
                 "success_rate": agg["success_rate"]})
 
     done = sum(1 for r in train_rows if r["exit_status"] == "complete")
+    declared = sum(1 for r in train_rows
+                   if r["exit_status"] != "complete"
+                   and r["wave_id"] in M5_DECLARED_FAILURES)
+    evals_ok = (n_a == EXPECTED_SLOTS
+                and n_b == EXPECTED_UNCODED_SLOTS
+                and n_c == EXPECTED_CROSS_SLOTS)
+    if not evals_ok:
+        status = "incomplete"
+    elif done == EXPECTED_TRAIN:
+        status = "complete"
+    elif done + declared == EXPECTED_TRAIN:
+        status = "complete_with_declared_failures"
+    else:
+        status = "incomplete"
     out = M5_ROOT / "step_m5_summary.json"
     out.write_text(json.dumps({
         "experiment": "M5",
         "amendment": AMENDMENT,
-        "status": ("complete"
-                   if done == EXPECTED_TRAIN
-                   and n_a == EXPECTED_SLOTS
-                   and n_b == EXPECTED_UNCODED_SLOTS
-                   and n_c == EXPECTED_CROSS_SLOTS else "incomplete"),
+        "status": status,
+        "declared_failures": sorted(M5_DECLARED_FAILURES),
         "design": {
             "m5a": {"cells": EXPECTED_TRAIN, "units": EXPECTED_UNITS,
                     "slots": EXPECTED_SLOTS, "arms": M5A_ARMS,
@@ -682,6 +698,7 @@ def cmd_finalize():
         "m5b_uncoded_rows": uncoded_rows,
         "m5c_cross_rows": cross_rows,
         "counts": {"m5a_train_done": done, "m5a_train_expected": EXPECTED_TRAIN,
+                   "m5a_declared_failures": declared,
                    "m5a_slots": n_a, "m5a_slots_expected": EXPECTED_SLOTS,
                    "m5b_slots": n_b,
                    "m5b_slots_expected": EXPECTED_UNCODED_SLOTS,

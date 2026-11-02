@@ -1,0 +1,27 @@
+== M5 training queue (non-frozen amendment) ==
+[ 1/12] TRAIN M5_m5_no_u_task_awgn_k12_seed42 hash=d7fd20defe32a055 steps=3000 arm=A16a
+[ 1/12] DONE  M5_m5_no_u_task_awgn_k12_seed42  3230.4s  task_loss_final=304.7738
+[ 2/12] TRAIN M5_m5_no_u_task_rayleigh_k12_seed42 hash=53f8f629a33cdd40 steps=3000 arm=A16a
+[ 2/12] DONE  M5_m5_no_u_task_rayleigh_k12_seed42  3323.4s  task_loss_final=2169.8618
+[ 3/12] TRAIN M5_m5_no_u_task_awgn_k18_seed42 hash=35c232923d213d74 steps=3000 arm=A16a
+[ 3/12] INCOMPLETE M5_m5_no_u_task_awgn_k18_seed42 (nan=0, grads=False)
+[ 4/12] TRAIN M5_m5_no_u_task_rayleigh_k18_seed42 hash=ce1c675c1595f324 steps=3000 arm=A16a
+[ 4/12] DONE  M5_m5_no_u_task_rayleigh_k18_seed42  2062.5s  task_loss_final=1221.6224
+[ 5/12] TRAIN M5_m5_no_v_task_awgn_k12_seed42 hash=4eb85192c3977af8 steps=3000 arm=A16a
+[ 5/12] DONE  M5_m5_no_v_task_awgn_k12_seed42  1828.1s  task_loss_final=15.7684
+[ 6/12] TRAIN M5_m5_no_v_task_rayleigh_k12_seed42 hash=04b0cf5f005e97b4 steps=3000 arm=A16a
+[ 6/12] DONE  M5_m5_no_v_task_rayleigh_k12_seed42  1946.5s  task_loss_final=15.8232
+[ 7/12] TRAIN M5_m5_no_v_task_awgn_k18_seed42 hash=3e9edeae4102a601 steps=3000 arm=A16a
+[ 7/12] DONE  M5_m5_no_v_task_awgn_k18_seed42  1866.2s  task_loss_final=15.7688
+[ 8/12] TRAIN M5_m5_no_v_task_rayleigh_k18_seed42 hash=df0c861ac5c9eaa2 steps=3000 arm=A16a
+[ 8/12] DONE  M5_m5_no_v_task_rayleigh_k18_seed42  3242.5s  task_loss_final=15.7946
+[ 9/12] TRAIN M5_m5_no_T_task_awgn_k12_seed42 hash=fee231a96c7d7cf3 steps=3000 arm=A16a
+[ 9/12] DONE  M5_m5_no_T_task_awgn_k12_seed42  3591.8s  task_loss_final=16.0736
+[10/12] TRAIN M5_m5_no_T_task_rayleigh_k12_seed42 hash=7efa2cbe27fcd871 steps=3000 arm=A16a
+[10/12] DONE  M5_m5_no_T_task_rayleigh_k12_seed42  3862.3s  task_loss_final=16.1175
+[11/12] TRAIN M5_m5_no_T_task_awgn_k18_seed42 hash=78bbd25b9c2fbab4 steps=3000 arm=A16a
+[11/12] DONE  M5_m5_no_T_task_awgn_k18_seed42  3836.7s  task_loss_final=16.0738
+[12/12] TRAIN M5_m5_no_T_task_rayleigh_k18_seed42 hash=7e1d455969a63947 steps=3000 arm=A16a
+[12/12] DONE  M5_m5_no_T_task_rayleigh_k18_seed42  1932.2s  task_loss_final=16.1015
+-- wave training finished: new=11 skipped=0 (failed skipped=0) failed_this_run=1 documented_failed=1 wall=32588.9s
+-- UNDECLARED failure(s) -> exit 1: ['M5_m5_no_u_task_awgn_k18_seed42']

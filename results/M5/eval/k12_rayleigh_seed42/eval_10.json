@@ -1,0 +1,76 @@
+{
+  "STEP": "M5",
+  "experiment": "M5",
+  "unit": "k12_rayleigh_seed42",
+  "k": 12,
+  "channel": "rayleigh",
+  "seed": 42,
+  "snr_db": 10.0,
+  "test_seed": 10042,
+  "episodes": 1000,
+  "t_max": 100,
+  "paired_reference": "frozen M1/M2 realizations not reused; wave evals are self-paired (same episodes within unit, across tags)",
+  "protocol_note": "M5 diagnostic protocol: E=1000, non-frozen amendment M5-A16-2026-11-01; NOT comparable 1:1 to frozen M1/M2 (E=5000)",
+  "non_frozen": true,
+  "wall_s": 1.8,
+  "aggregate_m5_no_u": {
+    "episodes": 1000,
+    "success_count": 12,
+    "failure_count": 988,
+    "success_rate": 0.012,
+    "final_distance_mean": 10.447690963745117,
+    "avg_distance_mean": 10.172274589538574,
+    "control_effort_mean": 771.9384765625,
+    "min_distance_mean": 7.730956554412842,
+    "mse_mean": 0.5168319940567017,
+    "ttg_success_mean": 32.5,
+    "ttg_success_median": 23.0
+  },
+  "aggregate_m5_no_v": {
+    "episodes": 1000,
+    "success_count": 997,
+    "failure_count": 3,
+    "success_rate": 0.997,
+    "final_distance_mean": 0.05761336535215378,
+    "avg_distance_mean": 2.0170507431030273,
+    "control_effort_mean": 246.45362854003906,
+    "min_distance_mean": 0.03130141273140907,
+    "mse_mean": 0.25053170323371887,
+    "ttg_success_mean": 34.262786865234375,
+    "ttg_success_median": 34.0
+  },
+  "aggregate_m5_no_T": {
+    "episodes": 1000,
+    "success_count": 995,
+    "failure_count": 5,
+    "success_rate": 0.995,
+    "final_distance_mean": 0.09170187264680862,
+    "avg_distance_mean": 2.0441431999206543,
+    "control_effort_mean": 236.60906982421875,
+    "min_distance_mean": 0.05095694586634636,
+    "mse_mean": 0.24524161219596863,
+    "ttg_success_mean": 34.563819885253906,
+    "ttg_success_median": 35.0
+  },
+  "wilson_m5_no_u": {
+    "wilson_low": 0.006877647806403522,
+    "wilson_high": 0.02085726847549828,
+    "p_hat": 0.012,
+    "success_count": 12,
+    "total": 1000
+  },
+  "wilson_m5_no_v": {
+    "wilson_low": 0.9912169859464969,
+    "wilson_high": 0.9989792161188614,
+    "p_hat": 0.997,
+    "success_count": 997,
+    "total": 1000
+  },
+  "wilson_m5_no_T": {
+    "wilson_low": 0.9883490446266249,
+    "wilson_high": 0.9978624644726756,
+    "p_hat": 0.995,
+    "success_count": 995,
+    "total": 1000
+  }
+}

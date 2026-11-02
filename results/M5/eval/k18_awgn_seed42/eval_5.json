@@ -1,0 +1,56 @@
+{
+  "STEP": "M5",
+  "experiment": "M5",
+  "unit": "k18_awgn_seed42",
+  "k": 18,
+  "channel": "awgn",
+  "seed": 42,
+  "snr_db": 5.0,
+  "test_seed": 10042,
+  "episodes": 1000,
+  "t_max": 100,
+  "paired_reference": "frozen M1/M2 realizations not reused; wave evals are self-paired (same episodes within unit, across tags)",
+  "protocol_note": "M5 diagnostic protocol: E=1000, non-frozen amendment M5-A16-2026-11-01; NOT comparable 1:1 to frozen M1/M2 (E=5000)",
+  "non_frozen": true,
+  "wall_s": 1.4,
+  "aggregate_m5_no_v": {
+    "episodes": 1000,
+    "success_count": 997,
+    "failure_count": 3,
+    "success_rate": 0.997,
+    "final_distance_mean": 0.07241980731487274,
+    "avg_distance_mean": 2.0280256271362305,
+    "control_effort_mean": 255.3596649169922,
+    "min_distance_mean": 0.039180293679237366,
+    "mse_mean": 0.21699799597263336,
+    "ttg_success_mean": 32.96589660644531,
+    "ttg_success_median": 33.0
+  },
+  "aggregate_m5_no_T": {
+    "episodes": 1000,
+    "success_count": 999,
+    "failure_count": 1,
+    "success_rate": 0.999,
+    "final_distance_mean": 0.04001189395785332,
+    "avg_distance_mean": 2.0068485736846924,
+    "control_effort_mean": 237.5211181640625,
+    "min_distance_mean": 0.017810050398111343,
+    "mse_mean": 0.22419123351573944,
+    "ttg_success_mean": 33.4304313659668,
+    "ttg_success_median": 33.0
+  },
+  "wilson_m5_no_v": {
+    "wilson_low": 0.9912169859464969,
+    "wilson_high": 0.9989792161188614,
+    "p_hat": 0.997,
+    "success_count": 997,
+    "total": 1000
+  },
+  "wilson_m5_no_T": {
+    "wilson_low": 0.9943574414020421,
+    "wilson_high": 0.9998234536293739,
+    "p_hat": 0.999,
+    "success_count": 999,
+    "total": 1000
+  }
+}

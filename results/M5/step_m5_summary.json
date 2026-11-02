@@ -1,0 +1,1881 @@
+{
+  "experiment": "M5",
+  "amendment": "M5-A16-2026-11-01",
+  "status": "complete_with_declared_failures",
+  "declared_failures": [
+    "M5_m5_no_u_task_awgn_k18_seed42"
+  ],
+  "design": {
+    "m5a": {
+      "cells": 12,
+      "units": 4,
+      "slots": 20,
+      "arms": {
+        "m5_no_u": [
+          1.0,
+          0.0,
+          0.1,
+          2.0
+        ],
+        "m5_no_v": [
+          1.0,
+          0.1,
+          0.0,
+          2.0
+        ],
+        "m5_no_T": [
+          1.0,
+          0.1,
+          0.1,
+          0.0
+        ]
+      },
+      "k": [
+        12,
+        18
+      ],
+      "seed": 42,
+      "steps": 3000
+    },
+    "m5b": {
+      "cells": 20,
+      "slots": 100,
+      "k": [
+        12,
+        18,
+        24,
+        30,
+        54
+      ]
+    },
+    "m5c": {
+      "units": 2,
+      "slots": 10,
+      "k": 18,
+      "source_tag": "lam_ctl_heavy"
+    }
+  },
+  "protocol_note": "M5 diagnostic: E=1000 per unit; NOT 1:1 comparable to frozen M1/M2 (E=5000). Steps, architecture, seeds and evaluation stream frozen; only the loss weighting (M5a) and the reference links (M5b/c) are new.",
+  "m5a_train_rows": [
+    {
+      "wave_id": "M5_m5_no_u_task_awgn_k12_seed42",
+      "arm": "m5_no_u",
+      "k": 12,
+      "channel": "awgn",
+      "seed": 42,
+      "lambdas": [
+        1.0,
+        0.0,
+        0.1,
+        2.0
+      ],
+      "exit_status": "complete",
+      "task_loss_final": 304.7738037109375,
+      "nan_batches": 0,
+      "grads_finite": true,
+      "wall_seconds": null,
+      "eval_after_success_rate": 0.015625
+    },
+    {
+      "wave_id": "M5_m5_no_u_task_rayleigh_k12_seed42",
+      "arm": "m5_no_u",
+      "k": 12,
+      "channel": "rayleigh",
+      "seed": 42,
+      "lambdas": [
+        1.0,
+        0.0,
+        0.1,
+        2.0
+      ],
+      "exit_status": "complete",
+      "task_loss_final": 2169.86181640625,
+      "nan_batches": 0,
+      "grads_finite": true,
+      "wall_seconds": null,
+      "eval_after_success_rate": 0.015625
+    },
+    {
+      "wave_id": "M5_m5_no_u_task_awgn_k18_seed42",
+      "arm": "m5_no_u",
+      "k": 18,
+      "channel": "awgn",
+      "seed": 42,
+      "lambdas": [
+        1.0,
+        0.0,
+        0.1,
+        2.0
+      ],
+      "exit_status": "incomplete",
+      "task_loss_final": 5213.4990234375,
+      "nan_batches": 0,
+      "grads_finite": false,
+      "wall_seconds": null,
+      "eval_after_success_rate": 0.015625
+    },
+    {
+      "wave_id": "M5_m5_no_u_task_rayleigh_k18_seed42",
+      "arm": "m5_no_u",
+      "k": 18,
+      "channel": "rayleigh",
+      "seed": 42,
+      "lambdas": [
+        1.0,
+        0.0,
+        0.1,
+        2.0
+      ],
+      "exit_status": "complete",
+      "task_loss_final": 1221.6224365234375,
+      "nan_batches": 0,
+      "grads_finite": true,
+      "wall_seconds": null,
+      "eval_after_success_rate": 0.04296875
+    },
+    {
+      "wave_id": "M5_m5_no_v_task_awgn_k12_seed42",
+      "arm": "m5_no_v",
+      "k": 12,
+      "channel": "awgn",
+      "seed": 42,
+      "lambdas": [
+        1.0,
+        0.1,
+        0.0,
+        2.0
+      ],
+      "exit_status": "complete",
+      "task_loss_final": 15.768356323242188,
+      "nan_batches": 0,
+      "grads_finite": true,
+      "wall_seconds": null,
+      "eval_after_success_rate": 1.0
+    },
+    {
+      "wave_id": "M5_m5_no_v_task_rayleigh_k12_seed42",
+      "arm": "m5_no_v",
+      "k": 12,
+      "channel": "rayleigh",
+      "seed": 42,
+      "lambdas": [
+        1.0,
+        0.1,
+        0.0,
+        2.0
+      ],
+      "exit_status": "complete",
+      "task_loss_final": 15.823152542114258,
+      "nan_batches": 0,
+      "grads_finite": true,
+      "wall_seconds": null,
+      "eval_after_success_rate": 1.0
+    },
+    {
+      "wave_id": "M5_m5_no_v_task_awgn_k18_seed42",
+      "arm": "m5_no_v",
+      "k": 18,
+      "channel": "awgn",
+      "seed": 42,
+      "lambdas": [
+        1.0,
+        0.1,
+        0.0,
+        2.0
+      ],
+      "exit_status": "complete",
+      "task_loss_final": 15.76875114440918,
+      "nan_batches": 0,
+      "grads_finite": true,
+      "wall_seconds": null,
+      "eval_after_success_rate": 1.0
+    },
+    {
+      "wave_id": "M5_m5_no_v_task_rayleigh_k18_seed42",
+      "arm": "m5_no_v",
+      "k": 18,
+      "channel": "rayleigh",
+      "seed": 42,
+      "lambdas": [
+        1.0,
+        0.1,
+        0.0,
+        2.0
+      ],
+      "exit_status": "complete",
+      "task_loss_final": 15.794567108154297,
+      "nan_batches": 0,
+      "grads_finite": true,
+      "wall_seconds": null,
+      "eval_after_success_rate": 1.0
+    },
+    {
+      "wave_id": "M5_m5_no_T_task_awgn_k12_seed42",
+      "arm": "m5_no_T",
+      "k": 12,
+      "channel": "awgn",
+      "seed": 42,
+      "lambdas": [
+        1.0,
+        0.1,
+        0.1,
+        0.0
+      ],
+      "exit_status": "complete",
+      "task_loss_final": 16.073562622070312,
+      "nan_batches": 0,
+      "grads_finite": true,
+      "wall_seconds": null,
+      "eval_after_success_rate": 1.0
+    },
+    {
+      "wave_id": "M5_m5_no_T_task_rayleigh_k12_seed42",
+      "arm": "m5_no_T",
+      "k": 12,
+      "channel": "rayleigh",
+      "seed": 42,
+      "lambdas": [
+        1.0,
+        0.1,
+        0.1,
+        0.0
+      ],
+      "exit_status": "complete",
+      "task_loss_final": 16.117490768432617,
+      "nan_batches": 0,
+      "grads_finite": true,
+      "wall_seconds": null,
+      "eval_after_success_rate": 1.0
+    },
+    {
+      "wave_id": "M5_m5_no_T_task_awgn_k18_seed42",
+      "arm": "m5_no_T",
+      "k": 18,
+      "channel": "awgn",
+      "seed": 42,
+      "lambdas": [
+        1.0,
+        0.1,
+        0.1,
+        0.0
+      ],
+      "exit_status": "complete",
+      "task_loss_final": 16.073787689208984,
+      "nan_batches": 0,
+      "grads_finite": true,
+      "wall_seconds": null,
+      "eval_after_success_rate": 1.0
+    },
+    {
+      "wave_id": "M5_m5_no_T_task_rayleigh_k18_seed42",
+      "arm": "m5_no_T",
+      "k": 18,
+      "channel": "rayleigh",
+      "seed": 42,
+      "lambdas": [
+        1.0,
+        0.1,
+        0.1,
+        0.0
+      ],
+      "exit_status": "complete",
+      "task_loss_final": 16.101465225219727,
+      "nan_batches": 0,
+      "grads_finite": true,
+      "wall_seconds": null,
+      "eval_after_success_rate": 1.0
+    }
+  ],
+  "m5a_pooled_rows": [
+    {
+      "arm": "m5_no_T",
+      "k": 12,
+      "channel": "awgn",
+      "snr_db": 0.0,
+      "success_count": 996,
+      "episodes": 1000,
+      "success_rate": 0.996
+    },
+    {
+      "arm": "m5_no_T",
+      "k": 12,
+      "channel": "awgn",
+      "snr_db": 5.0,
+      "success_count": 996,
+      "episodes": 1000,
+      "success_rate": 0.996
+    },
+    {
+      "arm": "m5_no_T",
+      "k": 12,
+      "channel": "awgn",
+      "snr_db": 10.0,
+      "success_count": 996,
+      "episodes": 1000,
+      "success_rate": 0.996
+    },
+    {
+      "arm": "m5_no_T",
+      "k": 12,
+      "channel": "awgn",
+      "snr_db": 15.0,
+      "success_count": 996,
+      "episodes": 1000,
+      "success_rate": 0.996
+    },
+    {
+      "arm": "m5_no_T",
+      "k": 12,
+      "channel": "awgn",
+      "snr_db": 20.0,
+      "success_count": 996,
+      "episodes": 1000,
+      "success_rate": 0.996
+    },
+    {
+      "arm": "m5_no_T",
+      "k": 12,
+      "channel": "rayleigh",
+      "snr_db": 0.0,
+      "success_count": 986,
+      "episodes": 1000,
+      "success_rate": 0.986
+    },
+    {
+      "arm": "m5_no_T",
+      "k": 12,
+      "channel": "rayleigh",
+      "snr_db": 5.0,
+      "success_count": 993,
+      "episodes": 1000,
+      "success_rate": 0.993
+    },
+    {
+      "arm": "m5_no_T",
+      "k": 12,
+      "channel": "rayleigh",
+      "snr_db": 10.0,
+      "success_count": 995,
+      "episodes": 1000,
+      "success_rate": 0.995
+    },
+    {
+      "arm": "m5_no_T",
+      "k": 12,
+      "channel": "rayleigh",
+      "snr_db": 15.0,
+      "success_count": 996,
+      "episodes": 1000,
+      "success_rate": 0.996
+    },
+    {
+      "arm": "m5_no_T",
+      "k": 12,
+      "channel": "rayleigh",
+      "snr_db": 20.0,
+      "success_count": 996,
+      "episodes": 1000,
+      "success_rate": 0.996
+    },
+    {
+      "arm": "m5_no_T",
+      "k": 18,
+      "channel": "awgn",
+      "snr_db": 0.0,
+      "success_count": 999,
+      "episodes": 1000,
+      "success_rate": 0.999
+    },
+    {
+      "arm": "m5_no_T",
+      "k": 18,
+      "channel": "awgn",
+      "snr_db": 5.0,
+      "success_count": 999,
+      "episodes": 1000,
+      "success_rate": 0.999
+    },
+    {
+      "arm": "m5_no_T",
+      "k": 18,
+      "channel": "awgn",
+      "snr_db": 10.0,
+      "success_count": 999,
+      "episodes": 1000,
+      "success_rate": 0.999
+    },
+    {
+      "arm": "m5_no_T",
+      "k": 18,
+      "channel": "awgn",
+      "snr_db": 15.0,
+      "success_count": 999,
+      "episodes": 1000,
+      "success_rate": 0.999
+    },
+    {
+      "arm": "m5_no_T",
+      "k": 18,
+      "channel": "awgn",
+      "snr_db": 20.0,
+      "success_count": 998,
+      "episodes": 1000,
+      "success_rate": 0.998
+    },
+    {
+      "arm": "m5_no_T",
+      "k": 18,
+      "channel": "rayleigh",
+      "snr_db": 0.0,
+      "success_count": 989,
+      "episodes": 1000,
+      "success_rate": 0.989
+    },
+    {
+      "arm": "m5_no_T",
+      "k": 18,
+      "channel": "rayleigh",
+      "snr_db": 5.0,
+      "success_count": 993,
+      "episodes": 1000,
+      "success_rate": 0.993
+    },
+    {
+      "arm": "m5_no_T",
+      "k": 18,
+      "channel": "rayleigh",
+      "snr_db": 10.0,
+      "success_count": 993,
+      "episodes": 1000,
+      "success_rate": 0.993
+    },
+    {
+      "arm": "m5_no_T",
+      "k": 18,
+      "channel": "rayleigh",
+      "snr_db": 15.0,
+      "success_count": 993,
+      "episodes": 1000,
+      "success_rate": 0.993
+    },
+    {
+      "arm": "m5_no_T",
+      "k": 18,
+      "channel": "rayleigh",
+      "snr_db": 20.0,
+      "success_count": 993,
+      "episodes": 1000,
+      "success_rate": 0.993
+    },
+    {
+      "arm": "m5_no_u",
+      "k": 12,
+      "channel": "awgn",
+      "snr_db": 0.0,
+      "success_count": 14,
+      "episodes": 1000,
+      "success_rate": 0.014
+    },
+    {
+      "arm": "m5_no_u",
+      "k": 12,
+      "channel": "awgn",
+      "snr_db": 5.0,
+      "success_count": 16,
+      "episodes": 1000,
+      "success_rate": 0.016
+    },
+    {
+      "arm": "m5_no_u",
+      "k": 12,
+      "channel": "awgn",
+      "snr_db": 10.0,
+      "success_count": 15,
+      "episodes": 1000,
+      "success_rate": 0.015
+    },
+    {
+      "arm": "m5_no_u",
+      "k": 12,
+      "channel": "awgn",
+      "snr_db": 15.0,
+      "success_count": 14,
+      "episodes": 1000,
+      "success_rate": 0.014
+    },
+    {
+      "arm": "m5_no_u",
+      "k": 12,
+      "channel": "awgn",
+      "snr_db": 20.0,
+      "success_count": 21,
+      "episodes": 1000,
+      "success_rate": 0.021
+    },
+    {
+      "arm": "m5_no_u",
+      "k": 12,
+      "channel": "rayleigh",
+      "snr_db": 0.0,
+      "success_count": 18,
+      "episodes": 1000,
+      "success_rate": 0.018
+    },
+    {
+      "arm": "m5_no_u",
+      "k": 12,
+      "channel": "rayleigh",
+      "snr_db": 5.0,
+      "success_count": 15,
+      "episodes": 1000,
+      "success_rate": 0.015
+    },
+    {
+      "arm": "m5_no_u",
+      "k": 12,
+      "channel": "rayleigh",
+      "snr_db": 10.0,
+      "success_count": 12,
+      "episodes": 1000,
+      "success_rate": 0.012
+    },
+    {
+      "arm": "m5_no_u",
+      "k": 12,
+      "channel": "rayleigh",
+      "snr_db": 15.0,
+      "success_count": 21,
+      "episodes": 1000,
+      "success_rate": 0.021
+    },
+    {
+      "arm": "m5_no_u",
+      "k": 12,
+      "channel": "rayleigh",
+      "snr_db": 20.0,
+      "success_count": 16,
+      "episodes": 1000,
+      "success_rate": 0.016
+    },
+    {
+      "arm": "m5_no_u",
+      "k": 18,
+      "channel": "rayleigh",
+      "snr_db": 0.0,
+      "success_count": 27,
+      "episodes": 1000,
+      "success_rate": 0.027
+    },
+    {
+      "arm": "m5_no_u",
+      "k": 18,
+      "channel": "rayleigh",
+      "snr_db": 5.0,
+      "success_count": 27,
+      "episodes": 1000,
+      "success_rate": 0.027
+    },
+    {
+      "arm": "m5_no_u",
+      "k": 18,
+      "channel": "rayleigh",
+      "snr_db": 10.0,
+      "success_count": 27,
+      "episodes": 1000,
+      "success_rate": 0.027
+    },
+    {
+      "arm": "m5_no_u",
+      "k": 18,
+      "channel": "rayleigh",
+      "snr_db": 15.0,
+      "success_count": 27,
+      "episodes": 1000,
+      "success_rate": 0.027
+    },
+    {
+      "arm": "m5_no_u",
+      "k": 18,
+      "channel": "rayleigh",
+      "snr_db": 20.0,
+      "success_count": 27,
+      "episodes": 1000,
+      "success_rate": 0.027
+    },
+    {
+      "arm": "m5_no_v",
+      "k": 12,
+      "channel": "awgn",
+      "snr_db": 0.0,
+      "success_count": 998,
+      "episodes": 1000,
+      "success_rate": 0.998
+    },
+    {
+      "arm": "m5_no_v",
+      "k": 12,
+      "channel": "awgn",
+      "snr_db": 5.0,
+      "success_count": 997,
+      "episodes": 1000,
+      "success_rate": 0.997
+    },
+    {
+      "arm": "m5_no_v",
+      "k": 12,
+      "channel": "awgn",
+      "snr_db": 10.0,
+      "success_count": 997,
+      "episodes": 1000,
+      "success_rate": 0.997
+    },
+    {
+      "arm": "m5_no_v",
+      "k": 12,
+      "channel": "awgn",
+      "snr_db": 15.0,
+      "success_count": 997,
+      "episodes": 1000,
+      "success_rate": 0.997
+    },
+    {
+      "arm": "m5_no_v",
+      "k": 12,
+      "channel": "awgn",
+      "snr_db": 20.0,
+      "success_count": 997,
+      "episodes": 1000,
+      "success_rate": 0.997
+    },
+    {
+      "arm": "m5_no_v",
+      "k": 12,
+      "channel": "rayleigh",
+      "snr_db": 0.0,
+      "success_count": 991,
+      "episodes": 1000,
+      "success_rate": 0.991
+    },
+    {
+      "arm": "m5_no_v",
+      "k": 12,
+      "channel": "rayleigh",
+      "snr_db": 5.0,
+      "success_count": 998,
+      "episodes": 1000,
+      "success_rate": 0.998
+    },
+    {
+      "arm": "m5_no_v",
+      "k": 12,
+      "channel": "rayleigh",
+      "snr_db": 10.0,
+      "success_count": 997,
+      "episodes": 1000,
+      "success_rate": 0.997
+    },
+    {
+      "arm": "m5_no_v",
+      "k": 12,
+      "channel": "rayleigh",
+      "snr_db": 15.0,
+      "success_count": 997,
+      "episodes": 1000,
+      "success_rate": 0.997
+    },
+    {
+      "arm": "m5_no_v",
+      "k": 12,
+      "channel": "rayleigh",
+      "snr_db": 20.0,
+      "success_count": 997,
+      "episodes": 1000,
+      "success_rate": 0.997
+    },
+    {
+      "arm": "m5_no_v",
+      "k": 18,
+      "channel": "awgn",
+      "snr_db": 0.0,
+      "success_count": 997,
+      "episodes": 1000,
+      "success_rate": 0.997
+    },
+    {
+      "arm": "m5_no_v",
+      "k": 18,
+      "channel": "awgn",
+      "snr_db": 5.0,
+      "success_count": 997,
+      "episodes": 1000,
+      "success_rate": 0.997
+    },
+    {
+      "arm": "m5_no_v",
+      "k": 18,
+      "channel": "awgn",
+      "snr_db": 10.0,
+      "success_count": 996,
+      "episodes": 1000,
+      "success_rate": 0.996
+    },
+    {
+      "arm": "m5_no_v",
+      "k": 18,
+      "channel": "awgn",
+      "snr_db": 15.0,
+      "success_count": 996,
+      "episodes": 1000,
+      "success_rate": 0.996
+    },
+    {
+      "arm": "m5_no_v",
+      "k": 18,
+      "channel": "awgn",
+      "snr_db": 20.0,
+      "success_count": 996,
+      "episodes": 1000,
+      "success_rate": 0.996
+    },
+    {
+      "arm": "m5_no_v",
+      "k": 18,
+      "channel": "rayleigh",
+      "snr_db": 0.0,
+      "success_count": 987,
+      "episodes": 1000,
+      "success_rate": 0.987
+    },
+    {
+      "arm": "m5_no_v",
+      "k": 18,
+      "channel": "rayleigh",
+      "snr_db": 5.0,
+      "success_count": 995,
+      "episodes": 1000,
+      "success_rate": 0.995
+    },
+    {
+      "arm": "m5_no_v",
+      "k": 18,
+      "channel": "rayleigh",
+      "snr_db": 10.0,
+      "success_count": 997,
+      "episodes": 1000,
+      "success_rate": 0.997
+    },
+    {
+      "arm": "m5_no_v",
+      "k": 18,
+      "channel": "rayleigh",
+      "snr_db": 15.0,
+      "success_count": 996,
+      "episodes": 1000,
+      "success_rate": 0.996
+    },
+    {
+      "arm": "m5_no_v",
+      "k": 18,
+      "channel": "rayleigh",
+      "snr_db": 20.0,
+      "success_count": 996,
+      "episodes": 1000,
+      "success_rate": 0.996
+    }
+  ],
+  "m5b_uncoded_rows": [
+    {
+      "variant": "uncoded_bmax",
+      "k": 12,
+      "channel": "awgn",
+      "snr_db": 0.0,
+      "bits_per_component": 4,
+      "success_count": 378,
+      "episodes": 1000,
+      "success_rate": 0.378
+    },
+    {
+      "variant": "uncoded_bmax",
+      "k": 12,
+      "channel": "awgn",
+      "snr_db": 5.0,
+      "bits_per_component": 4,
+      "success_count": 698,
+      "episodes": 1000,
+      "success_rate": 0.698
+    },
+    {
+      "variant": "uncoded_bmax",
+      "k": 12,
+      "channel": "awgn",
+      "snr_db": 10.0,
+      "bits_per_component": 4,
+      "success_count": 524,
+      "episodes": 1000,
+      "success_rate": 0.524
+    },
+    {
+      "variant": "uncoded_bmax",
+      "k": 12,
+      "channel": "awgn",
+      "snr_db": 15.0,
+      "bits_per_component": 4,
+      "success_count": 515,
+      "episodes": 1000,
+      "success_rate": 0.515
+    },
+    {
+      "variant": "uncoded_bmax",
+      "k": 12,
+      "channel": "awgn",
+      "snr_db": 20.0,
+      "bits_per_component": 4,
+      "success_count": 515,
+      "episodes": 1000,
+      "success_rate": 0.515
+    },
+    {
+      "variant": "uncoded_bmax",
+      "k": 12,
+      "channel": "rayleigh",
+      "snr_db": 0.0,
+      "bits_per_component": 4,
+      "success_count": 368,
+      "episodes": 1000,
+      "success_rate": 0.368
+    },
+    {
+      "variant": "uncoded_bmax",
+      "k": 12,
+      "channel": "rayleigh",
+      "snr_db": 5.0,
+      "bits_per_component": 4,
+      "success_count": 739,
+      "episodes": 1000,
+      "success_rate": 0.739
+    },
+    {
+      "variant": "uncoded_bmax",
+      "k": 12,
+      "channel": "rayleigh",
+      "snr_db": 10.0,
+      "bits_per_component": 4,
+      "success_count": 675,
+      "episodes": 1000,
+      "success_rate": 0.675
+    },
+    {
+      "variant": "uncoded_bmax",
+      "k": 12,
+      "channel": "rayleigh",
+      "snr_db": 15.0,
+      "bits_per_component": 4,
+      "success_count": 572,
+      "episodes": 1000,
+      "success_rate": 0.572
+    },
+    {
+      "variant": "uncoded_bmax",
+      "k": 12,
+      "channel": "rayleigh",
+      "snr_db": 20.0,
+      "bits_per_component": 4,
+      "success_count": 553,
+      "episodes": 1000,
+      "success_rate": 0.553
+    },
+    {
+      "variant": "uncoded_bcoded",
+      "k": 12,
+      "channel": "awgn",
+      "snr_db": 0.0,
+      "bits_per_component": 1,
+      "success_count": 67,
+      "episodes": 1000,
+      "success_rate": 0.067
+    },
+    {
+      "variant": "uncoded_bcoded",
+      "k": 12,
+      "channel": "awgn",
+      "snr_db": 5.0,
+      "bits_per_component": 1,
+      "success_count": 58,
+      "episodes": 1000,
+      "success_rate": 0.058
+    },
+    {
+      "variant": "uncoded_bcoded",
+      "k": 12,
+      "channel": "awgn",
+      "snr_db": 10.0,
+      "bits_per_component": 1,
+      "success_count": 64,
+      "episodes": 1000,
+      "success_rate": 0.064
+    },
+    {
+      "variant": "uncoded_bcoded",
+      "k": 12,
+      "channel": "awgn",
+      "snr_db": 15.0,
+      "bits_per_component": 1,
+      "success_count": 66,
+      "episodes": 1000,
+      "success_rate": 0.066
+    },
+    {
+      "variant": "uncoded_bcoded",
+      "k": 12,
+      "channel": "awgn",
+      "snr_db": 20.0,
+      "bits_per_component": 1,
+      "success_count": 66,
+      "episodes": 1000,
+      "success_rate": 0.066
+    },
+    {
+      "variant": "uncoded_bcoded",
+      "k": 12,
+      "channel": "rayleigh",
+      "snr_db": 0.0,
+      "bits_per_component": 1,
+      "success_count": 91,
+      "episodes": 1000,
+      "success_rate": 0.091
+    },
+    {
+      "variant": "uncoded_bcoded",
+      "k": 12,
+      "channel": "rayleigh",
+      "snr_db": 5.0,
+      "bits_per_component": 1,
+      "success_count": 64,
+      "episodes": 1000,
+      "success_rate": 0.064
+    },
+    {
+      "variant": "uncoded_bcoded",
+      "k": 12,
+      "channel": "rayleigh",
+      "snr_db": 10.0,
+      "bits_per_component": 1,
+      "success_count": 66,
+      "episodes": 1000,
+      "success_rate": 0.066
+    },
+    {
+      "variant": "uncoded_bcoded",
+      "k": 12,
+      "channel": "rayleigh",
+      "snr_db": 15.0,
+      "bits_per_component": 1,
+      "success_count": 60,
+      "episodes": 1000,
+      "success_rate": 0.06
+    },
+    {
+      "variant": "uncoded_bcoded",
+      "k": 12,
+      "channel": "rayleigh",
+      "snr_db": 20.0,
+      "bits_per_component": 1,
+      "success_count": 60,
+      "episodes": 1000,
+      "success_rate": 0.06
+    },
+    {
+      "variant": "uncoded_bmax",
+      "k": 18,
+      "channel": "awgn",
+      "snr_db": 0.0,
+      "bits_per_component": 6,
+      "success_count": 413,
+      "episodes": 1000,
+      "success_rate": 0.413
+    },
+    {
+      "variant": "uncoded_bmax",
+      "k": 18,
+      "channel": "awgn",
+      "snr_db": 5.0,
+      "bits_per_component": 6,
+      "success_count": 989,
+      "episodes": 1000,
+      "success_rate": 0.989
+    },
+    {
+      "variant": "uncoded_bmax",
+      "k": 18,
+      "channel": "awgn",
+      "snr_db": 10.0,
+      "bits_per_component": 6,
+      "success_count": 1000,
+      "episodes": 1000,
+      "success_rate": 1.0
+    },
+    {
+      "variant": "uncoded_bmax",
+      "k": 18,
+      "channel": "awgn",
+      "snr_db": 15.0,
+      "bits_per_component": 6,
+      "success_count": 1000,
+      "episodes": 1000,
+      "success_rate": 1.0
+    },
+    {
+      "variant": "uncoded_bmax",
+      "k": 18,
+      "channel": "awgn",
+      "snr_db": 20.0,
+      "bits_per_component": 6,
+      "success_count": 1000,
+      "episodes": 1000,
+      "success_rate": 1.0
+    },
+    {
+      "variant": "uncoded_bmax",
+      "k": 18,
+      "channel": "rayleigh",
+      "snr_db": 0.0,
+      "bits_per_component": 6,
+      "success_count": 391,
+      "episodes": 1000,
+      "success_rate": 0.391
+    },
+    {
+      "variant": "uncoded_bmax",
+      "k": 18,
+      "channel": "rayleigh",
+      "snr_db": 5.0,
+      "bits_per_component": 6,
+      "success_count": 881,
+      "episodes": 1000,
+      "success_rate": 0.881
+    },
+    {
+      "variant": "uncoded_bmax",
+      "k": 18,
+      "channel": "rayleigh",
+      "snr_db": 10.0,
+      "bits_per_component": 6,
+      "success_count": 996,
+      "episodes": 1000,
+      "success_rate": 0.996
+    },
+    {
+      "variant": "uncoded_bmax",
+      "k": 18,
+      "channel": "rayleigh",
+      "snr_db": 15.0,
+      "bits_per_component": 6,
+      "success_count": 998,
+      "episodes": 1000,
+      "success_rate": 0.998
+    },
+    {
+      "variant": "uncoded_bmax",
+      "k": 18,
+      "channel": "rayleigh",
+      "snr_db": 20.0,
+      "bits_per_component": 6,
+      "success_count": 999,
+      "episodes": 1000,
+      "success_rate": 0.999
+    },
+    {
+      "variant": "uncoded_bcoded",
+      "k": 18,
+      "channel": "awgn",
+      "snr_db": 0.0,
+      "bits_per_component": 2,
+      "success_count": 139,
+      "episodes": 1000,
+      "success_rate": 0.139
+    },
+    {
+      "variant": "uncoded_bcoded",
+      "k": 18,
+      "channel": "awgn",
+      "snr_db": 5.0,
+      "bits_per_component": 2,
+      "success_count": 161,
+      "episodes": 1000,
+      "success_rate": 0.161
+    },
+    {
+      "variant": "uncoded_bcoded",
+      "k": 18,
+      "channel": "awgn",
+      "snr_db": 10.0,
+      "bits_per_component": 2,
+      "success_count": 149,
+      "episodes": 1000,
+      "success_rate": 0.149
+    },
+    {
+      "variant": "uncoded_bcoded",
+      "k": 18,
+      "channel": "awgn",
+      "snr_db": 15.0,
+      "bits_per_component": 2,
+      "success_count": 148,
+      "episodes": 1000,
+      "success_rate": 0.148
+    },
+    {
+      "variant": "uncoded_bcoded",
+      "k": 18,
+      "channel": "awgn",
+      "snr_db": 20.0,
+      "bits_per_component": 2,
+      "success_count": 148,
+      "episodes": 1000,
+      "success_rate": 0.148
+    },
+    {
+      "variant": "uncoded_bcoded",
+      "k": 18,
+      "channel": "rayleigh",
+      "snr_db": 0.0,
+      "bits_per_component": 2,
+      "success_count": 159,
+      "episodes": 1000,
+      "success_rate": 0.159
+    },
+    {
+      "variant": "uncoded_bcoded",
+      "k": 18,
+      "channel": "rayleigh",
+      "snr_db": 5.0,
+      "bits_per_component": 2,
+      "success_count": 170,
+      "episodes": 1000,
+      "success_rate": 0.17
+    },
+    {
+      "variant": "uncoded_bcoded",
+      "k": 18,
+      "channel": "rayleigh",
+      "snr_db": 10.0,
+      "bits_per_component": 2,
+      "success_count": 155,
+      "episodes": 1000,
+      "success_rate": 0.155
+    },
+    {
+      "variant": "uncoded_bcoded",
+      "k": 18,
+      "channel": "rayleigh",
+      "snr_db": 15.0,
+      "bits_per_component": 2,
+      "success_count": 146,
+      "episodes": 1000,
+      "success_rate": 0.146
+    },
+    {
+      "variant": "uncoded_bcoded",
+      "k": 18,
+      "channel": "rayleigh",
+      "snr_db": 20.0,
+      "bits_per_component": 2,
+      "success_count": 149,
+      "episodes": 1000,
+      "success_rate": 0.149
+    },
+    {
+      "variant": "uncoded_bmax",
+      "k": 24,
+      "channel": "awgn",
+      "snr_db": 0.0,
+      "bits_per_component": 8,
+      "success_count": 404,
+      "episodes": 1000,
+      "success_rate": 0.404
+    },
+    {
+      "variant": "uncoded_bmax",
+      "k": 24,
+      "channel": "awgn",
+      "snr_db": 5.0,
+      "bits_per_component": 8,
+      "success_count": 991,
+      "episodes": 1000,
+      "success_rate": 0.991
+    },
+    {
+      "variant": "uncoded_bmax",
+      "k": 24,
+      "channel": "awgn",
+      "snr_db": 10.0,
+      "bits_per_component": 8,
+      "success_count": 1000,
+      "episodes": 1000,
+      "success_rate": 1.0
+    },
+    {
+      "variant": "uncoded_bmax",
+      "k": 24,
+      "channel": "awgn",
+      "snr_db": 15.0,
+      "bits_per_component": 8,
+      "success_count": 1000,
+      "episodes": 1000,
+      "success_rate": 1.0
+    },
+    {
+      "variant": "uncoded_bmax",
+      "k": 24,
+      "channel": "awgn",
+      "snr_db": 20.0,
+      "bits_per_component": 8,
+      "success_count": 1000,
+      "episodes": 1000,
+      "success_rate": 1.0
+    },
+    {
+      "variant": "uncoded_bmax",
+      "k": 24,
+      "channel": "rayleigh",
+      "snr_db": 0.0,
+      "bits_per_component": 8,
+      "success_count": 375,
+      "episodes": 1000,
+      "success_rate": 0.375
+    },
+    {
+      "variant": "uncoded_bmax",
+      "k": 24,
+      "channel": "rayleigh",
+      "snr_db": 5.0,
+      "bits_per_component": 8,
+      "success_count": 897,
+      "episodes": 1000,
+      "success_rate": 0.897
+    },
+    {
+      "variant": "uncoded_bmax",
+      "k": 24,
+      "channel": "rayleigh",
+      "snr_db": 10.0,
+      "bits_per_component": 8,
+      "success_count": 996,
+      "episodes": 1000,
+      "success_rate": 0.996
+    },
+    {
+      "variant": "uncoded_bmax",
+      "k": 24,
+      "channel": "rayleigh",
+      "snr_db": 15.0,
+      "bits_per_component": 8,
+      "success_count": 1000,
+      "episodes": 1000,
+      "success_rate": 1.0
+    },
+    {
+      "variant": "uncoded_bmax",
+      "k": 24,
+      "channel": "rayleigh",
+      "snr_db": 20.0,
+      "bits_per_component": 8,
+      "success_count": 1000,
+      "episodes": 1000,
+      "success_rate": 1.0
+    },
+    {
+      "variant": "uncoded_bcoded",
+      "k": 24,
+      "channel": "awgn",
+      "snr_db": 0.0,
+      "bits_per_component": 3,
+      "success_count": 329,
+      "episodes": 1000,
+      "success_rate": 0.329
+    },
+    {
+      "variant": "uncoded_bcoded",
+      "k": 24,
+      "channel": "awgn",
+      "snr_db": 5.0,
+      "bits_per_component": 3,
+      "success_count": 301,
+      "episodes": 1000,
+      "success_rate": 0.301
+    },
+    {
+      "variant": "uncoded_bcoded",
+      "k": 24,
+      "channel": "awgn",
+      "snr_db": 10.0,
+      "bits_per_component": 3,
+      "success_count": 281,
+      "episodes": 1000,
+      "success_rate": 0.281
+    },
+    {
+      "variant": "uncoded_bcoded",
+      "k": 24,
+      "channel": "awgn",
+      "snr_db": 15.0,
+      "bits_per_component": 3,
+      "success_count": 286,
+      "episodes": 1000,
+      "success_rate": 0.286
+    },
+    {
+      "variant": "uncoded_bcoded",
+      "k": 24,
+      "channel": "awgn",
+      "snr_db": 20.0,
+      "bits_per_component": 3,
+      "success_count": 286,
+      "episodes": 1000,
+      "success_rate": 0.286
+    },
+    {
+      "variant": "uncoded_bcoded",
+      "k": 24,
+      "channel": "rayleigh",
+      "snr_db": 0.0,
+      "bits_per_component": 3,
+      "success_count": 275,
+      "episodes": 1000,
+      "success_rate": 0.275
+    },
+    {
+      "variant": "uncoded_bcoded",
+      "k": 24,
+      "channel": "rayleigh",
+      "snr_db": 5.0,
+      "bits_per_component": 3,
+      "success_count": 358,
+      "episodes": 1000,
+      "success_rate": 0.358
+    },
+    {
+      "variant": "uncoded_bcoded",
+      "k": 24,
+      "channel": "rayleigh",
+      "snr_db": 10.0,
+      "bits_per_component": 3,
+      "success_count": 272,
+      "episodes": 1000,
+      "success_rate": 0.272
+    },
+    {
+      "variant": "uncoded_bcoded",
+      "k": 24,
+      "channel": "rayleigh",
+      "snr_db": 15.0,
+      "bits_per_component": 3,
+      "success_count": 276,
+      "episodes": 1000,
+      "success_rate": 0.276
+    },
+    {
+      "variant": "uncoded_bcoded",
+      "k": 24,
+      "channel": "rayleigh",
+      "snr_db": 20.0,
+      "bits_per_component": 3,
+      "success_count": 264,
+      "episodes": 1000,
+      "success_rate": 0.264
+    },
+    {
+      "variant": "uncoded_bmax",
+      "k": 30,
+      "channel": "awgn",
+      "snr_db": 0.0,
+      "bits_per_component": 10,
+      "success_count": 432,
+      "episodes": 1000,
+      "success_rate": 0.432
+    },
+    {
+      "variant": "uncoded_bmax",
+      "k": 30,
+      "channel": "awgn",
+      "snr_db": 5.0,
+      "bits_per_component": 10,
+      "success_count": 993,
+      "episodes": 1000,
+      "success_rate": 0.993
+    },
+    {
+      "variant": "uncoded_bmax",
+      "k": 30,
+      "channel": "awgn",
+      "snr_db": 10.0,
+      "bits_per_component": 10,
+      "success_count": 1000,
+      "episodes": 1000,
+      "success_rate": 1.0
+    },
+    {
+      "variant": "uncoded_bmax",
+      "k": 30,
+      "channel": "awgn",
+      "snr_db": 15.0,
+      "bits_per_component": 10,
+      "success_count": 1000,
+      "episodes": 1000,
+      "success_rate": 1.0
+    },
+    {
+      "variant": "uncoded_bmax",
+      "k": 30,
+      "channel": "awgn",
+      "snr_db": 20.0,
+      "bits_per_component": 10,
+      "success_count": 1000,
+      "episodes": 1000,
+      "success_rate": 1.0
+    },
+    {
+      "variant": "uncoded_bmax",
+      "k": 30,
+      "channel": "rayleigh",
+      "snr_db": 0.0,
+      "bits_per_component": 10,
+      "success_count": 425,
+      "episodes": 1000,
+      "success_rate": 0.425
+    },
+    {
+      "variant": "uncoded_bmax",
+      "k": 30,
+      "channel": "rayleigh",
+      "snr_db": 5.0,
+      "bits_per_component": 10,
+      "success_count": 881,
+      "episodes": 1000,
+      "success_rate": 0.881
+    },
+    {
+      "variant": "uncoded_bmax",
+      "k": 30,
+      "channel": "rayleigh",
+      "snr_db": 10.0,
+      "bits_per_component": 10,
+      "success_count": 997,
+      "episodes": 1000,
+      "success_rate": 0.997
+    },
+    {
+      "variant": "uncoded_bmax",
+      "k": 30,
+      "channel": "rayleigh",
+      "snr_db": 15.0,
+      "bits_per_component": 10,
+      "success_count": 1000,
+      "episodes": 1000,
+      "success_rate": 1.0
+    },
+    {
+      "variant": "uncoded_bmax",
+      "k": 30,
+      "channel": "rayleigh",
+      "snr_db": 20.0,
+      "bits_per_component": 10,
+      "success_count": 1000,
+      "episodes": 1000,
+      "success_rate": 1.0
+    },
+    {
+      "variant": "uncoded_bcoded",
+      "k": 30,
+      "channel": "awgn",
+      "snr_db": 0.0,
+      "bits_per_component": 4,
+      "success_count": 380,
+      "episodes": 1000,
+      "success_rate": 0.38
+    },
+    {
+      "variant": "uncoded_bcoded",
+      "k": 30,
+      "channel": "awgn",
+      "snr_db": 5.0,
+      "bits_per_component": 4,
+      "success_count": 720,
+      "episodes": 1000,
+      "success_rate": 0.72
+    },
+    {
+      "variant": "uncoded_bcoded",
+      "k": 30,
+      "channel": "awgn",
+      "snr_db": 10.0,
+      "bits_per_component": 4,
+      "success_count": 512,
+      "episodes": 1000,
+      "success_rate": 0.512
+    },
+    {
+      "variant": "uncoded_bcoded",
+      "k": 30,
+      "channel": "awgn",
+      "snr_db": 15.0,
+      "bits_per_component": 4,
+      "success_count": 515,
+      "episodes": 1000,
+      "success_rate": 0.515
+    },
+    {
+      "variant": "uncoded_bcoded",
+      "k": 30,
+      "channel": "awgn",
+      "snr_db": 20.0,
+      "bits_per_component": 4,
+      "success_count": 515,
+      "episodes": 1000,
+      "success_rate": 0.515
+    },
+    {
+      "variant": "uncoded_bcoded",
+      "k": 30,
+      "channel": "rayleigh",
+      "snr_db": 0.0,
+      "bits_per_component": 4,
+      "success_count": 369,
+      "episodes": 1000,
+      "success_rate": 0.369
+    },
+    {
+      "variant": "uncoded_bcoded",
+      "k": 30,
+      "channel": "rayleigh",
+      "snr_db": 5.0,
+      "bits_per_component": 4,
+      "success_count": 721,
+      "episodes": 1000,
+      "success_rate": 0.721
+    },
+    {
+      "variant": "uncoded_bcoded",
+      "k": 30,
+      "channel": "rayleigh",
+      "snr_db": 10.0,
+      "bits_per_component": 4,
+      "success_count": 687,
+      "episodes": 1000,
+      "success_rate": 0.687
+    },
+    {
+      "variant": "uncoded_bcoded",
+      "k": 30,
+      "channel": "rayleigh",
+      "snr_db": 15.0,
+      "bits_per_component": 4,
+      "success_count": 599,
+      "episodes": 1000,
+      "success_rate": 0.599
+    },
+    {
+      "variant": "uncoded_bcoded",
+      "k": 30,
+      "channel": "rayleigh",
+      "snr_db": 20.0,
+      "bits_per_component": 4,
+      "success_count": 555,
+      "episodes": 1000,
+      "success_rate": 0.555
+    },
+    {
+      "variant": "uncoded_bmax",
+      "k": 54,
+      "channel": "awgn",
+      "snr_db": 0.0,
+      "bits_per_component": 18,
+      "success_count": 432,
+      "episodes": 1000,
+      "success_rate": 0.432
+    },
+    {
+      "variant": "uncoded_bmax",
+      "k": 54,
+      "channel": "awgn",
+      "snr_db": 5.0,
+      "bits_per_component": 18,
+      "success_count": 989,
+      "episodes": 1000,
+      "success_rate": 0.989
+    },
+    {
+      "variant": "uncoded_bmax",
+      "k": 54,
+      "channel": "awgn",
+      "snr_db": 10.0,
+      "bits_per_component": 18,
+      "success_count": 1000,
+      "episodes": 1000,
+      "success_rate": 1.0
+    },
+    {
+      "variant": "uncoded_bmax",
+      "k": 54,
+      "channel": "awgn",
+      "snr_db": 15.0,
+      "bits_per_component": 18,
+      "success_count": 1000,
+      "episodes": 1000,
+      "success_rate": 1.0
+    },
+    {
+      "variant": "uncoded_bmax",
+      "k": 54,
+      "channel": "awgn",
+      "snr_db": 20.0,
+      "bits_per_component": 18,
+      "success_count": 1000,
+      "episodes": 1000,
+      "success_rate": 1.0
+    },
+    {
+      "variant": "uncoded_bmax",
+      "k": 54,
+      "channel": "rayleigh",
+      "snr_db": 0.0,
+      "bits_per_component": 18,
+      "success_count": 432,
+      "episodes": 1000,
+      "success_rate": 0.432
+    },
+    {
+      "variant": "uncoded_bmax",
+      "k": 54,
+      "channel": "rayleigh",
+      "snr_db": 5.0,
+      "bits_per_component": 18,
+      "success_count": 911,
+      "episodes": 1000,
+      "success_rate": 0.911
+    },
+    {
+      "variant": "uncoded_bmax",
+      "k": 54,
+      "channel": "rayleigh",
+      "snr_db": 10.0,
+      "bits_per_component": 18,
+      "success_count": 994,
+      "episodes": 1000,
+      "success_rate": 0.994
+    },
+    {
+      "variant": "uncoded_bmax",
+      "k": 54,
+      "channel": "rayleigh",
+      "snr_db": 15.0,
+      "bits_per_component": 18,
+      "success_count": 997,
+      "episodes": 1000,
+      "success_rate": 0.997
+    },
+    {
+      "variant": "uncoded_bmax",
+      "k": 54,
+      "channel": "rayleigh",
+      "snr_db": 20.0,
+      "bits_per_component": 18,
+      "success_count": 1000,
+      "episodes": 1000,
+      "success_rate": 1.0
+    },
+    {
+      "variant": "uncoded_bcoded",
+      "k": 54,
+      "channel": "awgn",
+      "snr_db": 0.0,
+      "bits_per_component": 8,
+      "success_count": 418,
+      "episodes": 1000,
+      "success_rate": 0.418
+    },
+    {
+      "variant": "uncoded_bcoded",
+      "k": 54,
+      "channel": "awgn",
+      "snr_db": 5.0,
+      "bits_per_component": 8,
+      "success_count": 989,
+      "episodes": 1000,
+      "success_rate": 0.989
+    },
+    {
+      "variant": "uncoded_bcoded",
+      "k": 54,
+      "channel": "awgn",
+      "snr_db": 10.0,
+      "bits_per_component": 8,
+      "success_count": 1000,
+      "episodes": 1000,
+      "success_rate": 1.0
+    },
+    {
+      "variant": "uncoded_bcoded",
+      "k": 54,
+      "channel": "awgn",
+      "snr_db": 15.0,
+      "bits_per_component": 8,
+      "success_count": 1000,
+      "episodes": 1000,
+      "success_rate": 1.0
+    },
+    {
+      "variant": "uncoded_bcoded",
+      "k": 54,
+      "channel": "awgn",
+      "snr_db": 20.0,
+      "bits_per_component": 8,
+      "success_count": 1000,
+      "episodes": 1000,
+      "success_rate": 1.0
+    },
+    {
+      "variant": "uncoded_bcoded",
+      "k": 54,
+      "channel": "rayleigh",
+      "snr_db": 0.0,
+      "bits_per_component": 8,
+      "success_count": 406,
+      "episodes": 1000,
+      "success_rate": 0.406
+    },
+    {
+      "variant": "uncoded_bcoded",
+      "k": 54,
+      "channel": "rayleigh",
+      "snr_db": 5.0,
+      "bits_per_component": 8,
+      "success_count": 921,
+      "episodes": 1000,
+      "success_rate": 0.921
+    },
+    {
+      "variant": "uncoded_bcoded",
+      "k": 54,
+      "channel": "rayleigh",
+      "snr_db": 10.0,
+      "bits_per_component": 8,
+      "success_count": 996,
+      "episodes": 1000,
+      "success_rate": 0.996
+    },
+    {
+      "variant": "uncoded_bcoded",
+      "k": 54,
+      "channel": "rayleigh",
+      "snr_db": 15.0,
+      "bits_per_component": 8,
+      "success_count": 999,
+      "episodes": 1000,
+      "success_rate": 0.999
+    },
+    {
+      "variant": "uncoded_bcoded",
+      "k": 54,
+      "channel": "rayleigh",
+      "snr_db": 20.0,
+      "bits_per_component": 8,
+      "success_count": 1000,
+      "episodes": 1000,
+      "success_rate": 1.0
+    }
+  ],
+  "m5c_cross_rows": [
+    {
+      "trained_on": "awgn",
+      "eval_channel": "rayleigh",
+      "snr_db": 0.0,
+      "success_count": 991,
+      "episodes": 1000,
+      "success_rate": 0.991
+    },
+    {
+      "trained_on": "awgn",
+      "eval_channel": "rayleigh",
+      "snr_db": 5.0,
+      "success_count": 997,
+      "episodes": 1000,
+      "success_rate": 0.997
+    },
+    {
+      "trained_on": "awgn",
+      "eval_channel": "rayleigh",
+      "snr_db": 10.0,
+      "success_count": 999,
+      "episodes": 1000,
+      "success_rate": 0.999
+    },
+    {
+      "trained_on": "awgn",
+      "eval_channel": "rayleigh",
+      "snr_db": 15.0,
+      "success_count": 999,
+      "episodes": 1000,
+      "success_rate": 0.999
+    },
+    {
+      "trained_on": "awgn",
+      "eval_channel": "rayleigh",
+      "snr_db": 20.0,
+      "success_count": 999,
+      "episodes": 1000,
+      "success_rate": 0.999
+    },
+    {
+      "trained_on": "rayleigh",
+      "eval_channel": "awgn",
+      "snr_db": 0.0,
+      "success_count": 999,
+      "episodes": 1000,
+      "success_rate": 0.999
+    },
+    {
+      "trained_on": "rayleigh",
+      "eval_channel": "awgn",
+      "snr_db": 5.0,
+      "success_count": 998,
+      "episodes": 1000,
+      "success_rate": 0.998
+    },
+    {
+      "trained_on": "rayleigh",
+      "eval_channel": "awgn",
+      "snr_db": 10.0,
+      "success_count": 998,
+      "episodes": 1000,
+      "success_rate": 0.998
+    },
+    {
+      "trained_on": "rayleigh",
+      "eval_channel": "awgn",
+      "snr_db": 15.0,
+      "success_count": 997,
+      "episodes": 1000,
+      "success_rate": 0.997
+    },
+    {
+      "trained_on": "rayleigh",
+      "eval_channel": "awgn",
+      "snr_db": 20.0,
+      "success_count": 997,
+      "episodes": 1000,
+      "success_rate": 0.997
+    }
+  ],
+  "counts": {
+    "m5a_train_done": 11,
+    "m5a_train_expected": 12,
+    "m5a_declared_failures": 1,
+    "m5a_slots": 20,
+    "m5a_slots_expected": 20,
+    "m5b_slots": 100,
+    "m5b_slots_expected": 100,
+    "m5c_slots": 10,
+    "m5c_slots_expected": 10
+  }
+}

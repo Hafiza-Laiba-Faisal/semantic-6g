@@ -38,6 +38,27 @@ and `results/README.md` added, generated bundles moved to `artifacts/`,
 `results/modal_token_log.txt` untracked, `pytest` added via
 `requirements-dev.txt`. Local suite: **99 passed in 126 s**.
 
+## 2026-11-02 — Thesis integration of M5, A-17 and A-18
+
+The thesis source and the built `.docx` now carry the new results:
+
+| Where | Change |
+|---|---|
+| Abstract | crossover re-labelled as a statement about the **coded** baseline; 12-geometry transmit-SNR range; M5 named as executed |
+| §4.9 | renamed "Extensions A-9 to A-18"; A-16/A-17/A-18 added; the "M5 — deferred" paragraph replaced |
+| Table 4.1 / 4.2 | M5 row complete with declared failure; A-16/A-17/A-18 rows added |
+| §5.8 | new **Table 5.11** (12-geometry link budget) + trend analysis; "one geometry" removed |
+| §5.9 | "strongest classical comparator" qualified: coded comparators only |
+| §5.12 (new) | M5a/M5b/M5c with **Tables 5.12–5.14**; summary renumbered to §5.13 |
+| §5.13 | items 7–9 added (λ term, framing artefact, geometry); old item 7 → 10 |
+| §6.5 | A-17 stability and M5b comparator sentences |
+| §7 | items 12 and 15 rewritten; items 16–17 added (cross-channel ceiling, λ_v/λ_T not load-bearing) |
+| §8.1–8.3 | conclusion, contributions (99 tests), future work updated |
+| List of Tables / Appendix B | Tables 5.11–5.14 and A-1…A-18 |
+
+`THESIS_MASTER_DOCUMENT.docx` rebuilt: 482 paragraphs, **25 tables** (was 21),
+1,259.9 KB.
+
 ---
 
 ## Project

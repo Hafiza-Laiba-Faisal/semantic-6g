@@ -38,6 +38,9 @@ one wins.
 | `RESULTS_POLAR_2026-10-26.md` | A-11 polar comparator |
 | `RESULTS_K24_SEEDS_2026-10-27.md` | A-14 seed variance at k = 24 |
 | `RESULTS_MECHANISM_2026-10-27.md` | Gradient-conditioning mechanism |
+| `RESULTS_AERIAL_GEOM_2026-11-01.md` | A-17 3GPP multi-geometry link budget (12 geometries) |
+| `RESULTS_M5B_M5C_2026-11-01.md` | M5b uncoded digital reference + M5c cross-channel |
+| `RESULTS_M5A_2026-11-02.md` | M5a λ-term removal (λ_u is the active term) |
 
 ## Design and planning
 

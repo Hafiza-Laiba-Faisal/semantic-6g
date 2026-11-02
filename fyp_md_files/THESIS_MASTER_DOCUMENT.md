@@ -55,9 +55,9 @@ We thank our supervisor, Ismat Hira, for her guidance, patience, and careful fee
 
 Reliable and bandwidth-efficient transmission of navigation-relevant information is a core requirement for autonomous unmanned aerial vehicle (UAV) operation over noisy and fading wireless links. Conventional digital communication and reconstruction-oriented Deep Joint Source-Channel Coding (DeepJSCC) are optimised to recover the transmitted signal with minimum distortion, independent of how that signal will subsequently be used. This thesis investigates a Task-Oriented DeepJSCC system in which the encoder and decoder are trained end-to-end to optimise UAV goal-reaching performance rather than reconstruction fidelity.
 
-A compact six-dimensional UAV kinematic state — position, velocity, and goal-relative information — is transmitted over Additive White Gaussian Noise (AWGN) and slow Rayleigh fading channels and used by a fixed navigation controller on a two-dimensional double-integrator model. The core matched-budget matrix is AWGN/Rayleigh. A separate 3GPP TR 36.777 / TR 38.901 UMa-aerial study adds LoS/NLoS path loss, 4/6 dB shadowing, and block fading at a pinned 500 m / 50 m / 2 GHz geometry; it is used for the link-budget (A-10) and dispersion-training (A-12/A-13) extensions. Three systems are compared under identical channel, SNR, and bandwidth conditions: a conventional digital link (quantisation, convolutional coding, QPSK), a reconstruction-oriented DeepJSCC autoencoder, and a task-oriented DeepJSCC system trained on the navigation rollout loss. The study is simulation-only and implemented in Python/PyTorch on CPU with deterministic seeds.
+A compact six-dimensional UAV kinematic state — position, velocity, and goal-relative information — is transmitted over Additive White Gaussian Noise (AWGN) and slow Rayleigh fading channels and used by a fixed navigation controller on a two-dimensional double-integrator model. The core matched-budget matrix is AWGN/Rayleigh. A separate 3GPP TR 36.777 / TR 38.901 UMa-aerial study adds LoS/NLoS path loss, 4/6 dB shadowing, and block fading; it is used for the link-budget (A-10), multi-geometry (A-17) and dispersion-training (A-12/A-13) extensions. Three systems are compared under identical channel, SNR, and bandwidth conditions: a conventional digital link (quantisation, convolutional coding, QPSK), a reconstruction-oriented DeepJSCC autoencoder, and a task-oriented DeepJSCC system trained on the navigation rollout loss. The study is simulation-only and implemented in Python/PyTorch on CPU with deterministic seeds.
 
-The central empirical finding is a bandwidth crossover: neural joint source-channel coding outperforms the classical digital link at low bandwidth (k ≤ 18 channel uses), while the classical link overtakes it at k ≥ 24 and dominates at k = 54. A second finding is diagnostic: the frozen task-oriented loss, which sets the control and velocity penalties to zero, collapses to 2–5% success. Adding control/velocity shaping (λ_u = λ_v = 0.1) recovers 99.7% success at k = 12 and 99.3–99.9% at k = 18 and 54, on both channels. The mechanism is a gradient-conditioning effect of roughly fourteen orders of magnitude, not a capacity effect. The result is tested against a full 5G NR polar comparator, a 3GPP UMa-aerial link budget, a CSI-error sweep, and a three-seed replication; the crossover holds in every case where a matched comparison exists. On the 3GPP link the λ-shaped policy needs 91 dB (k = 18) or 87 dB (k = 54) of transmit SNR for 0.90, against 108 dB for the digital link at k = 54; the digital link cannot reach 0.90 at k = 18. The thesis also documents the digital infeasibility boundary (M3), the secondary B = 8 bandwidth reference (M4), and the deferred M5 ablations. It contributes a matched-budget benchmark, the crossover characterisation, a reproducible diagnosis of why task-oriented training fails without loss shaping, and a first-order aerial-link assessment.
+The central empirical finding is a bandwidth crossover: neural joint source-channel coding outperforms the classical **coded** digital link at low bandwidth (k ≤ 18 channel uses), while the coded link overtakes it at k ≥ 24 and ties it at k = 54. A second finding is diagnostic: the frozen task-oriented loss, which sets the control and velocity penalties to zero, collapses to 2–5% success. Adding control/velocity shaping (λ_u = λ_v = 0.1) recovers 99.7% success at k = 12 and 99.3–99.9% at k = 18 and 54, on both channels; removing the control-effort penalty alone reproduces the failure, which localises the mechanism to a single term. The mechanism is a gradient-conditioning effect of roughly fourteen orders of magnitude, not a capacity effect. The result is tested against a full 5G NR polar comparator, a payload-maximal uncoded link, a 3GPP UMa-aerial link budget over twelve geometries, a CSI-error sweep, and a three-seed replication. The crossover holds for every coded comparator; against the uncoded link the neural arm is not overtaken below k = 54, so the comparator must travel with the claim. On the 3GPP link the λ-shaped policy needs 74–108 dB at k = 54 (78–113 dB at k = 18) of transmit SNR for 0.90 depending on geometry, against 89–127 dB for the digital link at k = 54 — an advantage of 15–21 dB that does not collapse across a 5× distance, 2× altitude and 1.75× carrier sweep; the digital link cannot reach 0.90 at k = 18 at any geometry. The thesis also documents the digital infeasibility boundary (M3), the secondary B = 8 bandwidth reference (M4), and the executed M5 ablations (λ-term removal, uncoded reference, cross-channel transfer). It contributes a matched-budget benchmark, the crossover characterisation, a reproducible diagnosis of why task-oriented training fails without loss shaping, and a first-order aerial-link assessment.
 
 **Keywords:** DeepJSCC, task-oriented communication, semantic communication, UAV navigation, joint source-channel coding, AWGN, Rayleigh fading, 3GPP UMa-aerial, aerial link budget, 6G, goal-reaching control.
 
@@ -155,8 +155,12 @@ The central empirical finding is a bandwidth crossover: neural joint source-chan
 - **Table 5.8** — Wave-C λ-heavy advantage over the best baseline.
 - **Table 5.9** — A-10 required transmit SNR on the 3GPP UMa-aerial link.
 - **Table 5.10** — A-15 full 5G NR polar comparator versus the convolutional baseline.
+- **Table 5.11** — A-17 multi-geometry link budget: transmit SNR for SR ≥ 0.90 at k = 54.
+- **Table 5.12** — M5a task-loss component removal.
+- **Table 5.13** — M5b uncoded QPSK versus the coded baseline and reconstruction.
+- **Table 5.14** — M5c cross-channel transfer.
 - **Table A.1** — Frozen configuration.
-- **Table B.1** — Protocol amendments A-1…A-15.
+- **Table B.1** — Protocol amendments A-1…A-18.
 - **Table B.2** — Experiment blocks and status.
 - **Table C.1** — Reproduction and file map.
 
@@ -445,12 +449,12 @@ The matrix spans the following dimensions.
 
 | Dimension | Levels |
 |---|---|
-| Channel | AWGN; slow Rayleigh fading; 3GPP UMa-aerial (A-10, A-12, A-13) |
+| Channel | AWGN; slow Rayleigh fading; 3GPP UMa-aerial (A-10, A-12, A-13, A-17) |
 | SNR | 0, 2, 4, …, 20 dB (M1); 0, 5, 10, 15, 20 dB (M2 and most extensions); −15…+20 dB nominal (A-12/A-13) |
 | Bandwidth k | 1, 2, 3 (M1, M3); 12, 18, 24, 30, 54 (M2); 54 (M4) |
 | Method | Digital; reconstruction DeepJSCC; task-oriented DeepJSCC |
 | Seeds | 42, 43, 44; 45, 46, 47 for A-14 |
-| Test episodes | 5,000 per unit (M2, M4, Wave-B); 1,000 per unit (M1, M3 is structural, Wave-A, Wave-C, A-9…A-15) |
+| Test episodes | 5,000 per unit (M2, M4, Wave-B); 1,000 per unit (M1, M3 is structural, Wave-A, Wave-C, M5, A-9…A-18) |
 
 **Table 4.2 — Experiment blocks actually executed.**
 
@@ -460,7 +464,7 @@ The matrix spans the following dimensions.
 | M2 | Matched-budget three-way comparison | k = 12, 18, 24, 30, 54; digital + reconstruction + task; AWGN, Rayleigh; E = 5,000 | complete |
 | M3 | Digital infeasibility boundary | k = 1, 2, 3; digital; structural display | complete (no measurement) |
 | M4 | Secondary B = 8 bandwidth reference | k = 54; digital; AWGN, Rayleigh; E = 5,000 | complete (secondary) |
-| M5 | Task-loss component removal, uncoded digital, cross-channel | declared by the frozen protocol; no cell run | deferred |
+| M5 | Task-loss component removal, uncoded digital, cross-channel | M5a: 12 cells, k = 12/18, seed 42; M5b: 20 conditions; M5c: 2 units; E = 1,000 | complete with one declared failure (A-18) |
 | Wave-A | Loss-component / λ ablation | k = 12; six arms; AWGN, Rayleigh; E = 1,000 | complete with two documented failures (85/90 slots) |
 | Wave-B | CSI-estimation-error ablation | all k; σ = 0, 0.05, 0.1, 0.2, 0.4; 350 cells; E = 5,000 | complete |
 | Wave-C | λ-shaping at other bandwidths | k = 18, 54; λ-heavy; AWGN, Rayleigh; seed 42; E = 1,000 | complete (pre-registered screening subset) |
@@ -471,8 +475,11 @@ The matrix spans the following dimensions.
 | A-13 | 3GPP training with outage tail resampled | k = 18, 54; λ-heavy; UMa-aerial; E = 1,000 | complete |
 | A-14 | Seed variance of the λ arm at k = 24 | k = 24; seeds 45, 46, 47; AWGN, Rayleigh; E = 1,000 | complete |
 | A-15 | Full 5G NR polar comparator | all k; CRC-6/11, CA-SCL L = 8; AWGN, Rayleigh; E = 1,000 | complete |
+| A-16 | M5 execution (pre-registration) | λ-term removal, uncoded QPSK, cross-channel; M5 root only | complete (A-18) |
+| A-17 | 3GPP multi-geometry link budget | 12 geometries; d_2D 200/500/1000 m, h 50/100 m, f_c 2/3.5 GHz; E = 1,000 | complete |
+| A-18 | M5a declared failure | `m5_no_u`, k = 18, AWGN, seed 42; non-finite gradients | kept, not retrained |
 
-The matrix is deliberately heterogeneous: M1–M4 are the frozen protocol, while Waves A–C and A-9–A-15 are dated, additive amendments with their own evaluation budgets. Comparisons across blocks are therefore labelled by protocol, and no block is silently pooled with another. Table 4.2 is the completeness map: M3 is structural, M4 is secondary, and M5 is deferred rather than missing.
+The matrix is deliberately heterogeneous: M1–M4 are the frozen protocol, while Waves A–C and A-9–A-18 are dated, additive amendments with their own evaluation budgets. Comparisons across blocks are therefore labelled by protocol, and no block is silently pooled with another. Table 4.2 is the completeness map: M3 is structural, M4 is secondary, and M5 is complete with one declared failure rather than deferred.
 
 ![Figure 4.1 — Experiment matrix actually executed: M1–M5, Waves A–C, and A-9…A-15.](fyp_md_files/figures/fig_experiment_matrix.png)
 
@@ -504,7 +511,7 @@ Wave-B evaluates 350 cells across five CSI-error levels (σ = 0, 0.05, 0.1, 0.2,
 
 Wave-C is a four-cell screening study: λ-heavy at k = 18 and 54, both channels, seed 42, E = 1,000. It asks whether the k = 12 fix generalises to other bandwidths. All four cells train in parallel; wall-clock is 4,956–5,457 s per cell.
 
-## 4.9 Extensions A-9 to A-15
+## 4.9 Extensions A-9 to A-18
 
 **A-9 (capacity).** A width-256 task model tests whether the low-bandwidth failure is a capacity artefact.
 
@@ -520,7 +527,11 @@ Wave-C is a four-cell screening study: λ-heavy at k = 18 and 54, both channels,
 
 **A-15 (5G NR polar).** A full 5G NR polar chain — CRC-6/11, 5G reliability construction, rate matching, CA-SCL with L = 8 — is compared with the convolutional baseline on the frozen grid and identical episodes. It is the strongest classical comparator in the thesis.
 
-**M5 — deferred.** The frozen protocol declared M5 (task-loss component removal, uncoded digital reference, cross-channel training) as deferred because its specification was incomplete. No M5 cell was trained or evaluated. It is reported as a scope limitation and as future work, not as a result.
+**A-16 (M5 execution).** The frozen protocol declared M5 (task-loss component removal, uncoded digital reference, cross-channel training) as deferred because its specification was incomplete. A-16 supplies the specification before the first cell: three arms that each remove one λ term from the heavy arm, a payload-maximal and a payload-matched uncoded QPSK reference, and a cross-channel transfer evaluation. Everything runs under the frozen steps, architecture, seeds and evaluation stream; only the loss weighting and the reference links are new.
+
+**A-17 (multi-geometry).** The A-10 method is repeated over twelve geometries (d_2D 200/500/1000 m, h 50/100 m, f_c 2.0/3.5 GHz). It is evaluation-only: the stored λ-heavy checkpoints and the frozen digital baseline are evaluated at effective SNR and mapped to transmit SNR through the LoS/NLoS mixture. The frozen A-10 artifact is not overwritten.
+
+**A-18 (declared failure).** One M5a cell (`m5_no_u`, k = 18, AWGN) finishes its steps but ends with non-finite gradients. It is recorded as a failure, is not retrained, and is excluded from that evaluation unit.
 
 ## 4.10 Evaluation Metrics
 
@@ -536,7 +547,7 @@ All methods are evaluated on bitwise-identical episodes: initial positions, goal
 
 ## 4.12 Reproducibility and Engineering Controls
 
-Every tunable constant lives in `project/config.py` with a provenance tag ([FROZEN], [LIT], or [PROJ]). The codebase has 57 passing tests covering the channel statistics, power normalisation, digital budget, evaluation gates, McNemar formula, architecture width, and protocol locks. The Docker image builds and the full suite runs on Linux in CI. All experiments are CPU-only and deterministic; a given (seed, configuration) pair reproduces bit-identically. Recovery from interruption retrains from the fixed seed under the frozen protocol, rather than resuming a partially saved optimizer state.
+Every tunable constant lives in `project/config.py` with a provenance tag ([FROZEN], [LIT], or [PROJ]). The codebase has 99 passing tests covering the channel statistics, power normalisation, digital budget, evaluation gates, McNemar formula, architecture width, and protocol locks. The Docker image builds and the full suite runs on Linux in CI. All experiments are CPU-only and deterministic; a given (seed, configuration) pair reproduces bit-identically. Recovery from interruption retrains from the fixed seed under the frozen protocol, rather than resuming a partially saved optimizer state.
 
 <!-- pagebreak -->
 # Chapter 5 — Results
@@ -692,7 +703,26 @@ At d_2D = 500 m, h = 50 m, f_c = 2 GHz, P_LoS = 0.8887, PL_mean = 95.63 dB:
 | Digital, k = 18 | Not reachable (ceiling 0.17) | Not reachable |
 | Digital, k = 54 | 108 dB | 117 dB |
 
-The λ policy's advantage over the classical link is 21 dB at 0.90 and 15 dB at 0.99 for k = 54, and unbounded at k = 18 where the classical link is payload-limited. The model includes LoS probability, LoS/NLoS path loss, and their mixture. It does not model Doppler, shadowing, aerial small-scale fading, antenna patterns, noise figure, or bandwidth. One geometry is evaluated.
+The λ policy's advantage over the classical link is 21 dB at 0.90 and 15 dB at 0.99 for k = 54, and unbounded at k = 18 where the classical link is payload-limited. The model includes LoS probability, LoS/NLoS path loss, and their mixture. It does not model Doppler, shadowing, aerial small-scale fading, antenna patterns, noise figure, or bandwidth. A single geometry is a weak basis for a trend, so A-17 repeats the identical evaluation over twelve geometries: d_2D ∈ {200, 500, 1000} m, h ∈ {50, 100} m, f_c ∈ {2.0, 3.5} GHz, E = 1,000 per point, using the stored Wave-C λ-heavy checkpoints and the frozen digital baseline. Nothing is retrained and the frozen A-10 artifact is untouched.
+
+**Table 5.11 — A-17 multi-geometry link budget: transmit SNR for SR ≥ 0.90 at k = 54.**
+
+| d_2D (m) | h (m) | f_c (GHz) | P_LoS | PL_mean (dB) | λ-heavy | Digital | Advantage |
+|---:|---:|---:|---:|---:|---:|---:|---:|
+| 200 | 50 | 2.0 | 0.967 | 85.4 | 74 | 89 | +15 |
+| 200 | 50 | 3.5 | 0.967 | 90.3 | 79 | 94 | +15 |
+| 200 | 100 | 2.0 | 1.000 | 85.7 | 74 | 90 | +16 |
+| 200 | 100 | 3.5 | 1.000 | 90.6 | 79 | 95 | +16 |
+| 500 | 50 | 2.0 | 0.889 | 95.6 | 87 | 108 | +21 |
+| 500 | 50 | 3.5 | 0.889 | 100.5 | 92 | 113 | +21 |
+| 500 | 100 | 2.0 | 0.945 | 94.4 | 83 | 99 | +16 |
+| 500 | 100 | 3.5 | 0.945 | 99.2 | 88 | 103 | +15 |
+| 1000 | 50 | 2.0 | 0.772 | 105.3 | 103 | 123 | +20 |
+| 1000 | 50 | 3.5 | 0.772 | 110.2 | 108 | 127 | +19 |
+| 1000 | 100 | 2.0 | 0.853 | 102.6 | 94 | 114 | +20 |
+| 1000 | 100 | 3.5 | 0.853 | 107.4 | 99 | 119 | +20 |
+
+The advantage does not collapse: it stays between 15 and 21 dB across a 5× span in distance, a 2× span in altitude and a 1.75× span in carrier frequency, and narrows only to 12–15 dB at the 0.99 target. The 500 m / 50 m / 2 GHz row reproduces A-10 exactly (87 dB against 108 dB), which confirms that the sweep measures the same quantity rather than a re-implementation. Distance dominates at roughly 29 dB per 5× distance — steeper than free space, because the 3GPP aerial NLoS branch adds a height-dependent exponent — and raising altitude from 50 to 100 m recovers 9 dB at 1000 m as P_LoS rises from 0.772 to 0.853. Carrier frequency adds a flat 5 dB from 2.0 to 3.5 GHz, shifting the budget without changing the comparison. The λ-heavy k = 18 arm needs 78–113 dB for 0.90; the digital k = 18 arm never reaches 0.90 at any geometry.
 
 ![Figure 5.8 — A-10: required transmit SNR on the 3GPP UMa-aerial link.](fyp_md_files/figures/fig_aerial_required_snr.png)
 
@@ -712,7 +742,7 @@ A-15 uses the full 5G NR chain (CRC-6/11, 5G reliability construction, rate matc
 | 30 | 0.5436 | 0.5596 | 5G slightly better |
 | 54 | **0.9952** | 0.9092 | Convolutional still stronger |
 
-The crossover at k = 18 → 24 survives the strongest classical comparator. The reported gap does not depend on the convolutional code being weak.
+The crossover at k = 18 → 24 survives every *coded* comparator tested. The reported gap does not depend on the convolutional code being weak. The strongest comparator is not a code at all, however: M5b (§5.12.2) removes the channel code entirely and shows that the low-bandwidth ceiling is a payload/framing artefact, so the comparator must travel with the claim.
 
 ![Figure 5.9 — A-11: polar versus convolutional digital baseline.](fyp_md_files/figures/fig_polar_vs_conv.png)
 
@@ -726,22 +756,75 @@ A-13 repeats the design with the >20 dB outage tail (3.78% of episodes) resample
 
 Six cells, three seeds, two channels: success ranges from 0.995 to 1.000 with a seed-to-seed range ≤ 0.004. The k = 24 number is not a one-initialisation artefact. Because the metric is at its ceiling, the study rules out a large initialisation dependence rather than measuring seed variance at a non-saturated point.
 
-## 5.12 Summary of Findings
+## 5.12 M5 — Deferred Ablations Executed (A-16, A-17, A-18)
 
-1. **Bandwidth crossover.** Neural JSCC wins at k ≤ 18; the classical digital link wins at k ≥ 24. This is the primary thesis contribution and is robust to a 5G NR polar comparator. M3 makes the low-bandwidth side structural: the matched-budget digital link cannot exist at k = 1–3. M4 makes the high-bandwidth side concrete: a B = 8 separated design needs k = 54 to pass 0.90 at 0 dB, while the λ-heavy link is at 0.999 with k = 18.
+The frozen protocol declared M5 as a deferred block: task-loss component removal, an uncoded digital reference, and cross-channel training. A-16 registered the design before the first cell, so the block is reported as pre-registered evidence rather than as an afterthought. All cells run under the frozen steps, architecture, seeds and evaluation stream; only the loss weighting (M5a) and the reference links (M5b/M5c) are new. The block is diagnostic at E = 1,000 per unit and is not pooled with the E = 5,000 frozen matrix.
+
+### 5.12.1 M5a — which λ term carries the effect
+
+Starting from the λ-heavy arm (λ_d, λ_u, λ_v, λ_T) = (1.0, 0.1, 0.1, 2.0), one term is removed at a time.
+
+**Table 5.12 — M5a task-loss component removal, mean success over 0–20 dB (E = 1,000).**
+
+| Arm | Removed | k = 12 AWGN | k = 12 Rayleigh | k = 18 AWGN | k = 18 Rayleigh |
+|---|---|---:|---:|---:|---:|
+| `m5_no_u` | control penalty | 0.016 | 0.016 | failed | 0.027 |
+| `m5_no_v` | velocity penalty | 0.997 | 0.997 | 0.996 | 0.996 |
+| `m5_no_T` | terminal penalty | 0.996 | 0.995 | 0.999 | 0.993 |
+| reference (Wave-A/C) | — | 0.997 | 0.997 | 0.999 | 0.993 |
+
+The control-effort penalty is the active term. Removing it collapses success to 0.016–0.027, raises the final loss by one to two orders of magnitude (305 to 5,214 against about 16), and at k = 18 AWGN destroys training outright: final loss 5,213.5 with non-finite gradients at the final step. That cell is a declared failure (A-18), is not retrained, and is excluded from the k = 18 AWGN evaluation unit, which therefore contains two arms rather than three. Removing λ_v or λ_T changes nothing outside the ceiling. The mechanism claim therefore sharpens from "λ-shaping works" to "λ_u is the term that works, and removing it reproduces the original frozen-arm failure". This is consistent with the gradient-conditioning account: L_u is the only term that is a direct function of the action applied to the plant, and therefore the only term that shapes the encoder gradient through the closed loop. The experiment localises the effect; it does not prove that causal chain.
+
+### 5.12.2 M5b — the uncoded digital reference
+
+A-11 and A-15 tested alternative channel codes. M5b removes the code entirely. Uncoded QPSK carries two bits per symbol, so the budget is 3B ≤ k rather than 6B + 6 ≤ k. Two variants are reported: `uncoded_bmax` uses the whole bandwidth (B = floor(k/3)), and `uncoded_bcoded` carries the same payload as the coded baseline (B = floor((k−6)/6)) with the code removed.
+
+**Table 5.13 — M5b uncoded QPSK versus the coded baseline and reconstruction, AWGN, mean over 0–20 dB.**
+
+| k | Reconstruction (M2) | Task, frozen λ (M2) | Digital, convolutional (M2) | Uncoded, B = k/3 | Uncoded, same payload |
+|---|---|---|---|---|---|
+| 12 | 0.242 | 0.028 | 0.062 | **0.526** (B = 4) | 0.064 (B = 1) |
+| 18 | 0.254 | 0.018 | 0.164 | **0.880** (B = 6) | 0.149 (B = 2) |
+| 24 | 0.233 | 0.034 | 0.306 | **0.879** (B = 8) | 0.297 (B = 3) |
+| 30 | 0.279 | 0.021 | 0.566 | **0.885** (B = 10) | 0.528 (B = 4) |
+| 54 | 0.246 | 0.016 | 0.995 | 0.884 (B = 18) | 0.881 (B = 8) |
+
+Three results follow. First, the low-bandwidth digital ceiling is a payload artefact, not a separation artefact: at k = 12 the frozen coded baseline carries B = 1 and reaches 0.062, while the same channel uses uncoded carry B = 4 and reach 0.526 on AWGN (0.581 on Rayleigh). The M3 infeasibility statement is therefore a statement about the frozen coded framing, not about digital communication. Second, the plateau is set by the payload alone: B = 4 gives 0.526 at k = 12 and 0.528 at k = 30, and B ≥ 6 saturates near 0.88, which is a strong internal consistency check on the uncoded path. Third, the crossover depends on the comparator. The frozen coded baseline is overtaken by the λ-heavy arm below k = 54 and ties at k = 54 (0.995 against 0.998); the uncoded full-bandwidth link reaches only 0.884 at k = 54 and is beaten at k = 12, 18 and 24 (0.526 against 0.997, 0.880 against 0.999, 0.879 against about 0.999). No digital variant, coded or uncoded, beats the λ-heavy arm below k = 54. The headline "digital wins at k ≥ 24" is therefore true of the coded baseline specifically, and the comparator must travel with the sentence.
+
+The non-monotone curves at B = 4 are real and are not a defect. At high SNR the estimate collapses to the deterministic quantised state, whose residual error (one quantiser step, about 1.07 m in position at B = 4) exceeds the 0.5 m goal radius, so the controller cannot settle; at moderate SNR bit errors dither the estimate and occasionally place it inside the goal radius. The frozen coded baseline shows the identical pattern at k = 30 Rayleigh (0.686 at 0 dB falling to 0.551 at 20 dB), so the effect belongs to the frozen quantiser and controller, not to the uncoded link.
+
+### 5.12.3 M5c — cross-channel transfer
+
+The Wave-C λ-heavy checkpoints at k = 18, seed 42, trained on one channel, are evaluated on the other without fine-tuning.
+
+**Table 5.14 — M5c cross-channel transfer, success rate (E = 1,000).**
+
+| Trained on | Evaluated on | 0 dB | 5 dB | 10 dB | 15 dB | 20 dB |
+|---|---|---|---|---|---|---|
+| AWGN | Rayleigh | 0.991 | 0.997 | 0.999 | 0.999 | 0.999 |
+| Rayleigh | AWGN | 0.999 | 0.998 | 0.998 | 0.997 | 0.997 |
+
+Transfer is complete at this operating point, but the metric is saturated on both channels, so the experiment cannot distinguish genuine channel-agnosticism from ceiling. The honest claim is that no measurable degradation appears at k = 18, not that the representation is channel-invariant. A harder task or a lower-bandwidth point is needed to resolve the question.
+
+## 5.13 Summary of Findings
+
+1. **Bandwidth crossover.** Neural JSCC wins at k ≤ 18; the classical digital link wins at k ≥ 24. This is the primary thesis contribution and is robust to a 5G NR polar comparator. M3 makes the low-bandwidth side structural: the matched-budget digital link cannot exist at k = 1–3. M4 makes the high-bandwidth side concrete: a B = 8 separated design needs k = 54 to pass 0.90 at 0 dB, while the λ-heavy link is at 0.999 with k = 18. M5b qualifies the high-bandwidth side: the crossover is a property of the coded baseline, and no digital variant, coded or uncoded, beats the λ-heavy arm below k = 54.
 2. **Frozen task loss fails.** With λ_u = λ_v = 0, the task arm is at 2–5% success and flat across SNR, at every k.
 3. **λ-shaping fixes it.** With λ_u = λ_v = 0.1, success reaches 99.7% at k = 12 and 99.3–99.9% at k = 18 and 54, on both channels.
 4. **The mechanism is gradient conditioning.** The encoder gradient is bounded by about fourteen orders of magnitude; capacity is not the cause.
 5. **CSI magnitude error is hidden by success rate.** SR is flat to σ = 0.4; MSE degrades by about 18%.
 6. **Aerial link.** The λ policy needs 91 dB (k = 18) or 87 dB (k = 54) of transmit SNR for 0.90; the digital link needs 108 dB at k = 54 and cannot reach 0.90 at k = 18. Training under the full 3GPP dispersion (A-12) diverges; resampling the >20 dB outage tail (A-13) restores stability but does not move the operating point materially (≤ 2 dB, inside sampling error).
-7. **Honest limits.** The 0.99+ result is at the task ceiling; high-bandwidth/high-SNR digital reaches 1.000; full-dispersion training (A-12) diverges.
+7. **Which λ term matters.** Removing the control-effort penalty alone collapses success to 0.016–0.027 and diverges at k = 18 AWGN; removing the velocity or terminal penalty changes nothing (0.993–0.999). λ_u is the active term (M5a).
+8. **The low-bandwidth digital ceiling is a framing artefact.** At k = 12, uncoded QPSK with B = 4 reaches 0.526 against 0.062 for the frozen coded B = 1 link. The M3 infeasibility boundary is a statement about the frozen packet, not about digital communication (M5b).
+9. **Aerial geometry.** Across twelve 3GPP UMa-aerial geometries the λ-heavy advantage over the classical link stays at 15–21 dB for 0.90 and 12–15 dB for 0.99; the 500/50/2 row reproduces A-10 exactly (A-17).
+10. **Honest limits.** The 0.99+ result is at the task ceiling; high-bandwidth/high-SNR digital reaches 1.000; full-dispersion training (A-12) diverges.
 
 <!-- pagebreak -->
 # Chapter 6 — Discussion
 
 ## 6.1 When Task-Oriented Communication Wins
 
-The data supports a conditional answer, not a universal one. Task-oriented communication wins when the channel is the binding constraint: low bandwidth (k ≤ 18), low SNR, and fading. In those regimes the neural code allocates its limited symbols to the state information that matters for control, and the digital link is either payload-limited or cliff-limited. At high bandwidth the classical link has enough symbols to send the six state components reliably; the neural decoder's objective, not the channel, becomes the bottleneck, and the digital link wins.
+The data supports a conditional answer, not a universal one. Task-oriented communication wins when the channel is the binding constraint: low bandwidth (k ≤ 18), low SNR, and fading. In those regimes the neural code allocates its limited symbols to the state information that matters for control, and the digital link is either payload-limited or cliff-limited. At high bandwidth the coded classical link has enough symbols to send the six state components reliably; the neural decoder's objective, not the channel, becomes the bottleneck, and the coded link overtakes the neural arm at k = 54 (0.995 against 0.998, effectively a tie). A payload-maximal uncoded link improves the low-bandwidth end substantially — 0.526 against 0.062 at k = 12 — but still does not overtake the shaped neural arm below k = 54.
 
 This is the direct 6G answer the thesis offers: semantic/task-oriented communication is not a universal replacement for classical communication. It is a regime-specific tool, and the crossover is where the regime changes.
 
@@ -761,9 +844,9 @@ The results suggest a design rule for aerial links: use task-oriented joint sour
 
 ## 6.5 The 3GPP Aerial Link and the Cost of Separation
 
-The 3GPP results add two qualifications to the crossover story. First, the aerial link does not change the ordering: the λ-shaped policy remains usable, and its transmit-power advantage over the classical link grows where the classical link is rate-limited (21 dB at 0.90 and 15 dB at 0.99 for k = 54; unbounded at k = 18). Second, the absolute power cost is large: the mean path loss is 95.6 dB, and the required transmit SNR is 87–108 dB relative to a unit-gain benchmark. These numbers are a link-budget statement, not a hardware-feasibility claim; antenna gain, noise figure, and bandwidth are excluded.
+The 3GPP results add two qualifications to the crossover story. First, the aerial link does not change the ordering: the λ-shaped policy remains usable, and its transmit-power advantage over the classical link grows where the classical link is rate-limited (21 dB at 0.90 and 15 dB at 0.99 for k = 54; unbounded at k = 18). Second, the absolute power cost is large: the mean path loss is 95.6 dB, and the required transmit SNR is 87–108 dB relative to a unit-gain benchmark. These numbers are a link-budget statement, not a hardware-feasibility claim; antenna gain, noise figure, and bandwidth are excluded. A-17 shows that the ordering is not a one-geometry coincidence: across a 5× distance, 2× altitude and 1.75× carrier sweep the advantage stays between 15 and 21 dB at 0.90 and between 12 and 15 dB at 0.99. Distance costs about 29 dB per 5×, altitude recovers up to 9 dB, and carrier frequency adds a flat 5 dB. What changes is the absolute budget, not the comparison.
 
-M3 and M4 sharpen the interpretation of the low- and high-bandwidth ends. At k = 1–3 the digital baseline is not a weak competitor; it cannot be built under the matched-budget invariant. At k = 54 the B = 8 digital link is strong, but it needs 54 channel uses to reach 0.974 at 0 dB, whereas the λ-shaped link reaches 0.999 at k = 18. The crossover is therefore best read as a statement about the bandwidth needed to make separation work, not about neural networks being universally better.
+M3 and M4 sharpen the interpretation of the low- and high-bandwidth ends. At k = 1–3 the digital baseline is not a weak competitor; it cannot be built under the matched-budget invariant. At k = 54 the B = 8 digital link is strong, but it needs 54 channel uses to reach 0.974 at 0 dB, whereas the λ-shaped link reaches 0.999 at k = 18. The crossover is therefore best read as a statement about the bandwidth needed to make separation work, not about neural networks being universally better. M5b sharpens this further: when the channel code is removed and the payload is maximised, the digital link improves sharply at low k (0.062 to 0.526 at k = 12) but still does not overtake the λ-heavy arm below k = 54. The crossover is thus about payload efficiency and objective alignment together, and its location depends on which classical comparator is used.
 
 A-12 and A-13 add a training caveat: λ-shaping is robust to the frozen protocol's channel, but not to arbitrary heavy-tailed dispersion. The full 3GPP dispersion puts about 4% of episodes more than 20 dB below the training curriculum, and the frozen recipe diverges; resampling the outage tail restores stability. This is a limitation of the training recipe, not evidence against the λ-shaping mechanism.
 
@@ -791,10 +874,12 @@ A-12 and A-13 add a training caveat: λ-shaping is robust to the frozen protocol
 9. **CSI success-rate insensitivity is coarse.** MSE exposes the 18% degradation that SR hides.
 10. **Polar baseline.** A-11 used SC polar without rate matching; A-15 adds the full 5G NR chain and confirms the crossover, but the 5G code runs at a higher rate for A ≥ 20 (CRC-11), which is a cost to 5G, not a favour.
 11. **A-13 coverage.** A-13 trains on 96.2% of the dispersion (100% LoS, 66% NLoS) and evaluates on 100%; it is not a full-dispersion training result.
-12. **One aerial geometry.** The A-10 link budget uses one distance, height, and carrier frequency.
+12. **Aerial geometry is a sweep, but not a mobility model.** A-17 covers twelve geometries (200–1000 m, 50–100 m, 2.0–3.5 GHz), so the link budget is no longer a single point; it still has no Doppler, no time-correlated shadowing, and no aerial small-scale fading.
 13. **M3 is structural, not empirical.** It shows that the matched-budget digital packet cannot exist at k = 1–3; it is not a measured success rate.
 14. **M4 is secondary.** It repeats the M2 k = 54, B = 8 digital cell as a labelled reference; it is not an independent primary result.
-15. **M5 was not run.** The frozen protocol declared M5 (task-loss component removal, uncoded digital, cross-channel training) as deferred. No M5 result exists, and none is reported.
+15. **M5 is complete but diagnostic.** M5 ran at E = 1,000 and is not pooled with the E = 5,000 frozen matrix. One M5a cell is a declared failure (A-18) and is excluded from its evaluation unit.
+16. **Cross-channel transfer is unresolved.** M5c shows no degradation at k = 18, but the metric is saturated there, so the experiment cannot separate transfer from ceiling.
+17. **λ_v and λ_T are not load-bearing.** M5a shows they can be removed without measurable loss at this operating point; this is not evidence that they are harmful, and they remain in the primary arm.
 
 <!-- pagebreak -->
 # Chapter 8 — Conclusion and Future Work
@@ -803,24 +888,25 @@ A-12 and A-13 add a training caveat: λ-shaping is robust to the frozen protocol
 
 This thesis asked whether a DeepJSCC system trained directly on UAV goal-reaching performance beats reconstruction-oriented DeepJSCC and a conventional digital link under matched channel and bandwidth conditions. The answer is conditional and empirically grounded.
 
-At low bandwidth (k ≤ 18) the neural joint source-channel link clearly outperforms the digital link; at high bandwidth (k ≥ 24) the digital link overtakes and dominates. The crossover is the primary result. M3 shows that at k = 1–3 the matched-budget digital link is not merely weak but structurally infeasible; M4 shows that at k = 54 the B = 8 separated design needs 54 channel uses to reach 0.974 at 0 dB, while the λ-heavy link reaches 0.999 at k = 18. The frozen task-oriented loss, with zero control and velocity penalties, fails at 2–5% success; adding λ_u = λ_v = 0.1 recovers 99.7% at k = 12 and 99.3–99.9% at k = 18 and 54, on both channels. The mechanism is gradient conditioning: the encoder gradient is bounded by about fourteen orders of magnitude, and capacity is not the explanation. The result is tested against a 5G NR polar comparator, a 3GPP aerial link budget, a CSI-error sweep, and a three-seed replication; the crossover holds where a matched comparison exists. On the 3GPP link the λ-shaped policy needs 91 dB (k = 18) or 87 dB (k = 54) of transmit SNR for 0.90, against 108 dB for the digital link at k = 54; the digital link cannot reach 0.90 at k = 18. The thesis also reports the negative results honestly: full-dispersion training diverges, the metric is at ceiling, and the high-bandwidth/high-SNR digital link reaches 1.000.
+At low bandwidth (k ≤ 18) the neural joint source-channel link clearly outperforms the coded digital link; at high bandwidth (k ≥ 24) the coded digital link overtakes it and ties it at k = 54. The crossover is the primary result. M3 shows that at k = 1–3 the matched-budget digital link is not merely weak but structurally infeasible; M4 shows that at k = 54 the B = 8 separated design needs 54 channel uses to reach 0.974 at 0 dB, while the λ-heavy link reaches 0.999 at k = 18. The frozen task-oriented loss, with zero control and velocity penalties, fails at 2–5% success; adding λ_u = λ_v = 0.1 recovers 99.7% at k = 12 and 99.3–99.9% at k = 18 and 54, on both channels. The mechanism is gradient conditioning: the encoder gradient is bounded by about fourteen orders of magnitude, and capacity is not the explanation. The result is tested against a 5G NR polar comparator, a payload-maximal uncoded link, a twelve-geometry 3GPP aerial link budget, a CSI-error sweep, and a three-seed replication; the crossover holds for every coded comparator, and the uncoded link does not overtake the neural arm below k = 54. On the 3GPP link the λ-shaped policy needs 91 dB (k = 18) or 87 dB (k = 54) of transmit SNR for 0.90, against 108 dB for the digital link at k = 54; the digital link cannot reach 0.90 at k = 18. The M5 ablations localise the mechanism to a single term: removing the control-effort penalty alone reproduces the original failure, while removing the velocity or terminal penalty does not. The uncoded reference shows that the low-bandwidth digital ceiling is a payload/framing artefact rather than a separation artefact, which relocates the crossover claim onto the coded baseline and leaves the λ-heavy arm unbeaten below k = 54. The twelve-geometry aerial sweep shows that the transmit-power advantage is stable at 15–21 dB rather than an artefact of one geometry. The thesis also reports the negative results honestly: full-dispersion training diverges, one M5a cell diverges, the metric is at ceiling, and the high-bandwidth/high-SNR digital link reaches 1.000.
 
 ## 8.2 Contributions
 
 1. **A matched-budget benchmark** for UAV state transmission: three communication methods, identical episodes, identical channel, identical bandwidth, both AWGN and Rayleigh, plus the M3 feasibility boundary and the M4 B = 8 reference.
 2. **The bandwidth-crossover characterisation:** a direct, data-backed answer to when task-oriented/semantic communication should be used in a 6G UAV link.
 3. **The λ-shaping diagnosis and mechanism:** why task-oriented training collapses without control/effort terms, and how a small penalty fixes it.
-4. **A first-order 3GPP UMa-aerial assessment:** a link-budget evaluation, a dispersion-training negative result, a stable tail-resampled variant, and a transmit-SNR comparison against the digital link.
-5. **A reproducible testbed:** 57 passing tests, CPU-only determinism, Docker/CI, and frozen configuration with provenance tags.
+4. **A 3GPP UMa-aerial assessment:** a link-budget evaluation over twelve geometries with a stable 15–21 dB advantage, a dispersion-training negative result, a stable tail-resampled variant, and a transmit-SNR comparison against the digital link.
+5. **A term-level mechanism and a payload-controlled comparator:** λ_u isolated as the active term by M5a, and an uncoded payload-maximal reference (M5b) that separates coding gain from payload.
+6. **A reproducible testbed:** 99 passing tests, CPU-only determinism, Docker/CI, and frozen configuration with provenance tags.
 
 ## 8.3 Future Work
 
 1. **A harder task.** The current metric is at ceiling; a tighter goal radius, shorter horizon, or cluttered workspace would let the benchmark resolve small differences between good methods.
 2. **Full-dispersion training.** A-12 diverges and A-13 only resamples the tail; a principled training scheme for the full 3GPP dispersion is open.
-3. **λ attribution.** Which of λ_u and λ_v is the active term, and whether a single combined penalty is sufficient, is not yet isolated.
+3. **λ sufficiency.** M5a isolates λ_u as the active term at k = 12 and 18; whether λ_v and λ_T can be dropped at a harder, non-saturated operating point, and whether a single combined penalty suffices, remains open.
 4. **Richer channel models.** Doppler, shadowing, aerial small-scale fading, antenna patterns, and multi-UAV interference.
 5. **Learned controller.** A jointly learned controller could test whether the communication gain survives control co-design.
-6. **M5 ablations.** Task-loss component removal, uncoded digital, and cross-channel training were deferred by the frozen protocol and remain open.
+6. **Cross-channel training under a non-saturated metric.** M5c is complete but at ceiling; a harder task is needed to measure transfer rather than assume it.
 7. **Hardware validation.** A software-defined radio or UAV flight test would test external validity.
 
 <!-- pagebreak -->
@@ -919,7 +1005,7 @@ Yang, M., Bian, C., & Kim, H.-S. (2022). OFDM-guided deep joint source-channel c
 
 The frozen protocol was extended only through dated, pre-registered amendments. Each amendment states its question, design, budget, and what is not changed before its first cell is run.
 
-**Table B.1 — Protocol amendments A-1…A-15.**
+**Table B.1 — Protocol amendments A-1…A-18.**
 
 | ID | Question | Status |
 |---|---|---|
@@ -931,6 +1017,9 @@ The frozen protocol was extended only through dated, pre-registered amendments. 
 | A-13 | Does outage-tail resampling stabilise training? | complete |
 | A-14 | Is k = 24 a one-initialisation artefact? | complete |
 | A-15 | Does a full 5G NR polar comparator change the crossover? | complete |
+| A-16 | Which λ term carries the shaping effect, and is the crossover a coding artefact? | complete (A-18) |
+| A-17 | Does the aerial advantage hold across geometry? | complete (15–21 dB, stable) |
+| A-18 | M5a numerical failure at k = 18 AWGN | kept, not retrained |
 
 **Table B.2 — Experiment blocks and status.**
 
@@ -940,11 +1029,11 @@ The frozen protocol was extended only through dated, pre-registered amendments. 
 | M2 | complete | 56 complete + 4 conditional-accept; 150/150 units |
 | M3 | complete | structural infeasibility display; no training or evaluation by design |
 | M4 | complete | secondary B = 8 reference at k = 54; E = 5,000 |
-| M5 | deferred | declared by the frozen protocol; no cell run |
+| M5 | complete with one declared failure | 11/12 training cells; 20/20 + 100/100 + 10/10 evaluation slots; A-18 |
 | Wave-A | complete with documented gaps | 44/46 training runs; 85/90 evaluation slots; two failures kept |
 | Wave-B | complete | 350 cells; 70/70 σ = 0 gates pass |
 | Wave-C | complete (screening) | 4/4 cells of the pre-registered A-8b subset |
-| A-9…A-15 | complete | A-9 and A-12 are kept negative results |
+| A-9…A-18 | complete | A-9, A-12 and the A-18 cell are kept negative results |
 
 # Appendix C — Reproduction and File Map
 
@@ -963,7 +1052,7 @@ The frozen protocol was extended only through dated, pre-registered amendments. 
 | `results/M3/`, `results/M4/` | Infeasibility boundary and B = 8 reference |
 | `results/WAVE_A/`, `results/WAVE_B/`, `results/WAVE_C/` | Diagnostic and robustness waves |
 | `results/ARCH_ABL/`, `results/K24_SEEDS/`, `results/AERIAL/`, `results/AERIAL_TRAIN/`, `results/AERIAL_TRAIN_TRUNC/`, `results/POLAR/`, `results/POLAR5G/` | Extensions A-9…A-15 |
-| `tests/` | 57 passing tests |
+| `tests/` | 99 passing tests |
 | `fyp_md_files/figures/` | All figures |
 | `fyp_md_files/FIGURES_DOCUMENT.md` | Figure companion with descriptions |
 
@@ -983,7 +1072,7 @@ The frozen protocol was extended only through dated, pre-registered amendments. 
 
 **D.6 3GPP UMa-aerial model.** A-10, A-12, and A-13 use the large-scale layer of 3GPP TR 36.777 / TR 38.901. The model includes LoS probability, LoS/NLoS path loss, 4/6 dB shadowing, and block fading. A-10 is evaluation-only and uses the mean link budget plus the LoS/NLoS mixture. A-12 trains under the full per-episode dispersion and diverges; A-13 resamples the >20 dB outage tail (3.78% of training episodes) and restores stability without moving the operating point materially. Doppler, time-correlated shadowing, altitude-dependent small-scale fading, antenna patterns, and hardware impairments are not modelled. The transmit-SNR numbers are relative to a unit-gain benchmark and are not a hardware link budget.
 
-**D.7 M3, M4, and M5.** M3 is a structural feasibility display: at k = 1–3 the matched-budget digital packet needs 12 channel uses at B = 1, so the cells are infeasible by design and no success rate is reported. M4 is a secondary B = 8 reference at k = 54, E = 5,000; it duplicates the M2 k = 54 digital cell and is never used as a primary result. M5 was declared by the frozen protocol but never executed; no M5 result exists.
+**D.7 M3, M4, and M5.** M3 is a structural feasibility display: at k = 1–3 the matched-budget digital packet needs 12 channel uses at B = 1, so the cells are infeasible by design and no success rate is reported. M4 is a secondary B = 8 reference at k = 54, E = 5,000; it duplicates the M2 k = 54 digital cell and is never used as a primary result. M5 was executed under A-16 and is reported in §5.12: the control-effort penalty is the active term (M5a), the low-bandwidth digital ceiling is a payload/framing artefact rather than a separation artefact (M5b), and cross-channel transfer shows no measurable degradation but is unresolved because the k = 18 metric is saturated (M5c). One M5a cell is a declared failure (A-18).
 
 # Appendix E — Viva Preparation
 
@@ -1003,10 +1092,10 @@ A: The frozen loss had λ_u = λ_v = 0. The encoder gradient exploded to ~10^14,
 A: We checked three controls: an untrained model scores 0.016; at −20 dB success drops to 0.279; the λ-light Rayleigh arm is degenerate at 0.019. The policy also ends two orders of magnitude closer to the goal while using less than half the control effort.
 
 **Q: Does semantic communication always win?**
-A: No. It wins at low bandwidth and under fading. At k ≥ 24 the classical link overtakes; at k = 54 and 20 dB it reaches 1.000 while we reach 0.998.
+A: No. It wins at low bandwidth and under fading. Against the frozen coded baseline the classical link overtakes at k ≥ 24; at k = 54 and 20 dB it reaches 1.000 while we reach 0.998. Against a payload-maximal uncoded link the neural arm is still not overtaken below k = 54, so the comparator has to travel with the claim.
 
 **Q: Why are there only two channels in the core matrix? Where is 3GPP?**
-A: The core matched-budget matrix is AWGN and Rayleigh because those are the controlled channels used by the DeepJSCC literature. The 3GPP UMa-aerial model is a first-class extension in Chapter 3.8 and Chapter 5.10: A-10 is the link budget, A-12 is full-dispersion training (negative), and A-13 is the tail-resampled stable variant. It is not in the core matrix because it changes the link budget by about 96 dB and needs its own protocol.
+A: The core matched-budget matrix is AWGN and Rayleigh because those are the controlled channels used by the DeepJSCC literature. The 3GPP UMa-aerial model is a first-class extension in Chapter 3.8 and Chapter 5.10: A-10 is the link budget; A-17 repeats it over twelve geometries and shows the 15–21 dB advantage does not collapse; A-12 is full-dispersion training (negative); and A-13 is the tail-resampled stable variant. It is not in the core matrix because it changes the link budget by about 96 dB and needs its own protocol.
 
 **Q: What is M3?**
 A: A structural infeasibility display, not a measured result. At k = 1, 2, 3 the smallest matched-budget digital packet needs 12 channel uses (6B + 6 at B = 1), so the digital baseline cannot be built. That is why M1 has no digital arm.
@@ -1015,7 +1104,7 @@ A: A structural infeasibility display, not a measured result. At k = 1, 2, 3 the
 A: A secondary B = 8 reference at k = 54, E = 5,000. It duplicates the M2 k = 54 digital cell and shows the bandwidth cost of separation: at 0 dB AWGN the digital link needs k = 54 to reach 0.974, while the λ-heavy link reaches 0.999 at k = 18.
 
 **Q: What about M5?**
-A: M5 (task-loss component removal, uncoded digital, cross-channel training) was declared by the frozen protocol but never executed. There is no M5 result. It is listed as deferred and as future work.
+A: It was executed under A-16 and is reported in §5.12. Removing the control-effort penalty alone collapses success to 0.016–0.027 and diverges at k = 18 AWGN, so λ_u is the active term. The uncoded reference shows that the low-bandwidth digital ceiling is a payload/framing artefact: at k = 12, uncoded B = 4 reaches 0.526 against 0.062 for the coded B = 1 link. Cross-channel transfer shows no degradation, but the k = 18 metric is saturated, so it is unresolved. One cell is a declared failure (A-18) and was not retrained.
 
 **Q: Did you run Waves A, B, and C?**
 A: Yes. Wave-A is the λ ablation at k = 12 (85/90 slots, two failures kept). Wave-B is the CSI-error sweep (350 cells, 70/70 σ = 0 gates). Wave-C is the λ-heavy screening at k = 18 and 54 (4/4 cells of the pre-registered A-8b subset).

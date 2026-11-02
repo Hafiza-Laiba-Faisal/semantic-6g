@@ -12,8 +12,8 @@ Every number below is copied from a stored artifact. File paths are given so eac
 1. **Masla:** task-oriented JSCC low bandwidth par **2.5%** success de raha tha, jabke reconstruction **23.7%** — sawal ye tha ke ye failure *task-orientation* ka qudrati masla hai ya *loss function* ka.
 2. **Jawab:** loss function ka masla tha. Sirf distance penalty (`lambda_u = lambda_v = 0`) model ko useful gradient nahi de rahi thi. Control aur velocity penalties `0.1` karte hi wahi model **0.999** par chala gaya.
 3. **Mechanism:** frozen arm mein encoder gradient `3 x 10^14` tak ja raha tha (14 orders of magnitude zyada), is liye training kabhi converge nahi hui. Lambda on karne se gradient `O(1)` ho gaya.
-4. **3GPP:** haan, implement hua hai — `TR 36.777` UMa-aerial: LoS probability, LoS/NLoS path loss, altitude, shadowing. Link budget (A-10), dispersion training (A-12), stable variant (A-13). **Doppler nahi hai**, aur sirf ek geometry hai.
-5. **Baqi:** M5 ka formal term-removal, multi-geometry, LDPC, aur naya "aligned" framework (ATROC/rateless/CIV/UEP) — ye thesis ke baad ka kaam hai.
+4. **3GPP:** haan, implement hua hai — `TR 36.777` UMa-aerial: LoS probability, LoS/NLoS path loss, altitude, shadowing. Link budget (A-10), **12-geometry sweep (A-17)**, dispersion training (A-12), stable variant (A-13). **Doppler nahi hai**, lekin geometry ab ek point nahi — 12 points hain (200–1000 m, 50–100 m, 2–3.5 GHz) aur advantage har point par 15–21 dB rehta hai.
+5. **Baqi:** Doppler, LDPC, aur naya "aligned" framework (ATROC/rateless/CIV/UEP). M5 (A-16) aur multi-geometry (A-17) ab **complete** hain — M5a batata hai ke sirf `lambda_u` active term hai, M5b batata hai ke low-bandwidth digital ceiling payload ka artefact hai, M5c cross-channel transfer par ceiling ki wajah se unresolved hai.
 
 ---
 
@@ -79,13 +79,14 @@ This is the project's mechanism finding: **task-oriented JSCC does not fail beca
 - **A-10 — link budget** (thesis Table 5.9): at `d2D = 500 m`, `h = 50 m`, `fc = 2 GHz`, `P_LoS = 0.8887`, `PL_mean = 95.63 dB`. Required transmit SNR for 0.90 success: lambda-shaped **91 dB** at k = 18 and **87 dB** at k = 54; digital **108 dB** at k = 54 and **never reaches 0.90** at k = 18 (payload-limited at 0.17). Advantage: **21 dB** at k = 54, unbounded at k = 18.
 - **A-12 — train under the full dispersion:** both cells collapse (final losses 4,320 and 210; 311 and 203 non-finite gradient steps). Reported as a **negative result**, not retrained.
 - **A-13 — train with the >20 dB outage tail (3.78% of episodes) resampled:** stable (4,643 → 16.2), operating point moves by **at most 2 dB** versus the Rayleigh-trained arm — inside sampling error. Honest claim: dispersion training does not move the operating point.
+- **A-17 — 12-geometry sweep** (thesis Table 5.11): the identical A-10 evaluation repeated over `d2D` 200/500/1000 m, `h` 50/100 m, `fc` 2.0/3.5 GHz. Required transmit SNR for 0.90 at k = 54 runs from **74 dB** (200 m, 50 m, 2 GHz) to **108 dB** (1000 m, 50 m, 3.5 GHz); the digital link runs from **89 dB** to **127 dB**. The advantage stays at **15–21 dB** (12–15 dB at 0.99) and never collapses. The 500/50/2 row reproduces A-10 exactly (87 dB against 108 dB). Distance costs about 29 dB per 5×, altitude recovers up to 9 dB, carrier frequency adds a flat 5 dB.
 
 ### 4.3 What is *not* implemented (stated in the thesis, §3.13 and Chapter 7)
 
 - **Doppler / velocity-induced fading** — the model is block-fading with no time correlation.
 - **Time-correlated shadowing** — one independent draw per episode.
 - **Aerial small-scale fading, antenna patterns, noise figure, bandwidth.**
-- **Multiple geometries** — only `d2D = 500 m`, `h = 50 m`, `fc = 2 GHz`.
+- **Mobility** — geometry is now swept (A-17), but there is no Doppler, so velocity-induced fading is still absent.
 
 **One-line answer:** it is a **3GPP large-scale + LoS/NLoS dispersion layer**, not a full 3GPP link-level simulator. That boundary is written in the thesis, not hidden.
 
@@ -98,16 +99,16 @@ This is the project's mechanism finding: **task-oriented JSCC does not fail beca
 | Replace generic Rayleigh with 3GPP TR 36.777 / 38.901 | **Done** (large-scale + dispersion) | `project/channels/aerial.py`; thesis §3.8, Fig 3.1; A-10, A-12, A-13 |
 | LoS/NLoS probabilistic switching | **Done** | `los_probability()`, `sample_aerial_offsets_db()` |
 | LoS/NLoS path loss with 3D distance, frequency, altitude | **Done** | `los_path_loss_db()`, `nlos_path_loss_db()` |
-| Altitude and velocity effects / Doppler | **Altitude yes, Doppler no** | thesis §3.13, Ch. 7 |
+| Altitude and velocity effects / Doppler | **Altitude yes; geometry swept (A-17); Doppler no** | thesis §3.13, §5.8, Ch. 7 |
 | Perfect CSI → add estimation error or justify | **Done** | Wave-B, 350 cells, 70/70 bit-exact gates (A-4); thesis §5.5 |
-| Run M5 loss ablation (non-zero control/velocity) | **Done as Wave-A/Wave-C**; formal term-removal remains | Tables 5.5, 5.7; A-8 |
+| Run M5 loss ablation (non-zero control/velocity) | **Done — formal term removal executed** | Tables 5.5, 5.7, 5.12; A-16, A-18 |
 | Architecture ablation (larger network) | **Done — negative** | A-9, `results/ARCH_ABL/` |
 | Objective ablation (position-weighted reconstruction) | **Done — does not fix it** | Wave-A `wrecon_pos` = 0.24 |
 | Diagnose training instability | **Done** | `RESULTS_MECHANISM_2026-10-27.md`; A-14 seed variance |
-| Modern digital baseline (LDPC / Polar) | **Polar + full 5G NR polar done; LDPC not done** | A-11, A-15; thesis §5.9 |
+| Modern digital baseline (LDPC / Polar) | **Polar, full 5G NR polar, and an uncoded payload-maximal reference done; LDPC not done** | A-11, A-15, M5b; thesis §5.9, §5.12.2 |
 | Aligned framework (ATROC), rateless, CIV, UEP | **Not done — new research** | Future work, Ch. 8 |
 | Containerised, DOI, configs, seeds | **Container + env + configs + seeds done; DOI not yet** | `Dockerfile`, `environment.yml`, `requirements.txt`, `project/config.py` |
-| Reproducibility | **Frozen protocol, deterministic seeds, 57 tests** | `PROJECT_STATUS.md`, `PROTOCOL_AMENDMENTS.md` |
+| Reproducibility | **Frozen protocol, deterministic seeds, 99 tests** | `PROJECT_STATUS.md`, `PROTOCOL_AMENDMENTS.md` |
 
 ---
 
@@ -123,18 +124,25 @@ That is a methodological strength: the negative result and the fix are both on t
 
 ## 7. What actually remains
 
+**Completed since the last review (all committed and in the thesis):**
+
+| Item | Result |
+|---|---|
+| M5a — remove one lambda term at a time (12 cells) | `lambda_u` is the active term; removing it collapses to 0.016–0.027 and diverges at k = 18 AWGN (declared failure A-18); `lambda_v`/`lambda_T` are not load-bearing |
+| M5b — uncoded digital reference (20 conditions) | at k = 12, uncoded B = 4 reaches **0.526** against **0.062** for the coded B = 1 link — the low-bandwidth ceiling is a payload/framing artefact |
+| M5c — cross-channel transfer (10 slots) | 0.991–0.999, but the k = 18 metric is saturated, so transfer is unresolved rather than proven |
+| A-17 — multi-geometry (12 geometries) | advantage stable at 15–21 dB; 500/50/2 reproduces A-10 exactly |
+
+**Still open:**
+
 | Item | Type | Cost | Blocks thesis? |
 |---|---|---|---|
-| M5a — remove one lambda term at a time (12 cells) | compute | ~8–12 h CPU | No |
-| M5b — uncoded digital reference (10 cells) | evaluation | minutes | No |
-| M5c — cross-channel training (4 cells) | compute | ~2–4 h | No |
-| A-10 multi-geometry (3 distances x 2 heights x 2 carriers) | evaluation | cheap | No |
 | Doppler + time-correlated shadowing | simulator change | days | No |
 | LDPC baseline | implementation | days | No (Polar already covers it) |
 | ATROC / rateless / CIV / UEP | new research | weeks–months | No |
 | IEEE paper (6 pages, numeric citations) + DOI | writing | weeks | No |
 
-**Rule that still applies:** M5 is not run without a dated protocol amendment (A-16) and explicit written supervisor approval.
+**Rule that still applies:** no extension is run without a dated protocol amendment registered before its first cell. A-16 was registered before M5's first cell, and A-18 records the one cell that failed.
 
 ---
 
@@ -144,5 +152,5 @@ That is a methodological strength: the negative result and the fix are both on t
 2. The pre-registered task-oriented arm **failed at low bandwidth** — 0.025 against 0.237 for reconstruction.
 3. We showed the failure is **not** capacity, not training length, and not the metric — it is the **loss function**.
 4. Adding control and velocity penalties (`0.1 / 0.1`) takes the same architecture from **0.025 to 0.999**, because the encoder gradient improves by **fourteen orders of magnitude**.
-5. On the **3GPP UMa-aerial** link the shaped policy needs **87–91 dB** transmit SNR for 0.90 success, while the digital link needs **108 dB** at k = 54 and cannot reach 0.90 at k = 18.
-6. The remaining work is the formal M5 term-removal, a multi-geometry sweep, Doppler, and the journal extension — not a re-do of the thesis.
+5. On the **3GPP UMa-aerial** link the shaped policy needs **74–108 dB** transmit SNR for 0.90 success depending on geometry (87 dB at the A-10 point), while the digital link needs **89–127 dB** at k = 54 and cannot reach 0.90 at k = 18 at any geometry; the advantage stays at **15–21 dB** across 12 geometries.
+6. The remaining work is Doppler, LDPC, and the journal extension — not a re-do of the thesis. M5 and the multi-geometry sweep are complete and integrated.

@@ -104,7 +104,7 @@ The thesis source and the built `.docx` now carry the new results:
 | §5.13 | items 7–9 added (λ term, framing artefact, geometry); old item 7 → 10 |
 | §6.5 | A-17 stability and M5b comparator sentences |
 | §7 | items 12 and 15 rewritten; items 16–17 added (cross-channel ceiling, λ_v/λ_T not load-bearing) |
-| §8.1–8.3 | conclusion, contributions (99 tests), future work updated |
+| §8.1–8.3 | conclusion, contributions (99 tests at that point), future work updated |
 | List of Tables / Appendix B | Tables 5.11–5.14 and A-1…A-18 |
 
 `THESIS_MASTER_DOCUMENT.docx` rebuilt: 482 paragraphs, **25 tables** (was 21),

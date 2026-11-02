@@ -556,7 +556,7 @@ All methods are evaluated on bitwise-identical episodes: initial positions, goal
 
 ## 4.12 Reproducibility and Engineering Controls
 
-Every tunable constant lives in `project/config.py` with a provenance tag ([FROZEN], [LIT], or [PROJ]). The codebase has 99 passing tests covering the channel statistics, power normalisation, digital budget, evaluation gates, McNemar formula, architecture width, and protocol locks. The Docker image builds and the full suite runs on Linux in CI. All experiments are CPU-only and deterministic; a given (seed, configuration) pair reproduces bit-identically. Recovery from interruption retrains from the fixed seed under the frozen protocol, rather than resuming a partially saved optimizer state.
+Every tunable constant lives in `project/config.py` with a provenance tag ([FROZEN], [LIT], or [PROJ]). The codebase has 111 passing tests covering the channel statistics, power normalisation, digital budget, evaluation gates, McNemar formula, architecture width, and protocol locks. The Docker image builds and the full suite runs on Linux in CI. All experiments are CPU-only and deterministic; a given (seed, configuration) pair reproduces bit-identically. Recovery from interruption retrains from the fixed seed under the frozen protocol, rather than resuming a partially saved optimizer state.
 
 <!-- pagebreak -->
 # Chapter 5 — Results
@@ -1076,7 +1076,7 @@ Yang, M., Bian, C., & Kim, H.-S. (2022). OFDM-guided deep joint source-channel c
 | Training seeds | 42, 43, 44 | FROZEN |
 | Test seed | 10042 | FROZEN |
 | Test episodes | 5,000 per unit (M2, M4, Wave-B) | FROZEN |
-| Test episodes | 1,000 per unit (M1, Wave-A, Wave-C, A-9…A-15) | PROJ |
+| Test episodes | 1,000 per unit (M1, Wave-A, Wave-C, A-9…A-20) | PROJ |
 | 3GPP geometry (A-10/A-12/A-13) | d2D = 500 m, h = 50 m, f_c = 2 GHz | PROJ |
 | 3GPP P_LoS / PL_mean | 0.8887 / 95.63 dB | 3GPP |
 | 3GPP shadowing | 4 dB LoS, 6 dB NLoS | 3GPP |

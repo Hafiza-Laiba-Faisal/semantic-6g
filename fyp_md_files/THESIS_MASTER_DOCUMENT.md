@@ -769,9 +769,9 @@ Starting from the λ-heavy arm (λ_d, λ_u, λ_v, λ_T) = (1.0, 0.1, 0.1, 2.0), 
 | Arm | Removed | k = 12 AWGN | k = 12 Rayleigh | k = 18 AWGN | k = 18 Rayleigh |
 |---|---|---:|---:|---:|---:|
 | `m5_no_u` | control penalty | 0.016 | 0.016 | failed | 0.027 |
-| `m5_no_v` | velocity penalty | 0.997 | 0.997 | 0.996 | 0.996 |
-| `m5_no_T` | terminal penalty | 0.996 | 0.995 | 0.999 | 0.993 |
-| reference (Wave-A/C) | — | 0.997 | 0.997 | 0.999 | 0.993 |
+| `m5_no_v` | velocity penalty | 0.997 | 0.996 | 0.996 | 0.994 |
+| `m5_no_T` | terminal penalty | 0.996 | 0.993 | 0.999 | 0.992 |
+| reference (Wave-A/C) | — | 0.997 | 0.997 | 0.999 | 0.996 |
 
 The control-effort penalty is the active term. Removing it collapses success to 0.016–0.027, raises the final loss by one to two orders of magnitude (305 to 5,214 against about 16), and at k = 18 AWGN destroys training outright: final loss 5,213.5 with non-finite gradients at the final step. That cell is a declared failure (A-18), is not retrained, and is excluded from the k = 18 AWGN evaluation unit, which therefore contains two arms rather than three. Removing λ_v or λ_T changes nothing outside the ceiling. The mechanism claim therefore sharpens from "λ-shaping works" to "λ_u is the term that works, and removing it reproduces the original frozen-arm failure". This is consistent with the gradient-conditioning account: L_u is the only term that is a direct function of the action applied to the plant, and therefore the only term that shapes the encoder gradient through the closed loop. The experiment localises the effect; it does not prove that causal chain.
 
@@ -814,7 +814,7 @@ Transfer is complete at this operating point, but the metric is saturated on bot
 4. **The mechanism is gradient conditioning.** The encoder gradient is bounded by about fourteen orders of magnitude; capacity is not the cause.
 5. **CSI magnitude error is hidden by success rate.** SR is flat to σ = 0.4; MSE degrades by about 18%.
 6. **Aerial link.** The λ policy needs 91 dB (k = 18) or 87 dB (k = 54) of transmit SNR for 0.90; the digital link needs 108 dB at k = 54 and cannot reach 0.90 at k = 18. Training under the full 3GPP dispersion (A-12) diverges; resampling the >20 dB outage tail (A-13) restores stability but does not move the operating point materially (≤ 2 dB, inside sampling error).
-7. **Which λ term matters.** Removing the control-effort penalty alone collapses success to 0.016–0.027 and diverges at k = 18 AWGN; removing the velocity or terminal penalty changes nothing (0.993–0.999). λ_u is the active term (M5a).
+7. **Which λ term matters.** Removing the control-effort penalty alone collapses success to 0.016–0.027 and diverges at k = 18 AWGN; removing the velocity or terminal penalty changes nothing (0.992–0.999). λ_u is the active term (M5a).
 8. **The low-bandwidth digital ceiling is a framing artefact.** At k = 12, uncoded QPSK with B = 4 reaches 0.526 against 0.062 for the frozen coded B = 1 link. The M3 infeasibility boundary is a statement about the frozen packet, not about digital communication (M5b).
 9. **Aerial geometry.** Across twelve 3GPP UMa-aerial geometries the λ-heavy advantage over the classical link stays at 15–21 dB for 0.90 and 12–15 dB for 0.99; the 500/50/2 row reproduces A-10 exactly (A-17).
 10. **Honest limits.** The 0.99+ result is at the task ceiling; high-bandwidth/high-SNR digital reaches 1.000; full-dispersion training (A-12) diverges.

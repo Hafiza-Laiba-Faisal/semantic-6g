@@ -18,7 +18,7 @@ cell**, so M5 is no longer a deferred label.
 **M5a headline (new):** removing the **control-effort penalty `λ_u`** alone
 collapses success to 0.016–0.027 and, at k = 18 AWGN, diverges outright
 (loss 5,213.5, non-finite grads — declared failure A-18). Removing `λ_v` or
-`λ_T` changes nothing (0.993–0.999). So `λ_u` is the active term; the
+`λ_T` changes nothing (0.992–0.999). So `λ_u` is the active term; the
 mechanism claim is now term-specific, not "λ helps".
 Full write-up: `fyp_md_files/RESULTS_M5A_2026-11-02.md`.
 

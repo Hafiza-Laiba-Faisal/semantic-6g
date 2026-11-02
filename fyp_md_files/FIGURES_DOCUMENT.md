@@ -709,15 +709,16 @@ This companion contains **all 38 figures** generated for the project. Each figur
 <!-- pagebreak -->
 ## Figure 38 — Experiment Matrix Actually Executed
 
-![Figure 38 — Experiment matrix: M1–M5, Waves A–C, and A-9…A-15.](fyp_md_files/figures/fig_experiment_matrix.png)
+![Figure 38 — Experiment matrix: M1–M5, Waves A–C, and A-9…A-20.](fyp_md_files/figures/fig_experiment_matrix.png)
 
-**What it shows.** A single-page map of every experiment block in the project: M1–M5, Waves A–C, and extensions A-9…A-15. Each row gives the question, the design actually run, and the status. M1–M4 are complete; M5 is deferred by the frozen protocol and was not run; Wave-A is complete with two documented failures (85/90 slots); Wave-C is the pre-registered screening subset; A-12 is a kept negative result.
+**What it shows.** A single-page map of every experiment block in the project: M1–M5, Waves A–C, and extensions A-9…A-20. Each row gives the question, the design actually run, and the status. M1–M5 are complete (M5 was executed under A-16); Wave-A is complete with two documented failures (85/90 slots); Wave-C is the pre-registered screening subset; A-12 and A-18 are kept negative results; A-19 and A-20 close the Doppler and LDPC gaps.
 
 **What to notice.**
 - This is the completeness map to use when checking that nothing was silently dropped.
-- M3 is structural, M4 is secondary, and M5 is deferred; those three labels must travel with any description of the matrix.
+- M3 is structural and M4 is secondary; those two labels must travel with any description of the matrix.
 - Wave-A and Wave-C have documented gaps; they are marked “complete (documented gaps)” rather than being presented as full grids.
-- A-12 is marked “complete (negative, kept)”; it is not retrained or hidden.
+- A-12 and A-18 are marked “complete (negative, kept)”; they are not retrained or hidden.
+- The M5 row points to A-16 because the frozen protocol deferred M5 and the amendment executed it; that history is part of the map.
 
 **Best placement.** Chapter 4.3 (experimental matrix); also Appendix B.
 

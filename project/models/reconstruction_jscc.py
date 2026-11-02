@@ -123,6 +123,7 @@ class ReconstructionDeepJSCC(torch.nn.Module):
         channel: str = "awgn",
         generator: Optional[torch.Generator] = None,
         aerial_gain: Optional[torch.Tensor] = None,
+        h: Optional[torch.Tensor] = None,
     ) -> torch.Tensor:
         """Return the NORMALIZED estimate for the frozen loss (item 7/8).
 
@@ -130,6 +131,10 @@ class ReconstructionDeepJSCC(torch.nn.Module):
         state; computing it from a denormalized output would be an
         inconsistent normalization (hard stop condition), so this helper
         is the canonical training path.
+
+        ``h`` (A-19, opt-in) is a pre-generated complex ``[B, 1]`` fading
+        gain used verbatim instead of sampling; ``None`` is the frozen path.
         """
         return self.forward(s, snr_db, channel=channel, generator=generator,
-                            denormalize_output=False, aerial_gain=aerial_gain)
+                            denormalize_output=False, aerial_gain=aerial_gain,
+                            h=h)

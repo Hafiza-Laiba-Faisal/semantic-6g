@@ -1,0 +1,28 @@
+{
+  "experiment": "DOPPLER",
+  "amendment": "A-19",
+  "arm": "a19_trained_correlated",
+  "point": "d0033_2g",
+  "doppler_hz": 0.33356409519815206,
+  "k": 12,
+  "channel": "rayleigh",
+  "snr_db": 5.0,
+  "episodes": 1000,
+  "test_seed": 10042,
+  "non_frozen": true,
+  "protocol_note": "A-19 follow-up: lambda-heavy retrained under correlated fading at the worst measured point",
+  "aggregate_task": {
+    "episodes": 1000,
+    "success_count": 996,
+    "failure_count": 4,
+    "success_rate": 0.996,
+    "final_distance_mean": 0.10320548713207245,
+    "avg_distance_mean": 2.0752017498016357,
+    "control_effort_mean": 281.65447998046875,
+    "min_distance_mean": 0.06332654505968094,
+    "mse_mean": 0.2621996998786926,
+    "ttg_success_mean": 34.82429885864258,
+    "ttg_success_median": 35.0
+  },
+  "wall_s": 0.7
+}

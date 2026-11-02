@@ -32,6 +32,7 @@ import torch
 
 from project import config
 from project.baselines.digital import DigitalBaseline
+from project.channels.doppler import jakes_fading
 from project.data.normalization import normalize
 from project.evaluation.metrics import per_episode_metrics
 from project.models.reconstruction_jscc import ReconstructionDeepJSCC
@@ -55,6 +56,16 @@ class Condition:
     bits_per_component: Optional[int] = None   # required for the digital method
     episodes: int = config.N_TEST_EPISODES_SMOKE
     seed: int = config.TEST_SEED
+
+    # --- A-19 (optional, default keeps the frozen i.i.d. block fading) -------
+    # When ``doppler_hz`` is set, ``h`` is drawn from the Clarke/Jakes process
+    # with that maximum Doppler shift instead of one independent gain per
+    # step.  ``None`` reproduces the frozen path bit-for-bit (a separate
+    # generator stream is used, so the frozen ``noise_test`` draws are not
+    # consumed differently).
+    doppler_hz: Optional[float] = None
+    carrier_ghz: float = 2.0
+    doppler_oscillators: int = 32
 
 
 def generate_realizations(
@@ -83,10 +94,20 @@ def generate_realizations(
     )
     out = {"p0": p0, "v0": v0, "goal": goal, "noise": noise}
     if cond.channel == "rayleigh":
-        h = torch.complex(
-            torch.randn(episodes, cond.t_max, generator=gen_noise) * 0.5 ** 0.5,
-            torch.randn(episodes, cond.t_max, generator=gen_noise) * 0.5 ** 0.5,
-        )
+        if cond.doppler_hz is None:
+            h = torch.complex(
+                torch.randn(episodes, cond.t_max, generator=gen_noise) * 0.5 ** 0.5,
+                torch.randn(episodes, cond.t_max, generator=gen_noise) * 0.5 ** 0.5,
+            )
+        else:
+            # A-19: correlated fading. Separate stream so the frozen draws
+            # above are untouched when this branch is not taken.
+            gen_dop = config.derive_generator("doppler_test", cond.seed)
+            h = jakes_fading(
+                episodes, cond.t_max, cond.doppler_hz,
+                dt=config.DT, n_osc=cond.doppler_oscillators,
+                generator=gen_dop,
+            )
         out["h"] = h
     return out
 

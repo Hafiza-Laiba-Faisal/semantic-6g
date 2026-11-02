@@ -79,11 +79,13 @@ This is the project's mechanism finding: **task-oriented JSCC does not fail beca
 - **A-10 — link budget** (thesis Table 5.9): at `d2D = 500 m`, `h = 50 m`, `fc = 2 GHz`, `P_LoS = 0.8887`, `PL_mean = 95.63 dB`. Required transmit SNR for 0.90 success: lambda-shaped **91 dB** at k = 18 and **87 dB** at k = 54; digital **108 dB** at k = 54 and **never reaches 0.90** at k = 18 (payload-limited at 0.17). Advantage: **21 dB** at k = 54, unbounded at k = 18.
 - **A-12 — train under the full dispersion:** both cells collapse (final losses 4,320 and 210; 311 and 203 non-finite gradient steps). Reported as a **negative result**, not retrained.
 - **A-13 — train with the >20 dB outage tail (3.78% of episodes) resampled:** stable (4,643 → 16.2), operating point moves by **at most 2 dB** versus the Rayleigh-trained arm — inside sampling error. Honest claim: dispersion training does not move the operating point.
-- **A-17 — 12-geometry sweep** (thesis Table 5.11): the identical A-10 evaluation repeated over `d2D` 200/500/1000 m, `h` 50/100 m, `fc` 2.0/3.5 GHz. Required transmit SNR for 0.90 at k = 54 runs from **74 dB** (200 m, 50 m, 2 GHz) to **108 dB** (1000 m, 50 m, 3.5 GHz); the digital link runs from **89 dB** to **127 dB**. The advantage stays at **15–21 dB** (12–15 dB at 0.99) and never collapses. The 500/50/2 row reproduces A-10 exactly (87 dB against 108 dB). Distance costs about 29 dB per 5×, altitude recovers up to 9 dB, carrier frequency adds a flat 5 dB.
+- **A-17 - 12-geometry sweep** (thesis Table 5.10): the identical A-10 evaluation repeated over `d2D` 200/500/1000 m, `h` 50/100 m, `fc` 2.0/3.5 GHz. Required transmit SNR for 0.90 at k = 54 runs from **74 dB** (200 m, 50 m, 2 GHz) to **108 dB** (1000 m, 50 m, 3.5 GHz); the digital link runs from **89 dB** to **127 dB**. The advantage stays at **15–21 dB** (12–15 dB at 0.99) and never collapses. The 500/50/2 row reproduces A-10 exactly (87 dB against 108 dB). Distance costs about 29 dB per 5×, altitude recovers up to 9 dB, carrier frequency adds a flat 5 dB.
+- **A-19 — Doppler / time-correlated Rayleigh** (thesis §5.13, Tables 5.15–5.16): the i.i.d. block-fading convention is replaced by a Clarke/Jakes process with the exact `J0` autocorrelation, and the displacement per step `Δ = v·DT/λ` is swept over ten points. At the most correlated point (`Δ = 0.033`, 0.05 m/s at 2 GHz) a fade lasts **4.08 steps** instead of 1.10. The λ-heavy arm moves by **at most 0.003** (k = 12) and **0.001** (k = 54); the digital k = 54 arm loses up to **0.028**, in the thesis's favour. The pre-registered rule triggered on that digital loss, so one training arm was run rather than argued away: **0.993** against **0.994** for the stored checkpoint — no gain, so the i.i.d. model is validated twice over.
+- **A-20 — 5G NR LDPC BG2 comparator** (thesis §5.14, Table 5.17): base graph 2 with the 38.212 lifting sets, systematic encoding and offset min-sum decoding, without the rate-matching chain. At k = 12–30 it is statistically indistinguishable from the convolutional baseline (largest difference **0.011**); at k = 54 AWGN it is **0.017 below** (0.978 against 0.995) and on Rayleigh it is **equal** (0.944 against 0.940). The k = 54 gap is a puncturing effect — rate-0.19 mother code truncated to 0.44 — not a decoder failure. No ordering changes.
 
 ### 4.3 What is *not* implemented (stated in the thesis, §3.13 and Chapter 7)
 
-- **Doppler / velocity-induced fading** — the model is block-fading with no time correlation.
+- **Doppler / velocity-induced fading** — the 3GPP layer is block-fading with no time correlation. A-19 measures time-correlated Rayleigh separately at link level (Clarke/Jakes, `J0` autocorrelation) and shows the i.i.d. convention is adequate for the neural arms; it is **not** fed into the 3GPP layer.
 - **Time-correlated shadowing** — one independent draw per episode.
 - **Aerial small-scale fading, antenna patterns, noise figure, bandwidth.**
 - **Mobility** — geometry is now swept (A-17), but there is no Doppler, so velocity-induced fading is still absent.
@@ -99,16 +101,16 @@ This is the project's mechanism finding: **task-oriented JSCC does not fail beca
 | Replace generic Rayleigh with 3GPP TR 36.777 / 38.901 | **Done** (large-scale + dispersion) | `project/channels/aerial.py`; thesis §3.8, Fig 3.1; A-10, A-12, A-13 |
 | LoS/NLoS probabilistic switching | **Done** | `los_probability()`, `sample_aerial_offsets_db()` |
 | LoS/NLoS path loss with 3D distance, frequency, altitude | **Done** | `los_path_loss_db()`, `nlos_path_loss_db()` |
-| Altitude and velocity effects / Doppler | **Altitude yes; geometry swept (A-17); Doppler no** | thesis §3.13, §5.8, Ch. 7 |
+| Altitude and velocity effects / Doppler | **Altitude yes; geometry swept (A-17); Doppler measured at link level (A-19), still absent from the 3GPP layer** | thesis §5.13, §5.8, Ch. 7 |
 | Perfect CSI → add estimation error or justify | **Done** | Wave-B, 350 cells, 70/70 bit-exact gates (A-4); thesis §5.5 |
 | Run M5 loss ablation (non-zero control/velocity) | **Done — formal term removal executed** | Tables 5.5, 5.7, 5.12; A-16, A-18 |
 | Architecture ablation (larger network) | **Done — negative** | A-9, `results/ARCH_ABL/` |
 | Objective ablation (position-weighted reconstruction) | **Done — does not fix it** | Wave-A `wrecon_pos` = 0.24 |
 | Diagnose training instability | **Done** | `RESULTS_MECHANISM_2026-10-27.md`; A-14 seed variance |
-| Modern digital baseline (LDPC / Polar) | **Polar, full 5G NR polar, and an uncoded payload-maximal reference done; LDPC not done** | A-11, A-15, M5b; thesis §5.9, §5.12.2 |
+| Modern digital baseline (LDPC / Polar) | **Done: SC polar, full 5G NR polar, 5G NR LDPC BG2, and an uncoded payload-maximal reference** | A-11, A-15, A-20, M5b; thesis §5.9, §5.12.2, §5.14 |
 | Aligned framework (ATROC), rateless, CIV, UEP | **Not done — new research** | Future work, Ch. 8 |
 | Containerised, DOI, configs, seeds | **Container + env + configs + seeds done; DOI not yet** | `Dockerfile`, `environment.yml`, `requirements.txt`, `project/config.py` |
-| Reproducibility | **Frozen protocol, deterministic seeds, 99 tests** | `PROJECT_STATUS.md`, `PROTOCOL_AMENDMENTS.md` |
+| Reproducibility | **Frozen protocol, deterministic seeds, 111 tests** | `PROJECT_STATUS.md`, `PROTOCOL_AMENDMENTS.md` |
 
 ---
 
@@ -132,13 +134,15 @@ That is a methodological strength: the negative result and the fix are both on t
 | M5b — uncoded digital reference (20 conditions) | at k = 12, uncoded B = 4 reaches **0.526** against **0.062** for the coded B = 1 link — the low-bandwidth ceiling is a payload/framing artefact |
 | M5c — cross-channel transfer (10 slots) | 0.991–0.999, but the k = 18 metric is saturated, so transfer is unresolved rather than proven |
 | A-17 — multi-geometry (12 geometries) | advantage stable at 15–21 dB; 500/50/2 reproduces A-10 exactly |
+| A-19 — Doppler / time-correlated Rayleigh (100 eval slots + 1 rule-triggered training arm) | λ-heavy moves ≤ 0.003; digital k = 54 loses 0.028; retraining under correlation gives 0.993 vs 0.994 — the i.i.d. model is validated |
+| A-20 — 5G NR LDPC BG2 (50 eval slots) | no ordering change; within 0.011 of conv at k = 12–30, 0.017 below at k = 54 AWGN, equal on Rayleigh |
 
 **Still open:**
 
 | Item | Type | Cost | Blocks thesis? |
 |---|---|---|---|
-| Doppler + time-correlated shadowing | simulator change | days | No |
-| LDPC baseline | implementation | days | No (Polar already covers it) |
+| Time-correlated shadowing inside the 3GPP layer | simulator change | days | No (A-19 covers small-scale Doppler) |
+| Full 38.212 LDPC chain (rate matching, interleaving, CRC) | implementation | days | No (A-20 covers BG2) |
 | ATROC / rateless / CIV / UEP | new research | weeks–months | No |
 | IEEE paper (6 pages, numeric citations) + DOI | writing | weeks | No |
 

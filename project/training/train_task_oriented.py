@@ -30,6 +30,7 @@ import torch
 
 from project import config
 from project.channels.aerial import sample_aerial_gain
+from project.channels.doppler import jakes_fading
 from project.data.normalization import denormalize, normalize
 from project.losses.task_loss import task_loss
 from project.models.reconstruction_jscc import ReconstructionDeepJSCC
@@ -46,6 +47,7 @@ def closed_loop_rollout(
     channel: str = "awgn",
     generator: Optional[torch.Generator] = None,
     aerial_max_offset_db: Optional[float] = None,
+    fading: Optional[torch.Tensor] = None,
 ) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
     """Differentiable T-step closed-loop rollout.
 
@@ -55,9 +57,19 @@ def closed_loop_rollout(
 
     ``aerial_max_offset_db`` (A-13, opt-in) resamples training episodes whose
     3GPP gain offset exceeds that cap; ``None`` is the A-12 behaviour.
+
+    ``fading`` (A-19, opt-in) is a pre-generated ``[B, t_max]`` complex gain
+    sequence; step ``t`` transmits through ``h[:, t:t+1]``.  ``None`` keeps the
+    frozen i.i.d. block-fading path bit-for-bit (the generator is then the only
+    source of fading, exactly as before).
     """
     if channel not in ("awgn", "rayleigh", "umaaerial"):
         raise ValueError(f"unknown channel {channel!r}")
+    if fading is not None:
+        if channel != "rayleigh":
+            raise ValueError("fading is only defined for Rayleigh")
+        if fading.shape[0] != s0.shape[0] or fading.shape[1] < t_max:
+            raise ValueError("fading must be [B, >= t_max]")
     p = s0[:, 0:2]
     v = s0[:, 2:4]
     g = s0[:, 4:6]
@@ -72,11 +84,12 @@ def closed_loop_rollout(
     controls = []
     s = s0
 
-    for _ in range(t_max):
+    for t in range(t_max):
         # communication: normalized estimate of the current state
-        s_bar_hat = comm.forward_losses(s, snr_db, channel=channel,
-                                        generator=generator,
-                                        aerial_gain=block_gain)
+        s_bar_hat = comm.forward_losses(
+            s, snr_db, channel=channel, generator=generator,
+            aerial_gain=block_gain,
+            h=None if fading is None else fading[:, t:t + 1])
         s_hat = denormalize(s_bar_hat)              # physical estimate
         u = pd_controller(s_hat)                    # frozen controller
         p, v = dynamics_step(p, v, u, dt=config.DT, v_max=config.V_MAX)
@@ -136,6 +149,7 @@ def train_task_oriented(
     verbose_every: int = 0,
     lambdas: Optional[Tuple[float, float, float, float]] = None,
     aerial_max_offset_db: Optional[float] = None,
+    doppler_hz: Optional[float] = None,
 ) -> Tuple[ReconstructionDeepJSCC, dict]:
     """Smoke-scale task-oriented training; returns (model, report).
 
@@ -155,11 +169,18 @@ def train_task_oriented(
     """
     if channel not in ("awgn", "rayleigh", "umaaerial"):
         raise ValueError(f"unknown channel {channel!r}")
+    if doppler_hz is not None:
+        if channel != "rayleigh":
+            raise ValueError("doppler_hz is only defined for Rayleigh")
+        if doppler_hz <= 0:
+            raise ValueError("doppler_hz must be > 0")
     config.set_global_seed(seed)                     # weight init
     gen_states = config.derive_generator("episodes", seed)
     gen_snr = config.derive_generator("noise_train", seed)
     gen_noise = config.derive_generator("noise_test", seed)
     gen_diag = config.derive_generator("aerial_gain", seed)  # A-12 only
+    # A-19: separate stream so the frozen draws above stay untouched
+    gen_fading = config.derive_generator("doppler_test", seed)
     env = NavigationEnv()
 
     # fixed deterministic evaluation batch (same distribution, fixed seeds)
@@ -188,11 +209,15 @@ def train_task_oriented(
         snr_db = float(torch.empty(1).uniform_(
             snr_range[0], snr_range[1], generator=gen_snr))
 
+        fading = (jakes_fading(batch_episodes, t_max, doppler_hz,
+                               generator=gen_fading)
+                  if doppler_hz is not None else None)
         pos, ctl, vel = closed_loop_rollout(model, s0, t_max=t_max,
                                             snr_db=snr_db, channel=channel,
                                             generator=gen_noise,
                                             aerial_max_offset_db=
-                                            aerial_max_offset_db)
+                                            aerial_max_offset_db,
+                                            fading=fading)
         if lambdas is None:
             out = task_loss(pos, ctl, vel, goal)
         else:
@@ -248,6 +273,7 @@ def train_task_oriented(
     report = {
         "channel": channel, "k": k, "seed": seed,
         "aerial_max_offset_db": aerial_max_offset_db,
+        "doppler_hz": doppler_hz,
         "steps": steps, "batch_episodes": batch_episodes, "t_max": t_max,
         "lr": lr, "snr_range_db": snr_range,
         "eval_episodes": eval_episodes, "eval_snr_db": eval_snr_db,

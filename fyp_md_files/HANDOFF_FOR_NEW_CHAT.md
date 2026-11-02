@@ -1,5 +1,13 @@
 # Handoff — New Chat
 
+> **Status note (2026-11-02).** This handoff was written before A-16…A-20.
+> Several statements below are now out of date: M5 **has** been executed
+> (A-16/A-18, `results/M5/` exists), A-17 adds twelve 3GPP geometries, A-19
+> adds a Doppler sweep, and A-20 adds a 5G NR LDPC BG2 comparator. The
+> authoritative current state is `fyp_md_files/PROJECT_STATUS.md` (2026-11-02
+> block); the protocol ledger is `fyp_md_files/PROTOCOL_AMENDMENTS.md`. Read
+> this file for the pre-A-16 history, not for the current gaps.
+
 **Project:** Task-Oriented DeepJSCC for UAV Navigation under Noisy and Fading Wireless Channels, with a 3GPP UMa-Aerial Link-Budget and Dispersion Extension  
 **Supervisor:** Ismat Hira  
 **Team:** Areesha Sohail; Amna Shahid; Hafiza Laiba Faisal  
@@ -132,12 +140,12 @@ Read these first:
 - fyp_md_files/PROTOCOL_AMENDMENTS.md
 - fyp_md_files/SUPERVISOR_APPROVAL_MEMO.md
 
-Current state:
+Current state (superseded by the 2026-11-02 note at the top of this file):
 - Thesis and figures are drafted; main result is the k=18→24 bandwidth crossover.
 - λ_u = λ_v = 0.1 fixes the frozen task loss.
-- M5 is deferred; no results/M5 exists. Do not invent M5 results.
-- 3GPP model has one geometry; no Doppler.
-- Latest commit is f39bb43.
+- M5 **has** been executed (A-16, one declared failure A-18); `results/M5/` exists.
+- 3GPP is swept over twelve geometries (A-17); Doppler is measured at link level (A-19); LDPC BG2 is added (A-20).
+- Latest commit is `4921967` before the A-19/A-20 block.
 
 Immediate task:
 [write the specific task here, e.g. "Add the five Lacuna citations to Chapter 2 and Table 2.1, then rebuild the thesis docx."]

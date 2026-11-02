@@ -1,6 +1,6 @@
 # fyp_md_files/ — document index
 
-44 files accumulated across the project. This index says what each one is and
+46 files accumulated across the project. This index says what each one is and
 whether it is **authoritative**. When two documents disagree, the authoritative
 one wins.
 
@@ -9,9 +9,9 @@ one wins.
 | File | Role | Authoritative? |
 |---|---|---|
 | `SUPERVISOR_BRIEFING_PLAIN.md` | Plain-language answer to "what was the problem, how was it solved, was 3GPP done" | Yes, for the narrative |
-| `THESIS_MASTER_DOCUMENT.md` | Thesis source (54 pages, 21 tables, 11 figures) | **Yes — the deliverable** |
-| `PROTOCOL_AMENDMENTS.md` | A-1 … A-16, every dated deviation | **Yes — the protocol ledger** |
-| `IEEE_EVALUATION_AND_REMAINING_WORK.md` | Independent IEEE-style audit, gap matrix, M5 plan | Yes, for remaining work |
+| `THESIS_MASTER_DOCUMENT.md` | Thesis source (24 numbered tables, 11 figures) | **Yes — the deliverable** |
+| `PROTOCOL_AMENDMENTS.md` | A-1 … A-20, every dated deviation | **Yes — the protocol ledger** |
+| `IEEE_EVALUATION_AND_REMAINING_WORK.md` | Independent IEEE-style audit, gap matrix, M5 plan (pre-A-16; see `PROJECT_STATUS.md` for current status) | Historical |
 | `PROJECT_STATUS.md` | Pipeline state and frozen decisions | Yes, for status |
 | `HANDOFF_FOR_NEW_CHAT.md` | Onboarding summary for a fresh session | Yes, for handoff |
 
@@ -41,6 +41,8 @@ one wins.
 | `RESULTS_AERIAL_GEOM_2026-11-01.md` | A-17 3GPP multi-geometry link budget (12 geometries) |
 | `RESULTS_M5B_M5C_2026-11-01.md` | M5b uncoded digital reference + M5c cross-channel |
 | `RESULTS_M5A_2026-11-02.md` | M5a λ-term removal (λ_u is the active term) |
+| `RESULTS_DOPPLER_2026-11-02.md` | A-19 Doppler / time-correlated Rayleigh sweep |
+| `RESULTS_LDPC_2026-11-02.md` | A-20 5G NR LDPC BG2 comparator |
 
 ## Design and planning
 

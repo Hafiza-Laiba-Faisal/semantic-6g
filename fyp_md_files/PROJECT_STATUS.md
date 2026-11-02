@@ -1,5 +1,56 @@
 # FYP Project Status
 
+## 2026-11-02 — Doppler (A-19) and 5G NR LDPC (A-20) closed
+
+**Trigger.** The last two open supervisor-review items: (i) i.i.d. block fading
+may flatter the neural arms, (ii) the digital baseline is defended only on the
+polar family. Both amendments were registered **before the first cell** (A-19
+and A-20 in `PROTOCOL_AMENDMENTS.md`).
+
+| Block | Universe | State |
+|---|---|---|
+| A-19 Doppler sweep | 10 Doppler points × 2 k × 5 SNR = 100 slots | **complete (100/100)** |
+| A-19 follow-up arm | 1 train (3000 steps) + 5 eval slots | **complete (6/6)**, rule-triggered |
+| A-20 LDPC BG2 | 5 k × 2 channels × 5 SNR = 50 slots | **complete (50/50)**, wall 7,671.5 s |
+
+**A-19 headline.** At the most correlated point (`Δ = 0.033`, 0.05 m/s at
+2 GHz) a fade lasts **4.08 steps** instead of 1.10. The λ-heavy arm moves by at
+most **0.003** (k = 12) and **0.001** (k = 54); the digital k = 54 arm loses
+**0.028**, i.e. in the thesis's favour. The pre-declared rule was written on
+"success", the digital loss triggered it, and the follow-up arm was run rather
+than argued away: **0.993** against **0.994** for the stored checkpoint, a
+change of −0.001 inside the seed spread. So the i.i.d. convention is validated
+by both evaluation and training. Full write-up:
+`fyp_md_files/RESULTS_DOPPLER_2026-11-02.md`.
+
+**A-20 headline.** 5G NR LDPC BG2 (without the 38.212 rate-matching chain) is
+statistically indistinguishable from the convolutional baseline at k = 12–30
+(largest difference **0.011** at E = 1,000); at k = 54 AWGN it is **0.017
+below** (0.978 against 0.995) and on Rayleigh **equal** (0.944 against 0.940).
+The k = 54 gap is structural: the BG2 mother code at `Z = 5` is rate 0.19 and
+the frozen 108-bit budget reaches rate 0.44 by puncturing, which costs belief
+propagation at 0 dB. No ordering changes. Two deviations from the registered
+text are disclosed in the A-20 outcome (A = 6B rather than 6B + 6, and the
+BG2 table is 5.3.2-3, not 5.3.2-2). Full write-up:
+`fyp_md_files/RESULTS_LDPC_2026-11-02.md`.
+
+**Thesis integration (same day):**
+
+| Where | Change |
+|---|---|
+| §5.13 (new) | A-19, **Tables 5.15–5.16** (sweep + rule-triggered arm) |
+| §5.14 (new) | A-20, **Table 5.17** (LDPC vs conv, per k and channel) |
+| Summary | renumbered §5.13 → §5.15; items 10 (Doppler) and 11 (LDPC) added |
+| §5.8 / §5.9 | Tables swapped so numbering follows document order: 5.10 = A-17, 5.11 = A-15 |
+| §6.6 (new) | "Two Robustness Axes: Channel Model and Code Family" |
+| §1.9, §2.5, §3.8, §6.7, §7, §8.1–8.3, App. D/E | Doppler/LDPC wording and viva answers |
+| Fig. 4.1 | regenerated with A-16…A-20 (20 rows) |
+| List of Tables / Appendix B | Tables 5.10–5.17, A-1…A-20 |
+
+**Repository state.** Local suite: **111 passed in 136 s** (99 previous + 27
+Doppler + 49 LDPC checks, split across two new test modules). Docx rebuilt from
+the Markdown source with the system Python.
+
 ## 2026-11-01 — M5 executed (A-16) and 3GPP multi-geometry sweep (A-17)
 
 **Trigger.** Supervisor review (2026-11-01) demanded the deferred M5 ablations

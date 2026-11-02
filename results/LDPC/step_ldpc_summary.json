@@ -1,0 +1,338 @@
+{
+  "experiment": "LDPC",
+  "amendment": "A-20",
+  "registered": "2026-11-02",
+  "episodes": 1000,
+  "snr_grid": [
+    0.0,
+    5.0,
+    10.0,
+    15.0,
+    20.0
+  ],
+  "k_list": [
+    12,
+    18,
+    24,
+    30,
+    54
+  ],
+  "expected_slots": 50,
+  "completed_slots": 50,
+  "missing_slots": 0,
+  "status": "complete",
+  "mean_over_snr": {
+    "k12_awgn": 0.0656,
+    "k12_rayleigh": 0.0646,
+    "k18_awgn": 0.1518,
+    "k18_rayleigh": 0.1522,
+    "k24_awgn": 0.29100000000000004,
+    "k24_rayleigh": 0.2914,
+    "k30_awgn": 0.5546,
+    "k30_rayleigh": 0.6154,
+    "k54_awgn": 0.9780000000000001,
+    "k54_rayleigh": 0.9437999999999999
+  },
+  "rows": [
+    {
+      "k": 12,
+      "channel": "awgn",
+      "snr_db": 0.0,
+      "success_rate": 0.064
+    },
+    {
+      "k": 12,
+      "channel": "awgn",
+      "snr_db": 5.0,
+      "success_rate": 0.066
+    },
+    {
+      "k": 12,
+      "channel": "awgn",
+      "snr_db": 10.0,
+      "success_rate": 0.066
+    },
+    {
+      "k": 12,
+      "channel": "awgn",
+      "snr_db": 15.0,
+      "success_rate": 0.066
+    },
+    {
+      "k": 12,
+      "channel": "awgn",
+      "snr_db": 20.0,
+      "success_rate": 0.066
+    },
+    {
+      "k": 12,
+      "channel": "rayleigh",
+      "snr_db": 0.0,
+      "success_rate": 0.067
+    },
+    {
+      "k": 12,
+      "channel": "rayleigh",
+      "snr_db": 5.0,
+      "success_rate": 0.067
+    },
+    {
+      "k": 12,
+      "channel": "rayleigh",
+      "snr_db": 10.0,
+      "success_rate": 0.06
+    },
+    {
+      "k": 12,
+      "channel": "rayleigh",
+      "snr_db": 15.0,
+      "success_rate": 0.063
+    },
+    {
+      "k": 12,
+      "channel": "rayleigh",
+      "snr_db": 20.0,
+      "success_rate": 0.066
+    },
+    {
+      "k": 18,
+      "channel": "awgn",
+      "snr_db": 0.0,
+      "success_rate": 0.165
+    },
+    {
+      "k": 18,
+      "channel": "awgn",
+      "snr_db": 5.0,
+      "success_rate": 0.15
+    },
+    {
+      "k": 18,
+      "channel": "awgn",
+      "snr_db": 10.0,
+      "success_rate": 0.148
+    },
+    {
+      "k": 18,
+      "channel": "awgn",
+      "snr_db": 15.0,
+      "success_rate": 0.148
+    },
+    {
+      "k": 18,
+      "channel": "awgn",
+      "snr_db": 20.0,
+      "success_rate": 0.148
+    },
+    {
+      "k": 18,
+      "channel": "rayleigh",
+      "snr_db": 0.0,
+      "success_rate": 0.155
+    },
+    {
+      "k": 18,
+      "channel": "rayleigh",
+      "snr_db": 5.0,
+      "success_rate": 0.155
+    },
+    {
+      "k": 18,
+      "channel": "rayleigh",
+      "snr_db": 10.0,
+      "success_rate": 0.144
+    },
+    {
+      "k": 18,
+      "channel": "rayleigh",
+      "snr_db": 15.0,
+      "success_rate": 0.156
+    },
+    {
+      "k": 18,
+      "channel": "rayleigh",
+      "snr_db": 20.0,
+      "success_rate": 0.151
+    },
+    {
+      "k": 24,
+      "channel": "awgn",
+      "snr_db": 0.0,
+      "success_rate": 0.313
+    },
+    {
+      "k": 24,
+      "channel": "awgn",
+      "snr_db": 5.0,
+      "success_rate": 0.284
+    },
+    {
+      "k": 24,
+      "channel": "awgn",
+      "snr_db": 10.0,
+      "success_rate": 0.286
+    },
+    {
+      "k": 24,
+      "channel": "awgn",
+      "snr_db": 15.0,
+      "success_rate": 0.286
+    },
+    {
+      "k": 24,
+      "channel": "awgn",
+      "snr_db": 20.0,
+      "success_rate": 0.286
+    },
+    {
+      "k": 24,
+      "channel": "rayleigh",
+      "snr_db": 0.0,
+      "success_rate": 0.348
+    },
+    {
+      "k": 24,
+      "channel": "rayleigh",
+      "snr_db": 5.0,
+      "success_rate": 0.305
+    },
+    {
+      "k": 24,
+      "channel": "rayleigh",
+      "snr_db": 10.0,
+      "success_rate": 0.271
+    },
+    {
+      "k": 24,
+      "channel": "rayleigh",
+      "snr_db": 15.0,
+      "success_rate": 0.262
+    },
+    {
+      "k": 24,
+      "channel": "rayleigh",
+      "snr_db": 20.0,
+      "success_rate": 0.271
+    },
+    {
+      "k": 30,
+      "channel": "awgn",
+      "snr_db": 0.0,
+      "success_rate": 0.717
+    },
+    {
+      "k": 30,
+      "channel": "awgn",
+      "snr_db": 5.0,
+      "success_rate": 0.511
+    },
+    {
+      "k": 30,
+      "channel": "awgn",
+      "snr_db": 10.0,
+      "success_rate": 0.515
+    },
+    {
+      "k": 30,
+      "channel": "awgn",
+      "snr_db": 15.0,
+      "success_rate": 0.515
+    },
+    {
+      "k": 30,
+      "channel": "awgn",
+      "snr_db": 20.0,
+      "success_rate": 0.515
+    },
+    {
+      "k": 30,
+      "channel": "rayleigh",
+      "snr_db": 0.0,
+      "success_rate": 0.651
+    },
+    {
+      "k": 30,
+      "channel": "rayleigh",
+      "snr_db": 5.0,
+      "success_rate": 0.704
+    },
+    {
+      "k": 30,
+      "channel": "rayleigh",
+      "snr_db": 10.0,
+      "success_rate": 0.628
+    },
+    {
+      "k": 30,
+      "channel": "rayleigh",
+      "snr_db": 15.0,
+      "success_rate": 0.554
+    },
+    {
+      "k": 30,
+      "channel": "rayleigh",
+      "snr_db": 20.0,
+      "success_rate": 0.54
+    },
+    {
+      "k": 54,
+      "channel": "awgn",
+      "snr_db": 0.0,
+      "success_rate": 0.89
+    },
+    {
+      "k": 54,
+      "channel": "awgn",
+      "snr_db": 5.0,
+      "success_rate": 1.0
+    },
+    {
+      "k": 54,
+      "channel": "awgn",
+      "snr_db": 10.0,
+      "success_rate": 1.0
+    },
+    {
+      "k": 54,
+      "channel": "awgn",
+      "snr_db": 15.0,
+      "success_rate": 1.0
+    },
+    {
+      "k": 54,
+      "channel": "awgn",
+      "snr_db": 20.0,
+      "success_rate": 1.0
+    },
+    {
+      "k": 54,
+      "channel": "rayleigh",
+      "snr_db": 0.0,
+      "success_rate": 0.732
+    },
+    {
+      "k": 54,
+      "channel": "rayleigh",
+      "snr_db": 5.0,
+      "success_rate": 0.991
+    },
+    {
+      "k": 54,
+      "channel": "rayleigh",
+      "snr_db": 10.0,
+      "success_rate": 0.997
+    },
+    {
+      "k": 54,
+      "channel": "rayleigh",
+      "snr_db": 15.0,
+      "success_rate": 0.999
+    },
+    {
+      "k": 54,
+      "channel": "rayleigh",
+      "snr_db": 20.0,
+      "success_rate": 1.0
+    }
+  ]
+}

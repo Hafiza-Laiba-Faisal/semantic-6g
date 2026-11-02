@@ -25,6 +25,8 @@ relaxed.
   **fourteen orders of magnitude**.
 - **3GPP UMa-aerial:** the shaped policy needs **87–91 dB** transmit SNR for 0.90 success;
   the digital link needs **108 dB** at k = 54 and never reaches 0.90 at k = 18.
+- **Robustness:** time-correlated (Clarke/Jakes) fading moves the neural arms by **≤ 0.003**
+  (A-19), and a **5G NR LDPC BG2** comparator does not change the crossover (A-20).
 
 ## Repository map
 
@@ -35,7 +37,7 @@ project/            the library (importable package)
   models/             DeepJSCC encoder/decoder
   training/           reconstruction and task-oriented (closed-loop) trainers
   evaluation/         paired evaluation harness, metrics, McNemar/Wilson statistics
-  baselines/          convolutional, polar, and 5G NR polar digital links
+  baselines/          convolutional, polar, 5G NR polar, and 5G NR LDPC BG2 digital links
   losses/             task and reconstruction losses
   uav/                double-integrator dynamics, controller, environment
 tools/              one runner/builder per experiment or document
@@ -56,7 +58,7 @@ python -m venv .venv
 # 2. validate the frozen experiment matrix (no compute)
 .\.venv\Scripts\python.exe main.py validate-matrix
 
-# 3. run the test suite (99 tests, ~2 min on CPU)
+# 3. run the test suite (111 tests, ~2 min on CPU)
 .\.venv\Scripts\python.exe -m pip install -r requirements-dev.txt
 .\.venv\Scripts\python.exe -m pytest tests -q
 
@@ -77,14 +79,14 @@ subdirectory.
 | Every protocol deviation, dated | `fyp_md_files/PROTOCOL_AMENDMENTS.md` |
 | Independent IEEE-style audit + remaining work | `fyp_md_files/IEEE_EVALUATION_AND_REMAINING_WORK.md` |
 | Pipeline status and frozen decisions | `fyp_md_files/PROJECT_STATUS.md` |
-| Index of all 44 documents | `fyp_md_files/INDEX.md` |
+| Index of all 46 documents | `fyp_md_files/INDEX.md` |
 
 ## Ground rules
 
 - Do not modify frozen mathematical conventions without a dated protocol amendment.
 - Do not invent or retype numerical values; every number comes from a stored artifact.
-- Negative results are kept, not retrained away (A-9 capacity, A-12 full-dispersion training).
-- M5 is not run without a dated amendment (A-16) and explicit written supervisor approval.
+- Negative results are kept, not retrained away (A-9 capacity, A-12 full-dispersion training, A-18 M5a cell).
+- Experiments are run only under a dated amendment registered before the first cell (most recently A-19 Doppler and A-20 LDPC).
 
 ## Licence / status
 

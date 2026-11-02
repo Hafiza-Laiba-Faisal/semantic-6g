@@ -278,7 +278,7 @@ def experiment_matrix():
         ("M4", "Secondary B = 8 bandwidth reference",
          "k = 54; digital; AWGN, Rayleigh; E = 5000", "complete"),
         ("M5", "Task-loss removal, uncoded digital, cross-channel",
-         "declared by the frozen protocol; no cell run", "deferred"),
+         "M5a/M5b/M5c executed under A-16; E = 1000", "complete"),
         ("Wave-A", "Loss-component / lambda ablation",
          "k = 12; six arms; AWGN, Rayleigh; E = 1000", "complete*"),
         ("Wave-B", "CSI-estimation-error ablation",
@@ -299,6 +299,16 @@ def experiment_matrix():
          "k = 24; seeds 45, 46, 47; AWGN, Rayleigh", "complete"),
         ("A-15", "Full 5G NR polar comparator",
          "all k; CRC-6/11, CA-SCL L = 8; AWGN, Rayleigh", "complete"),
+        ("A-16", "M5 execution (pre-registered)",
+         "lambda-term removal; uncoded QPSK; transfer", "complete"),
+        ("A-17", "3GPP multi-geometry link budget",
+         "12 geometries; d = 200/500/1000 m; h = 50/100 m", "complete"),
+        ("A-18", "Declared M5a failure",
+         "m5_no_u, k = 18, AWGN; non-finite gradients", "negative"),
+        ("A-19", "Doppler / time-correlated Rayleigh",
+         "10 Doppler points; k = 12, 54; lambda + digital", "complete"),
+        ("A-20", "5G NR LDPC BG2 comparator",
+         "all k; AWGN, Rayleigh; E = 1000", "complete"),
     ]
     status_color = {
         "complete": "#dff0d8", "complete*": "#fcf8e3",
@@ -309,7 +319,7 @@ def experiment_matrix():
         "negative": "complete (negative, kept)", "deferred": "deferred (not run)",
     }
 
-    fig, ax = plt.subplots(figsize=(9.8, 5.3))
+    fig, ax = plt.subplots(figsize=(9.8, 6.9))
     ax.axis("off")
     ax.set_xlim(0, 1)
     ax.set_ylim(0, 1)
@@ -341,10 +351,10 @@ def experiment_matrix():
                 va="center", ha="center", color="#222", zorder=2)
     ax.plot([0.0, 1.0], [bottom, bottom], color="#444", lw=1.0)
     ax.text(0.0, bottom - 0.035,
-            "M1-M4 complete; M5 deferred by the frozen protocol. "
-            "Wave-A/B/C and A-9...A-15 are dated, additive amendments.",
+            "M1-M5 complete (M5 executed under A-16). "
+            "Wave-A/B/C and A-9...A-20 are dated, additive amendments.",
             fontsize=7.0, color="#555", va="top")
-    ax.set_title("Experiment matrix actually executed (M1-M5, Waves A-C, A-9...A-15)",
+    ax.set_title("Experiment matrix actually executed (M1-M5, Waves A-C, A-9...A-20)",
                  fontsize=9.5, pad=14)
     fig.tight_layout()
     out = FIG / "fig_experiment_matrix.png"

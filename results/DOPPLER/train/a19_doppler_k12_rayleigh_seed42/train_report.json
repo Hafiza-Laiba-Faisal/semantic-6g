@@ -1,0 +1,25 @@
+{
+  "cell": "a19_doppler",
+  "amendment": "A-19",
+  "point": "d0033_2g",
+  "doppler_hz": 0.33356409519815206,
+  "carrier_ghz": 2.0,
+  "speed_mps": 0.05,
+  "k": 12,
+  "channel": "rayleigh",
+  "seed": 42,
+  "steps": 3000,
+  "lambdas": {
+    "ld": 1.0,
+    "lu": 0.1,
+    "lv": 0.1,
+    "lT": 2.0
+  },
+  "nan_batches": 0,
+  "grads_finite": true,
+  "task_loss_initial": 3898.340087890625,
+  "task_loss_final": 16.121074676513672,
+  "eval_after_success_rate": 1.0,
+  "wall_s": 3245.0,
+  "checkpoint": "C:\\Users\\LENOVO\\.config\\freebuff-desktop\\no-folder\\threads\\f65d0493999624d4117ab3756824010b4a55de670bd3ad110bf23c6b6022da89\\semantic-6g\\results\\DOPPLER\\train\\a19_doppler_k12_rayleigh_seed42\\final_ckpt.pt"
+}

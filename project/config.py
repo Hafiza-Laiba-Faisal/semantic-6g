@@ -253,6 +253,9 @@ RNG_KEYS = {
     # every generator is seed + hash(key), so existing streams are unchanged.
     "aerial_gain": "aerial_gain",
     "aerial_eval": "aerial_eval",
+    # A-19 (2026-11-02): Clarke/Jakes oscillator phases for time-correlated
+    # fading.  Additive, for the same reason: existing streams are unchanged.
+    "doppler_test": "doppler_test",
 }
 
 

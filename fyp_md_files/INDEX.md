@@ -1,6 +1,6 @@
 # fyp_md_files/ — document index
 
-46 files accumulated across the project. This index says what each one is and
+47 files accumulated across the project. This index says what each one is and
 whether it is **authoritative**. When two documents disagree, the authoritative
 one wins.
 
@@ -10,6 +10,7 @@ one wins.
 |---|---|---|
 | `SUPERVISOR_BRIEFING_PLAIN.md` | Plain-language answer to "what was the problem, how was it solved, was 3GPP done" | Yes, for the narrative |
 | `THESIS_MASTER_DOCUMENT.md` | Thesis source (24 numbered tables, 11 figures) | **Yes — the deliverable** |
+| `IEEE_PAPER_DRAFT.md` | 6-page IEEE conference-paper draft (numeric citations, 4 tables, 4 figures) | Yes, for the paper track |
 | `PROTOCOL_AMENDMENTS.md` | A-1 … A-20, every dated deviation | **Yes — the protocol ledger** |
 | `IEEE_EVALUATION_AND_REMAINING_WORK.md` | Independent IEEE-style audit, gap matrix, M5 plan (pre-A-16; see `PROJECT_STATUS.md` for current status) | Historical |
 | `PROJECT_STATUS.md` | Pipeline state and frozen decisions | Yes, for status |
@@ -86,5 +87,6 @@ These are the proposal and reference dumps the design was derived from. They are
 python tools/build_thesis_docx.py --md fyp_md_files/THESIS_MASTER_DOCUMENT.md --out THESIS_MASTER_DOCUMENT.docx --header "Task-Oriented DeepJSCC for UAV Navigation"
 python tools/build_thesis_docx.py --md fyp_md_files/FIGURES_DOCUMENT.md --out FIGURES_DOCUMENT.docx --header "Thesis Figures"
 python tools/build_thesis_docx.py --md fyp_md_files/LACUNA_LITERATURE_MAP.md --out LACUNA_LITERATURE_MAP.docx --header "Lacuna Literature Map"
+python tools/build_ieee_paper_docx.py --md fyp_md_files/IEEE_PAPER_DRAFT.md --out IEEE_PAPER_DRAFT.docx
 python tools/build_thesis_docx.py --md fyp_md_files/SUPERVISOR_BRIEFING_PLAIN.md --out SUPERVISOR_BRIEFING_PLAIN.docx --header "Supervisor Briefing"
 ```

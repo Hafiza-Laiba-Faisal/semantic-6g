@@ -94,11 +94,11 @@ check("INDEX lists both results notes",
       "RESULTS_DOPPLER_2026-11-02.md" in idx and "RESULTS_LDPC_2026-11-02.md" in idx)
 check("INDEX says 24 numbered tables", "24 numbered tables" in idx)
 
-ps = (ROOT / "fyp_md_files/PROJECT_STATUS.md").read_text(encoding="utf-8")
+ps = (ROOT / "ARCHIVE/PROJECT_STATUS.md").read_text(encoding="utf-8")
 check("PROJECT_STATUS has the 2026-11-02 block",
       "## 2026-11-02 — Doppler (A-19) and 5G NR LDPC (A-20) closed" in ps)
 
-brief = (ROOT / "fyp_md_files/SUPERVISOR_BRIEFING_PLAIN.md").read_text(encoding="utf-8")
+brief = (ROOT / "ARCHIVE/SUPERVISOR_BRIEFING_PLAIN.md").read_text(encoding="utf-8")
 check("briefing has A-19 and A-20 bullets",
       "**A-19 — Doppler" in brief and "**A-20 — 5G NR LDPC" in brief)
 check("briefing no 'LDPC not done'", "LDPC not done" not in brief)
@@ -129,7 +129,7 @@ except Exception as exc:  # noqa: BLE001
 stale = ("M5 is deferred", "no results/M5 exists", "LDPC not done",
          "99 passing tests", "contributions (99 tests)")
 srcs = ["README.md", "fyp_md_files/THESIS_MASTER_DOCUMENT.md",
-        "fyp_md_files/PROJECT_STATUS.md", "fyp_md_files/SUPERVISOR_BRIEFING_PLAIN.md",
+        "ARCHIVE/PROJECT_STATUS.md", "ARCHIVE/SUPERVISOR_BRIEFING_PLAIN.md",
         "fyp_md_files/INDEX.md", "results/README.md"]
 for s in srcs:
     t = (ROOT / s).read_text(encoding="utf-8")

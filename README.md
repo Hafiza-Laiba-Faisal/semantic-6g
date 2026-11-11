@@ -74,11 +74,11 @@ subdirectory.
 
 | Question | File |
 |---|---|
-| What is the project, in plain language? | `fyp_md_files/SUPERVISOR_BRIEFING_PLAIN.md` |
+| What is the project, in plain language? | `SUBMISSION_KIT/ONE_PAGER.md` (the older narrative is archived at `ARCHIVE/SUPERVISOR_BRIEFING_PLAIN.md`) |
 | Full thesis source | `fyp_md_files/THESIS_MASTER_DOCUMENT.md` |
 | Every protocol deviation, dated | `fyp_md_files/PROTOCOL_AMENDMENTS.md` |
-| Independent IEEE-style audit + remaining work | `fyp_md_files/IEEE_EVALUATION_AND_REMAINING_WORK.md` |
-| Pipeline status and frozen decisions | `fyp_md_files/PROJECT_STATUS.md` |
+| Independent IEEE-style audit + remaining work | `ARCHIVE/IEEE_EVALUATION_AND_REMAINING_WORK.md` |
+| Pipeline status and frozen decisions | `ARCHIVE/PROJECT_STATUS.md` |
 | Index of all 46 documents | `fyp_md_files/INDEX.md` |
 
 ## Ground rules

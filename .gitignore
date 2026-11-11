@@ -9,6 +9,9 @@ __pycache__/
 # agent-local state
 .freebuff/
 
+# Word lock files
+~$*
+
 # large legacy torch binaries only (current checkpoints are small .pt files,
 # intentionally tracked as a private-repo recovery backup)
 *.pth

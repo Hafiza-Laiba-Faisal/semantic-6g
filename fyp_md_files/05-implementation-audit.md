@@ -627,4 +627,4 @@ Gate L (in-process regression): Step-3 43/43, Step 0-2 11/11,
   Step-4 structural 21/21, Step-5 core, Step-6 core — all PASS in-process.
 ```
 
-Continuation marker: `fyp_md_files/PROJECT_STATUS.md` (machine-independent handoff; resume procedure inside).
+Continuation marker: `ARCHIVE/PROJECT_STATUS.md` (machine-independent handoff; resume procedure inside).

@@ -17,16 +17,22 @@ relaxed.
 
 ## Headline result
 
-- **Bandwidth crossover:** neural JSCC wins at `k ≤ 18`; the digital link wins at `k ≥ 24`.
-- **The frozen task loss fails** at low bandwidth (0.025 vs 0.237 for reconstruction at k = 18),
-  and it is **not** a capacity, training-budget, or metric artefact.
-- **λ-shaping fixes it:** adding control and velocity penalties (`λ_u = λ_v = 0.1`) takes the
-  same architecture from **0.025 to 0.999**, because the encoder gradient improves by roughly
-  **fourteen orders of magnitude**.
-- **3GPP UMa-aerial:** the shaped policy needs **87–91 dB** transmit SNR for 0.90 success;
-  the digital link needs **108 dB** at k = 54 and never reaches 0.90 at k = 18.
+- **Bandwidth crossover (reconstruction arm):** neural JSCC wins at `k ≤ 18`; the coded link wins
+  at `k ≥ 24`. The shaped task arm sits at the task ceiling (0.996–0.999), so the benchmark cannot
+  rank it against the coded link above `k = 18`.
+- **The frozen task loss fails** at 2–6% success across the grid (0.018 vs 0.254 for reconstruction
+  at `k = 18`), and it is **not** a capacity, training-budget, or metric artefact.
+- **λ-shaping fixes it:** adding control and velocity penalties (`λ_u = λ_v = 0.1`) takes the same
+  architecture to **0.993–0.999**; the median encoder gradient falls by **7–10 orders of magnitude**,
+  so the mechanism is optimisation conditioning, not capacity.
+- **3GPP-inspired UMa-aerial (large-scale layer):** the shaped policy requires **87 dB** of normalised
+  transmit power for 0.90 success at `k = 54` (**91 dB** at `k = 18`); the coded link requires
+  **108 dB** at `k = 54` and never reaches 0.90 at `k = 18`. Across 12 geometries the gap is
+  **15–21 dB** at 0.90 and **12–15 dB** at 0.99. These are unit-gain link-budget dB, **not EIRP**,
+  and the sweep remaps one shared performance curve rather than running independent channels.
 - **Robustness:** time-correlated (Clarke/Jakes) fading moves the neural arms by **≤ 0.003**
-  (A-19), and a **5G NR LDPC BG2** comparator does not change the crossover (A-20).
+  (A-19), and a **5G NR LDPC BG2** comparator does not change the ordering at `k = 12–30` (A-20).
+  Overlapping confidence intervals are reported as such; no formal equivalence test is claimed.
 
 ## Repository map
 
@@ -44,6 +50,8 @@ tools/              one runner/builder per experiment or document
 tests/              17 protocol/design test modules + noiseless oracle gate
 results/            per-experiment artifacts (JSON, reports); see results/README.md
 fyp_md_files/       thesis source, protocol amendments, results notes; see its INDEX.md
+SUBMISSION_KIT/     what to hand to a panel: paper, thesis, one-pager, hero figures
+ARCHIVE/            superseded notes (stale numbers; do not cite)
 artifacts/          generated bundles and console logs (not source)
 .github/workflows/  CI: matrix validation + all tests + Docker build
 ```
@@ -79,7 +87,7 @@ subdirectory.
 | Every protocol deviation, dated | `fyp_md_files/PROTOCOL_AMENDMENTS.md` |
 | Independent IEEE-style audit + remaining work | `ARCHIVE/IEEE_EVALUATION_AND_REMAINING_WORK.md` |
 | Pipeline status and frozen decisions | `ARCHIVE/PROJECT_STATUS.md` |
-| Index of all 46 documents | `fyp_md_files/INDEX.md` |
+| Index of documents (live + archived) | `fyp_md_files/INDEX.md` |
 
 ## Ground rules
 
